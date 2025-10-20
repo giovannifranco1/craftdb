@@ -6,6 +6,8 @@
         "dev": "vite"
     },
     "dependencies": {
+        "@alpinejs/anchor": "^3.15.0",
+        "@alpinejs/collapse": "^3.15.0",
         "@tailwindcss/vite": "^4.1.11",
         "autoprefixer": "^10.4.20",
         "axios": "^1.7.4",
