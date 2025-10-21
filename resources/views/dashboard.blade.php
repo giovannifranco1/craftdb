@@ -1,16 +1,14 @@
 <x-layouts.app :title="__('Dashboard')">
-    <div class="relative vh-100 bg-gray-50 p-4">
+    <div class="relative vh-100 bg-gray-50">
         <!-- Dashboard Header -->
-        <div class="mb-6">
-            <h1 class="text-2xl font-bold text-gray-900">Diagrama ER - Dashboard</h1>
-            <p class="text-gray-600 mt-1">Arraste as tabelas para organizar seu diagrama</p>
+        <div class="mb-1">
         </div>
 
-        <div class="bg-gray-100 p-5 rounded-md">
+        <div class="bg-gray-100 p-3 rounded-md">
             <!-- Floating Tables Container -->
             <div
                 id="workspace"
-                class="relative w-full h-[calc(100vh-13.8rem)] overflow-hidden"
+                class="relative w-full h-[calc(100vh-9rem)] overflow-hidden"
                 x-data="{
                     scale: 0.6,
                     minScale: 0.2,
@@ -84,6 +82,7 @@
                         $spacingY = 400;
                     @endphp
                     @foreach(range(1, $total) as $i)
+
                         @php
                             $row = floor(($i - 1) / $maxPerRow);
                             $col = ($i - 1) % $maxPerRow;
@@ -93,6 +92,7 @@
                             $x = $col * $spacingX + $dx;
                             $y = $row * $spacingY + $dy;
                         @endphp
+
                         <livewire:table :x="$x" :y="$y" :key="$i" />
                     @endforeach
 
