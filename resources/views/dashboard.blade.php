@@ -1,14 +1,14 @@
 <x-layouts.app :title="__('Dashboard')">
     <div class="relative vh-100 bg-gray-50">
         <!-- Dashboard Header -->
-        <div class="mb-1">
+        <div class="">
         </div>
 
-        <div class="bg-gray-100 p-3 rounded-md">
+        <div class="drag-workspace-bg p-5">
             <!-- Floating Tables Container -->
             <div
                 id="workspace"
-                class="relative w-full h-[calc(100vh-9rem)] overflow-hidden"
+                class="relative w-full h-[calc(100vh-6rem)] overflow-hidden"
                 x-data="{
                     scale: 0.6,
                     minScale: 0.2,
