@@ -1,4 +1,4 @@
-<x-layouts.app :title="__('Dashboard')">
+<x-layouts.app-drag-workspace :title="__('Dashboard')">
     <div class="relative vh-100 bg-gray-50">
         <!-- Dashboard Header -->
         <div class="">
@@ -100,4 +100,4 @@
             </div>
         </div>
     </div>
-</x-layouts.app>
+</x-layouts.app-drag-workspace>
