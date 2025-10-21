@@ -9,12 +9,24 @@
         initialY: 0,
         ghostX: 0,
         ghostY: 0,
+        baseZIndex: 10,
+        currentZIndex: 10,
         init() {
             this.$el.addEventListener('selectstart', (e) => e.preventDefault());
             document.addEventListener('mousemove', (e) => this.drag(e));
             document.addEventListener('mouseup', (e) => this.endDrag(e));
             document.addEventListener('touchmove', (e) => this.drag(e), { passive: false });
             document.addEventListener('touchend', (e) => this.endDrag(e));
+
+            // Inicializar z-index global se não existir
+            if (!window.draggableElements) {
+                window.draggableElements = new Set();
+                window.maxZIndex = 1000;
+            }
+
+            // Registrar este elemento no sistema global
+            window.draggableElements.add(this.$el);
+            this.updateAllZIndex();
         },
         startDrag(e) {
             // Permitir drag APENAS no header da tabela
@@ -23,6 +35,10 @@
             }
             this.isDragging = true;
             window.tableIsDragging = true;
+
+            // Definir este elemento como o de maior z-index
+            this.bringToFront();
+
             if (e.type === 'touchstart') {
                 this.startX = e.touches[0].clientX;
                 this.startY = e.touches[0].clientY;
@@ -62,6 +78,9 @@
             window.tableIsDragging = false;
             this.$el.style.transition = 'all 0.2s ease-out';
             this.snapToGrid();
+
+            // Recalcular z-index de todos os elementos após o drag
+            this.updateAllZIndex();
         },
         snapToGrid() {
             const gridSize = 20;
@@ -71,10 +90,40 @@
         snapCalc(val) {
             const gridSize = 10; // Grid menor para shadow mais próximo
             return Math.round(val / gridSize) * gridSize;
+        },
+        bringToFront() {
+            // Incrementar o z-index máximo e aplicar ao elemento atual
+            window.maxZIndex += 1;
+            this.currentZIndex = window.maxZIndex;
+            this.$el.style.zIndex = this.currentZIndex;
+        },
+        updateAllZIndex() {
+            // Recalcular z-index de todos os elementos draggáveis
+            if (!window.draggableElements) return;
+
+            // Ordenar elementos por z-index atual (maior primeiro)
+            const elements = Array.from(window.draggableElements).map(el => ({
+                element: el,
+                zIndex: parseInt(el.style.zIndex) || 10
+            })).sort((a, b) => b.zIndex - a.zIndex);
+
+            // Redistribuir z-index começando do maior
+            let currentZ = window.maxZIndex || 1000;
+            elements.forEach((item, index) => {
+                if (item.element === this.$el && this.isDragging) {
+                    // Elemento sendo movido mantém o maior z-index
+                    item.element.style.zIndex = currentZ;
+                    this.currentZIndex = currentZ;
+                } else {
+                    // Outros elementos recebem z-index decrescente
+                    currentZ -= 1;
+                    item.element.style.zIndex = currentZ;
+                }
+            });
         }
      }"
      x-init="init()"
-     :style="`transform: translate3d(${x}px, ${y}px, 0); z-index: ${isDragging ? 1000 : 10}; transition: ${isDragging ? 'none' : 'all 0.2s ease-out'};`"
+     :style="`transform: translate3d(${x}px, ${y}px, 0); z-index: ${currentZIndex}; transition: ${isDragging ? 'none' : 'all 0.2s ease-out'};`"
      :class="{ 'shadow-2xl': isDragging, 'shadow-lg': !isDragging }"
      @mousedown="startDrag($event)"
      @touchstart="startDrag($event)">
