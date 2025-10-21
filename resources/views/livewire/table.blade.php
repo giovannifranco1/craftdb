@@ -17,7 +17,8 @@
             document.addEventListener('touchend', (e) => this.endDrag(e));
         },
         startDrag(e) {
-            if (e.target.closest('button') || e.target.closest('input') || e.target.closest('select')) {
+            // Permitir drag APENAS no header da tabela
+            if (!e.target.closest('.bg-gray-50.border-b.border-gray-200.p-3.rounded-t-xl')) {
                 return;
             }
             this.isDragging = true;
@@ -37,6 +38,7 @@
         },
         drag(e) {
             if (!this.isDragging) return;
+
             e.preventDefault();
             let currentX, currentY;
             if (e.type === 'touchmove') {
@@ -73,7 +75,7 @@
      }"
      x-init="init()"
      :style="`transform: translate3d(${x}px, ${y}px, 0); z-index: ${isDragging ? 1000 : 10}; transition: ${isDragging ? 'none' : 'all 0.2s ease-out'};`"
-     :class="{ 'shadow-2xl scale-105': isDragging, 'shadow-lg': !isDragging }"
+     :class="{ 'shadow-2xl': isDragging, 'shadow-lg': !isDragging }"
      @mousedown="startDrag($event)"
      @touchstart="startDrag($event)">
 
@@ -91,13 +93,15 @@
                     </div>
                     users
                 </h3>
+
                 <div class="flex gap-1">
-                    <button class="p-1.5 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-md transition-colors">
+                    <button class="p-1.5 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
+                            @mousedown.stop @touchstart.stop>
                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                         </svg>
                     </button>
-                    <button class="p-1.5 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-md transition-colors">
+                    <button class="p-1.5 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-md transition-colors" @mousedown.stop @touchstart.stop>
                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                         </svg>
@@ -109,6 +113,7 @@
         <!-- Table Structure -->
         <div class="overflow-y-auto h-64">
             <table class="w-full">
+
                 <thead class="bg-gray-50 sticky top-0">
                     <tr class="border-b border-gray-200">
                         <th class="text-left py-2 px-3 text-xs font-medium text-gray-600 uppercase tracking-wider">Campo</th>
@@ -117,6 +122,7 @@
                         <th class="text-left py-2 px-3 text-xs font-medium text-gray-600 uppercase tracking-wider">Relacionamento</th>
                     </tr>
                 </thead>
+
                 <tbody class="divide-y divide-gray-100">
                     <!-- id field -->
                     <tr class="hover:bg-gray-50 transition-colors">
@@ -321,7 +327,7 @@
                     <span>•</span>
                     <span>1 UK</span>
                 </div>
-                <button class="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-md transition-colors">
+                <button class="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-md transition-colors" @mousedown.stop @touchstart.stop>
                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
                     </svg>
