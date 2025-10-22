@@ -1,5 +1,5 @@
-<a href="{{ route('diagram.show', $diagram->id) }}">
-    <div class="card bg-base-100 w-70 shadow-sm">
+<a href="{{ route('diagram.show', $diagram->name) }}">
+    <div class="card bg-base-100 w-100 shadow-sm">
 
         <div class="card-body">
             <div class="bg-blue-100 p-3 w-12 rounded-sm">

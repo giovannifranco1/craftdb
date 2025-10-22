@@ -16,8 +16,15 @@
             </a>
 
             <flux:navbar>
-                <flux:navbar.item href="#" icon="home" :href="route('home')" :current="request()->routeIs('home')" wire:navigate>{{ __('Dashboard') }}</flux:navbar.item>
+                <flux:navbar.item href="#" icon="home" :href="route('home')" :current="request()->routeIs('home')" wire:navigate>{{ __('Diagrams') }}</flux:navbar.item>
             </flux:navbar>
+
+            @if(request()->routeIs('diagram.show'))
+                <flux:breadcrumbs class="ms-45">
+                    <flux:breadcrumbs.item href="{{ route('home') }}">Diagrams</flux:breadcrumbs.item>
+                    <flux:breadcrumbs.item href="{{ route('diagram.show', $diagramName)}}">{{ $diagramName }}</flux:breadcrumbs.item>
+                </flux:breadcrumbs>
+            @endif
 
             <flux:spacer />
 

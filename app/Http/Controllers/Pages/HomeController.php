@@ -10,8 +10,6 @@ class HomeController extends Controller
 {
     public function index(): View
     {
-        $diagrams = Diagram::paginate();
-
-        return view('dashboard', compact('diagrams'));
+        return view('dashboard');
     }
 }

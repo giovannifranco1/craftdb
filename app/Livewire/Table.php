@@ -6,8 +6,10 @@ use App\Models\Table as TableModel;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\Lazy;
 use Livewire\Component;
 
+#[Lazy]
 class Table extends Component
 {
     public TableModel $table;
@@ -20,7 +22,9 @@ class Table extends Component
     #[Computed()]
     public function getColumns(): Collection
     {
-        return $this->table->column()->get();
+        return $this->table->columns()
+            ->orderByDesc('order')
+            ->get();
     }
 
     public function render(): View

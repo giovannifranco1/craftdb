@@ -16,4 +16,22 @@ class Table extends Model
     {
         return $this->hasMany(Column::class, 'table_id');
     }
+
+    public function scopeWithPrimaryCount($query)
+    {
+        $query->withCount([
+            'columns as primary_count' => function ($q) {
+                $q->where('is_primary', true);
+            },
+        ]);
+    }
+
+    public function scopeWithForeignCount($query)
+    {
+        $query->withCount([
+            'columns as foreign_count' => function ($q) {
+                $q->where('is_foreign', true);
+            },
+        ]);
+    }
 }

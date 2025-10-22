@@ -11,6 +11,12 @@ class DiagramController extends Controller
     /** Show Diagram */
     public function show(Diagram $diagram): View
     {
-        return view('pages.diagram.show', compact('diagram'));
+        $tables = $diagram->tables()
+            ->withForeignCount()
+            ->withPrimaryCount()
+            ->withCount('columns')
+            ->get();
+
+        return view('pages.diagram.show', compact('diagram', 'tables'));
     }
 }

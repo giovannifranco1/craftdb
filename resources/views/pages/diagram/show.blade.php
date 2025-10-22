@@ -1,4 +1,4 @@
-<x-layouts.app-drag-workspace :title="__('Diagram')">
+<x-layouts.app-drag-workspace :diagram-name="$diagram->name" :title="__('Diagram')">
     <div class="absolute top-0 left-0 origin-top-left transition-transform duration-100 ease-out"
         :style="`transform: translate(${offsetX}px, ${offsetY}px) scale(${scale});`">
 
@@ -6,7 +6,6 @@
             $maxPerRow = 5;
             $spacingX = 500;
             $spacingY = 400;
-            $tables = $diagram->tables()->get();
         @endphp
 
         @foreach($tables as $key => $table)

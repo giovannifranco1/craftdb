@@ -1,4 +1,4 @@
-<x-layouts.app.sidebar :title="$title ?? null">
+<x-layouts.app.sidebar :diagram-name="$diagramName ?? ''" :title="$title ?? null">
     <div class="relative vh-100 bg-gray-50">
         <div class="drag-workspace-bg p-5">
             <!-- Floating Tables Container -->

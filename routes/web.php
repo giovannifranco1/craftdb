@@ -32,5 +32,5 @@ Route::middleware(['auth'])->group(function () {
 
 /** Diagram */
 Route::middleware(['auth'])->group(function () {
-    Route::get('/diagram/{diagram}', [DiagramController::class, 'show'])->name('diagram.show');
+    Route::get('/diagram/{diagram:name}', [DiagramController::class, 'show'])->name('diagram.show');
 });
