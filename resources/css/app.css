@@ -7,7 +7,7 @@
 @source '../../vendor/livewire/flux/stubs/**/*.blade.php';
 
 @plugin "daisyui" {
-    themes: light --default, dark --prefersdark, cupcake;
+    themes: light --default, dark --prefersdark, fantasy;
 }
 
 @custom-variant dark (&:where(.dark, .dark *));

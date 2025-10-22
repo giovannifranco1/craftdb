@@ -1,7 +1,7 @@
 <div class="absolute w-96 h-80 select-none bg-white rounded-xl border border-gray-200 shadow-lg"
      x-data="{
-        x: {{ $x }},
-        y: {{ $y }},
+        x: {{ $table->x }},
+        y: {{ $table->y }},
         isDragging: false,
         startX: 0,
         startY: 0,
@@ -127,7 +127,6 @@
      :class="{ 'shadow-2xl': isDragging, 'shadow-lg': !isDragging }"
      @mousedown="startDrag($event)"
      @touchstart="startDrag($event)">
-
 
     <!-- Table body -->
     <div class="rounded-xl w-full h-full flex flex-col">

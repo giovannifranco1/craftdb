@@ -2,19 +2,25 @@
 
 namespace App\Livewire;
 
+use App\Models\Table as TableModel;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Collection;
+use Livewire\Attributes\Computed;
 use Livewire\Component;
 
 class Table extends Component
 {
+    public TableModel $table;
 
-    public int $x = 0;
-    public int $y = 0;
-
-    public function mount(int $x, int $y): void
+    public function mount(TableModel $table): void
     {
-        $this->x = $x;
-        $this->y = $y;
+        $this->table = $table;
+    }
+
+    #[Computed()]
+    public function getColumns(): Collection
+    {
+        return $this->table->column()->get();
     }
 
     public function render(): View

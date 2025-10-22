@@ -1,17 +1,16 @@
 <?php
 
+use App\Http\Controllers\Pages\DiagramController;
+use App\Http\Controllers\Pages\HomeController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 use Livewire\Volt\Volt;
 
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
-
-Route::view('dashboard', 'dashboard')
+Route::get('/', [HomeController::class, 'index'])
     ->middleware(['auth', 'verified'])
-    ->name('dashboard');
+    ->name('home');
 
+/** Settings */
 Route::middleware(['auth'])->group(function () {
     Route::redirect('settings', 'settings/profile');
 
@@ -29,4 +28,9 @@ Route::middleware(['auth'])->group(function () {
             ),
         )
         ->name('two-factor.show');
+});
+
+/** Diagram */
+Route::middleware(['auth'])->group(function () {
+    Route::get('/diagram/{diagram}', [DiagramController::class, 'show'])->name('diagram.show');
 });

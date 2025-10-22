@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html data-theme="cupcake" lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
+<html data-theme="fantasy" lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
     <head>
         @include('partials.head')
     </head>
@@ -11,15 +11,17 @@
             <flux:sidebar.toggle class="lg:hidden" icon="bars-2" inset="left" />
 
             <!-- Logo -->
-            <a href="{{ route('dashboard') }}" class="flex me-5 items-center space-x-2 rtl:space-x-reverse" wire:navigate>
+            <a href="{{ route('home') }}" class="flex me-5 items-center space-x-2 rtl:space-x-reverse" wire:navigate>
                 <x-app-logo />
             </a>
 
             <flux:navbar>
-                <flux:navbar.item href="#" icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>{{ __('Dashboard') }}</flux:navbar.item>
+                <flux:navbar.item href="#" icon="home" :href="route('home')" :current="request()->routeIs('home')" wire:navigate>{{ __('Dashboard') }}</flux:navbar.item>
             </flux:navbar>
 
             <flux:spacer />
+
+            <flux:button href="{{ '#' }}" icon="plus" variant="primary" color="blue" size="sm" class="me-5">Novo Diagrama</flux:button>
 
             <!-- User Menu -->
             <flux:dropdown position="bottom" align="end">

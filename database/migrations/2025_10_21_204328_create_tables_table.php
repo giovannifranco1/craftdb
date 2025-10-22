@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tables', function (Blueprint $table) {
+        Schema::create('table', function (Blueprint $table) {
             $table->id();
             $table->foreignId('diagram_id')->constrained('diagram', indexName: 'diagram_id_foreign');
             $table->string('name');
