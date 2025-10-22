@@ -3,81 +3,135 @@
         <!-- SVG overlay quick test -->
         <div class="p-4 bg-gray-50 rounded-lg border border-gray-200">
             <h2 class="text-sm font-semibold text-gray-700 mb-3">SVG overlay test</h2>
-            <div x-data="svgTest()" x-init="init()" class="relative h-64 bg-white rounded-md border border-gray-200">
-                <!-- SVG overlay -->
-                <svg class="pointer-events-none absolute inset-0 w-full h-full z-10">
-                    <path :d="connection.path" stroke="#64748b" stroke-width="2" fill="none" stroke-linecap="round"></path>
-                </svg>
+            <div x-data="svgTest()" class="relative h-64 bg-white rounded-md border border-gray-200 overflow-hidden">
+                <div
+                    x-data="{ offsetX: 0, offsetY: 0, scale: 1, isDragging: false, startX: 0, startY: 0 }"
+                    x-init="
+                    // PAN (arrastar)
+                    $el.addEventListener('mousedown', (e) => {
+                        if (e.target.closest('#boxA, #boxB')) return; // ignora boxes
+                        isDragging = true;
+                        startX = e.clientX - offsetX;
+                        startY = e.clientY - offsetY;
+                    });
 
-                <!-- Box A -->
-                <div id="boxA"
-                     x-data="{ x: 24, y: 24, isDragging: false, startX: 0, startY: 0, initialX: 0, initialY: 0 }"
-                     x-init="
-                        $el.addEventListener('mousedown', (e) => startDrag(e));
-                        document.addEventListener('mousemove', (e) => drag(e));
-                        document.addEventListener('mouseup', (e) => endDrag(e));
-                        function startDrag(e) {
-                            isDragging = true;
-                            startX = e.clientX;
-                            startY = e.clientY;
-                            initialX = x;
-                            initialY = y;
-                            $el.style.transition = 'none';
-                        }
-                        function drag(e) {
-                            if (!isDragging) return;
-                            e.preventDefault();
-                            x = initialX + (e.clientX - startX);
-                            y = initialY + (e.clientY - startY);
-                            $el.dispatchEvent(new CustomEvent('box-move', { bubbles: true }));
-                        }
-                        function endDrag(e) {
-                            if (!isDragging) return;
-                            isDragging = false;
-                            $el.dispatchEvent(new CustomEvent('box-move', { bubbles: true }));
-                        }
-                     "
-                     :style="`transform: translate3d(${x}px, ${y}px, 0);`"
-                    class="absolute w-40 h-16 bg-sky-100 border border-sky-200 rounded-md shadow-sm flex items-center justify-center cursor-move select-none">
-                    <span class="text-xs text-sky-800">Box A</span>
-                    <span class="anchor-right absolute right-0 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-sky-500"></span>
-                    <span class="anchor-left absolute left-0 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-sky-500"></span>
-                </div>
+                    document.addEventListener('mousemove', (e) => {
+                        if (!isDragging) return;
+                        offsetX = e.clientX - startX;
+                        offsetY = e.clientY - startY;
+                        applyTransform();
+                        $el.dispatchEvent(new CustomEvent('workspace-move', { bubbles: true }));
+                    });
 
-                <!-- Box B -->
-                <div id="boxB"
-                     x-data="{ x: 200, y: 120, isDragging: false, startX: 0, startY: 0, initialX: 0, initialY: 0 }"
-                     x-init="
-                        $el.addEventListener('mousedown', (e) => startDrag(e));
-                        document.addEventListener('mousemove', (e) => drag(e));
-                        document.addEventListener('mouseup', (e) => endDrag(e));
-                        function startDrag(e) {
-                            isDragging = true;
-                            startX = e.clientX;
-                            startY = e.clientY;
-                            initialX = x;
-                            initialY = y;
-                            $el.style.transition = 'none';
-                        }
-                        function drag(e) {
-                            if (!isDragging) return;
+                    document.addEventListener('mouseup', () => { isDragging = false; });
+
+                    // ZOOM (cmd + / cmd -)
+                    window.addEventListener('keydown', (e) => {
+                        if (!e.metaKey) return; // só com CMD
+                        if (e.key === '+' || e.key === '=') {
                             e.preventDefault();
-                            x = initialX + (e.clientX - startX);
-                            y = initialY + (e.clientY - startY);
-                            $el.dispatchEvent(new CustomEvent('box-move', { bubbles: true }));
+                            scale = Math.min(scale + 0.1, 2); // máximo 200%
+                            applyTransform();
+                            $el.dispatchEvent(new CustomEvent('workspace-zoom', { bubbles: true, detail: { scale } }));
+                        } else if (e.key === '-') {
+                            e.preventDefault();
+                            scale = Math.max(scale - 0.1, 0.4); // mínimo 40%
+                            applyTransform();
+                            $el.dispatchEvent(new CustomEvent('workspace-zoom', { bubbles: true, detail: { scale } }));
+                        } else if (e.key === '0') {
+                            e.preventDefault();
+                            scale = 1;
+                            offsetX = offsetY = 0;
+                            applyTransform();
+                            $el.dispatchEvent(new CustomEvent('workspace-zoom', { bubbles: true, detail: { scale } }));
+                            }
+                        });
+
+                        function applyTransform() {
+                            $el.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${scale})`;
+                            $el.style.transformOrigin = '0 0';
                         }
-                        function endDrag(e) {
-                            if (!isDragging) return;
-                            isDragging = false;
-                            $el.style.transition = 'all 0.2s ease-out';
-                            $el.dispatchEvent(new CustomEvent('box-move', { bubbles: true }));
-                        }
-                     "
-                     :style="`transform: translate3d(${x}px, ${y}px, 0);`"
-                    class="absolute w-40 h-16 bg-emerald-100 border border-emerald-200 rounded-md shadow-sm flex items-center justify-center cursor-move select-none">
-                    <span class="text-xs text-emerald-800">Box B</span>
-                    <span class="anchor-right absolute right-0 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-emerald-500"></span>
-                    <span class="anchor-left absolute left-0 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-emerald-500"></span>
+                    "
+                    class="absolute inset-0 cursor-grab active:cursor-grabbing"
+                    style="will-change: transform;"
+
+                >
+
+                    <!-- SVG overlay -->
+                    <svg class="pointer-events-none absolute inset-0 w-full h-full z-10">
+                        <path :d="connection.path" stroke="#64748b" stroke-width="2" fill="none" stroke-linecap="round"></path>
+                    </svg>
+
+                    <!-- Box A -->
+                    <div id="boxA"
+                        x-data="{ x: 24, y: 24, isDragging: false, startX: 0, startY: 0, initialX: 0, initialY: 0 }"
+                        x-init="
+                            $el.addEventListener('mousedown', (e) => startDrag(e));
+                            document.addEventListener('mousemove', (e) => drag(e));
+                            document.addEventListener('mouseup', (e) => endDrag(e));
+                            function startDrag(e) {
+                                isDragging = true;
+                                startX = e.clientX;
+                                startY = e.clientY;
+                                initialX = x;
+                                initialY = y;
+                                $el.style.transition = 'none';
+                            }
+                            function drag(e) {
+                                if (!isDragging) return;
+                                e.preventDefault();
+                                x = initialX + (e.clientX - startX);
+                                y = initialY + (e.clientY - startY);
+                                $el.dispatchEvent(new CustomEvent('box-move', { bubbles: true }));
+                            }
+                            function endDrag(e) {
+                                if (!isDragging) return;
+                                isDragging = false;
+                                $el.dispatchEvent(new CustomEvent('box-move', { bubbles: true }));
+                            }
+                        "
+                        :style="`transform: translate3d(${x}px, ${y}px, 0);`"
+                        class="absolute w-40 h-16 bg-sky-100 border border-sky-200 rounded-md shadow-sm flex items-center justify-center cursor-move select-none">
+                        <span class="text-xs text-sky-800">Box A</span>
+                        <span class="anchor-right absolute right-0 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-sky-500"></span>
+                        <span class="anchor-left absolute left-0 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-sky-500"></span>
+                    </div>
+
+                    <!-- Box B -->
+                    <div id="boxB"
+                        x-data="{ x: 200, y: 120, isDragging: false, startX: 0, startY: 0, initialX: 0, initialY: 0 }"
+                        x-init="
+                            $el.addEventListener('mousedown', (e) => startDrag(e));
+                            document.addEventListener('mousemove', (e) => drag(e));
+                            document.addEventListener('mouseup', (e) => endDrag(e));
+                            function startDrag(e) {
+                                isDragging = true;
+                                startX = e.clientX;
+                                startY = e.clientY;
+                                initialX = x;
+                                initialY = y;
+                                $el.style.transition = 'none';
+                            }
+                            function drag(e) {
+                                if (!isDragging) return;
+                                e.preventDefault();
+                                x = initialX + (e.clientX - startX);
+                                y = initialY + (e.clientY - startY);
+                                $el.dispatchEvent(new CustomEvent('box-move', { bubbles: true }));
+                            }
+                            function endDrag(e) {
+                                if (!isDragging) return;
+                                isDragging = false;
+                                $el.style.transition = 'all 0.2s ease-out';
+                                $el.dispatchEvent(new CustomEvent('box-move', { bubbles: true }));
+                            }
+                        "
+                        :style="`transform: translate3d(${x}px, ${y}px, 0);`"
+                        class="absolute w-40 h-16 bg-emerald-100 border border-emerald-200 rounded-md shadow-sm flex items-center justify-center cursor-move select-none">
+                        <span class="text-xs text-emerald-800">Box B</span>
+                        <span class="anchor-right absolute right-0 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-emerald-500"></span>
+                        <span class="anchor-left absolute left-0 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-emerald-500"></span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -89,21 +143,34 @@
     function svgTest() {
         return {
             connection: { id: 't-1', path: '' },
-            init() {
-                let attempts = 0;
-                const tryCompute = () => {
-                    attempts++;
-                    const ok = this.compute();
-                    if (!ok && attempts < 8) requestAnimationFrame(tryCompute);
-                };
-                requestAnimationFrame(tryCompute);
+            workspaceOffset: { x: 0, y: 0 },
+            workspaceScale: 1,
 
+            init() {
                 // Listen for box move events to recompute connection
-                this.$el.addEventListener('box-move', () => {
+                this.$el.addEventListener('box-move', () => this.compute());
+
+                this.$el.addEventListener('workspace-move', (e) => {
+                    // Atualiza offset e recalcula
+                    const transform = e.target.style.transform.match(/translate\(([-0-9.]+)px,\s*([-0-9.]+)px\)/);
+                    if (transform) {
+                        this.workspaceOffset.x = parseFloat(transform[1]) || 0;
+                        this.workspaceOffset.y = parseFloat(transform[2]) || 0;
+                    }
                     this.compute();
                 });
+
+
+                this.$el.addEventListener('workspace-zoom', (e) => {
+                    this.workspaceScale = e.detail.scale || 1;
+                    this.compute();
+                });
+
+                requestAnimationFrame(() => this.compute());
+
             },
             compute() {
+                console.log(2)
                 const container = this.$el.getBoundingClientRect();
 
                 const boxA = document.getElementById('boxA');
@@ -146,10 +213,18 @@
             },
             getPointForSide(boxEl, side, container) {
                 const boxRect = boxEl.getBoundingClientRect();
-                const anchorX = side === 'right'
-                    ? (boxRect.right - container.left)
-                    : (boxRect.left - container.left);
-                const anchorY = boxRect.top - container.top + boxRect.height / 2;
+
+                // Compensa o deslocamento e o zoom
+                const offsetX = this.workspaceOffset.x;
+                const offsetY = this.workspaceOffset.y;
+                const scale = this.workspaceScale;
+
+                const anchorX = (side === 'right'
+                    ? (boxRect.right - container.left - offsetX)
+                    : (boxRect.left - container.left - offsetX)) / scale;
+
+                const anchorY = (boxRect.top - container.top - offsetY + boxRect.height / 2) / scale;
+
                 return { x: anchorX, y: anchorY };
             },
             createCurvedPath(p1, p2, container) {
