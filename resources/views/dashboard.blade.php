@@ -4,8 +4,7 @@
         <div class="p-4 bg-gray-50 rounded-lg border border-gray-200">
             <h2 class="text-sm font-semibold text-gray-700 mb-3">SVG overlay test</h2>
             <div x-data="svgTest()" class="relative h-64 bg-white rounded-md border border-gray-200 overflow-hidden">
-                <div
-                    x-data="{ offsetX: 0, offsetY: 0, scale: 1, isDragging: false, startX: 0, startY: 0 }"
+                <div x-data="{ offsetX: 0, offsetY: 0, scale: 1, isDragging: false, startX: 0, startY: 0 }"
                     x-init="
                     // PAN (arrastar)
                     $el.addEventListener('mousedown', (e) => {
@@ -56,7 +55,6 @@
                     style="will-change: transform;"
 
                 >
-
                     <!-- SVG overlay -->
                     <svg class="pointer-events-none absolute inset-0 w-full h-full z-10">
                         <path :d="connection.path" stroke="#64748b" stroke-width="2" fill="none" stroke-linecap="round"></path>
@@ -136,7 +134,7 @@
             </div>
         </div>
 
-        {{-- <livewire:diagram-list /> --}}
+        <livewire:diagram-list />
     </div>
 
     <script>
@@ -170,7 +168,6 @@
 
             },
             compute() {
-                console.log(2)
                 const container = this.$el.getBoundingClientRect();
 
                 const boxA = document.getElementById('boxA');

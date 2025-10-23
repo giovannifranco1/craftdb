@@ -3,7 +3,7 @@
         <div class="drag-workspace-bg p-5">
             <!-- Floating Tables Container -->
             <div id="workspace"
-                class="relative w-full h-[calc(100vh-6rem)] overflow-hidden"
+                class="relative overflow-hidden"
                 x-data="{
                     scale: 0.6,
                     minScale: 0.2,
@@ -66,9 +66,10 @@
                 @mousemove="pan($event)"
                 @mouseup="endPan()"
                 @mouseleave="endPan()"
-                tabindex="0"
-            >
-                {{ $slot }}
+                tabindex="0">
+                <div class="absolute top-0 left-0 origin-top-left transition-transform duration-100 ease-out" :style="`transform: translate(${offsetX}px, ${offsetY}px) scale(${scale});`">
+                    {{ $slot }}
+                </div>
             </div>
         </div>
     </div>

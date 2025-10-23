@@ -10,6 +10,8 @@ Route::get('/', [HomeController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('home');
 
+Route::get('/teste', fn() => view('teste'));
+
 /** Settings */
 Route::middleware(['auth'])->group(function () {
     Route::redirect('settings', 'settings/profile');

@@ -16,4 +16,11 @@ class Diagram extends Model
     {
         return $this->hasMany(Table::class, 'diagram_id');
     }
+
+    public function relationships()
+    {
+        return Relationship::query()
+            ->whereHas('fromTable', fn ($q) => $q->where('diagram_id', $this->id))
+            ->orWhereHas('toTable', fn ($q) => $q->where('diagram_id', $this->id));
+    }
 }
