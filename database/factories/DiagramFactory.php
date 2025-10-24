@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Models\User;
+use App\Models\Team\Team;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,9 +17,13 @@ class DiagramFactory extends Factory
      */
     public function definition(): array
     {
+        $name = fake()->words(2, true);
+        $slug = str()->slug($name);
+
         return [
-            'user_id' => User::factory(),
+            'team_id' => Team::factory(),
             'name' => fake()->words(2, true),
+            'slug' => $slug,
             'description' => fake()->optional(0.7)->sentence(),
         ];
     }

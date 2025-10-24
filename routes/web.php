@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Pages\DiagramController;
 use App\Http\Controllers\Pages\HomeController;
+use App\Http\Controllers\Pages\TesteController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 use Livewire\Volt\Volt;
@@ -9,8 +10,6 @@ use Livewire\Volt\Volt;
 Route::get('/', [HomeController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('home');
-
-Route::get('/teste', fn() => view('teste'));
 
 /** Settings */
 Route::middleware(['auth'])->group(function () {
@@ -33,6 +32,7 @@ Route::middleware(['auth'])->group(function () {
 });
 
 /** Diagram */
-Route::middleware(['auth'])->group(function () {
-    Route::get('/diagram/{diagram:name}', [DiagramController::class, 'show'])->name('diagram.show');
+Route::middleware(['auth', 'role:team_id'])->group(function () {
+    Route::get('{team_id}/teste', [TesteController::class, 'index']);
+    Route::get('{team_id}/diagram/{diagram:slug}', [DiagramController::class, 'show'])->name('diagram.show');
 });

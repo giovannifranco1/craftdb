@@ -3,15 +3,19 @@
 namespace App\Livewire;
 
 use App\Models\Diagram;
+use App\Models\Team\Team;
 use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Lazy;
 use Livewire\Attributes\Url;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 #[Lazy]
 class DiagramList extends Component
 {
+    use WithPagination;
+
     #[Url]
     public string $search = '';
 
@@ -29,7 +33,8 @@ class DiagramList extends Component
     {
         return Diagram::query()
             ->when($this->search, fn($q) => $q->where('name', 'like', "%{$this->search}%"))
-            ->paginate();
+            ->where('team_id', Team::currentTeam()->getKey())
+            ->paginate(1);
     }
 
     public function render(): View

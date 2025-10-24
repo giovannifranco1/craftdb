@@ -5,7 +5,7 @@
     $diagram = Diagram::find(1);
 @endphp
 
-<x-layouts.app-drag-workspace-two :diagram="$diagram">
+<x-layouts.app-workspace :diagram="$diagram">
 
     @php
         $table = Table::find(1);
@@ -29,4 +29,4 @@
     <livewire:table :table="$table3" />
 
 
-</x-layouts.app-drag-workspace-two>
+</x-layouts.app-workspace>

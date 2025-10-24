@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Diagram;
+use App\Models\Team\Team;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -14,23 +15,28 @@ class DiagramSeeder extends Seeder
     public function run(): void
     {
         // Criar alguns diagramas para usuários existentes
-        $users = User::all();
+        $teams = Team::all();
 
-        if ($users->isEmpty()) {
+        if ($teams->isEmpty()) {
             // Se não há usuários, criar um usuário primeiro
             $user = User::factory()->create([
                 'name' => 'Admin User',
                 'email' => 'admin@example.com',
             ]);
-            $users = collect([$user]);
+
+            $team = Team::factory()->create([
+                'user_id' => $user->id
+            ]);
+
+            $teams = collect([$team]);
         }
 
         // Criar 3-5 diagramas por usuário
-        foreach ($users as $user) {
+        foreach ($teams as $team) {
             Diagram::factory()
                 ->count(fake()->numberBetween(3, 5))
                 ->create([
-                    'user_id' => $user->id,
+                    'team_id' => $team->id,
                 ]);
         }
 
@@ -39,7 +45,7 @@ class DiagramSeeder extends Seeder
             ->count(2)
             ->withDescription()
             ->create([
-                'user_id' => $users->first()->id,
+                'team_id' => $team->first()->id,
             ]);
     }
 }

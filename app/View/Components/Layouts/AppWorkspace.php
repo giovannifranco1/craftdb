@@ -7,7 +7,7 @@ use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class AppDragWorkspaceTwo extends Component
+class AppWorkspace extends Component
 {
     public $relationships;
     /**
@@ -25,6 +25,6 @@ class AppDragWorkspaceTwo extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.layouts.app-drag-workspace-two');
+        return view('components.layouts.app-workspace');
     }
 }

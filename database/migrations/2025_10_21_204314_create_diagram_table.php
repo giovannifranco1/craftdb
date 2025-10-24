@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('diagram', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->index('users_id');
+            $table->foreignId('team_id')->index('team_id_foreign');
             $table->string('name');
+            $table->string('slug');
             $table->text('description')->nullable();
 
             /** timestamps  */

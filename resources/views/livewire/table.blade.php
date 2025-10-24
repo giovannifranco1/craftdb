@@ -92,10 +92,25 @@
                 startY: 0,
                 initialX: 0,
                 initialY: 0,
+
                 init() {
                     this.$el.addEventListener('mousedown', (e) => this.startDrag(e));
                     document.addEventListener('mousemove', (e) => this.drag(e));
                     document.addEventListener('mouseup', (e) => this.endDrag(e));
+                },
+                getScale() {
+                    const workspace = document.getElementById('workspace-inner');
+                    if (!workspace) return 1;
+
+                    const style = window.getComputedStyle(workspace);
+                    const transform = style.transform;
+
+                    if (transform && transform !== 'none') {
+                        const match = transform.match(/matrix\(([^,]+),/);
+                        if (match) return parseFloat(match[1]) || 1;
+                    }
+
+                    return 1;
                 },
                 startDrag(e) {
                     this.isDragging = true;
@@ -108,8 +123,16 @@
                 drag(e) {
                     if (!this.isDragging) return;
                     e.preventDefault();
-                    this.x = this.initialX + (e.clientX - this.startX);
-                    this.y = this.initialY + (e.clientY - this.startY);
+
+                    const scale = this.getScale();
+
+                    const dx = (e.clientX - this.startX) / scale;
+                    const dy = (e.clientY - this.startY) / scale;
+
+                    this.x = this.initialX + dx;
+                    this.y = this.initialY + dy;
+
+                    this.$el.style.transform = `translate(${this.x}px, ${this.y}px)`;
                     this.$el.dispatchEvent(new CustomEvent('box-move', { bubbles: true }));
                 },
                 endDrag(e) {
