@@ -334,6 +334,12 @@
                                 el.setAttribute('stroke-width', '2.25');
                             });
 
+                            // Ensure highlighted connection renders on top (SVG uses DOM order)
+                            const parentGroup = connGroup.parentNode;
+                            if (parentGroup && parentGroup.appendChild) {
+                                parentGroup.appendChild(connGroup);
+                            }
+
                             const fe = document.getElementById(conn.fromId);
                             const te = document.getElementById(conn.toId);
                             [fe, te].forEach(node => {
