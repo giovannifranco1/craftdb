@@ -1,4 +1,5 @@
 <x-layouts.canvas :diagram="$diagram" :title="__('Diagram')">
+
     @php
         $maxPerRow = 5;
         $spacingX = 500;

@@ -32,6 +32,14 @@ body {
     left: 0;
 }
 
+
+.table-footer-beauty{
+    /* Bordar inferior brilhante (300 mais brilho), usando a var dinâmica */
+    border-bottom: 5px solid;
+    border-image: linear-gradient(to right, transparent, color-mix(in srgb, var(--table-footer-bg) 80%, white 20%), transparent) 1;
+    box-shadow: 0 5px 8px 0 color-mix(in srgb,var(--table-footer-bg) 80%, white 20%);
+}
+
 #controls {
     position: fixed;
     bottom: 1rem;

@@ -67,6 +67,11 @@
                         this.debouncedCompute();
                     });
 
+                    window.addEventListener('table-expanded' , e => {
+                        console.log(e.detail);
+                        this.compute();
+                    })
+
                     window.addEventListener('resize', () => {
                         this.compute();
                     });
@@ -82,7 +87,7 @@
 
                     this.computeTimeout = setTimeout(() => {
                         this.compute();
-                    }, 16);
+                    }, 10);
                 },
                 compute() {
                     this.connections = [];
@@ -100,13 +105,27 @@
                             return;
                         }
 
+                        const fromIsCollapsed =  fromEl.closest('table').hasAttribute('is-collapsed');
+                        const toIsCollapsed = toEl.closest('table').hasAttribute('is-collapsed');
+
+                        if (fromIsCollapsed || toIsCollapsed) {
+                            return
+                        }
+
                         const { aSide, bSide } = this.updateConnectionAnchorVisibility(fromEl, toEl);
 
                         let p1 = this.getPointForSide(fromEl, aSide, group);
                         let p2 = this.getPointForSide(toEl, bSide, group);
 
                         // Calcula o path curvo que contorna os boxes
-                        const connection = { id: `${item.id}`, type: item.type, path: this.createCurvedPath(p1, p2), p1, p2, aSide, bSide };
+                        const connection = {
+                            id: `${item.id}`,
+                            type: item.type,
+                            path: this.createCurvedPath(p1, p2),
+                            p1, p2, aSide, bSide,
+                            fromId: `column-${item.from_table_id}-${item.from_column_id}`,
+                            toId: `column-${item.to_table_id}-${item.to_column_id}`
+                        };
                         this.connections.push(connection);
                     });
 
@@ -270,29 +289,78 @@
 
                     // Desenha os novos
                     this.connections.forEach(conn => {
+                        // Cria um grupo por conexão
+                        const connGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                        connGroup.dataset.fromId = conn.fromId;
+                        connGroup.dataset.toId = conn.toId;
+                        group.appendChild(connGroup);
+
                         const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
                         path.setAttribute('d', conn.path);
                         path.setAttribute('stroke', '#888');
                         path.setAttribute('fill', 'none');
                         path.setAttribute('stroke-width', '1.5');
-                        group.appendChild(path);
+                        path.setAttribute('pointer-events', 'stroke');
+                        path.style.cursor = 'pointer';
+                        connGroup.appendChild(path);
 
                         // Desenha a barrinha vertical SEMPRE nas duas pontas
-                        this.drawBar(group, conn.p1, conn.aSide);
-                        this.drawBar(group, conn.p2, conn.bSide);
+                        this.drawBar(connGroup, conn.p1, conn.aSide);
+                        this.drawBar(connGroup, conn.p2, conn.bSide);
 
                         // Crow's foot (pé de galinha) só no lado 'n' para 1:n, e em ambos no n:n
                         const isOneToMany = conn.type === '1:n';
                         const isManyToMany = conn.type === 'n:n';
 
                         if (isOneToMany) {
-                            this.drawCrowsFoot(group, conn.p2, conn.bSide);
-                            this.drawBar(group, conn.p1, conn.aSide, 12);
+                            this.drawCrowsFoot(connGroup, conn.p2, conn.bSide);
+                            this.drawBar(connGroup, conn.p1, conn.aSide, 12);
                         }
+
                         if (isManyToMany) {
-                            this.drawCrowsFoot(group, conn.p1, conn.aSide);
-                            this.drawCrowsFoot(group, conn.p2, conn.bSide);
+                            this.drawCrowsFoot(connGroup, conn.p1, conn.aSide);
+                            this.drawCrowsFoot(connGroup, conn.p2, conn.bSide);
                         }
+
+                        if (!isManyToMany && !isOneToMany) {
+                            this.drawBar(connGroup, conn.p2, conn.bSide, 12);
+                            this.drawBar(connGroup, conn.p1, conn.aSide, 12);
+                        }
+
+                        // Hover highlight
+                        const highlightOn = () => {
+                            connGroup.querySelectorAll('path').forEach(el => {
+                                el.setAttribute('stroke', '#eab308');
+                                el.setAttribute('stroke-width', '2.25');
+                            });
+
+                            const fe = document.getElementById(conn.fromId);
+                            const te = document.getElementById(conn.toId);
+                            [fe, te].forEach(node => {
+                                if (!node) return;
+                                node.style.backgroundColor = 'rgba(250, 204, 21, 0.25)';
+                                node.style.outline = '1px solid #facc15';
+                                node.style.borderRadius = '4px';
+                            });
+                        };
+
+                        const highlightOff = () => {
+                            connGroup.querySelectorAll('path').forEach(el => {
+                                el.setAttribute('stroke', '#888');
+                                el.setAttribute('stroke-width', '1.5');
+                            });
+                            const fe = document.getElementById(conn.fromId);
+                            const te = document.getElementById(conn.toId);
+                            [fe, te].forEach(node => {
+                                if (!node) return;
+                                node.style.backgroundColor = '';
+                                node.style.outline = '';
+                                node.style.borderRadius = '';
+                            });
+                        };
+
+                        connGroup.addEventListener('mouseenter', highlightOn);
+                        connGroup.addEventListener('mouseleave', highlightOff);
                     });
 
                 },
@@ -311,6 +379,8 @@
                     bar.setAttribute('fill', 'none');
                     bar.setAttribute('stroke-width', '1.5');
                     bar.setAttribute('stroke-linecap', 'round');
+                    bar.setAttribute('pointer-events', 'stroke');
+                    bar.style.cursor = 'pointer';
                     group.appendChild(bar);
                 },
                 drawCrowsFoot(group, endPoint, side) {
@@ -344,6 +414,8 @@
                         seg.setAttribute('stroke', '#888');
                         seg.setAttribute('fill', 'none');
                         seg.setAttribute('stroke-width', '1.5');
+                        seg.setAttribute('pointer-events', 'stroke');
+                        seg.style.cursor = 'pointer';
                         group.appendChild(seg);
                     });
                 }
