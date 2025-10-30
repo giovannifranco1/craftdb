@@ -277,24 +277,42 @@
                         path.setAttribute('stroke-width', '1.5');
                         group.appendChild(path);
 
-                        // Marcações de cardinalidade (crow's foot) para 1:n e n:n
+                        // Desenha a barrinha vertical SEMPRE nas duas pontas
+                        this.drawBar(group, conn.p1, conn.aSide);
+                        this.drawBar(group, conn.p2, conn.bSide);
+
+                        // Crow's foot (pé de galinha) só no lado 'n' para 1:n, e em ambos no n:n
                         const isOneToMany = conn.type === '1:n';
                         const isManyToMany = conn.type === 'n:n';
 
                         if (isOneToMany) {
-                            // Ajuste solicitado: pé de galinha no lado FROM (p1)
-                            this.drawCrowsFoot(group, conn.p1, conn.aSide);
+                            this.drawCrowsFoot(group, conn.p2, conn.bSide);
+                            this.drawBar(group, conn.p1, conn.aSide, 12);
                         }
-
                         if (isManyToMany) {
-                            // Em n:n desenha crow-foot em ambas as pontas
                             this.drawCrowsFoot(group, conn.p1, conn.aSide);
                             this.drawCrowsFoot(group, conn.p2, conn.bSide);
                         }
                     });
 
-                }
-                ,
+                },
+                drawBar(group, endPoint, side, offset = 8) {
+                    // Pequena barrinha vertical para indicar "1"
+                    // side: 'left' | 'right'
+                    const barLen = 7;
+                    const dir = side === 'left' ? -1 : 1;
+                    const ox = endPoint.x + dir * offset;
+                    const oy = endPoint.y;
+                    const half = barLen / 2;
+                    const bar = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+
+                    bar.setAttribute('d', `M ${ox} ${oy - half} L ${ox} ${oy + half}`);
+                    bar.setAttribute('stroke', '#888');
+                    bar.setAttribute('fill', 'none');
+                    bar.setAttribute('stroke-width', '1.5');
+                    bar.setAttribute('stroke-linecap', 'round');
+                    group.appendChild(bar);
+                },
                 drawCrowsFoot(group, endPoint, side) {
                     // Crow's foot clássico: três linhas que partem do mesmo ponto e abrem em leque
                     // side: 'left' | 'right'
@@ -302,7 +320,7 @@
                     const dir = side === 'left' ? -1 : 1; // direção para fora do box
                     const hookOffset = 8; // distância da ponta do campo até onde começa o pé
                     const length = 14;    // comprimento de cada "dedo"
-                    const spreadDeg = 28; // abertura das barras externas
+                    const spreadDeg = 30; // abertura das barras externas
 
                     // Origem levemente afastada do endpoint para não sobrepor a borda do box
                     const ox = endPoint.x + dir * hookOffset;
@@ -320,6 +338,7 @@
                         // Inverte a direção para apontar em direção à tabela (mesmo lado do endpoint)
                         const x2 = ox - Math.cos(a) * length;
                         const y2 = oy - Math.sin(a) * length;
+
                         const seg = document.createElementNS('http://www.w3.org/2000/svg', 'path');
                         seg.setAttribute('d', `M ${ox} ${oy} L ${x2} ${y2}`);
                         seg.setAttribute('stroke', '#888');
