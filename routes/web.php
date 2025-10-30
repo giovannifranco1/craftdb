@@ -34,5 +34,6 @@ Route::middleware(['auth'])->group(function () {
 /** Diagram */
 Route::middleware(['auth', 'role:team_id'])->group(function () {
     Route::get('{team_id}/teste', [TesteController::class, 'index']);
+    Route::get('{team_id}/canvas', [TesteController::class, 'canvas']);
     Route::get('{team_id}/diagram/{diagram:slug}', [DiagramController::class, 'show'])->name('diagram.show');
 });

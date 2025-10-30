@@ -7,7 +7,13 @@ use Illuminate\Contracts\View\View;
 
 class TesteController extends Controller
 {
-    public function index(): View {
+    public function index(): View
+    {
         return view('teste');
+    }
+
+    public function canvas(): View
+    {
+        return view('canvas');
     }
 }

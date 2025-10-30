@@ -11,7 +11,7 @@
         <flux:header sticky class="border-b border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900 z-50">
             <div class="flex flex-col w-full">
                 <!-- Top bar -->
-                <div class="flex items-center justify-between w-full mt-1">
+                <div class="flex items-center justify-between w-full mt-3">
                     <div class="flex items-center">
                         <!-- Logo -->
                         <a href="{{ route('home') }}" class="flex me-5 items-center space-x-2 rtl:space-x-reverse" wire:navigate>

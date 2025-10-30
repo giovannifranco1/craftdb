@@ -1,4 +1,4 @@
-<x-layouts.app-workspace :diagram="$diagram"  :title="__('Diagram')">
+<x-layouts.canvas :diagram="$diagram" :title="__('Diagram')">
     @php
         $maxPerRow = 5;
         $spacingX = 500;
@@ -16,11 +16,13 @@
             $x = $col * $spacingX + $dx;
             $y = $row * $spacingY + $dy;
 
-            $table->x = $x;
-            $table->y = $y;
+            if ($table->id !== 1) {
+                $table->x = $x;
+                $table->y = $y;
+            }
         @endphp
 
         <livewire:table :$table :key="$key" />
     @endforeach
 
-</x-layouts.app-workspace>
+</x-layouts.canvas>
