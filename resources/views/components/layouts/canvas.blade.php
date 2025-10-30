@@ -106,7 +106,7 @@
                         let p2 = this.getPointForSide(toEl, bSide, group);
 
                         // Calcula o path curvo que contorna os boxes
-                        const connection = { id: `${item.id}`, type: item.type, path: this.createCurvedPath(p1, p2) };
+                        const connection = { id: `${item.id}`, type: item.type, path: this.createCurvedPath(p1, p2), p1, p2, aSide, bSide };
                         this.connections.push(connection);
                     });
 
@@ -276,8 +276,57 @@
                         path.setAttribute('fill', 'none');
                         path.setAttribute('stroke-width', '1.5');
                         group.appendChild(path);
+
+                        // Marcações de cardinalidade (crow's foot) para 1:n e n:n
+                        const isOneToMany = conn.type === '1:n';
+                        const isManyToMany = conn.type === 'n:n';
+
+                        if (isOneToMany) {
+                            // Ajuste solicitado: pé de galinha no lado FROM (p1)
+                            this.drawCrowsFoot(group, conn.p1, conn.aSide);
+                        }
+
+                        if (isManyToMany) {
+                            // Em n:n desenha crow-foot em ambas as pontas
+                            this.drawCrowsFoot(group, conn.p1, conn.aSide);
+                            this.drawCrowsFoot(group, conn.p2, conn.bSide);
+                        }
                     });
 
+                }
+                ,
+                drawCrowsFoot(group, endPoint, side) {
+                    // Crow's foot clássico: três linhas que partem do mesmo ponto e abrem em leque
+                    // side: 'left' | 'right'
+
+                    const dir = side === 'left' ? -1 : 1; // direção para fora do box
+                    const hookOffset = 8; // distância da ponta do campo até onde começa o pé
+                    const length = 14;    // comprimento de cada "dedo"
+                    const spreadDeg = 28; // abertura das barras externas
+
+                    // Origem levemente afastada do endpoint para não sobrepor a borda do box
+                    const ox = endPoint.x + dir * hookOffset;
+                    const oy = endPoint.y;
+
+                    // Ângulo base: 0 (direita) ou 180° (esquerda)
+                    const baseAngle = side === 'right' ? 0 : Math.PI;
+                    const angles = [
+                        baseAngle - (Math.PI / 180) * spreadDeg,
+                        baseAngle,
+                        baseAngle + (Math.PI / 180) * spreadDeg,
+                    ];
+
+                    angles.forEach(a => {
+                        // Inverte a direção para apontar em direção à tabela (mesmo lado do endpoint)
+                        const x2 = ox - Math.cos(a) * length;
+                        const y2 = oy - Math.sin(a) * length;
+                        const seg = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                        seg.setAttribute('d', `M ${ox} ${oy} L ${x2} ${y2}`);
+                        seg.setAttribute('stroke', '#888');
+                        seg.setAttribute('fill', 'none');
+                        seg.setAttribute('stroke-width', '1.5');
+                        group.appendChild(seg);
+                    });
                 }
             }
         }
