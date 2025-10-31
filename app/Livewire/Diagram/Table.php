@@ -1,15 +1,13 @@
 <?php
 
-namespace App\Livewire;
+namespace App\Livewire\Diagram;
 
 use App\Models\Table as TableModel;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
 use Livewire\Attributes\Computed;
-use Livewire\Attributes\Lazy;
 use Livewire\Component;
 
-// #[Lazy]
 class Table extends Component
 {
     public TableModel $table;
@@ -29,6 +27,6 @@ class Table extends Component
 
     public function render(): View
     {
-        return view('livewire.table');
+        return view('livewire.diagram.table');
     }
 }

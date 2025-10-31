@@ -23,7 +23,7 @@
             }
         @endphp
 
-        <livewire:table :$table :key="$key" />
+        <livewire:diagram.table :$table :key="$key" />
     @endforeach
 
 </x-layouts.canvas>
