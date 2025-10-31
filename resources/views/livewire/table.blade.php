@@ -1,22 +1,24 @@
+@use('App\Support\Helpers')
+
+<x-table.css-table :table="$table" />
 
 <div id="table-{{$table->id}}" table-box x-data="tableInit(@js($table->x), @js($table->y))" :style="`transform: translate3d(${x}px, ${y}px, 0); width: ${getSnappedWidth()}px; max-width: ${getSnappedWidth()}px`" class="absolute h-full select-none z-50 rounded-xl border border-gray-200 shadow-lg">
-
     <!-- Table -->
-    <div class="rounded-xl cursor-pointer w-full h-full flex flex-col relative">
+    <div class="rounded-xl w-full h-full flex flex-col relative">
         <!-- Header -->
         <div :style="`height: ${getGridSize()/2 + getGridSize()}px;`" class="bg-blue-500 flex-none border-b border-gray-200 px-3 py-1 rounded-t-xl table-header-beauty">
             <div class="flex items-center justify-between">
                 <h3 class="text-sm font-semibold text-gray-900 flex items-center gap-2">
-                    <div class="w-4 h-4 bg-gray-600 rounded text-white text-xs flex items-center justify-center font-bold">
-                        <flux:icon.table class="w-2 h-2"/>
+                    <div class="w-4 h-4 rounded text-white text-xs flex items-center justify-center font-bold table-icon">
+                        <flux:icon.sheet class="size-3"/>
                     </div>
                     <span class="text-white font-normal">{{ $table->name }}</span>
                 </h3>
 
                 <div>
-                    <button x-on:click="toggleExpanded()" class="p-1.5 cursor-pointer text-white hover:text-gray-700 hover:bg-gray-100 rounded-md transition-colors" @mousedown.stop @touchstart.stop>
-                        <flux:icon.chevron-down x-show="expanded" class="size-4"/>
-                        <flux:icon.chevron-up x-show="!expanded" class="size-4"/>
+                    <button x-on:click="toggleExpanded()" class="p-1.5 text-white hover:text-gray-700 hover:bg-gray-100 rounded-md transition-colors">
+                        <flux:icon.play variant="solid" x-show="expanded" class="size-4 rotate-90"/>
+                        <flux:icon.play variant="solid" x-show="!expanded" class="size-4"/>
                     </button>
                 </div>
             </div>
@@ -27,7 +29,7 @@
             <table class="w-full table-fixed">
                 <colgroup>
                     <col :style="`width: ${colWidths[0]}px`">
-                    <col>
+                    <col :style="`width: ${colWidths[1]}px`">
                 </colgroup>
 
                 <tbody class="divide-y divide-gray-100">
@@ -36,9 +38,7 @@
                         <tr id="column-{{$table->id }}-{{ $column->id }}" class="hover:bg-blue-300/20 transition-colors" :style="`height: ${getGridSize()}px;`">
                             <td class="py-[2px] px-3">
                                 <div class="flex items-center gap-2">
-                                    <div class="w-3 h-3 bg-gray-800 rounded text-white text-xs flex items-center justify-center font-bold">
-                                        <flux:icon.table-type-primary-key class="w-2 h-2"/>
-                                    </div>
+                                    {!! Helpers::getIconDiamondByTypeColumn($column) !!}
                                     <span class="text-xs font-medium text-gray-900">{{ $column->name }}</span>
                                 </div>
                                 <!-- inline column resize handle at end of first td -->
@@ -46,18 +46,8 @@
                             </td>
 
                             <td>
-                                <span class="inline-flex items-center px-2  rounded text-xs uppercase font-medium bg-gray-100 text-gray-800">{{ $column->type }}</span>
+                                <span class="inline-flex items-center px-2 rounded text-xs uppercase font-medium bg-gray-100 text-gray-800">{{ $column->length > 0 ? "$column->type($column->length)" : $column->type }}</span>
                             </td>
-
-                            {{-- <td class="text-center">
-                                @if ($column->is_primary)
-                                    <span class="inline-flex items-center px-2 rounded text-xs font-medium bg-yellow-100 text-yellow-800">PK</span>
-                                @elseif($column->is_foreign)
-                                    <span class="inline-flex items-center px-2 rounded text-xs font-medium bg-blue-100 text-blue-800">FK</span>
-                                @else
-                                    <span class="text-xs text-gray-400">-</span>
-                                @endif
-                            </td> --}}
                         </tr>
                     @endforeach
                 </tbody>
@@ -65,7 +55,7 @@
         </div>
 
         <!-- Footer -->
-        <div class="bg-gray-50 flex-none border-t border-gray-200 px-3 py-px rounded-b-xl table-footer-beauty">
+        <div class="bg-gray-50 flex-none px-3 py-px rounded-b-xl table-footer-beauty">
             <div class="flex items-center justify-between text-xs text-gray-500">
                 <div class="flex gap-3">
                     <span>{{ $table->columns_count }} campos</span>
@@ -74,14 +64,11 @@
                     <span>•</span>
                     <span>{{ $table->foreign_count }} FK</span>
                 </div>
-                <button class="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-md transition-colors">
+                <button type="button" class="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-md transition-colors">
                     <flux:icon.arrow-down-tray class="size-4"/>
                 </button>
             </div>
         </div>
-
-        <!-- Resize handle (right edge) -->
-        <div class="absolute top-0 right-0 h-full w-2 cursor-col-resize"></div>
     </div>
 
     <script>
@@ -98,7 +85,7 @@
                 minHeight: null,
                 resizeStartX: 0,
                 initialWidth: 0,
-                colWidths: [220, 140], // Column resize state
+                colWidths: [80  , 50], // Column resize state
                 expanded: true,
 
 

@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Table extends Model
 {
+    const COLOR_DEFAULT = '#2563eb';
+    
     use HasFactory;
 
     protected $table = 'table';

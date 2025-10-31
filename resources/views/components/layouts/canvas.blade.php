@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html data-theme="fantasy" lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
     <head>
-        @include('partials.head')
+        @include('partials.head-canvas')
     </head>
 
     @use('App\Models\Table')
 
-    <body style="background-color: #f6f6f6">
-        <div x-data="{ canvas: new InfiniteCanvas(25) }" class="container">
+    <body>
+        <div x-data="{canvas: new InfiniteCanvas(25), zoomPercent: 75}" class="container">
             <canvas id="canvas"></canvas>
 
             <svg id="svg-overlay" x-data="svg()">
@@ -18,13 +18,16 @@
                 {{ $slot }}
             </div>
 
-            <div id="controls">
-                <button type="button" id="zoom-in" @click="Alpine.raw(canvas).zoom(1.25)">+</button>
-                <button type="button" id="zoom-out" @click="Alpine.raw(canvas).zoom(0.75)">-</button>
-                <button type="button" id="move-left" @click="Alpine.raw(canvas).offsetLeft(10)"><-</button>
-                <button type="button" id="move-right" @click="Alpine.raw(canvas).offsetRight(10)">-></button>
-                <button type="button" id="move-up" @click="Alpine.raw(canvas).offsetUp(10)">^</button>
-                <button type="button" id="move-down" @click="Alpine.raw(canvas).offsetDown(10)">v</button>
+            <div id="controls" class="w-[20rem] h-14 bg-white items-center rounded-lg flex justify-between">
+                <button class="p-1 ms-2 rounded-sm transition-colors cursor-pointer hover:bg-gray-200" type="button" id="zoom-in" @click="Alpine.raw(canvas).zoom(1.155)">
+                    <flux:icon.magnifying-glass-plus class="size-6"/>
+                </button>
+
+                <span @canvas-zoom.window="zoomPercent = Math.round($event.detail.scale * 100);" x-text="`${zoomPercent}%`"></span>
+
+                <button class="p-1 me-2 rounded-sm transition-colors cursor-pointer hover:bg-gray-200" type="button" id="zoom-in" @click="Alpine.raw(canvas).zoom(0.85)">
+                    <flux:icon.magnifying-glass-minus class="size-6"/>
+                </button>
             </div>
         </div>
 
@@ -299,9 +302,9 @@
                         path.setAttribute('d', conn.path);
                         path.setAttribute('stroke', '#888');
                         path.setAttribute('fill', 'none');
-                        path.setAttribute('stroke-width', '1.5');
+                        path.setAttribute('stroke-width', '2');
                         path.setAttribute('pointer-events', 'stroke');
-                        path.style.cursor = 'pointer';
+
                         connGroup.appendChild(path);
 
                         // Desenha a barrinha vertical SEMPRE nas duas pontas
@@ -353,7 +356,7 @@
                         const highlightOff = () => {
                             connGroup.querySelectorAll('path').forEach(el => {
                                 el.setAttribute('stroke', '#888');
-                                el.setAttribute('stroke-width', '1.5');
+                                el.setAttribute('stroke-width', '2');
                             });
                             const fe = document.getElementById(conn.fromId);
                             const te = document.getElementById(conn.toId);
@@ -383,10 +386,10 @@
                     bar.setAttribute('d', `M ${ox} ${oy - half} L ${ox} ${oy + half}`);
                     bar.setAttribute('stroke', '#888');
                     bar.setAttribute('fill', 'none');
-                    bar.setAttribute('stroke-width', '1.5');
+                    bar.setAttribute('stroke-width', '2');
                     bar.setAttribute('stroke-linecap', 'round');
                     bar.setAttribute('pointer-events', 'stroke');
-                    bar.style.cursor = 'pointer';
+
                     group.appendChild(bar);
                 },
                 drawCrowsFoot(group, endPoint, side) {
@@ -419,9 +422,9 @@
                         seg.setAttribute('d', `M ${ox} ${oy} L ${x2} ${y2}`);
                         seg.setAttribute('stroke', '#888');
                         seg.setAttribute('fill', 'none');
-                        seg.setAttribute('stroke-width', '1.5');
+                        seg.setAttribute('stroke-width', '2');
                         seg.setAttribute('pointer-events', 'stroke');
-                        seg.style.cursor = 'pointer';
+
                         group.appendChild(seg);
                     });
                 }

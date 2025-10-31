@@ -6,10 +6,6 @@
 @source '../../vendor/livewire/flux-pro/stubs/**/*.blade.php';
 @source '../../vendor/livewire/flux/stubs/**/*.blade.php';
 
-/* @plugin "daisyui" {
-    themes: light --default, dark --prefersdark, fantasy;
-} */
-
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* Re-assign Flux's gray of choice... */
@@ -59,33 +55,6 @@ select:focus[data-flux-control] {
     @apply size-4;
 } */
 
-/* Drag workspace background pattern - infinite grid */
-.drag-workspace-bg {
-    background-color: #f8fafc;
-    background-image:
-        radial-gradient(circle, #cbd5e1 1px, transparent 1px);
-    background-size: 20px 20px;
-    background-position: 0 0;
-    background-repeat: repeat;
-    /* Make it much larger to ensure infinite feel */
-    width: 400%;
-    height: 400%;
-    position: absolute;
-    top: -150%;
-    left: -150%;
-    /* Ensure the pattern continues seamlessly */
-    background-attachment: local;
-}
-
-.dark .drag-workspace-bg {
-    background-color: #23272f;
-    background-image:
-        radial-gradient(circle, #475569 1px, transparent 1px);
-    background-size: 20px 20px;
-    background-position: 0 0;
-    background-repeat: repeat;
-    background-attachment: local;
-}
 
 /* Workspace dragging states */
 .is-dragging-workspace {

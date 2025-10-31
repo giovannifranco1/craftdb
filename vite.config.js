@@ -1,11 +1,17 @@
 import {
     defineConfig
 } from 'vite';
+import path from 'node:path';
 import fs from 'fs-extra';
 import laravel from 'laravel-vite-plugin';
 import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
+    resolve: {
+        alias: {
+            '@images': path.resolve(__dirname, 'resources/images'),
+        },
+    },
     plugins: [
         laravel({
             input: ['resources/css/app.css', 'resources/css/luvi.ui.css', 'resources/js/app.js', 'resources/css/canvas.css'],

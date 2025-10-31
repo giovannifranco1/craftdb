@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="24" height="24" viewBox="0 0 24 24"
+     fill="currentColor"
+     stroke="white"
+     stroke-width="1.5"
+     class="lucide lucide-mouse-pointer-2-solid">
+  <path d="M4.037 4.688c-.167-.433.284-.884.717-.717l16 6.5c.446.181.423.825-.032.94l-6.124 1.58a1.5 1.5 0 0 0-1.078 1.078l-1.579 6.126c-.115.455-.759.478-.94.032z"/>
+</svg>
