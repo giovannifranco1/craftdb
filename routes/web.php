@@ -3,13 +3,13 @@
 use App\Http\Controllers\Pages\DiagramController;
 use App\Http\Controllers\Pages\HomeController;
 use App\Http\Controllers\Pages\TesteController;
+use App\Livewire\Dashboard;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 use Livewire\Volt\Volt;
 
-Route::get('/', [HomeController::class, 'index'])
-    ->middleware(['auth', 'verified'])
-    ->name('home');
+/** Dashboard */
+Route::get('/', Dashboard::class)->middleware(['auth', 'verified'])->name('home');
 
 /** Settings */
 Route::middleware(['auth'])->group(function () {

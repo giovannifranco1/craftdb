@@ -6,13 +6,14 @@ use App\Models\Diagram;
 use App\Models\Team\Team;
 use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Lazy;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
 
 #[Lazy]
-class DiagramList extends Component
+class Dashboard extends Component
 {
     use WithPagination;
 

@@ -1,6 +1,5 @@
 import collapse from "@alpinejs/collapse";
 import anchor from "@alpinejs/anchor";
-import { InfiniteCanvas } from '../js/infinite-canvas.js'
 
 import.meta.glob(["../images/**"]);
 
@@ -17,5 +16,3 @@ document.addEventListener(
     },
     { once: true },
 );
-
-window.InfiniteCanvas = InfiniteCanvas;

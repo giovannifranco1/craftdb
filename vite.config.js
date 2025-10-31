@@ -14,7 +14,13 @@ export default defineConfig({
     },
     plugins: [
         laravel({
-            input: ['resources/css/app.css', 'resources/css/luvi.ui.css', 'resources/js/app.js', 'resources/css/canvas.css'],
+            input: [
+                'resources/css/app.css',
+                'resources/css/luvi.ui.css',
+                'resources/js/app.js',
+                'resources/css/canvas.css',
+                'resources/js/canvas/main.js'
+            ],
             refresh: true,
         }),
         {
