@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html data-theme="fantasy" lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="light">
     <head>
         @include('partials.head')
     </head>
@@ -11,10 +11,10 @@
         <flux:header sticky class="border-b border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900 z-50">
             <div class="flex flex-col w-full">
                 <!-- Top bar -->
-                <div class="flex items-center justify-between w-full mt-3">
+                <div class="flex items-center justify-between w-full my-3">
                     <div class="flex items-center">
                         <!-- Logo -->
-                        <a href="{{ route('home') }}" class="flex me-5 items-center space-x-2 rtl:space-x-reverse" wire:navigate>
+                        <a href="{{ route('home') }}" class="flex me-5 ms-2 items-center space-x-3 rtl:space-x-reverse" wire:navigate>
                             <x-app-logo />
                         </a>
 
@@ -85,7 +85,7 @@
 
                 <!-- Navbar -->
                 <flux:navbar class="-mb-px max-lg:hidden mt-2">
-                    <flux:navbar.item href="#" style="padding-left: 0 !important" :href="route('home')" :current="request()->routeIs('home')" wire:navigate>
+                    <flux:navbar.item href="#" :href="route('home')" :current="request()->routeIs('home')" wire:navigate>
                         {{ __('Diagrams') }}
                     </flux:navbar.item>
                     <flux:separator vertical variant="subtle" class="my-2"/>
@@ -93,10 +93,7 @@
             </div>
         </flux:header>
 
-
-        <main class="p-0">
-            {{ $slot }}
-        </main>
+        {{ $slot }}
 
         @fluxScripts
     </body>

@@ -4,12 +4,14 @@ use App\Http\Controllers\Pages\DiagramController;
 use App\Http\Controllers\Pages\HomeController;
 use App\Http\Controllers\Pages\TesteController;
 use App\Livewire\Dashboard;
+use App\Livewire\MyFavorites;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 use Livewire\Volt\Volt;
 
 /** Dashboard */
 Route::get('/', Dashboard::class)->middleware(['auth', 'verified'])->name('home');
+Route::get('/my-favorites', MyFavorites::class)->middleware(['auth', 'verified'])->name('home.my-favorites');
 
 /** Settings */
 Route::middleware(['auth'])->group(function () {

@@ -1,4 +1,4 @@
-<a href="{{ route('diagram.show', [$diagram->team_id, $diagram->slug]) }}" class="block group">
+<a href="{{ route('diagram.show', [$diagram->team_id, $diagram->slug]) }}" class="block group" {{ $attributes }}>
     <div class="w-80 h-64 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 hover:shadow-2xl hover:border-blue-400 dark:hover:border-blue-500 transition-all duration-300 overflow-hidden relative">
         <!-- Gradient overlay no hover -->
         <div class="absolute inset-0 bg-linear-to-br from-blue-50/0 to-blue-100/0 group-hover:from-blue-50/50 group-hover:to-blue-100/30 dark:from-blue-900/0 dark:to-blue-800/0 dark:group-hover:from-blue-900/20 dark:group-hover:to-blue-800/10 transition-all duration-300"></div>
@@ -37,7 +37,7 @@
                     </small>
                 </div>
 
-                <div class="bg-gradient-to-r from-blue-600 to-blue-700 dark:from-blue-700 dark:to-blue-800 text-white px-5 py-2.5 rounded-lg text-sm font-semibold shadow-lg group-hover:from-blue-700 group-hover:to-blue-800 dark:group-hover:from-blue-600 dark:group-hover:to-blue-700 group-hover:shadow-xl transition-all duration-300 transform group-hover:scale-105">
+                <div class="bg-linear-to-r from-blue-600 to-blue-700 dark:from-blue-700 dark:to-blue-800 text-white px-5 py-2.5 rounded-lg text-sm font-semibold shadow-lg group-hover:from-blue-700 group-hover:to-blue-800 dark:group-hover:from-blue-600 dark:group-hover:to-blue-700 group-hover:shadow-xl transition-all duration-300 transform group-hover:scale-105">
                     Abrir →
                 </div>
             </div>
