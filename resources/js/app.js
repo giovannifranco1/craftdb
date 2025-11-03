@@ -11,8 +11,9 @@ document.addEventListener(
         for (const path in modules) {
             window.Alpine.plugin(modules[path].default);
         }
-        window.Alpine.plugin(collapse);
-        window.Alpine.plugin(anchor);
+
+        Alpine.plugin(collapse);
+        Alpine.plugin(anchor);
     },
     { once: true },
 );

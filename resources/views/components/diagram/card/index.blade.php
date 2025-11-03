@@ -6,8 +6,8 @@
         <div class="relative z-10 p-6 h-full flex flex-col">
             <!-- Header com ícone e título -->
             <div class="flex items-start space-x-4 mb-4">
-                <div class="bg-linear-to-br from-blue-500 to-blue-600 dark:from-blue-600 dark:to-blue-700 p-3 rounded-xl shadow-lg">
-                    <flux:icon.table-cells class="text-white w-6 h-6" />
+                <div class="bg-linear-to-br bg-blue-500 dark:from-blue-600 dark:to-blue-700 p-3 rounded-xl shadow-lg">
+                    <flux:icon.graph class="w-6 h-6 text-blue-100" />
                 </div>
                 <div class="flex-1 min-w-0">
                     <h2 class="text-lg font-bold text-gray-900 dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300 truncate">
@@ -37,8 +37,8 @@
                     </small>
                 </div>
 
-                <div class="bg-linear-to-r from-blue-600 to-blue-700 dark:from-blue-700 dark:to-blue-800 text-white px-5 py-2.5 rounded-lg text-sm font-semibold shadow-lg group-hover:from-blue-700 group-hover:to-blue-800 dark:group-hover:from-blue-600 dark:group-hover:to-blue-700 group-hover:shadow-xl transition-all duration-300 transform group-hover:scale-105">
-                    Abrir →
+                <div class="bg-linear-to-r from-blue-500 to-blue-600 dark:from-blue-700 dark:to-blue-800 text-white px-5 py-2.5 rounded-lg text-sm font-semibold shadow-lg group-hover:from-blue-600 group-hover:to-blue-700 dark:group-hover:from-blue-600 dark:group-hover:to-blue-700 group-hover:shadow-xl transition-all duration-300 transform group-hover:scale-105">
+                    Ver Diagrama
                 </div>
             </div>
         </div>

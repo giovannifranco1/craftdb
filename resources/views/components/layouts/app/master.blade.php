@@ -85,9 +85,7 @@
 
                 <!-- Navbar -->
                 <flux:navbar class="-mb-px max-lg:hidden mt-2">
-                    <flux:navbar.item href="#" :href="route('home')" :current="request()->routeIs('home')" wire:navigate>
-                        {{ __('Diagrams') }}
-                    </flux:navbar.item>
+                    <flux:navbar.item badge="Pro" badge:color="lime" href="#" :href="route('home')" :current="request()->routeIs('home')" wire:navigate>{{ __('Diagrams') }}</flux:navbar.item>
                     <flux:separator vertical variant="subtle" class="my-2"/>
                 </flux:navbar>
             </div>
