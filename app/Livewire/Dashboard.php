@@ -25,7 +25,7 @@ class Dashboard extends Component
         sleep(1);
 
         return Diagram::query()
-            ->when($this->search, fn($q) => $q->where('name', 'like', "%{$this->search}%"))
+            ->when($this->search, fn ($q) => $q->where('name', 'like', "%{$this->search}%"))
             ->where('team_id', Team::currentTeam()->getKey())
             ->paginate();
     }

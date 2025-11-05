@@ -2,11 +2,19 @@
 
 <x-table.css-table :table="$table" />
 
-<div id="table-{{$table->id}}" table-box x-data="runTable(@js($table->x), @js($table->y))" :style="`transform: translate3d(${x}px, ${y}px, 0); width: ${getSnappedWidth()}px; max-width: ${getSnappedWidth()}px`" class="absolute h-full select-none z-50 rounded-xl border border-gray-200 shadow-lg">
+<div id="table-{{ $table->id }}" table-box x-data="runTable(@js($table->x), @js($table->y))"
+    :style="`transform: translate3d(${x}px, ${y}px, 0); width: ${getSnappedWidth()}px; max-width: ${getSnappedWidth()}px`"
+    class="absolute h-full select-none z-50 rounded-xl border border-gray-200 shadow-lg">
     <!-- Table -->
     <div class="rounded-xl w-full h-full flex flex-col relative">
         <!-- Header -->
-        <div :style="`height: ${getGridSize()/2 + getGridSize()}px;`" class="bg-blue-500 flex-none border-b border-gray-200 px-3 py-1 rounded-t-xl table-header-beauty">
+        <div x-data="{ loading: false, pressed: false }"
+            @mousedown="pressed = true"
+            @mouseup="if (pressed) {  loading = true; pressed = false; $dispatch('table-side-editor.open', { table: @js($table) });  }"
+            @mouseleave="pressed = false"
+            @table-side-editor-opened.window="loading = false"
+            :style="`height: ${getGridSize()/2 + getGridSize()}px; cursor: ${loading ? 'wait' : ''};`"
+            class="bg-blue-500 flex-none border-b border-gray-200 px-3 py-1 rounded-t-xl table-header-beauty">
             <div class="flex items-center justify-between">
                 <h3 class="text-sm font-semibold text-gray-900 flex items-center gap-2">
                     <div class="w-4 h-4 rounded text-white text-xs flex items-center justify-center font-bold table-icon">
@@ -16,9 +24,10 @@
                 </h3>
 
                 <div>
-                    <button x-on:click="toggleExpanded()" class="p-1.5 text-white hover:text-gray-700 hover:bg-gray-100 rounded-md transition-colors">
-                        <flux:icon.play variant="solid" x-show="expanded" class="size-4 rotate-90"/>
-                        <flux:icon.play variant="solid" x-show="!expanded" class="size-4"/>
+                    <button @mousedown.stop="toggleExpanded()"
+                        class="p-1.5 text-white hover:text-gray-700 hover:bg-gray-100 rounded-md transition-colors">
+                        <flux:icon.play variant="solid" x-show="expanded" class="size-4 rotate-90" />
+                        <flux:icon.play variant="solid" x-show="!expanded" class="size-4" />
                     </button>
                 </div>
             </div>
@@ -64,8 +73,9 @@
                     <span>•</span>
                     <span>{{ $table->foreign_count }} FK</span>
                 </div>
-                <button type="button" class="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-md transition-colors">
-                    <flux:icon.arrow-down-tray class="size-4"/>
+                <button type="button"
+                    class="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-md transition-colors">
+                    <flux:icon.arrow-down-tray class="size-4" />
                 </button>
             </div>
         </div>

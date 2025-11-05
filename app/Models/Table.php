@@ -5,11 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\Relationship;
 
 class Table extends Model
 {
     const COLOR_DEFAULT = '#2563eb';
-    
+
     use HasFactory;
 
     protected $table = 'table';
@@ -35,5 +36,15 @@ class Table extends Model
                 $q->where('is_foreign', true);
             },
         ]);
+    }
+
+    public function relationships()
+    {
+        return Relationship::query()
+            ->where(function ($query) {
+                $query->where('from_table_id', $this->id)
+                    ->orWhere('to_table_id', $this->id);
+            })
+            ->with(['fromTable', 'toTable', 'fromColumn', 'toColumn']);
     }
 }

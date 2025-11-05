@@ -17,12 +17,10 @@ class Table extends Component
         $this->table = $table;
     }
 
-    #[Computed()]
+    #[Computed]
     public function getColumns(): Collection
     {
-        return $this->table->columns()
-            ->orderByDesc('order')
-            ->get();
+        return $this->table->columns()->orderByDesc('order')->get();
     }
 
     public function render(): View

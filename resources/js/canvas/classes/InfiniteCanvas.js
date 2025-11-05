@@ -142,6 +142,12 @@ export class InfiniteCanvas {
         );
 
         window.addEventListener("wheel", (event) => {
+            const sidePanel = event.target.closest('section[aria-modal="true"]');
+
+            if (sidePanel) {
+                return; // Não processa eventos de wheel dentro do painel lateral
+            }
+
             event.preventDefault();
             this.#onWheel(event.deltaX, event.deltaY)
         }, { passive: false });

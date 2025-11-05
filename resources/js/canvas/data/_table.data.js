@@ -94,6 +94,10 @@ export default (x, y) => ({
         const tableEl = this.$root.querySelector('table');
 
         if (tableEl) tableEl.toggleAttribute('is-collapsed', !this.expanded);
+
+        setTimeout(() => {
+            this.$el.dispatchEvent(new CustomEvent('box-move', { bubbles: true }));
+        }, 100);
     }
     // ---- RESIZE ------
 });
