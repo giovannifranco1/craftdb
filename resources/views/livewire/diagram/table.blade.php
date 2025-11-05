@@ -73,8 +73,7 @@
                     <span>•</span>
                     <span>{{ $table->foreign_count }} FK</span>
                 </div>
-                <button type="button"
-                    class="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-md transition-colors">
+                <button type="button" class="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-md transition-colors">
                     <flux:icon.arrow-down-tray class="size-4" />
                 </button>
             </div>
