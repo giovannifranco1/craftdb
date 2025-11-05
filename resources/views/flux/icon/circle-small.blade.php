@@ -15,7 +15,7 @@ $classes = Flux::classes('shrink-0')
 @endphp
 
 {{-- Your SVG code here: --}}
-@if($variant === '<s></s>olid')
+@if($variant === 'solid')
 <svg {{ $attributes->class($classes) }} data-flux-icon aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" role="img">
     <circle cx="12" cy="12" r="6" />
 </svg>

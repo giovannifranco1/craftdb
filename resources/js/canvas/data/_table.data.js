@@ -89,9 +89,9 @@ export default (x, y) => ({
         this.isDragging = false;
         this.$el.dispatchEvent(new CustomEvent('box-move', { bubbles: true }));
     },
-    toggleExpanded() {
+    toggleExpanded(element) {
         this.expanded = !this.expanded;
-        const tableEl = this.$root.querySelector('table');
+        const tableEl = element.querySelector('table');
 
         if (tableEl) tableEl.toggleAttribute('is-collapsed', !this.expanded);
 

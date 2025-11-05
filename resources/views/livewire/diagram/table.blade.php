@@ -24,7 +24,7 @@
                 </h3>
 
                 <div>
-                    <button @mousedown.stop="toggleExpanded()"
+                    <button @mousedown.stop="toggleExpanded($el.closest('[table-box]'))"
                         class="p-1.5 text-white hover:text-gray-700 hover:bg-gray-100 rounded-md transition-colors">
                         <flux:icon.play variant="solid" x-show="expanded" class="size-4 rotate-90" />
                         <flux:icon.play variant="solid" x-show="!expanded" class="size-4" />

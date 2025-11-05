@@ -15,6 +15,8 @@ final class TableSideEditor extends Component
 
     public Table $table;
 
+    public ?int $selectedColumnId = null;
+
     public function mount(Table $table): void
     {
         $this->table = $table;
@@ -30,9 +32,42 @@ final class TableSideEditor extends Component
     #[Computed]
     public function getColumns(): Collection
     {
-        return $this->table->columns()
+        return $this->table
+            ->columns()
             ->orderByDesc('order')
             ->get();
+    }
+
+    public function getForeignKeys(): Collection
+    {
+        return $this->table
+            ->columns()
+            ->filterByForeignKeys()
+            ->orderByDesc('order')
+            ->get();
+    }
+
+    #[Computed]
+    public function getSelectedColumn()
+    {
+        if ($this->selectedColumnId === null) {
+            return null;
+        }
+
+        return $this->table
+            ->columns()
+            ->whereKey($this->selectedColumnId)
+            ->first();
+    }
+
+    public function selectColumn(int $columnId): void
+    {
+        $this->selectedColumnId = $columnId;
+    }
+
+    public function clearSelection(): void
+    {
+        $this->selectedColumnId = null;
     }
 
     public function render()

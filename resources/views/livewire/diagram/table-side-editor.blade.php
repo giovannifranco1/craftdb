@@ -59,53 +59,169 @@
                         </header>
                         <article class="relative mt-6 flex-1 px-4 sm:px-6">
                             @use('App\Support\Helpers')
-                            @if($table?->id)
-                                <div class="space-y-1.5 overflow-y-scroll h-160">
-                                    @forelse($this->getColumns() as $column)
-                                        <div class="bg-white rounded border border-gray-200 p-2 hover:border-gray-300 transition-all">
-                                            <div class="flex items-center gap-1.5 mb-1">
-                                                {!! Helpers::getIconDiamondByTypeColumn($column) !!}
-                                                <span class="text-xs font-medium text-gray-900">{{ $column->name }}</span>
-                                            </div>
 
-                                            <div class="flex flex-wrap items-center gap-1">
-                                                <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[7pt] font-medium bg-gray-100 text-gray-800">
-                                                    {{ $column->length > 0 ? "$column->type($column->length)" : $column->type }}
-                                                </span>
+                            <div class="border-b border-gray-200 dark:border-neutral-700">
+                                <nav class="flex gap-x-1" aria-label="Tabs" role="tablist" aria-orientation="horizontal">
+                                    <button type="button" class="hs-tab-active:font-semibold hs-tab-active:border-blue-600 hs-tab-active:text-blue-600 py-4 px-1 inline-flex items-center gap-x-2 border-b-2 border-transparent text-sm whitespace-nowrap text-gray-500 hover:text-blue-600 focus:outline-hidden focus:text-blue-600 disabled:opacity-50 disabled:pointer-events-none dark:text-neutral-400 dark:hover:text-blue-500 active" id="tabs-with-badges-item-1" aria-selected="true" data-hs-tab="#tab-columns" aria-controls="tab-columns" role="tab">
+                                        Columns<span class="hs-tab-active:bg-blue-100 hs-tab-active:text-blue-600 dark:hs-tab-active:bg-blue-800 dark:hs-tab-active:text-white ms-1 py-0.5 px-1.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-neutral-700 dark:text-neutral-300">15</span>
+                                    </button>
+                                    <button type="button" class="hs-tab-active:font-semibold hs-tab-active:border-blue-600 hs-tab-active:text-blue-600 py-4 px-1 inline-flex items-center gap-x-2 border-b-2 border-transparent text-sm whitespace-nowrap text-gray-500 hover:text-blue-600 focus:outline-hidden focus:text-blue-600 disabled:opacity-50 disabled:pointer-events-none dark:text-neutral-400 dark:hover:text-blue-500" id="tabs-with-badges-item-2" aria-selected="false" data-hs-tab="#tab-foreign-keys" aria-controls="tab-foreign-keys" role="tab">
+                                        Foreign Keys<span class="hs-tab-active:bg-blue-100 hs-tab-active:text-blue-600 dark:hs-tab-active:bg-blue-800 dark:hs-tab-active:text-white ms-1 py-0.5 px-1.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-neutral-700 dark:text-neutral-300">4</span>
+                                    </button>
+                                </nav>
+                              </div>
 
-                                                @if($column->is_primary)
-                                                    <span class="inline-flex items-center px-1 py-0.5 rounded text-[7pt] font-medium bg-amber-100 text-amber-800">PK</span>
-                                                @endif
-                                                @if($column->is_foreign)
-                                                    <span class="inline-flex items-center px-1 py-0.5 rounded text-[7pt] font-medium bg-red-100 text-red-800">FK</span>
-                                                @endif
-                                                @if($column->is_nullable)
-                                                    <span class="inline-flex items-center px-1 py-0.5 rounded text-[7pt] font-medium bg-blue-100 text-blue-800">NULL</span>
-                                                @endif
-                                                @if($column->default_value)
-                                                    <span class="inline-flex items-center px-1 py-0.5 rounded text-[7pt] font-medium bg-green-100 text-green-800" title="Default: {{ $column->default_value }}">
-                                                        Default
+                              <div class="mt-3">
+                                <div id="tab-columns" role="tabpanel" aria-labelledby="tabs-with-badges-item-1">
+                                    <div class="space-y-1.5 overflow-y-scroll h-89.5">
+                                        @forelse($this->getColumns() as $column)
+                                            <div
+                                                @class([
+                                                    'bg-white border-l-4 rounded-l-md rounded border p-2 transition-all flex gap-2 justify-between',
+                                                    'border-gray-200 hover:border-gray-300' => $selectedColumnId !== $column->id,
+                                                    'border-blue-300 border-l-blue-500 ring-1 ring-blue-100' => $selectedColumnId === $column->id,
+                                                ])
+                                                wire:click="selectColumn({{ $column->id }})"
+                                            >
+                                                <div class="flex items-center gap-1.5 mb-1">
+                                                    {!! Helpers::getIconDiamondByTypeColumn($column) !!}
+                                                    <span class="text-xs font-medium text-gray-900">{{ $column->name }}</span>
+                                                </div>
+
+                                                <div class="flex flex-wrap items-center gap-1">
+                                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[7pt] font-medium bg-gray-100 text-gray-800">
+                                                        {{ $column->length > 0 ? "$column->type($column->length)" : $column->type }}
                                                     </span>
-                                                @endif
+
+                                                    @if($column->is_primary)
+                                                        <span class="inline-flex items-center px-1 py-0.5 rounded text-[7pt] font-medium bg-amber-100 text-amber-800">PK</span>
+                                                    @endif
+                                                    @if($column->is_foreign)
+                                                        <span class="inline-flex items-center px-1 py-0.5 rounded text-[7pt] font-medium bg-red-100 text-red-800">FK</span>
+                                                    @endif
+                                                    @if($column->is_nullable)
+                                                        <span class="inline-flex items-center px-1 py-0.5 rounded text-[7pt] font-medium bg-blue-100 text-blue-800">NULL</span>
+                                                    @endif
+                                                    @if($column->default_value)
+                                                        <span class="inline-flex items-center px-1 py-0.5 rounded text-[7pt] font-medium bg-green-100 text-green-800" title="Default: {{ $column->default_value }}">
+                                                            Default
+                                                        </span>
+                                                    @endif
+                                                </div>
                                             </div>
+                                        @empty
+                                            <div class="bg-white rounded-lg border border-gray-200 p-8 text-center">
+                                                <p class="text-sm text-gray-500">No columns found</p>
+                                            </div>
+                                        @endforelse
+                                    </div>
 
-                                            @if($column->comment)
-                                                <p class="text-xs text-gray-500 italic mt-0.5">{{ $column->comment }}</p>
-                                            @endif
-                                        </div>
-                                    @empty
-                                        <div class="bg-white rounded-lg border border-gray-200 p-8 text-center">
-                                            <p class="text-sm text-gray-500">No columns found</p>
-                                        </div>
-                                    @endforelse
-                                </div>
+                                    <div class="relative flex items-center my-3">
+                                        <div class="flex-grow border-t border-gray-200"></div>
+                                        <span class="mx-3 text-[10px] uppercase tracking-wide text-gray-400">Detalhes</span>
+                                        <div class="flex-grow border-t border-gray-200"></div>
+                                    </div>
 
-                                <div class="flex justify-end mb-5">
-                                    <flux:button @click.stop="$dispatch('table-relationships-side-editor.open', { table: {{ $table->id ?? '' }} })" variant="primary">
-                                        Table Side Relationships
-                                    </flux:button>
+                                    <div class="h-70">
+                                        @php($selected = $this->getSelectedColumn())
+                                        @if($selected)
+                                            <div class="bg-white rounded-lg border-l-4 border-l-blue-500 border border-gray-200 p-4 shadow-sm h-full">
+                                                <div class="flex items-start justify-between">
+                                                    <div class="flex items-center gap-2">
+                                                        {!! Helpers::getIconDiamondByTypeColumn($selected) !!}
+                                                        <h3 class="text-sm font-semibold text-gray-900">{{ $selected->name }}</h3>
+                                                    </div>
+                                                    <div class="flex flex-wrap items-center gap-1">
+                                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[7pt] font-medium bg-gray-100 text-gray-800">
+                                                            {{ $selected->length > 0 ? "$selected->type($selected->length)" : $selected->type }}
+                                                        </span>
+                                                        @if($selected->is_primary)
+                                                            <span class="inline-flex items-center px-1 py-0.5 rounded text-[7pt] font-medium bg-amber-100 text-amber-800">PK</span>
+                                                        @endif
+                                                        @if($selected->is_foreign)
+                                                            <span class="inline-flex items-center px-1 py-0.5 rounded text-[7pt] font-medium bg-red-100 text-red-800">FK</span>
+                                                        @endif
+                                                        @if($selected->is_nullable)
+                                                            <span class="inline-flex items-center px-1 py-0.5 rounded text-[7pt] font-medium bg-blue-100 text-blue-800">NULL</span>
+                                                        @endif
+                                                    </div>
+                                                </div>
+
+                                                <dl class="mt-4 grid grid-cols-2 gap-3 text-xs">
+                                                    <div class="space-y-0.5">
+                                                        <dt class="text-gray-500">Type</dt>
+                                                        <dd class="text-gray-900 font-medium">{{ $selected->type }}</dd>
+                                                    </div>
+                                                    <div class="space-y-0.5">
+                                                        <dt class="text-gray-500">Length</dt>
+                                                        <dd class="text-gray-900 font-medium">{{ $selected->length ?: '—' }}</dd>
+                                                    </div>
+                                                    <div class="space-y-0.5">
+                                                        <dt class="text-gray-500">Nullable</dt>
+                                                        <dd class="text-gray-900 font-medium">{{ $selected->is_nullable ? 'Yes' : 'No' }}</dd>
+                                                    </div>
+                                                    <div class="space-y-0.5">
+                                                        <dt class="text-gray-500">Primary</dt>
+                                                        <dd class="text-gray-900 font-medium">{{ $selected->is_primary ? 'Yes' : 'No' }}</dd>
+                                                    </div>
+                                                    <div class="space-y-0.5">
+                                                        <dt class="text-gray-500">Foreign</dt>
+                                                        <dd class="text-gray-900 font-medium">{{ $selected->is_foreign ? 'Yes' : 'No' }}</dd>
+                                                    </div>
+                                                    <div class="space-y-0.5">
+                                                        <dt class="text-gray-500">Default</dt>
+                                                        <dd class="text-gray-900 font-medium">{{ $selected->default_value ?? '—' }}</dd>
+                                                    </div>
+                                                </dl>
+
+                                                <dt class="text-xs text-gray-500 mb-2 mt-4">Comment</dt>
+
+                                                <div class="grid gap-2 grid-cols-6 items-center">
+
+                                                    <div class="col-span-5">
+                                                        <div class="rounded-md border border-gray-200 bg-gray-50 px-3 py-1 min-h-12 h-12 overflow-y-scroll">
+                                                            <p class="text-[11px] leading-5 text-gray-700">Rerum deserunt ea animi eveniet cumque ea eius.Rerum deserunt ea animi eveniet cumque ea eiusRerum deserunt ea animi eveniet cumque ea eiusRerum deserunt ea animi eveniet cumque ea eiusRerum deserunt ea animi eveniet cumque ea eiusRerum deserunt ea animi eveniet cumque ea eiusRerum deserunt ea animi eveniet cumque ea eius</p>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="flex col-auto justify-center">
+                                                        <flux:button size="sm" wire:click="clearSelection">Close</flux:button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @else
+                                            <div class="bg-gray-50 rounded-lg border border-l-4 border-dashed border-gray-200 p-6 h-full flex items-center justify-center">
+                                                <p class="text-xs text-gray-500">Selecione uma coluna para ver os detalhes</p>
+                                            </div>
+                                        @endif
+                                    </div>
+
                                 </div>
-                            @endif
+                                <div x-data="{table: @entangle('table') }" id="tab-foreign-keys" class="hidden" role="tabpanel" aria-labelledby="tabs-with-badges-item-2">
+                                    <div class="flex flex-col justify-between h-150">
+                                        <div class="space-y-1.5 overflow-y-scroll">
+                                            @forelse($this->getForeignKeys() as $column)
+                                                <div class="bg-white rounded border border-gray-200 p-2 hover:border-gray-300 transition-all">
+                                                    <div class="flex items-center gap-1.5 mb-1">
+                                                        {!! Helpers::getIconDiamondByTypeColumn($column) !!}
+                                                        <span class="text-xs font-medium text-gray-900">{{ $column->name }}</span>
+                                                    </div>
+                                                </div>
+                                            @empty
+                                                <div class="bg-white rounded-lg border border-gray-200 p-8 text-center">
+                                                    <p class="text-sm text-gray-500">No foreign keys found</p>
+                                                </div>
+                                            @endforelse
+                                        </div>
+
+                                        <div class="flex justify-end mt-5">
+                                            <flux:button @click.stop="$dispatch('table-relationships-side-editor.open', { table: {{ $table }} })" variant="primary">
+                                                Relationships
+                                            </flux:button>
+                                        </div>
+                                    </div>
+                                </div>
+                              </div>
                         </article>
                     </div>
                 </div>

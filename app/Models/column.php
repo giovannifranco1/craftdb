@@ -26,4 +26,9 @@ class Column extends Model
     {
         return $this->relationshipsFrom->merge($this->relationshipsTo);
     }
+
+    public function scopeFilterByForeignKeys($query)
+    {
+        return $query->where('is_foreign', true);
+    }
 }

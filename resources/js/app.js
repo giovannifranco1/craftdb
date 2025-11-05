@@ -1,5 +1,6 @@
 import collapse from "@alpinejs/collapse";
 import anchor from "@alpinejs/anchor";
+import '@preline/tabs';
 
 import.meta.glob(["../images/**"]);
 

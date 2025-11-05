@@ -290,37 +290,63 @@ export class InfiniteCanvas {
 
             const width = this.canvas.clientWidth;
             const height = this.canvas.clientHeight;
+            const step = this.cellSize * this.#scale;
 
-            // Desenha as linhas verticais
-            // O cálculo do ponto de partida deve levar em consideração o resto da divisão do offsetX pelo cellSize, escalado.
+            // Cálculo do ponto de partida leva em conta o offset escalado
             const startX = (-this.#offsetX % this.cellSize) * this.#scale;
+            const startY = (-this.#offsetY % this.cellSize) * this.#scale;
 
-            for (let x = startX; x <= width; x += this.cellSize * this.#scale) {
+            // Desenha rótulos dos eixos nas posições das linhas de grade
+            for (let x = startX; x <= width; x += step) {
                 const source = x;
-                this.context.moveTo(source, 0);
-                this.context.lineTo(source, height);
-
-                // Calcula a posição virtual para o texto
                 const virtualX = this.toVirtualX(source / this.#scale);
                 this.context.fillText(`${virtualX.toFixed(0)}`, source, 10);
             }
-
-            // Desenha as linhas horizontais
-            // O cálculo do ponto de partida deve levar em consideração o resto da divisão do offsetY pelo cellSize, escalado.
-            const startY = (-this.#offsetY % this.cellSize) * this.#scale;
-
-            for (
-                let y = startY;
-                y <= height;
-                y += this.cellSize * this.#scale
-            ) {
+            for (let y = startY; y <= height; y += step) {
                 const destination = y;
-                this.context.moveTo(0, destination);
-                this.context.lineTo(width, destination);
-
-                // Calcula a posição virtual para o texto
                 const virtualY = this.toVirtualY(destination / this.#scale);
                 this.context.fillText(`${virtualY.toFixed(0)}`, 0, destination);
+            }
+
+            // Desenha somente um traço central entre vértices (formato "+ - +")
+            const dashLen = 2; // comprimento do traço em pixels de tela
+            this.context.beginPath();
+
+            // Dashes em linhas verticais (pequeno segmento vertical no meio de cada célula)
+            for (let x = startX; x <= width; x += step) {
+                for (let y = startY; y + step <= height; y += step) {
+                    const midY = y + step / 2;
+                    this.context.moveTo(x, midY - dashLen / 2);
+                    this.context.lineTo(x, midY + dashLen / 2);
+                }
+            }
+
+            // Dashes em linhas horizontais (pequeno segmento horizontal no meio de cada célula)
+            for (let y = startY; y <= height; y += step) {
+                for (let x = startX; x + step <= width; x += step) {
+                    const midX = x + step / 2;
+                    this.context.moveTo(midX - dashLen / 2, y);
+                    this.context.lineTo(midX + dashLen / 2, y);
+                }
+            }
+            this.context.stroke();
+
+            // Desenha marcadores de vértice em formato "+"
+            const markerColor = "rgb(209,213,219)"; // um pouco mais escuro
+            const arm = 5; // tamanho do braço do "+" em pixels de tela
+            this.context.strokeStyle = markerColor;
+            this.context.lineWidth = 1;
+            this.context.beginPath();
+
+            for (let x = startX; x <= width; x += step) {
+                for (let y = startY; y <= height; y += step) {
+                    // Horizontal do "+"
+                    this.context.moveTo(x - arm, y);
+                    this.context.lineTo(x + arm, y);
+                    // Vertical do "+"
+                    this.context.moveTo(x, y - arm);
+                    this.context.lineTo(x, y + arm);
+                }
             }
             this.context.stroke();
         }
