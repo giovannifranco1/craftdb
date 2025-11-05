@@ -24,22 +24,11 @@ export default (relationships) => ({
             this.linesLayer.setAttribute('transform', transform);
         });
 
-        window.addEventListener('canvas-transform', (e) => {
-            this.linesLayer.setAttribute('transform', e.detail.transform);
-        });
-
-        window.addEventListener('box-move', () => {
-            this.debouncedCompute();
-        });
-
-        window.addEventListener('table-expanded' , e => {
-            console.log(e.detail);
-            this.compute();
-        })
-
-        window.addEventListener('resize', () => {
-            this.compute();
-        });
+        window.addEventListener('canvas-transform', (e) => this.linesLayer.setAttribute('transform', e.detail.transform));
+        window.addEventListener('box-move', () => this.debouncedCompute());
+        window.addEventListener('tables-inicializeted', () => this.debouncedCompute());
+        window.addEventListener('table-expanded', () => this.compute());
+        window.addEventListener('resize', () => this.compute());
     },
     snapToGrid(coord) {
         return Math.round(coord / this.gridSize) * this.gridSize;
