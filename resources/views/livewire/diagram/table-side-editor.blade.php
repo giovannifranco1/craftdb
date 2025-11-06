@@ -22,7 +22,7 @@
         class="fixed inset-0 bg-gray-200/50 transition-opacity"
     ></div>
 
-    <div class="fixed inset-0 overflow-hidden">
+    <div class="fixed inset-0 overflow-hidden" table-id="{{ $table->id }}">
         <div class="absolute inset-0 overflow-hidden">
             <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
 
@@ -40,9 +40,17 @@
                     <div class="flex h-full flex-col overflow-y-scroll bg-white py-6 shadow-xl">
                         <header class="px-4 sm:px-6">
                             <div class="flex items-start justify-between">
-                                <h2 class="text-lg font-medium text-gray-900" id="table-title">
-                                    {{ ucfirst($table->name) }}
-                                </h2>
+                                <div class="flex gap-2">
+                                    <h2 class="text-lg font-medium text-gray-900" id="table-title">
+                                        {{ ucfirst($table->name) }}
+                                    </h2>
+                                    <div class="flex items-center">
+                                        <div
+                                            class="w-4 h-4 bg-[var(--table-base-bg)] rounded-full shadow-sm"
+                                            title="table color: {{ $table->color ?? \App\Models\Table::COLOR_DEFAULT }}"
+                                        ></div>
+                                    </div>
+                                </div>
                                 <div class="ml-3 flex h-7 items-center">
                                     <button
                                         type="button"
@@ -62,24 +70,25 @@
 
                             <div class="border-b border-gray-200 dark:border-neutral-700">
                                 <nav class="flex gap-x-1" aria-label="Tabs" role="tablist" aria-orientation="horizontal">
-                                    <button type="button" class="hs-tab-active:font-semibold hs-tab-active:border-blue-600 hs-tab-active:text-blue-600 py-4 px-1 inline-flex items-center gap-x-2 border-b-2 border-transparent text-sm whitespace-nowrap text-gray-500 hover:text-blue-600 focus:outline-hidden focus:text-blue-600 disabled:opacity-50 disabled:pointer-events-none dark:text-neutral-400 dark:hover:text-blue-500 active" id="tabs-with-badges-item-1" aria-selected="true" data-hs-tab="#tab-columns" aria-controls="tab-columns" role="tab">
-                                        Columns<span class="hs-tab-active:bg-blue-100 hs-tab-active:text-blue-600 dark:hs-tab-active:bg-blue-800 dark:hs-tab-active:text-white ms-1 py-0.5 px-1.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-neutral-700 dark:text-neutral-300">15</span>
+                                    <button type="button" class="hs-tab-active:font-semibold hs-tab-active:border-[var(--table-base-bg)] hs-tab-active:text-[var(--table-base-bg)] py-4 px-1 inline-flex items-center gap-x-2 border-b-2 border-transparent text-sm whitespace-nowrap text-gray-500 hover:text-[var(--table-base-bg)] focus:outline-hidden focus:text-[var(--table-base-bg)] disabled:opacity-50 disabled:pointer-events-none dark:text-neutral-400 dark:hover:text-blue-500 active" id="tabs-with-badges-item-1" aria-selected="true" data-hs-tab="#tab-columns" aria-controls="tab-columns" role="tab">
+                                        Columns<span class="hs-tab-active:bg-[var(--table-base-bg)]/20 hs-tab-active:text-[var(--table-base-bg)] dark:hs-tab-active:bg-blue-800 dark:hs-tab-active:text-white ms-1 py-0.5 px-1.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-neutral-700 dark:text-neutral-300">15</span>
                                     </button>
-                                    <button type="button" class="hs-tab-active:font-semibold hs-tab-active:border-blue-600 hs-tab-active:text-blue-600 py-4 px-1 inline-flex items-center gap-x-2 border-b-2 border-transparent text-sm whitespace-nowrap text-gray-500 hover:text-blue-600 focus:outline-hidden focus:text-blue-600 disabled:opacity-50 disabled:pointer-events-none dark:text-neutral-400 dark:hover:text-blue-500" id="tabs-with-badges-item-2" aria-selected="false" data-hs-tab="#tab-foreign-keys" aria-controls="tab-foreign-keys" role="tab">
-                                        Foreign Keys<span class="hs-tab-active:bg-blue-100 hs-tab-active:text-blue-600 dark:hs-tab-active:bg-blue-800 dark:hs-tab-active:text-white ms-1 py-0.5 px-1.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-neutral-700 dark:text-neutral-300">4</span>
+                                    <button type="button" class="hs-tab-active:font-semibold hs-tab-active:border-[var(--table-base-bg)] hs-tab-active:text-[var(--table-base-bg)] py-4 px-1 inline-flex items-center gap-x-2 border-b-2 border-transparent text-sm whitespace-nowrap text-gray-500 hover:text-[var(--table-base-bg)] focus:outline-hidden focus:text-[var(--table-base-bg)] disabled:opacity-50 disabled:pointer-events-none dark:text-neutral-400 dark:hover:text-blue-500" id="tabs-with-badges-item-2" aria-selected="false" data-hs-tab="#tab-foreign-keys" aria-controls="tab-foreign-keys" role="tab">
+                                        Foreign Keys<span class="hs-tab-active:bg-[var(--table-base-bg)]/20 hs-tab-active:text-[var(--table-base-bg)] dark:hs-tab-active:bg-blue-800 dark:hs-tab-active:text-white ms-1 py-0.5 px-1.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-neutral-700 dark:text-neutral-300">4</span>
                                     </button>
                                 </nav>
-                              </div>
+                            </div>
 
-                              <div class="mt-3">
+                            <div class="mt-3">
                                 <div id="tab-columns" role="tabpanel" aria-labelledby="tabs-with-badges-item-1">
+
                                     <div class="space-y-1.5 overflow-y-scroll h-89.5">
                                         @forelse($this->getColumns() as $column)
                                             <div
                                                 @class([
                                                     'bg-white border-l-4 rounded-l-md rounded border p-2 transition-all flex gap-2 justify-between',
                                                     'border-gray-200 hover:border-gray-300' => $selectedColumnId !== $column->id,
-                                                    'border-blue-300 border-l-blue-500 ring-1 ring-blue-100' => $selectedColumnId === $column->id,
+                                                    'border-blue-300 table-column-border-left ring-1 table-column-border-ring' => $selectedColumnId === $column->id,
                                                 ])
                                                 wire:click="selectColumn({{ $column->id }})"
                                             >
@@ -122,10 +131,15 @@
                                         <div class="flex-grow border-t border-gray-200"></div>
                                     </div>
 
-                                    <div class="h-70">
+                                    <div class="h-70 relative">
                                         @php($selected = $this->getSelectedColumn())
                                         @if($selected)
-                                            <div class="bg-white rounded-lg border-l-4 border-l-blue-500 border border-gray-200 p-4 shadow-sm h-full">
+                                            <div wire:loading.delay class="absolute inset-0 backdrop-blur-sm rounded-lg z-10">
+                                                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8">
+                                                    <div class="absolute inset-0 rounded-full border-2 border-gray-300/30 border-t-[var(--table-base-bg)] animate-spin"></div>
+                                                </div>
+                                            </div>
+                                            <div class="bg-white table-column-border-left rounded-lg border-l-4 border border-gray-200 p-4 shadow-sm h-full">
                                                 <div class="flex items-start justify-between">
                                                     <div class="flex items-center gap-2">
                                                         {!! Helpers::getIconDiamondByTypeColumn($selected) !!}
@@ -197,6 +211,7 @@
                                     </div>
 
                                 </div>
+
                                 <div x-data="{table: @entangle('table') }" id="tab-foreign-keys" class="hidden" role="tabpanel" aria-labelledby="tabs-with-badges-item-2">
                                     <div class="flex flex-col justify-between h-150">
                                         <div class="space-y-1.5 overflow-y-scroll">
@@ -215,13 +230,13 @@
                                         </div>
 
                                         <div class="flex justify-end mt-5">
-                                            <flux:button @click.stop="$dispatch('table-relationships-side-editor.open', { table: {{ $table }} })" variant="primary">
+                                            <flux:button  variant="primary">
                                                 Relationships
                                             </flux:button>
                                         </div>
                                     </div>
                                 </div>
-                              </div>
+                            </div>
                         </article>
                     </div>
                 </div>

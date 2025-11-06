@@ -16,7 +16,6 @@ export default defineConfig({
         laravel({
             input: [
                 'resources/css/app.css',
-                'resources/css/luvi-ui.css',
                 'resources/js/app.js',
                 'resources/css/canvas.css',
                 'resources/js/canvas/main.js'

@@ -1,11 +1,10 @@
-:root {
+@theme {
+    --table-base-bg: #2563eb;
     --table-header-bg: #2563eb;
+    --table-header-icon-bg: color-mix(in srgb, var(--table-header-bg), white 20%);
     --table-footer-bg: #2563eb;
 }
 
-@layer base {
-
-}
 body {
     /* Slightly shift hotspot right so tip appears a bit left */
     cursor: url('@images/icons/cursor.svg') 3.5 3.5, auto;
@@ -43,14 +42,31 @@ body {
     left: 0;
 }
 
+.table-primary {
+    background-color: var(--table-base-bg);
+}
+
 .table-header-beauty {
     background-color: var(--table-header-bg);
+}
+
+.table-header-icon {
+    background-color: var(--table-header-icon-bg);
 }
 
 .table-footer-beauty {
     border-bottom-width: 5px;
     border-bottom-style: solid;
     border-bottom-color: var(--table-footer-bg);
+}
+
+.table-column-border-left {
+    border-left-color: color-mix(in srgb, var(--table-base-bg), #fff 10%);
+}
+
+.table-column-border-ring {
+    border-color: var(--table-base-bg);
+    box-shadow: 0 0 0 2px color-mix(in oklab, var(--table-base-bg), white 95%);
 }
 
 #controls {

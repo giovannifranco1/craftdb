@@ -2,9 +2,9 @@
 
 <x-table.css-table :table="$table" />
 
-<div id="table-{{ $table->id }}" table-box x-data="runTable(@js($table->x), @js($table->y))"
+<div id="table-{{ $table->id }}" table-id="{{ $table->id }}" table-box x-data="runTable(@js($table->x), @js($table->y))"
     :style="`transform: translate3d(${x}px, ${y}px, 0); width: ${getSnappedWidth()}px; max-width: ${getSnappedWidth()}px`"
-    class="absolute h-full select-none z-50 rounded-xl border border-gray-200 shadow-lg">
+    class="absolute h-full select-none z-50 rounded-xl shadow-lg">
     <!-- Table -->
     <div class="rounded-xl w-full h-full flex flex-col relative">
         <!-- Header -->
@@ -17,7 +17,7 @@
             class="bg-blue-500 flex-none border-b border-gray-200 px-3 py-1 rounded-t-xl table-header-beauty">
             <div class="flex items-center justify-between">
                 <h3 class="text-sm font-semibold text-gray-900 flex items-center gap-2">
-                    <div class="w-4 h-4 rounded text-white text-xs flex items-center justify-center font-bold table-icon">
+                    <div class="w-4 h-4 rounded text-white text-xs flex items-center justify-center font-bold table-header-icon">
                         <flux:icon.sheet class="size-3"/>
                     </div>
                     <span class="text-white font-normal">{{ $table->name }}</span>
