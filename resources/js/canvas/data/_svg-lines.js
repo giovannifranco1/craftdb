@@ -39,7 +39,7 @@ export default (relationships) => ({
             }
         });
 
-        window.addEventListener('table-side-editor-closed', (e) => this.clearHighlight());
+        window.addEventListener('table-side-editor-closed', () => this.clearHighlight());
     },
     snapToGrid(coord) {
         return Math.round(coord / this.gridSize) * this.gridSize;
@@ -382,7 +382,7 @@ export default (relationships) => ({
         const dir = side === 'left' ? -1 : 1; // direção para fora do box
         const hookOffset = 8; // distância da ponta do campo até onde começa o pé
         const length = 14;    // comprimento de cada "dedo"
-        const spreadDeg = 30; // abertura das barras externas
+        const spreadDeg = 35; // abertura das barras externas
 
         // Origem levemente afastada do endpoint para não sobrepor a borda do box
         const ox = endPoint.x + dir * hookOffset;
