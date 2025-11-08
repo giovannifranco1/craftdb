@@ -6,6 +6,8 @@ export default (relationships) => ({
     gridSize: null, // Mesmo tamanho do grid do InfiniteCanvas
     linesLayer: null,
     initialTransform: null,
+    highlightedTableId: null,
+    highlightedColumnIds: [],
 
     init() {
         this.gridSize = Alpine.raw(this.canvas).cellSize;
@@ -17,7 +19,7 @@ export default (relationships) => ({
         // Aguarda o DOM estar completamente renderizado
         requestAnimationFrame(() => {this.compute()});
 
-        window.addEventListener('canvas-zoom', (e) => {
+        window.addEventListener('canvas-zoom', () => {
             // Aplica o mesmo transform do canvas ao <g>
             // Não recomputa aqui para evitar "pulos"; as paths acompanham via transform
             const transform = Alpine.raw(this.canvas).getTransformString();
@@ -29,6 +31,15 @@ export default (relationships) => ({
         window.addEventListener('tables-inicializeted', () => this.debouncedCompute());
         window.addEventListener('table-expanded', () => this.compute());
         window.addEventListener('resize', () => this.compute());
+        window.addEventListener('table-side-editor.open', (e) => {
+            // Aplica highlight IMEDIATAMENTE quando clica na tabela
+            const tableId = e.detail?.table?.id || e.detail?.tableId;
+            if (tableId) {
+                this.highlightTableConnections(tableId);
+            }
+        });
+
+        window.addEventListener('table-side-editor-closed', (e) => this.clearHighlight());
     },
     snapToGrid(coord) {
         return Math.round(coord / this.gridSize) * this.gridSize;
@@ -48,7 +59,6 @@ export default (relationships) => ({
 
         if (!this.$el) return;
 
-        const svg = this.$el.getBoundingClientRect();
         const group = this.$el.querySelector('#lines-layer');
 
         this.relationships.forEach(item => {
@@ -305,23 +315,45 @@ export default (relationships) => ({
             };
 
             const highlightOff = () => {
-                connGroup.querySelectorAll('path').forEach(el => {
-                    el.setAttribute('stroke', '#888');
-                    el.setAttribute('stroke-width', '2');
-                });
-                const fe = document.getElementById(conn.fromId);
-                const te = document.getElementById(conn.toId);
-                [fe, te].forEach(node => {
-                    if (!node) return;
-                    node.style.backgroundColor = '';
-                    node.style.outline = '';
-                    node.style.borderRadius = '';
-                });
+                // Verifica se esta conexão está destacada pela tabela
+                const isTableHighlighted = this.isConnectionHighlightedByTable(conn);
+
+                // Se não estiver destacada pela tabela, remove o highlight
+                if (!isTableHighlighted) {
+                    connGroup.querySelectorAll('path').forEach(el => {
+                        el.setAttribute('stroke', '#888');
+                        el.setAttribute('stroke-width', '2');
+                    });
+
+                    const fe = document.getElementById(conn.fromId);
+                    const te = document.getElementById(conn.toId);
+
+                    // Remove highlight apenas das colunas que não estão destacadas pela tabela
+                    if (fe && !this.highlightedColumnIds.includes(conn.fromId)) {
+                        fe.style.backgroundColor = '';
+                        fe.style.outline = '';
+                        fe.style.borderRadius = '';
+                    }
+
+                    if (te && !this.highlightedColumnIds.includes(conn.toId)) {
+                        te.style.backgroundColor = '';
+                        te.style.outline = '';
+                        te.style.borderRadius = '';
+                    }
+                } else {
+                    // Se estiver destacada pela tabela, reaplica o highlight da tabela
+                    this.applyHighlightToConnection(conn, connGroup);
+                }
             };
 
             connGroup.addEventListener('mouseenter', highlightOn);
             connGroup.addEventListener('mouseleave', highlightOff);
         });
+
+        // Aplica highlight se houver uma tabela destacada
+        if (this.highlightedTableId) {
+            this.applyHighlightToTable(this.highlightedTableId);
+        }
 
     },
     drawBar(group, endPoint, side, offset = 8) {
@@ -377,6 +409,143 @@ export default (relationships) => ({
             seg.setAttribute('pointer-events', 'stroke');
 
             group.appendChild(seg);
+        });
+    },
+    highlightTableConnections(tableId) {
+        // Limpa o highlight anterior
+        this.clearHighlight();
+
+        if (!tableId) {
+            this.highlightedTableId = null;
+            return;
+        }
+
+        this.highlightedTableId = tableId;
+
+        // Aplica o highlight IMEDIATAMENTE
+        this.applyHighlightToTable(tableId);
+    },
+    clearHighlight() {
+        const group = this.$el?.querySelector('#lines-layer');
+        if (!group) return;
+
+        // Limpa o highlight das linhas
+        if (this.highlightedTableId) {
+            const previousTableIdNum = parseInt(this.highlightedTableId);
+            const previousConnections = this.connections.filter(conn => {
+                const fromTableId = parseInt(conn.fromId.split('-')[1]);
+                const toTableId = parseInt(conn.toId.split('-')[1]);
+                return fromTableId === previousTableIdNum || toTableId === previousTableIdNum;
+            });
+
+            previousConnections.forEach(conn => {
+                const connGroup = group.querySelector(`g[data-from-id="${conn.fromId}"][data-to-id="${conn.toId}"]`);
+                if (!connGroup) return;
+
+                // Restaura o estilo padrão das linhas
+                connGroup.querySelectorAll('path').forEach(el => {
+                    el.setAttribute('stroke', '#888');
+                    el.setAttribute('stroke-width', '2');
+                });
+            });
+        }
+
+        // Limpa o highlight das colunas
+        this.highlightedColumnIds.forEach(columnId => {
+            const columnEl = document.getElementById(columnId);
+            if (columnEl) {
+                columnEl.style.backgroundColor = '';
+                columnEl.style.outline = '';
+                columnEl.style.borderRadius = '';
+            }
+        });
+
+        this.highlightedColumnIds = [];
+        this.highlightedTableId = null;
+    },
+    isConnectionHighlightedByTable(conn) {
+        if (!this.highlightedTableId) return false;
+
+        const tableIdNum = parseInt(this.highlightedTableId);
+        const fromTableId = parseInt(conn.fromId.split('-')[1]);
+        const toTableId = parseInt(conn.toId.split('-')[1]);
+
+        return fromTableId === tableIdNum || toTableId === tableIdNum;
+    },
+    applyHighlightToConnection(conn, connGroup) {
+        const group = this.$el?.querySelector('#lines-layer');
+        if (!group || !connGroup) return;
+
+        // Aplica o mesmo estilo do highlight da tabela
+        connGroup.querySelectorAll('path').forEach(el => {
+            el.setAttribute('stroke', '#eab308');
+            el.setAttribute('stroke-width', '2.25');
+        });
+
+        // Move para o topo (renderiza por último)
+        if (group && group.appendChild) {
+            group.appendChild(connGroup);
+        }
+
+        // Destaca as colunas relacionadas
+        const fe = document.getElementById(conn.fromId);
+        const te = document.getElementById(conn.toId);
+        [fe, te].forEach(node => {
+            if (!node) return;
+            node.style.backgroundColor = 'rgba(250, 204, 21, 0.25)';
+            node.style.outline = '1px solid #facc15';
+            node.style.borderRadius = '4px';
+        });
+    },
+    applyHighlightToTable(tableId) {
+        const group = this.$el?.querySelector('#lines-layer');
+        if (!group) return;
+
+        // Converte tableId para número para comparação
+        const tableIdNum = parseInt(tableId);
+
+        // Encontra todas as conexões relacionadas a esta tabela
+        const relatedConnections = this.connections.filter(conn => {
+            // Extrai o table_id do fromId e toId (formato: "column-{table_id}-{column_id}")
+            const fromTableId = parseInt(conn.fromId.split('-')[1]);
+            const toTableId = parseInt(conn.toId.split('-')[1]);
+
+            return fromTableId === tableIdNum || toTableId === tableIdNum;
+        });
+
+        // Aplica highlight em todas as conexões relacionadas
+        relatedConnections.forEach(conn => {
+            const connGroup = group.querySelector(`g[data-from-id="${conn.fromId}"][data-to-id="${conn.toId}"]`);
+            if (!connGroup) return;
+
+            // Aplica o mesmo estilo do highlightOn
+            connGroup.querySelectorAll('path').forEach(el => {
+                el.setAttribute('stroke', '#eab308');
+                el.setAttribute('stroke-width', '2.25');
+            });
+
+            // Move para o topo (renderiza por último)
+            if (group && group.appendChild) {
+                group.appendChild(connGroup);
+            }
+
+            // Destaca as colunas relacionadas
+            const fe = document.getElementById(conn.fromId);
+            const te = document.getElementById(conn.toId);
+            [fe, te].forEach(node => {
+                if (!node) return;
+                node.style.backgroundColor = 'rgba(250, 204, 21, 0.25)';
+                node.style.outline = '1px solid #facc15';
+                node.style.borderRadius = '4px';
+
+                // Armazena o ID da coluna para poder limpar depois
+                if (!this.highlightedColumnIds.includes(conn.fromId)) {
+                    this.highlightedColumnIds.push(conn.fromId);
+                }
+                if (!this.highlightedColumnIds.includes(conn.toId)) {
+                    this.highlightedColumnIds.push(conn.toId);
+                }
+            });
         });
     }
 });
