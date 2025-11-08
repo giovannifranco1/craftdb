@@ -27,6 +27,7 @@
 }
 
 @theme {
+    --font-sans: "Inter", sans-serif;
     --color-accent: var(--color-slate-800);
     --color-accent-content: var(--color-slate-800);
     --color-accent-foreground: var(--color-white);
@@ -57,16 +58,3 @@ select:focus[data-flux-control] {
 /* \[:where(&)\]:size-4 {
     @apply size-4;
 } */
-
-
-/* Workspace dragging states */
-.is-dragging-workspace {
-    cursor: grabbing !important;
-    user-select: none;
-}
-
-.is-dragging-workspace * {
-    pointer-events: none;
-}
-
-

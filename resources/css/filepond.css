@@ -1,0 +1,28 @@
+/* .filepond--item {
+    width: calc(50% - 0.5em);
+} */
+
+.filepond--credits {
+    display: none;
+}
+
+.filepond--panel-root {
+    background-color: #FAFBFC;
+}
+.filepond--root *:not(text) small {
+    font-size: 11.5pt !important;
+}
+
+.filepond--drop-label {
+    min-height: 177px !important; Ajuste conforme sua necessidade
+    padding: 20px; /* Ajuste o padding para aumentar o espaçamento interno */
+    cursor: pointer;
+}
+
+.filepond--drop-label label
+{
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+}

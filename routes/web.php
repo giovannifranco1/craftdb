@@ -1,9 +1,9 @@
 <?php
 
 use App\Http\Controllers\Pages\DiagramController;
-use App\Http\Controllers\Pages\HomeController;
-use App\Http\Controllers\Pages\TesteController;
 use App\Livewire\Dashboard;
+use App\Livewire\Diagram\DiagramCreate;
+use App\Livewire\Diagram\DiagramImport;
 use App\Livewire\MyFavorites;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
@@ -35,7 +35,5 @@ Route::middleware(['auth'])->group(function () {
 
 /** Diagram */
 Route::middleware(['auth', 'role:team_id'])->group(function () {
-    Route::get('{team_id}/teste', [TesteController::class, 'index']);
-    Route::get('{team_id}/canvas', [TesteController::class, 'canvas']);
     Route::get('{team_id}/diagram/{diagram:slug}', [DiagramController::class, 'show'])->name('diagram.show');
 });

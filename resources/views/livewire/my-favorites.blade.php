@@ -8,4 +8,5 @@
     <flux:button @click.stop="$dispatch('table-side-editor.open')" variant="primary">Table Side</flux:button>
     <flux:button @click.stop="$dispatch('table-relationships-side-editor.open')" variant="primary">Table Side relationships</flux:button>
 
+
 </div>

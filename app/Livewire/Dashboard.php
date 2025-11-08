@@ -22,8 +22,6 @@ class Dashboard extends Component
     #[Computed]
     public function getDiagrams()
     {
-        sleep(1);
-
         return Diagram::query()
             ->when($this->search, fn ($q) => $q->where('name', 'like', "%{$this->search}%"))
             ->where('team_id', Team::currentTeam()->getKey())

@@ -8,20 +8,19 @@
 body {
     /* Slightly shift hotspot right so tip appears a bit left */
     cursor: url('@images/icons/cursor.svg') 3.5 3.5, auto;
-
     position: fixed;
     inset: 0;
     width: 100%;
     height: 100%;
     overflow: hidden;
-    background-color: #f6f6f6;
+    background-color: #f3f4f6;
     padding: 0;
     margin: 0;
 }
 
 .container {
     position: relative;
-    width: 100vw;
+    width: 100%;
     height: 100vh;
     overflow: visible;
 }

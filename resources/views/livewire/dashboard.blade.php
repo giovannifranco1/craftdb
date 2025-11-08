@@ -16,6 +16,6 @@
     </div>
 
     <div class="mt-5">
-            {{ $this->getDiagrams()->links() }}
+        {{ $this->getDiagrams()->links() }}
     </div>
 </div>

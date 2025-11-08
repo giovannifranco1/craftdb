@@ -1,0 +1,93 @@
+<?php
+
+namespace App\Livewire\Forms\Diagram;
+
+use App\Rules\Diagram\ImportValidFileType;
+use Flux\Flux;
+use Livewire\Form;
+
+class ImportForm extends Form
+{
+    /** @var 'file'|'laravel'|null */
+    public ?string $type = null;
+
+    /**
+     * @var array<int, \Illuminate\Http\UploadedFile>
+     * @phpstan-var list<\Illuminate\Http\UploadedFile>
+     */
+    public array $file = [];
+
+    /**
+     * @var bool
+     * @phpstan-var bool
+     */
+    public bool $hasImport = false;
+
+
+    protected function rules(): array
+    {
+        $rules = [
+            'file' => 'nullable|array',
+            'file.*' => [
+                'file',
+                new ImportValidFileType
+            ],
+            'type' => 'nullable|in:sql,laravel'
+        ];
+
+        if ($this->hasImport) {
+            $rules = array_merge($rules, [
+                'file' => 'required|array',
+                'type' => 'required|in:sql,laravel'
+            ]);
+        }
+
+        return $rules;
+    }
+
+    /**
+     * Cancel File
+     */
+    public function cancelFile(): void
+    {
+        $this->file = [];
+    }
+
+    /**
+     * Cancel Import
+     */
+    public function cancel(): void
+    {
+        $this->cancelFile();
+        $this->hasImport = false;
+        Flux::modal('diagram-import')->close();
+    }
+
+    /**
+     * Confirm import
+     */
+    public function confirm(): void
+    {
+        $this->hasImport = true;
+
+        $this->validate();
+
+        Flux::modal('diagram-import')->close();
+    }
+
+    /**
+     * Remove a file from the import list.
+     *
+     * @phpstan-param int|null $index The index of the file to remove. If null, all files will be removed.
+     * @return void
+     */
+    public function removeFile(?int $index = null): void
+    {
+        if ($index !== null && is_array($this->file)) {
+            unset($this->file[$index]);
+            $this->file = array_values($this->file); // Reindex array
+        } else {
+            $this->file = [];
+        }
+    }
+}

@@ -12,7 +12,7 @@
             @mousedown="pressed = true"
             @mouseup="if (pressed) {  loading = true; pressed = false; $dispatch('table-side-editor.open', { table: @js($table) });  }"
             @mouseleave="pressed = false"
-            @table-side-editor-opened.window="loading = false"
+            @table-side-editor-opened.window="loading = false;"
             :style="`height: ${getGridSize()/2 + getGridSize()}px; cursor: ${loading ? 'wait' : ''};`"
             class="bg-blue-500 flex-none border-b border-gray-200 px-3 py-1 rounded-t-xl table-header-beauty">
             <div class="flex items-center justify-between">
@@ -20,7 +20,7 @@
                     <div class="w-4 h-4 rounded text-white text-xs flex items-center justify-center font-bold table-header-icon">
                         <flux:icon.sheet class="size-3"/>
                     </div>
-                    <span class="text-white font-normal">{{ $table->name }}</span>
+                    <span class="text-white font-normal text-[12pt] font-[Kalam]">{{ $table->name }}</span>
                 </h3>
 
                 <div>
@@ -48,7 +48,7 @@
                             <td class="py-[2px] px-3">
                                 <div class="flex items-center gap-2">
                                     {!! Helpers::getIconDiamondByTypeColumn($column) !!}
-                                    <span class="text-xs font-medium text-gray-900">{{ $column->name }}</span>
+                                    <span class="text-xs font-medium text-gray-900 font-[Poppins]">{{ $column->name }}</span>
                                 </div>
                                 <!-- inline column resize handle at end of first td -->
                                 <span class="absolute top-0 right-0 h-full w-1 cursor-col-resize z-10" @mousedown.stop="startColResize(0, $event)" @touchstart.stop="startColResize(0, $event)"></span>

@@ -5,7 +5,9 @@
     </head>
 
     @use('App\Models\Team\Team')
-
+    @php
+        $team = Team::currentTeam();
+    @endphp
     <body class="min-h-screen bg-white dark:bg-zinc-800">
         <!-- Horizontal Navigation Header -->
         <flux:header sticky class="border-b border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900 z-50">
@@ -19,10 +21,6 @@
                         </a>
 
                         @if(request()->routeIs('diagram.show'))
-                            @php
-                                $team = Team::currentTeam();
-                            @endphp
-
                             <flux:breadcrumbs class="ms-5">
                                 <flux:breadcrumbs.item href="{{ route('home') }}">Diagrams</flux:breadcrumbs.item>
                                 <flux:breadcrumbs.item href="{{ route('diagram.show', [$team->id, $diagram->slug])}}">{{ $diagram->name }}</flux:breadcrumbs.item>
@@ -31,7 +29,7 @@
                     </div>
 
                     <div class="flex items-center space-x-4">
-                        <flux:button href="#" icon="plus" variant="primary" color="blue" size="sm">
+                        <flux:button @click="$flux.modal('diagram-create').show()" icon="plus" variant="primary" size="sm">
                             Novo Diagrama
                         </flux:button>
 
@@ -93,6 +91,9 @@
 
         {{ $slot }}
 
+        @livewire('diagram.diagram-create')
+        @filepondScripts
         @fluxScripts
+        @vite(['resources/css/filepond.css'])
     </body>
 </html>

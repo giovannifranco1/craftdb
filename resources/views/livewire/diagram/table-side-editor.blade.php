@@ -19,10 +19,10 @@
         x-transition:leave="ease-in-out duration-250"
         x-transition:leave-start="opacity-100"
         x-transition:leave-end="opacity-0"
-        class="fixed inset-0 bg-gray-200/50 transition-opacity"
+        class="fixed inset-0 transition-opacity pointer-events-none"
     ></div>
 
-    <div class="fixed inset-0 overflow-hidden" table-id="{{ $table->id }}">
+    <div class="fixed inset-0 overflow-hidden pointer-events-none" table-id="{{ $table->id }}">
         <div class="absolute inset-0 overflow-hidden">
             <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
 
@@ -35,13 +35,16 @@
                     x-transition:leave="transform transition ease-in-out duration-250 sm:duration-500"
                     x-transition:leave-start="translate-x-0"
                     x-transition:leave-end="translate-x-full"
-                    class="pointer-events-auto w-screen max-w-2xl"
+                    class="pointer-events-auto w-screen bg-white max-w-[28rem]"
                 >
-                    <div class="flex h-full flex-col overflow-y-scroll bg-white py-6 shadow-xl">
+                    <div
+                        wire:loading.class.delay.shorter="opacity-60"
+                        class="flex h-full flex-col overflow-y-scroll bg-white py-6 shadow-xl"
+                    >
                         <header class="px-4 sm:px-6">
                             <div class="flex items-start justify-between">
                                 <div class="flex gap-2">
-                                    <h2 class="text-lg font-medium text-gray-900" id="table-title">
+                                    <h2 class="text-lg font-medium text-gray-900 font-[Poppins]" id="table-title">
                                         {{ ucfirst($table->name) }}
                                     </h2>
                                     <div class="flex items-center">
@@ -94,7 +97,7 @@
                                             >
                                                 <div class="flex items-center gap-1.5 mb-1">
                                                     {!! Helpers::getIconDiamondByTypeColumn($column) !!}
-                                                    <span class="text-xs font-medium text-gray-900">{{ $column->name }}</span>
+                                                    <span class="text-xs font-medium text-gray-900 font-[Poppins]">{{ $column->name }}</span>
                                                 </div>
 
                                                 <div class="flex flex-wrap items-center gap-1">

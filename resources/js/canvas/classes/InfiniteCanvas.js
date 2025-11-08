@@ -4,7 +4,7 @@ export class InfiniteCanvas {
     context = null;
     cellSize;
 
-    #scale = 0.75;
+    #scale = 0.85;
     #offsetX = 0;
     #offsetY = 0;
 

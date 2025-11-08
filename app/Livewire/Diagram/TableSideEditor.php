@@ -27,6 +27,8 @@ final class TableSideEditor extends Component
     {
         $this->table = $table;
         $this->open = true;
+
+        $this->js('$dispatch("table-side-editor-opened")');
     }
 
     #[Computed]
