@@ -5,7 +5,10 @@
     </head>
 
     <body>
+        <x-alert/>
+
         <div x-data="runCanvas()" class="container">
+
             <canvas id="canvas"></canvas>
 
             <svg x-data="runSvgLines(@js($relationships))" id="svg-overlay">
@@ -16,6 +19,7 @@
                 {{ $slot }}
             </div>
 
+            {{-- Loading init page --}}
             <div x-data="{loading: true}" x-show="loading" @tables-inicializeted.window="loading = false" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
                 <div class="flex flex-col items-center gap-6">
                     <div class="relative w-16 h-16">
@@ -47,6 +51,12 @@
             </div>
 
             <div id="controls" class="w-[20rem] h-14 bg-white items-center rounded-lg flex justify-between">
+                <button
+                    class="p-1 ms-2 rounded-sm transition-colors cursor-pointer hover:bg-gray-200"
+                    type="button"
+                    @click="$dispatch('add-table')">
+                        <flux:icon.check class="size-6"/>
+                </button>
                 <button class="p-1 ms-2 rounded-sm transition-colors cursor-pointer hover:bg-gray-200" type="button" id="zoom-in" @click="Alpine.raw(canvas).zoom(1.155)">
                     <flux:icon.magnifying-glass-plus class="size-6"/>
                 </button>

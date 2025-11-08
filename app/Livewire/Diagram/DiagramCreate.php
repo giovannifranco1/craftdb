@@ -4,13 +4,10 @@ namespace App\Livewire\Diagram;
 
 use App\Actions\Diagram\CreateNewDiagram;
 use App\Livewire\Forms\Diagram\ImportForm;
-use App\Models\Diagram;
 use App\Models\Team\Team;
 use App\Rules\Diagram\ImportValidFileType;
-use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Str;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -106,73 +103,20 @@ class DiagramCreate extends Component
         $this->importForm->confirm();
     }
 
-    public function import()
-    {
-        $this->validate([
-            'file'        => 'required|array',
-            'file.*'      => 'file|mimes:sql,json,xml,csv,zip,php|max:10240',
-            'name'        => 'required|string|max:255',
-            'description' => 'nullable|string|max:1000',
-        ]);
-
-        try {
-            // Simulate upload progress
-            for ($i = 0; $i <= 100; $i += 10) {
-                usleep(100000); // 0.1 second delay
-            }
-
-            // Store the first file (or process all files)
-            $filePaths = [];
-            foreach ($this->file as $file) {
-                $filePaths[] = $file->store('diagram-imports', 'public');
-            }
-            $filePath = $filePaths[0] ?? null;
-
-            // Ensure unique slug
-            $baseSlug = Str::slug($this->name);
-            $slug = $baseSlug;
-            $counter = 1;
-            while (Diagram::where('slug', $slug)->where('team_id', Team::currentTeam()->getKey())->exists()) {
-                $slug = $baseSlug . '-' . $counter;
-                $counter++;
-            }
-
-            // Create diagram
-            $diagram = Diagram::create([
-                'name'        => $this->name,
-                'description' => $this->description ?: null,
-                'team_id'     => Team::currentTeam()->getKey(),
-                'slug'        => $slug,
-            ]);
-
-            // TODO: Process the file and import the diagram structure
-            // This would parse the SQL/JSON/XML/CSV and create tables, columns, relationships
-
-            $this->dispatch('diagram-imported', diagramId: $diagram->id);
-
-            // Redirect to the diagram
-            return $this->redirect(route('diagram.show', [
-                Team::currentTeam()->getKey(),
-                $diagram->slug,
-            ]), navigate: true);
-        } catch (\Exception $e) {
-            $this->addError('file', 'Erro ao importar diagrama: ' . $e->getMessage());
-        }
-    }
-
     public function create(CreateNewDiagram $action)
     {
         $validatedData = $this->validate();
 
         $diagram = $action->exec($validatedData);
 
-        $this->dispatch('diagram-imported', diagramId: $diagram->id);
         $this->modal('diagram-create')->close();
 
-        return $this->redirect(route('diagram.show', [
+        session()->flash('message', __("Diagram created successfully."));
+
+        $this->redirect(route('diagram.show', [
             Team::currentTeam()->getKey(),
             $diagram->slug,
-        ]), navigate: true);
+        ]));
     }
 
     /**

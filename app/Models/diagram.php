@@ -12,18 +12,6 @@ class Diagram extends Model
 
     protected $table = 'diagram';
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
-    protected $fillable = [
-        'team_id',
-        'name',
-        'slug',
-        'description',
-    ];
-
     public function tables(): HasMany
     {
         return $this->hasMany(Table::class, 'diagram_id');

@@ -1,7 +1,5 @@
 @use('App\Support\Helpers')
 
-<x-table.css-table :table="$table" />
-
 <div id="table-{{ $table->id }}" table-id="{{ $table->id }}" table-box x-data="runTable(@js($table->x), @js($table->y))"
     :style="`transform: translate3d(${x}px, ${y}px, 0); width: ${getSnappedWidth()}px; max-width: ${getSnappedWidth()}px`"
     class="absolute h-full select-none z-50 rounded-xl shadow-lg">

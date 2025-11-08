@@ -16,11 +16,15 @@
             $x = $col * $spacingX + $dx;
             $y = $row * $spacingY + $dy;
 
-            if ($table->id !== 1) {
+            if (is_null($table?->id)) {
                 $table->x = $x;
                 $table->y = $y;
             }
         @endphp
+
+        <div wire:key="table-css-{{ $table->id }}">
+            <x-table.css-table :table="$table" />
+        </div>
 
         <livewire:diagram.table :$table :key="$key" />
     @endforeach
