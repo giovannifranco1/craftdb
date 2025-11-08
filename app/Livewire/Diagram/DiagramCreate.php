@@ -20,6 +20,7 @@ class DiagramCreate extends Component
     public ImportForm $importForm;
 
     // UI state $this
+    /** @var int<1,2> */
     public int $step = 1;
 
     // UI StateForm $this
@@ -32,16 +33,16 @@ class DiagramCreate extends Component
     #[Validate('required|in:colorful,basic')]
     public ?string $style = null;
 
-    #[Validate('required|in:mysql,postgresql,sqlite')]
-    public ?string $database = null;
+    #[Validate('required|in:mysql')]
+    public ?string $database = null; // todo: postgresql,sqlite
 
     /** @return void  */
     public function mount()
     {
-        $this->resetWizard();
+        $this->resetUIState();
     }
 
-    public function resetWizard(): void
+    public function resetUIState(): void
     {
         $this->step = 1;
         $this->name = '';
@@ -103,7 +104,7 @@ class DiagramCreate extends Component
         $this->importForm->confirm();
     }
 
-    public function create(CreateNewDiagram $action)
+    public function create(CreateNewDiagram $action): void
     {
         $validatedData = $this->validate();
 

@@ -27,7 +27,7 @@ class CreateNewDiagram
     /**
      * @param DTODiagram $data
      */
-    public function exec(array $data): ?Diagram
+    public function exec(array $data): Diagram
     {
         $this->_validate($data);
 
