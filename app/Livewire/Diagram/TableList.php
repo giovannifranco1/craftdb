@@ -4,7 +4,6 @@ namespace App\Livewire\Diagram;
 
 use App\Models\Diagram;
 use Illuminate\Database\Eloquent\Collection;
-use Jantinnerezo\LivewireAlert\Facades\LivewireAlert;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Lazy;
 use Livewire\Attributes\On;
@@ -44,6 +43,25 @@ class TableList extends Component
         $this->dispatch('alert', message: "Table $count added successfully.");
     }
 
+    #[On('save-tables-positions')]
+    public function saveTablesPositions($diagramId, $tables): void
+    {
+        if ($this->diagram->id != $diagramId) {
+            return;
+        }
+
+        // Atualiza as posições de cada tabela
+        foreach ($tables as $tableData) {
+            $this->diagram->tables()
+                ->where('id', $tableData['id'])
+                ->update([
+                    'x' => (int) $tableData['x'],
+                    'y' => (int) $tableData['y'],
+                ]);
+        }
+
+        $this->dispatch('alert', message: 'Posições das tabelas salvas com sucesso!');
+    }
 
     public function placeholder()
     {

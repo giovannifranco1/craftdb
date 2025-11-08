@@ -7,7 +7,7 @@
     <body>
         <x-alert/>
 
-        <div x-data="runCanvas()" class="container">
+        <div diagram-id="{{ $diagram->id }}" x-data="runCanvas()" class="container">
 
             <canvas id="canvas"></canvas>
 
