@@ -94,6 +94,5 @@
         @livewire('diagram.diagram-create')
         @filepondScripts
         @fluxScripts
-        @vite(['resources/css/filepond.css'])
     </body>
 </html>

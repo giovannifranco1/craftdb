@@ -1,8 +1,10 @@
 import collapse from "@alpinejs/collapse";
 import anchor from "@alpinejs/anchor";
 import '@preline/tabs';
+import '@preline/dropdown';
+import '@floating-ui/dom';
+
 import.meta.glob(["../images/**"]);
-import Swal from 'sweetalert2'
 
 document.addEventListener(
     "alpine:init",
@@ -18,5 +20,3 @@ document.addEventListener(
     },
     { once: true },
 );
-
-window.Swal = Swal
