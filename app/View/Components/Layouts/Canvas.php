@@ -10,6 +10,7 @@ use Illuminate\View\Component;
 class Canvas extends Component
 {
     public $relationships;
+    public bool $isInitialLoad;
     /**
      * Create a new component instance.
      */
@@ -18,6 +19,13 @@ class Canvas extends Component
     )
     {
         $this->relationships = $this->diagram->relationships()->get();
+
+        $this->isInitialLoad = $diagram->is_initial_load;
+
+        if ($this->isInitialLoad) {
+            $diagram->is_initial_load = false;
+            $diagram->save();
+        }
     }
 
     /**

@@ -99,6 +99,12 @@ class DiagramCreate extends Component
         $this->importForm->cancel();
     }
 
+    public function cancelCreate(): void
+    {
+        $this->resetUIState();
+        $this->modal('diagram-create')->close();
+    }
+
     public function confirmImport(): void
     {
         $this->importForm->confirm();

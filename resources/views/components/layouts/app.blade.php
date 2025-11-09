@@ -4,7 +4,7 @@
             <aside class="p-0">
                 @isset($aside) {{ $aside }}
                 @elseif(request()->is('settings/*'))
-                @else <x-ui.menu />
+                @else <x-ui.menu/>
                 @endisset
             </aside>
 

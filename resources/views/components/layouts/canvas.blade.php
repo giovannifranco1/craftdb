@@ -7,7 +7,7 @@
     <body>
         <x-ui.alert/>
 
-        <div diagram-id="{{ $diagram->id }}" x-data="runCanvas()" class="container hs-dropdown [--trigger:contextmenu]">
+        <div x-data="runCanvas(25, @js($isInitialLoad))" diagram-id="{{ $diagram->id }}" class="container hs-dropdown [--trigger:contextmenu]">
             <x-ui.context-menu/>
             <x-ui.canvas.loading/>
             <x-ui.canvas.controls/>

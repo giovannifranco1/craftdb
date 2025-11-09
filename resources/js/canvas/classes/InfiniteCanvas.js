@@ -91,6 +91,33 @@ export class InfiniteCanvas {
         return this.#scale;
     }
 
+    getOffsetX() {
+        return this.#offsetX;
+    }
+
+    getOffsetY() {
+        return this.#offsetY;
+    }
+
+    clientToVirtual(clientX, clientY) {
+        if (!this.canvas) {
+            return { x: 0, y: 0 };
+        }
+
+        const rect = this.canvas.getBoundingClientRect();
+        const xRelative = clientX - rect.left;
+        const yRelative = clientY - rect.top;
+
+        const scale = this.getScale();
+        const offsetX = this.getOffsetX();
+        const offsetY = this.getOffsetY();
+
+        const virtualX = xRelative / scale + offsetX;
+        const virtualY = yRelative / scale + offsetY;
+
+        return { x: virtualX, y: virtualY };
+    }
+
     getTransformString() {
         const x = -this.#offsetX * this.#scale;
         const y = -this.#offsetY * this.#scale;

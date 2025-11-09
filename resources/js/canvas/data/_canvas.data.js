@@ -1,20 +1,35 @@
 import { InfiniteCanvas } from '../classes/InfiniteCanvas.js'
+import confetti from 'canvas-confetti'; 'canvas-confetti';
 
 // @Alpine.js data
-export default (cellSize = 25) => ({
+export default (cellSize = 25, isInitialLoad = false) => ({
     canvas: new InfiniteCanvas(cellSize),
     zoomPercent: 75,
+    contextMenuPosition: { x: 100, y: 100 },
     init() {
-        const handleKeyDown = (e) => this.handleMetaS(e);
-        window.addEventListener('keydown', handleKeyDown);
+        window.addEventListener('keydown', (e) => this.handleMetaS(e));
+        this.$el.addEventListener('save-positions', () => this.saveTablesPositions());
 
-        this.$el.addEventListener('save-positions', () => {
-            this.saveTablesPositions();
-        });
+        // Captura a posição do clique direito no canvas
+        const canvasElement = document.getElementById('canvas');
+        if (canvasElement) {
+            canvasElement.addEventListener('contextmenu', (e) => {
+                const virtualPos = Alpine.raw(this.canvas).clientToVirtual(e.clientX, e.clientY);
+                this.contextMenuPosition = virtualPos;
+            });
+        }
+
+        if (isInitialLoad) {
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.6 }
+            });
+        }
+
     },
 
     saveTablesPositions() {
-        // Coleta todas as tabelas com suas coordenadas
         const tables = [];
         const tableElements = this.$el.querySelectorAll('[table-box][table-id]');
 

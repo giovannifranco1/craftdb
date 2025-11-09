@@ -3,7 +3,7 @@
     <div class="p-1 space-y-0.5">
         <button
             type="button"
-            @click="$dispatch('add-table')"
+            @click="Livewire.dispatch('add-table', { x: Math.round(contextMenuPosition.x), y: Math.round(contextMenuPosition.y) })"
             class="w-full flex items-center gap-x-3 py-1.5 px-3 rounded-lg text-[13px] text-gray-800 hover:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none focus:outline-hidden focus:bg-gray-100 dark:text-neutral-300 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700">
             <flux:icon.sheet class="size-4"/>
             <span>Adicionar Tabela</span>

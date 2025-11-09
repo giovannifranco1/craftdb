@@ -30,12 +30,12 @@ class TableList extends Component
     }
 
     #[On('add-table')]
-    public function addTable(): void
+    public function addTable(int $x = 100, int $y = 100): void
     {
         $this->diagram->tables()->create([
             'name' => 'teste',
-            'x' => 0,
-            'y' => 0,
+            'x' => $x,
+            'y' => $y,
         ]);
 
         $count = $this->diagram->tables()->count();

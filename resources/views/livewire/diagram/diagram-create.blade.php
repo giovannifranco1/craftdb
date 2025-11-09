@@ -1,4 +1,4 @@
-<flux:modal :dismissible="false" :closable="false" name="diagram-create" class="md:w-150 min-h-[65%]">
+<flux:modal      name="diagram-create" class="md:w-150 min-h-[65%]">
     <div class="space-y-6 flex flex-col">
 
         <!-- Header -->
@@ -35,7 +35,7 @@
 
         <!-- Footer actions -->
         <div class="flex items-center gap-2">
-            <flux:button class="cursor-pointer" variant="ghost" icon="x-mark" @click="$flux.modal('diagram-create').close()">{{ __('Cancel') }}</flux:button>
+            <flux:button wire:click="cancelCreate()" class="cursor-pointer" variant="ghost" icon="x-mark">{{ __('Cancel') }}</flux:button>
 
             <flux:spacer />
 
