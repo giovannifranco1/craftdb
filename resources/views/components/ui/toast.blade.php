@@ -1,4 +1,4 @@
-<div class="absolute z-50 max-w-sm w-full top-12 end-12">
+<div class="absolute z-50 max-w-lg w-full top-12 end-12">
     <div
         x-data="{ messageToast: null, descriptionToast: null }"
         x-show="messageToast"
@@ -11,27 +11,27 @@
         x-init="() => {
             @if(session('message'))
                 messageToast = @js(session('message'));
-                setTimeout(() => { messageToast = null; }, 3000);
+                setTimeout(() => { messageToast = null; }, 5000);
             @endif
 
             Livewire.on('alert', ({ message, description }) => {
                 messageToast = message;
                 description = description;
-                setTimeout(() => { messageToast = null; }, 3000);
+                setTimeout(() => { messageToast = null; }, 5000);
             })
         }"
         style="display: none"
     >
-        <flux:callout>
+        <flux:callout inline>
             <x-slot name="icon">
                 <flux:icon.check-circle variant="solid" class="size-5" color="green"/>
             </x-slot>
 
             <flux:callout.heading x-text="messageToast"></flux:callout.heading>
 
-            <flux:callout.text x-show="descriptionToast">
-                <p>We've improved our notification system to deliver alerts faster and more reliably.</p>
-            </flux:callout.text>
+            <x-slot name="actions">
+                <flux:button @click="messageToast = null" class="border-0 p-0 shadow-none" icon="x-mark"/>
+            </x-slot>
         </flux:callout>
     </div>
 </div>
