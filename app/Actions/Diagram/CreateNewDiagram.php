@@ -10,7 +10,7 @@ use Illuminate\Http\UploadedFile;
 /**
  * @phpstan-type DTODiagram array{
  *     name: string,
- *     style: 'basic'|'colorful',
+ *     style: 'neutral'|'colorful',
  *     database: string,
  *     description?: string|null,
  *     file?: array<UploadedFile>,
@@ -40,6 +40,7 @@ class CreateNewDiagram
         return Diagram::create([
             'name'        => $data['name'],
             'description' => data_get($data, 'description'),
+            'style'       => data_get($data, 'style'),
             'team_id'     => Team::currentTeam()->getKey(),
             'slug'        => $slug,
         ]);

@@ -30,7 +30,7 @@ class DiagramCreate extends Component
     #[Validate('nullable|string|max:255')]
     public ?string $description = '';
 
-    #[Validate('required|in:colorful,basic')]
+    #[Validate('required|in:colorful,neutral')]
     public ?string $style = null;
 
     #[Validate('required|in:mysql')]

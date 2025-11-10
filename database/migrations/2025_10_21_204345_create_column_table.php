@@ -16,9 +16,9 @@ return new class extends Migration
             $table->foreignId('table_id')->constrained('table', indexName: 'table_id_foreign');
             $table->string('name');
             $table->string('type');
-            $table->boolean('is_primary');
-            $table->boolean('is_foreign');
-            $table->boolean('is_nullable');
+            $table->boolean('is_primary')->default(false);
+            $table->boolean('is_foreign')->default(false);
+            $table->boolean('is_nullable')->default(false);
             $table->integer('order');
             $table->integer('length')->nullable();
             $table->string('default_value')->nullable();

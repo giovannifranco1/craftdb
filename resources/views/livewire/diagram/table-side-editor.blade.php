@@ -74,16 +74,22 @@
                             <div class="border-b border-gray-200 dark:border-neutral-700">
                                 <nav class="flex gap-x-1" aria-label="Tabs" role="tablist" aria-orientation="horizontal">
                                     <button type="button" class="hs-tab-active:font-semibold hs-tab-active:border-[var(--table-base-bg)] hs-tab-active:text-[var(--table-base-bg)] py-4 px-1 inline-flex items-center gap-x-2 border-b-2 border-transparent text-sm whitespace-nowrap text-gray-500 hover:text-[var(--table-base-bg)] focus:outline-hidden focus:text-[var(--table-base-bg)] disabled:opacity-50 disabled:pointer-events-none dark:text-neutral-400 dark:hover:text-blue-500 active" id="tabs-with-badges-item-1" aria-selected="true" data-hs-tab="#tab-columns" aria-controls="tab-columns" role="tab">
-                                        Columns<span class="hs-tab-active:bg-[var(--table-base-bg)]/20 hs-tab-active:text-[var(--table-base-bg)] dark:hs-tab-active:bg-blue-800 dark:hs-tab-active:text-white ms-1 py-0.5 px-1.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-neutral-700 dark:text-neutral-300">15</span>
+                                        Columns<span class="hs-tab-active:bg-[var(--table-base-bg)]/20 hs-tab-active:text-[var(--table-base-bg)] dark:hs-tab-active:bg-blue-800 dark:hs-tab-active:text-white ms-1 py-0.5 px-1.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-neutral-700 dark:text-neutral-300">{{ $this->getColumns()->count() }}</span>
                                     </button>
                                     <button type="button" class="hs-tab-active:font-semibold hs-tab-active:border-[var(--table-base-bg)] hs-tab-active:text-[var(--table-base-bg)] py-4 px-1 inline-flex items-center gap-x-2 border-b-2 border-transparent text-sm whitespace-nowrap text-gray-500 hover:text-[var(--table-base-bg)] focus:outline-hidden focus:text-[var(--table-base-bg)] disabled:opacity-50 disabled:pointer-events-none dark:text-neutral-400 dark:hover:text-blue-500" id="tabs-with-badges-item-2" aria-selected="false" data-hs-tab="#tab-foreign-keys" aria-controls="tab-foreign-keys" role="tab">
-                                        Foreign Keys<span class="hs-tab-active:bg-[var(--table-base-bg)]/20 hs-tab-active:text-[var(--table-base-bg)] dark:hs-tab-active:bg-blue-800 dark:hs-tab-active:text-white ms-1 py-0.5 px-1.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-neutral-700 dark:text-neutral-300">4</span>
+                                        Foreign Keys<span class="hs-tab-active:bg-[var(--table-base-bg)]/20 hs-tab-active:text-[var(--table-base-bg)] dark:hs-tab-active:bg-blue-800 dark:hs-tab-active:text-white ms-1 py-0.5 px-1.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-neutral-700 dark:text-neutral-300">{{ $this->getForeignKeys()->count() }}</span>
                                     </button>
                                 </nav>
                             </div>
 
                             <div class="mt-3">
                                 <div id="tab-columns" role="tabpanel" aria-labelledby="tabs-with-badges-item-1">
+
+                                    <div class="mb-3 flex justify-end">
+                                        <flux:button icon="plus-circle" size="sm" wire:click="openCreateColumnModal" variant="primary">
+                                            Adicionar Coluna
+                                        </flux:button>
+                                    </div>
 
                                     <div class="space-y-1.5 overflow-y-scroll h-89.5">
                                         @forelse($this->getColumns() as $column)
@@ -95,9 +101,36 @@
                                                 ])
                                                 wire:click="selectColumn({{ $column->id }})"
                                             >
-                                                <div class="flex items-center gap-1.5 mb-1">
+                                                <div class="flex items-center gap-1.5 mb-1 flex-1">
                                                     {!! Helpers::getIconDiamondByTypeColumn($column) !!}
-                                                    <span class="text-xs font-medium text-gray-900 font-[Poppins]">{{ $column->name }}</span>
+                                                    @if($editingColumnId === $column->id)
+                                                        <div class="flex items-center gap-1 flex-1" @click.stop>
+                                                            <flux:input
+                                                                wire:model="editingColumnName"
+                                                                wire:keydown.enter="updateColumnName({{ $column->id }})"
+                                                                wire:keydown.escape="cancelEditingColumnName"
+                                                                class="text-[9pt] font-medium font-[Poppins]"
+                                                                style="all: unset; height: 10px;"
+                                                                autofocus
+                                                            />
+                                                            <flux:icon
+                                                                wire:click="updateColumnName({{ $column->id }})"
+                                                                name="check"
+                                                                class="size-3 block"
+                                                            />
+                                                            <flux:icon
+                                                                wire:click="cancelEditingColumnName"
+                                                                name="x-mark"
+                                                                class="size-3 block"
+                                                            />
+                                                        </div>
+                                                    @else
+                                                        <span
+                                                            class="text-xs font-medium text-gray-900 font-[Poppins] cursor-pointer hover:text-blue-600"
+                                                            wire:click.stop="startEditingColumnName({{ $column->id }})"
+                                                            title="Clique para editar o nome"
+                                                        >{{ $column->name }}</span>
+                                                    @endif
                                                 </div>
 
                                                 <div class="flex flex-wrap items-center gap-1">
@@ -193,16 +226,23 @@
 
                                                 <dt class="text-xs text-gray-500 mb-2 mt-4">Comment</dt>
 
-                                                <div class="grid gap-2 grid-cols-6 items-center">
-
+                                                <div class="grid gap-2 grid-cols-6 items-start">
                                                     <div class="col-span-5">
-                                                        <div class="rounded-md border border-gray-200 bg-gray-50 px-3 py-1 min-h-12 h-12 overflow-y-scroll">
-                                                            <p class="text-[11px] leading-5 text-gray-700">Rerum deserunt ea animi eveniet cumque ea eius.Rerum deserunt ea animi eveniet cumque ea eiusRerum deserunt ea animi eveniet cumque ea eiusRerum deserunt ea animi eveniet cumque ea eiusRerum deserunt ea animi eveniet cumque ea eiusRerum deserunt ea animi eveniet cumque ea eiusRerum deserunt ea animi eveniet cumque ea eius</p>
+                                                        <div class="rounded-md border border-gray-200 bg-gray-50 px-3 py-1 min-h-12 max-h-24 overflow-y-auto">
+                                                            <p class="text-[11px] leading-5 text-gray-700">{{ $selected->comment ?: '—' }}</p>
                                                         </div>
                                                     </div>
 
-                                                    <div class="flex col-auto justify-center">
-                                                        <flux:button size="sm" wire:click="clearSelection">Close</flux:button>
+                                                    <div class="flex col-auto flex-col gap-1 justify-start">
+                                                        <flux:button size="sm" wire:click="openEditColumnModal({{ $selected->id }})" variant="ghost" class="text-xs">
+                                                            <flux:icon.pencil class="size-3" />
+                                                        </flux:button>
+                                                        <flux:button size="sm" wire:click="deleteColumn" wire:confirm="Tem certeza que deseja deletar esta coluna?" variant="ghost" class="text-xs text-red-600 hover:text-red-700">
+                                                            <flux:icon.trash class="size-3" />
+                                                        </flux:button>
+                                                        <flux:button size="sm" wire:click="clearSelection" variant="ghost" class="text-xs">
+                                                            <flux:icon.x-mark class="size-3" />
+                                                        </flux:button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -247,4 +287,135 @@
             </div>
         </div>
     </div>
+{{--
+    <!-- Modal para criar nova coluna -->
+    <flux:modal name="create-column" class="md:w-[32rem]">
+        <div class="space-y-6 flex flex-col">
+            <!-- Header -->
+            <div class="space-y-3">
+                <flux:heading size="lg">
+                    Nova Coluna
+                </flux:heading>
+                <flux:text class="text-zinc-600 dark:text-zinc-400">
+                    Adicione uma nova coluna à tabela {{ ucfirst($table->name) }}
+                </flux:text>
+            </div>
+
+            <!-- Form -->
+            <form wire:submit="createColumn" class="space-y-4">
+                <flux:field>
+                    <flux:label badge="Required">Nome</flux:label>
+                    <flux:input wire:model="columnName" placeholder="e.g. email" />
+                    <flux:error name="columnName" />
+                </flux:field>
+
+                <flux:field>
+                    <flux:label badge="Required">Tipo</flux:label>
+                    <select wire:model="columnType" class="mt-1 block w-full py-2 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                        @foreach($this->getColumnTypes() as $key => $value)
+                            <option value="{{ $key }}">{{ $value }}</option>
+                        @endforeach
+                    </select>
+                    <flux:error name="columnType" />
+                </flux:field>
+
+                <flux:field>
+                    <flux:label>Comprimento</flux:label>
+                    <flux:input type="number" wire:model="columnLength" placeholder="e.g. 255" />
+                    <flux:error name="columnLength" />
+                </flux:field>
+
+                <flux:field>
+                    <flux:label>Valor Padrão</flux:label>
+                    <flux:input wire:model="columnDefaultValue" placeholder="e.g. NULL, 0, CURRENT_TIMESTAMP" />
+                    <flux:error name="columnDefaultValue" />
+                </flux:field>
+
+                <div class="space-y-2">
+                    <flux:checkbox wire:model="columnIsPrimary" label="Primary Key" />
+                    <flux:checkbox wire:model="columnIsForeign" label="Foreign Key" />
+                    <flux:checkbox wire:model="columnIsNullable" label="Nullable" />
+                </div>
+
+                <flux:field>
+                    <flux:label>Comentário</flux:label>
+                    <textarea wire:model="columnComment" rows="3" placeholder="Descrição da coluna..." class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"></textarea>
+                    <flux:error name="columnComment" />
+                </flux:field>
+
+                <!-- Footer actions -->
+                <div class="flex items-center gap-2 pt-2">
+                    <flux:button type="button" wire:click="cancelForm" variant="ghost" icon="x-mark">Cancelar</flux:button>
+                    <flux:spacer />
+                    <flux:button type="submit" variant="primary" icon="check">Criar Coluna</flux:button>
+                </div>
+            </form>
+        </div>
+    </flux:modal>
+
+    <!-- Modal para editar coluna -->
+    <flux:modal name="edit-column" class="md:w-[32rem]">
+        <div class="space-y-6 flex flex-col">
+            <!-- Header -->
+            <div class="space-y-3">
+                <flux:heading size="lg">
+                    Editar Coluna
+                </flux:heading>
+                <flux:text class="text-zinc-600 dark:text-zinc-400">
+                    Edite os detalhes da coluna
+                </flux:text>
+            </div>
+
+            <!-- Form -->
+            <form wire:submit="updateColumn" class="space-y-4">
+                <flux:field>
+                    <flux:label badge="Required">Nome</flux:label>
+                    <flux:input wire:model="columnName" placeholder="e.g. email" />
+                    <flux:error name="columnName" />
+                </flux:field>
+
+                <flux:field>
+                    <flux:label badge="Required">Tipo</flux:label>
+                    <select wire:model="columnType" class="mt-1 block w-full py-2 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                        @foreach($this->getColumnTypes() as $key => $value)
+                            <option value="{{ $key }}">{{ $value }}</option>
+                        @endforeach
+                    </select>
+                    <flux:error name="columnType" />
+                </flux:field>
+
+                <flux:field>
+                    <flux:label>Comprimento</flux:label>
+                    <flux:input type="number" wire:model="columnLength" placeholder="e.g. 255" />
+                    <flux:error name="columnLength" />
+                </flux:field>
+
+                <flux:field>
+                    <flux:label>Valor Padrão</flux:label>
+                    <flux:input wire:model="columnDefaultValue" placeholder="e.g. NULL, 0, CURRENT_TIMESTAMP" />
+                    <flux:error name="columnDefaultValue" />
+                </flux:field>
+
+                <div class="space-y-2">
+                    <flux:checkbox wire:model="columnIsPrimary" label="Primary Key" />
+                    <flux:checkbox wire:model="columnIsForeign" label="Foreign Key" />
+                    <flux:checkbox wire:model="columnIsNullable" label="Nullable" />
+                </div>
+
+                <flux:field>
+                    <flux:label>Comentário</flux:label>
+                    <textarea wire:model="columnComment" rows="3" placeholder="Descrição da coluna..." class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"></textarea>
+                    <flux:error name="columnComment" />
+                </flux:field>
+
+                <!-- Footer actions -->
+                <div class="flex items-center gap-2 pt-2">
+                    <flux:button type="button" wire:click="cancelEditForm" variant="ghost" icon="x-mark">Cancelar</flux:button>
+                    <flux:spacer />
+                    <flux:button type="submit" variant="primary" icon="check">Salvar Alterações</flux:button>
+                </div>
+            </form>
+        </div>
+    </flux:modal> --}}
+
 </section>

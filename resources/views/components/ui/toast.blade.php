@@ -1,4 +1,4 @@
-<div class="absolute z-50 max-w-lg w-full top-12 end-12">
+<div class="absolute z-50 max-w-sm w-full top-12 end-12">
     <div
         x-data="{ messageToast: null, descriptionToast: null }"
         x-show="messageToast"
@@ -28,10 +28,6 @@
             </x-slot>
 
             <flux:callout.heading x-text="messageToast"></flux:callout.heading>
-
-            <x-slot name="actions">
-                <flux:button @click="messageToast = null" class="border-0 p-0 shadow-none" icon="x-mark"/>
-            </x-slot>
         </flux:callout>
     </div>
 </div>

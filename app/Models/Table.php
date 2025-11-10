@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\Relationship;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Table extends Model
 {
@@ -18,6 +19,11 @@ class Table extends Model
     public function columns(): HasMany
     {
         return $this->hasMany(Column::class, 'table_id');
+    }
+
+    public function diagram(): BelongsTo
+    {
+        return $this->belongsTo(Diagram::class, 'diagram_id');
     }
 
     public function scopeWithPrimaryCount($query)

@@ -14,6 +14,11 @@ class TableList extends Component
 {
     public Diagram $diagram;
 
+    protected $listeners = [
+        'table::color-saved' => '$refresh',
+        'table::removed'     => '$refresh'
+    ];
+
     public function mount(Diagram $diagram)
     {
         $this->diagram = $diagram;
@@ -26,6 +31,7 @@ class TableList extends Component
             ->withForeignCount()
             ->withPrimaryCount()
             ->withCount('columns')
+            ->with(['diagram'])
             ->get();
     }
 

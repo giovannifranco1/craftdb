@@ -26,6 +26,6 @@
             <x-table.css-table :table="$table" />
         </div>
 
-        <livewire:diagram.table :$table :key="$key" />
+        <livewire:diagram.table :$table :key="$table->id" />
     @endforeach
 </div>

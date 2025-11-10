@@ -23,4 +23,12 @@ class Diagram extends Model
             ->whereHas('fromTable', fn ($q) => $q->where('diagram_id', $this->id))
             ->orWhereHas('toTable', fn ($q) => $q->where('diagram_id', $this->id));
     }
+
+    public function getColors(): array
+    {
+        return match($this->style) {
+            'colorful' => config('color.colorful'),
+            'neutral'  => config('color.neutral')
+        };
+    }
 }

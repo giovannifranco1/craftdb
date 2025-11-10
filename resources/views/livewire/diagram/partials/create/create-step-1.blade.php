@@ -31,21 +31,21 @@
                 </span>
             </label>
 
-            <label class="relative border rounded-xl p-6 cursor-pointer hover:border-primary-300 hover:bg-primary-50/60 transition flex flex-col @if($style === 'basic') border-primary-400 bg-primary-50 @else border-zinc-300 bg-white @endif">
+            <label class="relative border rounded-xl p-6 cursor-pointer hover:border-primary-300 hover:bg-primary-50/60 transition flex flex-col @if($style === 'neutral') border-primary-400 bg-primary-50 @else border-zinc-300 bg-white @endif">
                 <input type="radio"
                     class="sr-only"
                     wire:model.live="style"
-                    value="basic">
+                    value="neutral">
                 <div class="flex items-center gap-3 mb-1">
                     <flux:icon.swatch variant="solid" class="size-4" />
-                    <span class="text-sm font-semibold">{{ __('Basic color') }}</span>
+                    <span class="text-sm font-semibold">{{ __('Neutral') }}</span>
                 </div>
                 <p class="text-sm text-zinc-600 leading-relaxed min-h-[55px] max-h-[55px]">
                     {{ __('Displays the diagram with a single neutral color for a cleaner, distraction-free look.') }}
                 </p>
 
                 <span class="absolute top-2 right-2">
-                    @if ($style === 'basic')
+                    @if ($style === 'neutral')
                         <flux:icon.check-circle variant="solid" class="size-5" />
                     @endif
                 </span>

@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('team_id')->index('team_id_foreign');
             $table->string('name');
             $table->string('slug');
+            $table->string('style');
             $table->boolean('is_initial_load')->default(true);
             $table->text('description')->nullable();
 

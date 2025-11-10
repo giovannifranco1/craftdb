@@ -23,6 +23,7 @@ class DiagramFactory extends Factory
         return [
             'team_id' => Team::factory(),
             'name' => fake()->words(2, true),
+            'style' => fake()->randomElement(['colorful', 'neutral']),
             'slug' => $slug,
             'description' => fake()->optional(0.7)->sentence(),
         ];
