@@ -8,6 +8,25 @@ use Illuminate\Support\Facades\Config;
 use Jurager\Teams\Support\Facades\Teams as TeamsFacade;
 use Exception;
 
+/**
+ * @property int $id
+ * @property int $team_id
+ * @property int $user_id
+ * @property int $role_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Team\Role $role
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Membership newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Membership newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Membership query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Membership whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Membership whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Membership whereRoleId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Membership whereTeamId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Membership whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Membership whereUserId($value)
+ * @mixin \Eloquent
+ */
 class Membership extends Pivot
 {
     /**

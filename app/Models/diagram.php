@@ -2,33 +2,80 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Arr;
 
+/**
+ * @property int $id
+ * @property int $team_id
+ * @property string $name
+ * @property string $slug
+ * @property string $style
+ * @property int $is_initial_load
+ * @property string|null $description
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Table> $tables
+ * @property-read int|null $tables_count
+ * @method static \Database\Factories\DiagramFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Diagram newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Diagram newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Diagram query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Diagram whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Diagram whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Diagram whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Diagram whereIsInitialLoad($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Diagram whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Diagram whereSlug($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Diagram whereStyle($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Diagram whereTeamId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Diagram whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
 class Diagram extends Model
 {
+    /** @use HasFactory<\Database\Factories\DiagramFactory> */
     use HasFactory;
 
     protected $table = 'diagram';
 
+    /**
+     * @return HasMany<\App\Models\Table, $this>
+     */
     public function tables(): HasMany
     {
         return $this->hasMany(Table::class, 'diagram_id');
     }
 
+    /**
+     * @return Builder<Relationship>
+     */
     public function relationships()
     {
         return Relationship::query()
-            ->whereHas('fromTable', fn ($q) => $q->where('diagram_id', $this->id))
-            ->orWhereHas('toTable', fn ($q) => $q->where('diagram_id', $this->id));
+            ->whereHas('fromTable', fn($q) => $q->where('diagram_id', $this->id))
+            ->orWhereHas('toTable', fn($q) => $q->where('diagram_id', $this->id));
     }
 
+    /**
+     * @return list<string>
+     */
     public function getColors(): array
     {
-        return match($this->style) {
+        $colors = match ($this->style) {
             'colorful' => config('color.colorful'),
-            'neutral'  => config('color.neutral')
+            'neutral'  => config('color.neutral'),
+            default    => [],
         };
+
+        $colors = Arr::wrap($colors);
+
+        return array_values(array_filter(
+            $colors,
+            static fn($color): bool => is_string($color)
+        ));
     }
 }
