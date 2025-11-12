@@ -125,7 +125,7 @@ export class InfiniteCanvas {
     }
 
     #dispatchTransformChanged() {
-        const event = new CustomEvent('canvas-transform', {
+        const event = new CustomEvent('canvas::transform', {
             detail: {
                 scale: this.getScale(),
                 transform: this.getTransformString(), // tipo "translate(x, y) scale(s)"

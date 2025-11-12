@@ -1,4 +1,4 @@
-<flux:modal      name="diagram-create" class="md:w-150 min-h-[65%]">
+<flux:modal :closable="false" name="diagram-create" class="md:w-150 min-h-[65%]">
     <div class="space-y-6 flex flex-col">
 
         <!-- Header -->

@@ -12,12 +12,7 @@ export default (relationships) => ({
     init() {
         this.gridSize = Alpine.raw(this.canvas).cellSize;
         this.linesLayer = this.$el.querySelector('#lines-layer'),
-
-        // Inicializa o transform do <g> para manter sync com o canvas
         this.linesLayer.setAttribute('transform', Alpine.raw(this.canvas).getTransformString());
-
-        // Aguarda o DOM estar completamente renderizado
-        requestAnimationFrame(() => {this.compute()});
 
         window.addEventListener('canvas-zoom', () => {
             // Aplica o mesmo transform do canvas ao <g>
@@ -26,20 +21,19 @@ export default (relationships) => ({
             this.linesLayer.setAttribute('transform', transform);
         });
 
-        window.addEventListener('canvas-transform', (e) => this.linesLayer.setAttribute('transform', e.detail.transform));
-        window.addEventListener('box-move', () => this.debouncedCompute());
-        window.addEventListener('tables-inicializeted', () => this.debouncedCompute());
-        window.addEventListener('table-expanded', () => this.compute());
-        window.addEventListener('resize', () => this.compute());
-        window.addEventListener('table-side-editor.open', (e) => {
-            // Aplica highlight IMEDIATAMENTE quando clica na tabela
-            const tableId = e.detail?.table?.id || e.detail?.tableId;
-            if (tableId) {
-                this.highlightTableConnections(tableId);
+        window.addEventListener('canvas::transform', (e) => this.linesLayer.setAttribute('transform', e.detail.transform));
+        window.addEventListener('table::move', () => this.debouncedCompute());
+        window.addEventListener('table::expanded', () => this.compute());
+        window.addEventListener('table-side-editor::open', e => this.highlightTableConnections(e.detail?.table || e.detail?.tableId));
+        window.addEventListener('table-side-editor::closed', () => this.clearHighlight());
+        window.addEventListener('relationships::fresh', (event) => this.relationships = event.detail.relationships);
+        window.addEventListener('tables-list::inicializeted', () => this.debouncedCompute());
+
+        Livewire.hook('morphed',  ({ component }) => {
+            if (component?.name === 'diagram.table') {
+                this.debouncedCompute();
             }
         });
-
-        window.addEventListener('table-side-editor-closed', () => this.clearHighlight());
     },
     snapToGrid(coord) {
         return Math.round(coord / this.gridSize) * this.gridSize;
@@ -93,7 +87,7 @@ export default (relationships) => ({
             this.connections.push(connection);
         });
 
-        console.log('Total connections:', this.connections.length);
+        console.log('✅ Total connections:', this.connections.length);
 
         this.renderSvg();
     },

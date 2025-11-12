@@ -39,4 +39,15 @@ class Helpers
             </div>
         blade);
     }
+
+    public static function getRandomColor(string $style): string
+    {
+        $colors = match($style) {
+            'neutral' => config('color.neutral', []),
+            'colorful' => config('color.colorful', []),
+            default => [],
+        };
+
+        return $colors[array_rand($colors)];
+    }
 }

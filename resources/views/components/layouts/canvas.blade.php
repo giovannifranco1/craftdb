@@ -5,9 +5,11 @@
     </head>
 
     <body>
+        @persist('toast')
         <x-ui.toast/>
+        @endpersist
 
-        <div x-data="runCanvas(25, @js($isInitialLoad))" diagram-id="{{ $diagram->id }}" class="container hs-dropdown [--trigger:contextmenu]">
+        <div x-ref="canvasRoot" x-data="runCanvas(25, @js($isInitialLoad))" diagram-id="{{ $diagram->id }}" class="container hs-dropdown [--trigger:contextmenu]">
             <x-ui.context-menu/>
             <x-ui.canvas.loading/>
             <x-ui.canvas.controls/>

@@ -54,7 +54,7 @@ class CreateNewDiagram
         $validator = validator()->make($data, [
             'name'        => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:255'],
-            'style'       => ['required', 'in:basic,colorful'],
+            'style'       => ['required', 'in:neutral,colorful'],
             'database'    => ['required', 'in:mysql,postgresql,sqlite'],
         ]);
 

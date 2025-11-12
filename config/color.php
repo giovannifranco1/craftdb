@@ -6,12 +6,12 @@
 return [
 
     'neutral' => [
-        '#6B7280', // Slate Gray - neutro e suave
-        '#9CA3AF', // Cool Gray - elegante e discreto
-        '#A8A29E', // Warm Gray - acolhedor e neutro
-        '#94A3B8', // Blue Gray - suave e profissional
-        '#B8B5B2', // Stone Gray - neutro e confortável
-        '#8B8B8B', // Classic Gray - atemporal e elegante
+        '#7C7C7C', // Medium Gray - neutro e vibrante
+        '#8B7D6B', // Warm Beige - acolhedor e vivo
+        '#6B8E9F', // Blue Gray - suave mas com presença
+        '#9A8B7A', // Taupe - elegante e quente
+        '#7A8B8B', // Teal Gray - refrescante e neutro
+        '#A68B7A', // Blush Gray - suave e acolhedor
     ],
 
     'colorful' => [

@@ -26,8 +26,8 @@ export default (x, y) => ({
         this.minHeight = 13 * this.getGridSize();
 
         this.$el.addEventListener('mousedown', (e) => this.startDrag(e));
-        document.addEventListener('mousemove', (e) => this.drag(e));
-        document.addEventListener('mouseup', (e) => this.endDrag(e));
+        this.$refs.canvasRoot.addEventListener('mousemove', (e) => this.drag(e));
+        this.$refs.canvasRoot.addEventListener('mouseup', (e) => this.endDrag(e));
     },
 
     getScale() {
@@ -82,12 +82,12 @@ export default (x, y) => ({
         this.$el.style.left = '0px';
         this.$el.style.top = '0px';
         this.$el.style.transform = `translate3d(${this.x}px, ${this.y}px, 0)`;
-        this.$el.dispatchEvent(new CustomEvent('box-move', { bubbles: true }));
+        this.$dispatch('table::move');
     },
     endDrag() {
         if (!this.isDragging) return;
         this.isDragging = false;
-        this.$el.dispatchEvent(new CustomEvent('box-move', { bubbles: true }));
+        this.$dispatch('table::move');
     },
     toggleExpanded(element) {
         this.expanded = !this.expanded;
@@ -95,9 +95,7 @@ export default (x, y) => ({
 
         if (tableEl) tableEl.toggleAttribute('is-collapsed', !this.expanded);
 
-        setTimeout(() => {
-            this.$el.dispatchEvent(new CustomEvent('box-move', { bubbles: true }));
-        }, 100);
+        setTimeout(() => {this.$dispatch('table::expanded')}, 100);
     }
     // ---- RESIZE ------
 });

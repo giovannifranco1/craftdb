@@ -33,6 +33,7 @@ use Illuminate\Support\Arr;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Diagram whereStyle($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Diagram whereTeamId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Diagram whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Diagram findBySlug($value)
  * @mixin \Eloquent
  */
 class Diagram extends Model
@@ -77,5 +78,15 @@ class Diagram extends Model
             $colors,
             static fn($color): bool => is_string($color)
         ));
+    }
+
+    /**
+     * @param Builder<$this> $query
+     * @param string $slug
+     * @return Builder<$this>
+     */
+    public function scopefindBySlug(Builder $query, string $slug): Builder
+    {
+        return $query->where('slug', $slug);
     }
 }

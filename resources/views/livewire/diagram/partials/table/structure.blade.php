@@ -14,7 +14,7 @@
                     <td class="py-[2px] px-3">
                         <div class="flex items-center gap-2">
                             {!! Helpers::getIconDiamondByTypeColumn($column) !!}
-                            <span class="text-xs font-medium text-gray-900 font-[Poppins]">{{ $column->name }}</span>
+                            <span class="text-xs font-medium text-gray-900 font-[Comic_Relief]">{{ $column->name }}</span>
                         </div>
                         <!-- inline column resize handle at end of first td -->
                         <span class="absolute top-0 right-0 h-full w-1 cursor-col-resize z-10" @mousedown.stop="startColResize(0, $event)" @touchstart.stop="startColResize(0, $event)"></span>

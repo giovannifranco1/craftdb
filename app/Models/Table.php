@@ -91,6 +91,17 @@ class Table extends Model
     }
 
     /**
+     * @param Builder<$this> $query
+     * @return Builder<$this>
+     */
+    public function scopeFirstPrimaryColumn(Builder $query): Builder
+    {
+        return $query->with(['columns' => function ($q) {
+            $q->where('is_primary', true)->orderBy('order')->limit(1);
+        }]);
+    }
+
+    /**
      * @return Builder<\App\Models\Relationship>
      */
     public function relationships()

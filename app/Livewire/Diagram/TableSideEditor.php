@@ -55,14 +55,14 @@ final class TableSideEditor extends Component
         $this->table = $table;
     }
 
-    #[On('table-side-editor.open')]
+    #[On('table-side-editor::open')]
     public function open(Table $table): void
     {
         $this->table = $table;
         $this->open = true;
         $this->resetForms();
 
-        $this->js('$dispatch("table-side-editor-opened", { tableId: ' . $table->id . ' })');
+        $this->dispatch('table-side-editor::opened', tableId: $table->id);
     }
 
     public function openCreateColumnModal(): void
@@ -169,7 +169,7 @@ final class TableSideEditor extends Component
         ]);
 
         $this->cancelEditingColumnName();
-        $this->dispatch('column-saved');
+        $this->dispatch('table::column-saved');
     }
 
     public function cancelForm(): void
@@ -205,7 +205,7 @@ final class TableSideEditor extends Component
 
         $this->resetForms();
         $this->js('$flux.modal("create-column").close()');
-        $this->dispatch('column-saved');
+        $this->dispatch('table::column-saved');
     }
 
     public function updateColumn(): void

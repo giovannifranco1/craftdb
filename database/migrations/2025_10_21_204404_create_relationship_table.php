@@ -17,7 +17,8 @@ return new class extends Migration
             $table->foreignId('from_column_id')->constrained('column', indexName: 'column_id_foreign');
             $table->foreignId('to_table_id')->constrained('table', indexName: 'table_id_foreign');
             $table->foreignId('to_column_id')->constrained('column', indexName: 'column_id_foreign');
-            $table->enum('type', ['1:1', '1:n', 'n:n']);
+            $table->foreignId('parent_n_n_pivot_id')->nullable()->constrained('table',  indexName: 'parent_n_n_pivot_id_foreign');
+            $table->enum('type', ['1:1', '1:n', 'n:1']);
             $table->string('label')->nullable();
 
             /** timestamps */

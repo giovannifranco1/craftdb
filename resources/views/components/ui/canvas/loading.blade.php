@@ -1,4 +1,4 @@
-<div x-data="{loading: true}" x-show="loading" @tables-inicializeted.window="loading = false" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+<div x-data="{loading: true}" x-show="loading" @tables-list::inicializeted.window="loading = false" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
     <div class="flex flex-col items-center gap-6">
         <div class="relative w-16 h-16">
             <div class="absolute inset-0 rounded-full border-2 border-gray-300/30 border-t-white animate-spin"></div>

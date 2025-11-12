@@ -1,10 +1,16 @@
 <div
-    id="table-{{ $table->id }}" table-id="{{ $table->id }}" table-box x-data="runTable(@js($table->x), @js($table->y))"
+    x-data="runTable(@js($table->x), @js($table->y))"
     x-show="@js($table->id)"
+    id="table-{{ $table->id }}"
+    table-id="{{ $table->id }}"
+    table-box
     :style="`transform: translate3d(${x}px, ${y}px, 0); width: ${getSnappedWidth()}px; max-width: ${getSnappedWidth()}px`"
-    class="absolute h-full select-none z-50 rounded-xl shadow-lg">
+    class="absolute h-full select-none rounded-xl shadow-lg">
+
+    <x-ui.diagram.table.dropdown-menu :table="$table"/>
+
     <!-- Table -->
-    <div class="rounded-xl w-full h-full flex flex-col relative">
+    <div class="rounded-xl z-10 w-full h-full flex flex-col relative">
 
         <!-- Header -->
         @include('livewire.diagram.partials.table.header')

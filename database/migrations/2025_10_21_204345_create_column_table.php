@@ -19,7 +19,7 @@ return new class extends Migration
             $table->boolean('is_primary')->default(false);
             $table->boolean('is_foreign')->default(false);
             $table->boolean('is_nullable')->default(false);
-            $table->integer('order');
+            $table->double('order')->default(1.0);
             $table->integer('length')->nullable();
             $table->string('default_value')->nullable();
             $table->text('comment')->nullable();

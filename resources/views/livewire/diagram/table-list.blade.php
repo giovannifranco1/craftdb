@@ -1,4 +1,4 @@
-<div x-init="$dispatch('tables-inicializeted')" style="position: static; inset: auto; transform: none; contain: layout;">
+<div x-init="$dispatch('tables-list::inicializeted')" style="position: static; inset: auto; transform: none; contain: layout;">
     @php
         $maxPerRow = 5;
         $spacingX = 500;

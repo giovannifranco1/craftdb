@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\RelationshipType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $from_column_id
  * @property int $to_table_id
  * @property int $to_column_id
- * @property string $type
+ * @property RelationshipType $type
  * @property string|null $label
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -40,7 +41,13 @@ class Relationship extends Model
     /** @use HasFactory<\Database\Factories\RelationshipFactory> */
     use HasFactory;
 
+    /** @var string */
     protected $table = 'relationship';
+
+    /** @var array<string, string> */
+    protected $casts = [
+        'type' => RelationshipType::class,
+    ];
 
     /**
      * @return BelongsTo<Table, $this>

@@ -1,13 +1,12 @@
 <section
     x-data="{ open: @entangle('open') }"
-    x-init="$watch('open', value => value && $dispatch('table-side-editor-opened', { tableId: '{{ $table->id }}' }))"
-    @keydown.window.escape="$event.stopImmediatePropagation(); open = false; $dispatch('table-side-editor-closed')"
     x-show="open"
     x-cloak
+    x-ref="dialog"
     class="relative z-10"
     aria-labelledby="slide-over-title"
-    x-ref="dialog"
     aria-modal="true"
+    @keydown.window.escape="$event.stopImmediatePropagation(); open = false; $dispatch('table-side-editor::closed')"
 >
 
     <div
@@ -58,7 +57,7 @@
                                     <button
                                         type="button"
                                         class="rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                                        @click.stop="open = false; $dispatch('table-side-editor-closed')"
+                                        @click.stop="open = false; $dispatch('table-side-editor::closed')"
                                     >
                                         <span class="sr-only">Close panel</span>
                                         <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">

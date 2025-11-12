@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('diagram_id')->constrained('diagram', indexName: 'diagram_id_foreign');
             $table->string('name');
+            $table->boolean('is_pivot')->default(false);
             $table->integer('x')->comment('position x in diagram');
             $table->integer('y')->comment('position y in diagram');
             $table->string('color')->nullable();

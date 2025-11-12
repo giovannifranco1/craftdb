@@ -8,16 +8,23 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class Table extends Component
 {
     protected $listeners = [
-        'column-saved' => '$refresh'
+        'table::column-saved' => '$refresh',
     ];
 
     #[Locked]
     public TableModel $table;
+
+    public $relationship = [
+        'from_column_id' => '',
+        'to_column_id'   => '',
+        'type'           => '',
+    ];
 
     public function mount(TableModel $table): void
     {
@@ -27,14 +34,17 @@ class Table extends Component
     #[Computed]
     public function getColumns(): Collection
     {
-        return $this->table->columns()->orderByDesc('order')->get();
+        return $this->table
+            ->columns()
+            ->orderBy('order')
+            ->get();
     }
 
     public function setColor(string $color): void
     {
         $this->table->color = $color;
 
-        if(!in_array($color, array_merge(config('color.colorful'), config('color.neutral')))) {
+        if (!in_array($color, array_merge(config('color.colorful'), config('color.neutral')))) {
             return;
         };
 
@@ -48,30 +58,50 @@ class Table extends Component
     {
         $minOrder = $this->table->columns()->min('order');
         $newOrder = $minOrder === null
-            ? 100
-            : max(1, (int)($minOrder / 2));
+        ? 100
+        : max(1, (int) ($minOrder / 2));
 
         $baseColumn = [
             'name'  => 'new_column',
             'type'  => 'varchar',
-            'order' => $newOrder
+            'order' => $newOrder,
         ];
 
         $this->table->columns()->create($baseColumn);
+        $this->refreshTableWithCounts();
         $this->dispatch('table::column-added');
-        $this->dispatch('$refresh')->self();
+    }
+
+    #[On('table::relationship-added')]
+    public function refreshTableWithCounts(): void
+    {
+        $this->table = $this->table->fresh([
+            'diagram',
+            'columns' => function ($query) {
+                $query->orderBy('order');
+            }
+        ])->loadCount([
+            'columns',
+            'columns as primary_count' => function ($q) {
+                $q->where('is_primary', true);
+            },
+            'columns as foreign_count' => function ($q) {
+                $q->where('is_foreign', true);
+            },
+        ]);
     }
 
     public function remove(): void
     {
         DB::transaction(function () {
+            $this->table->relationships()->delete();
             $this->table->columns()->delete();
             $this->table->delete();
         });
 
-        $this->dispatch('$refresh')->self();
         $this->dispatch('alert', message: "Table Removed");
         $this->dispatch('table::removed');
+        $this->dispatch('relationships::fresh');
     }
 
     public function render(): View
