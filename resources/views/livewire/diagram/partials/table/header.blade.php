@@ -1,20 +1,41 @@
 <div
     x-data="{
         loading: false,
-        pressed: false,
+        mouseDownPos: null,
+        clickThreshold: 5, // pixels de tolerância para considerar como clique
 
-        eventMouseUp() {
-            if (this.pressed) {
+        handleMouseDown(e) {
+            this.mouseDownPos = {
+                x: e.clientX,
+                y: e.clientY
+            };
+        },
 
-                if (this.isInRelationshipEvent) {
-                    this.addRelationship();
-                    return;
-                }
+        eventMouseUp(e) {
+            if (!this.mouseDownPos) return;
 
-                this.loading = true;
-                this.pressed = false;
-                $dispatch('table-side-editor::open', { table: @js($table->id) })
+            // Calcula a distância percorrida desde o mousedown
+            const distance = Math.sqrt(
+                Math.pow(e.clientX - this.mouseDownPos.x, 2) +
+                Math.pow(e.clientY - this.mouseDownPos.y, 2)
+            );
+
+            // Se moveu muito, não é um clique - apenas reseta
+            if (distance > this.clickThreshold) {
+                this.mouseDownPos = null;
+                return;
             }
+
+            // É um clique válido
+            if (this.isInRelationshipEvent) {
+                this.addRelationship();
+                this.mouseDownPos = null;
+                return;
+            }
+
+            this.loading = true;
+            this.mouseDownPos = null;
+            $dispatch('table-side-editor::open', { table: @js($table->id) })
         },
 
         addRelationship() {
@@ -28,9 +49,9 @@
         }
 
     }"
-    @mousedown="pressed = true"
-    @mouseup="eventMouseUp()"
-    @mouseleave="pressed = false"
+    @mousedown="handleMouseDown($event)"
+    @mouseup="eventMouseUp($event)"
+    @mouseleave="mouseDownPos = null"
     @table-side-editor::opened.window="loading = false;"
     :style="`height: ${getGridSize()/2 + getGridSize()}px; cursor: ${loading ? 'wait' : ''};`"
     class="bg-blue-500 flex-none border-b border-gray-200 px-3 py-1 rounded-t-xl table-header-beauty"
@@ -44,12 +65,12 @@
                     class="inline-flex items-center p-2 justify-center"
                     x-on:mousedown.stop="
                         const tableBox = $el.closest('[table-box]');
-                        $dispatch('toggle-dropdown-menu', { tableBox: tableBox || $el });
-                        $dispatch('dropdown-menu-opened', { el: tableBox || $el });
+                        $dispatch('dropdown-menu::toggle', { tableBox: tableBox || $el });
+                        $dispatch('dropdown-menu::opened', { el: tableBox || $el });
                     "
                     x-on:keydown.escape="
                         const tableBox = $el.closest('[table-box]');
-                        $dispatch('toggle-dropdown-menu', { tableBox: tableBox || $el });
+                        $dispatch('dropdown-menu::toggle', { tableBox: tableBox || $el });
                     "
                 >
                     <flux:icon.sheet class="size-3"/>

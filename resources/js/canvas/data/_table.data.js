@@ -34,7 +34,7 @@ export default (x, y) => ({
         this.$el.addEventListener('mousedown', (e) => this.startDrag(e));
         this.$refs.canvasRoot.addEventListener('mousemove', (e) => this.drag(e));
         this.$refs.canvasRoot.addEventListener('mouseup', (e) => this.endDrag(e));
-        this.$root.addEventListener('dropdown-menu-opened', () => this.setHighestZIndex());
+        this.$root.addEventListener('dropdown-menu::opened', () => this.setHighestZIndex());
     },
 
     getScale() {

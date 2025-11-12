@@ -10,7 +10,7 @@
     @mousedown.outside.window="open = false"
     @keydown.escape.stop="open = false"
     @mousedown.stop
-    @dropdown-menu-opened.window="if (($event.detail?.el || null) !== ($el.closest('[table-box]') || $el)) open = false"
+    @dropdown-menu::opened.window="if (($event.detail?.el || null) !== ($el.closest('[table-box]') || $el)) open = false"
     class="absolute -top-15 p-3 -left-15 z-50 mt-2 min-w-30 w-50 justify-between flex bg-accent items-center text-white rounded-md"
 >
     @foreach($table->diagram->getColors() as $color)
