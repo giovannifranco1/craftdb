@@ -4,7 +4,7 @@
 
 <div
     x-data="{
-        open: true,
+        open: false,
 
         addRelationshipOneToOne() {
             this.isInRelationshipEvent = true;

@@ -1,7 +1,13 @@
+// Contador global para z-index (inicia em 1000)
+if (typeof window.tableZIndexCounter === 'undefined') {
+    window.tableZIndexCounter = 1000;
+}
+
 // @Alpine.js data
 export default (x, y) => ({
     x: x,
     y: y,
+    zIndex: null, // z-index será definido quando necessário
     isDragging: false,
     startX: 0,
     startY: 0,
@@ -28,6 +34,7 @@ export default (x, y) => ({
         this.$el.addEventListener('mousedown', (e) => this.startDrag(e));
         this.$refs.canvasRoot.addEventListener('mousemove', (e) => this.drag(e));
         this.$refs.canvasRoot.addEventListener('mouseup', (e) => this.endDrag(e));
+        this.$root.addEventListener('dropdown-menu-opened', () => this.setHighestZIndex());
     },
 
     getScale() {
@@ -46,6 +53,14 @@ export default (x, y) => ({
         const gridSize = this.getGridSize();
         return Math.round(coord / gridSize) * gridSize;
     },
+    setHighestZIndex() {
+        window.tableZIndexCounter += 1;
+        const newZIndex = window.tableZIndexCounter;
+        this.zIndex = newZIndex;
+        this.$el.style.zIndex = newZIndex;
+
+        return newZIndex;
+    },
     startDrag(e) {
         this.isDragging = true;
         this.startX = e.clientX;
@@ -53,6 +68,9 @@ export default (x, y) => ({
         this.initialX = this.x;
         this.initialY = this.y;
         this.$el.style.transition = 'none';
+
+        // Define z-index alto apenas uma vez quando o drag começa
+        this.setHighestZIndex();
     },
     drag(e) {
         if (!this.isDragging) return;
@@ -87,6 +105,7 @@ export default (x, y) => ({
     endDrag() {
         if (!this.isDragging) return;
         this.isDragging = false;
+        // Mantém o z-index alto (não reseta, para que a tabela permaneça sobre as outras)
         this.$dispatch('table::move');
     },
     toggleExpanded(element) {

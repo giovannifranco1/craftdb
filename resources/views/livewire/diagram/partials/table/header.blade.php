@@ -42,12 +42,12 @@
                     x-data
                     type="button"
                     class="inline-flex items-center p-2 justify-center"
-                    @mousedown.stop="
+                    x-on:mousedown.stop="
                         const tableBox = $el.closest('[table-box]');
                         $dispatch('toggle-dropdown-menu', { tableBox: tableBox || $el });
                         $dispatch('dropdown-menu-opened', { el: tableBox || $el });
                     "
-                    @keydown.escape="
+                    x-on:keydown.escape="
                         const tableBox = $el.closest('[table-box]');
                         $dispatch('toggle-dropdown-menu', { tableBox: tableBox || $el });
                     "

@@ -4,7 +4,7 @@
     id="table-{{ $table->id }}"
     table-id="{{ $table->id }}"
     table-box
-    :style="`transform: translate3d(${x}px, ${y}px, 0); width: ${getSnappedWidth()}px; max-width: ${getSnappedWidth()}px`"
+    :style="`transform: translate3d(${x}px, ${y}px, 0); width: ${getSnappedWidth()}px; max-width: ${getSnappedWidth()}px; ${zIndex ? `z-index: ${zIndex};` : ''}`"
     class="absolute h-full select-none rounded-xl shadow-lg">
 
     <x-ui.diagram.table.dropdown-menu :table="$table"/>
