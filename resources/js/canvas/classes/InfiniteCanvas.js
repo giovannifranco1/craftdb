@@ -11,7 +11,7 @@ export class InfiniteCanvas {
     #touchMode = "single"; // "single" | "double"
     #prevTouch = [null, null]; // [Touch | null, Touch | null]
 
-    constructor(cellSize = 40) {
+    constructor(cellSize = 40, [offsetX, offsetY] = []) {
         this.cellSize = cellSize;
 
         const canvas = document.getElementById("canvas");
@@ -25,6 +25,12 @@ export class InfiniteCanvas {
 
             if (context) {
                 this.context = context;
+                // Se offsetX e offsetY são números válidos, ajusta os offsets iniciais
+                if (typeof offsetX === 'number' && typeof offsetY === 'number') {
+                    this.#offsetX = offsetX / this.#scale;
+                    this.#offsetY = offsetY / this.#scale;
+                }
+
                 this.#draw();
             } else {
                 console.error(`<canvas> element is missing context 2d`);
@@ -85,6 +91,15 @@ export class InfiniteCanvas {
         this.#draw();
         this.#dispatchTransformChanged();
 
+    }
+
+    setPositionOffsets(offsetX, offsetY) {
+        if (typeof offsetX === 'number' && typeof offsetY === 'number') {
+            this.#offsetX = offsetX;
+            this.#offsetY = offsetY;
+        }
+
+        this.#draw();
     }
 
     getScale() {

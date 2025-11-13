@@ -3,6 +3,7 @@
 namespace App\Support;
 
 use App\Models\Column;
+use App\Models\Diagram;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Blade;
 
@@ -38,6 +39,30 @@ class Helpers
                 {$iconComponent}
             </div>
         blade);
+    }
+
+    /**
+     * @param Diagram $diagram
+     * @return array{int offsetX, offsetY}
+     */
+    public static function getPositionCanvasByDiagram(Diagram $diagram): array
+    {
+        $firstTable = $diagram->tables->first();
+
+        if (!$firstTable) {
+            return [0, 0];
+        }
+
+        $marginX = 700;
+        $marginY = 500;
+
+        $x = (int) ($firstTable->x ?? 0);
+        $y = (int) ($firstTable->y ?? 0);
+
+        $offsetX = $x - $marginX;
+        $offsetY = $y - $marginY;
+
+        return [$offsetX, $offsetY];
     }
 
     public static function getRandomColor(string $style): string

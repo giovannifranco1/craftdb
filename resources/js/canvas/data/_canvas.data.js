@@ -3,8 +3,8 @@ import cursorBase from '@images/icons/cursor.svg';
 import confetti from 'canvas-confetti'; 'canvas-confetti';
 
 // @Alpine.js data
-export default (cellSize = 25, isInitialLoad = false) => ({
-    canvas: new InfiniteCanvas(cellSize),
+export default (cellSize = 25, isInitialLoad = false, [offsetX, offsetY] = []) => ({
+    canvas: new InfiniteCanvas(cellSize, [offsetX, offsetY]),
     zoomPercent: 75,
     contextMenuPosition: { x: 100, y: 100 },
     isInRelationshipEvent: false,
