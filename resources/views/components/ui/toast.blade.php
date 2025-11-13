@@ -22,7 +22,7 @@
 
                 // Reseta o progresso
                 this.progress = 100;
-                const duration = 5000; // 5 segundos
+                const duration = 3000; // 5 segundos
                 const interval = 50; // atualiza a cada 50ms
                 const decrement = (100 / (duration / interval));
 
@@ -40,7 +40,7 @@
                 this.timeoutId = setTimeout(() => {
                     this.messageToast = null;
                     this.timeoutId = null;
-                }, 5000);
+                }, 3000);
             }
         }"
         x-show="messageToast"

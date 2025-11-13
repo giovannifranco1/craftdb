@@ -29,7 +29,7 @@ export default (cellSize = 25, isInitialLoad = false, [offsetX, offsetY] = []) =
 
         if (isInitialLoad) {
             confetti({
-                particleCount: 100,
+                particleCount: 200,
                 spread: 70,
                 origin: { y: 0.6 }
             });
