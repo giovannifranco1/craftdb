@@ -13,7 +13,7 @@ class Helpers
     {
         // Primary key (nullable) - blue background
         if ($column->is_primary) {
-            $iconComponent = '<flux:icon.circle-small variant="solid" class="size-2.5 text-amber-400"/>';
+            $iconComponent = '<flux:icon.key variant="solid" class="size-3 text-amber-400"/>';
         }
 
         // Foreign key (nullable) - red solid

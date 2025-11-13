@@ -98,8 +98,8 @@ export class InfiniteCanvas {
             this.#offsetX = offsetX;
             this.#offsetY = offsetY;
         }
-
         this.#draw();
+        this.#dispatchTransformChanged();
     }
 
     getScale() {
