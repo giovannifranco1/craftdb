@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Diagram;
 
+use App\Models\Column;
 use App\Models\Diagram;
 use App\Models\Table as TableModel;
 use Illuminate\Contracts\View\View;
@@ -75,6 +76,15 @@ class Table extends Component
         $this->dispatch('alert', message: "Color Updated");
         $this->refreshTableWithCounts();
         $this->dispatch('table::color-saved');
+    }
+
+    public function renameColumn(Column $column, $newName): void
+    {
+        $column->name = $newName;
+        $column->save();
+
+        $this->refreshTableWithCounts();
+        $this->dispatch('table::column-renamed');
     }
 
     public function addColum(): void
