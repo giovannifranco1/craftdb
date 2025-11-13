@@ -58,6 +58,8 @@ export default (relationships) => ({
         this.relationships.forEach(item => {
             const fromEl = document.getElementById(`column-${item.from_table_id}-${item.from_column_id}`);
             const toEl = document.getElementById(`column-${item.to_table_id}-${item.to_column_id}`);
+            const fromTableEl = document.getElementById(`table-${item.from_table_id}`);
+            const toTableEl = document.getElementById(`table-${item.to_table_id}`);
 
             if (!fromEl || !toEl) {
                 return;
@@ -79,7 +81,7 @@ export default (relationships) => ({
             const connection = {
                 id: `${item.id}`,
                 type: item.type,
-                path: this.createCurvedPath(p1, p2),
+                path: this.createCurvedPath(p1, p2, fromTableEl, toTableEl),
                 p1, p2, aSide, bSide,
                 fromId: `column-${item.from_table_id}-${item.from_column_id}`,
                 toId: `column-${item.to_table_id}-${item.to_column_id}`
@@ -144,8 +146,222 @@ export default (relationships) => ({
 
         return { aSide, bSide };
     },
-    createCurvedPath(p1, p2) {
-        // Calcula distâncias
+    getTableBoundsInSVG(tableEl, group) {
+        if (!tableEl || !group) return null;
+
+        // Obtém o bounding box da tabela em coordenadas de tela
+        const rect = tableEl.getBoundingClientRect();
+
+        // Converte os cantos do retângulo para coordenadas SVG
+        const pt = this.$el.createSVGPoint();
+        const gCTM = group.getScreenCTM();
+
+        // Canto superior esquerdo
+        pt.x = rect.left;
+        pt.y = rect.top;
+        const topLeft = pt.matrixTransform(gCTM.inverse());
+
+        // Canto inferior direito
+        pt.x = rect.right;
+        pt.y = rect.bottom;
+        const bottomRight = pt.matrixTransform(gCTM.inverse());
+
+        return {
+            xMin: topLeft.x,
+            xMax: bottomRight.x,
+            yMin: topLeft.y,
+            yMax: bottomRight.y
+        };
+    },
+    isPointInsideTable(point, tableBounds) {
+        if (!point || !tableBounds) return false;
+
+        return point.x >= tableBounds.xMin &&
+               point.x <= tableBounds.xMax &&
+               point.y >= tableBounds.yMin &&
+               point.y <= tableBounds.yMax;
+    },
+    isPointOnTableYAxis(point, tableBounds) {
+        if (!point || !tableBounds) return false;
+
+        // Verifica se o ponto está no eixo Y da tabela (Y entre yMin e yMax)
+        return point.y >= tableBounds.yMin && point.y <= tableBounds.yMax;
+    },
+    shouldAdjustPointForLateralExit(point, tableBounds) {
+        if (!point || !tableBounds) return false;
+
+        // REGRA SIMPLES: Se o ponto está no eixo Y da tabela (Y entre yMin e yMax), SEMPRE ajustar
+        // Não importa se o X está dentro ou fora - se está no eixo Y, força saída pela lateral
+        const isOnYAxis = point.y >= tableBounds.yMin && point.y <= tableBounds.yMax;
+
+        return isOnYAxis;
+    },
+    adjustPointToExitTable(point, tableBounds, exitSide, gridSize) {
+        if (!point || !tableBounds) return point;
+
+        // Mantém o Y original
+        let newX = point.x;
+        const offset = gridSize; // Offset para garantir que a linha saia completamente da tabela
+
+        if (exitSide === 'right') {
+            // Ajusta para sair pela direita (X maior)
+            newX = tableBounds.xMax + offset;
+        } else {
+            // Ajusta para sair pela esquerda (X menor)
+            newX = tableBounds.xMin - offset;
+        }
+
+        // Alinha ao grid
+        newX = Math.round(newX / gridSize) * gridSize;
+
+        return {
+            x: newX,
+            y: point.y
+        };
+    },
+    adjustPointForVerticalConnection(point, tableBounds, position, gridSize) {
+        if (!point || !tableBounds) return point;
+
+        const centerX = (tableBounds.xMin + tableBounds.xMax) / 2;
+        let newY = point.y;
+        const offset = gridSize;
+
+        if (position === 'bottom') {
+            newY = tableBounds.yMax + offset;
+        } else if (position === 'top') {
+            newY = tableBounds.yMin - offset;
+        }
+
+        return {
+            x: Math.round(centerX / gridSize) * gridSize,
+            y: Math.round(newY / gridSize) * gridSize
+        };
+    },
+    // Função para verificar se a linha está abaixo da tabela
+    isLineBelowTable(p1, p2, tableEl, ) {
+        if (!tableEl) return false;
+
+        const group = this.$el.querySelector('#lines-layer');
+        if (!group) return false;
+
+        // Obtém o bounding box da tabela em coordenadas de tela
+        const rect = tableEl.getBoundingClientRect();
+
+        // Converte os cantos do retângulo para coordenadas SVG
+        const pt = this.$el.createSVGPoint();
+        const gCTM = group.getScreenCTM();
+
+        // Canto superior esquerdo
+        pt.x = rect.left;
+        pt.y = rect.top;
+        const topLeft = pt.matrixTransform(gCTM.inverse());
+
+        // Canto inferior direito
+        pt.x = rect.right;
+        pt.y = rect.bottom;
+        const bottomRight = pt.matrixTransform(gCTM.inverse());
+
+        // Coordenadas da tabela no espaço SVG
+        const tableXMin = topLeft.x;
+        const tableXMax = bottomRight.x;
+        const tableYMin = topLeft.y;
+        const tableYMax = bottomRight.y;
+
+        // Verifica se a linha está abaixo no eixo Y
+        // (Y aumenta para baixo, então "abaixo" = Y maior)
+        const isBelowY = p1.y > tableYMax && p2.y > tableYMax;
+
+        // Verifica se a linha está abaixo/à direita no eixo X
+        // (X aumenta para a direita, então "abaixo" pode significar "à direita")
+        const isBelowX = p1.x > tableXMax && p2.x > tableXMax;
+
+        // Retorna um objeto com os resultados
+        return {
+            belowY: isBelowY,        // Linha está abaixo no eixo Y
+            belowX: isBelowX,        // Linha está à direita no eixo X
+            completelyBelow: isBelowY && isBelowX,  // Está abaixo em ambos os eixos
+            tableBounds: {
+                xMin: tableXMin,
+                xMax: tableXMax,
+                yMin: tableYMin,
+                yMax: tableYMax
+            }
+        };
+    },
+    createCurvedPath(p1, p2, fromTableEl, toTableEl) {
+        const group = this.$el.querySelector('#lines-layer');
+
+        // Obtém os bounds das tabelas uma vez para reutilizar
+        let fromTableBounds = null;
+        let toTableBounds = null;
+
+        if (fromTableEl && group) {
+            fromTableBounds = this.getTableBoundsInSVG(fromTableEl, group);
+        }
+
+        if (toTableEl && group) {
+            toTableBounds = this.getTableBoundsInSVG(toTableEl, group);
+        }
+
+        let useVerticalConnection = false;
+        let fromCenterX = null;
+        let toCenterX = null;
+
+        if (fromTableBounds && toTableBounds) {
+            fromCenterX = (fromTableBounds.xMin + fromTableBounds.xMax) / 2;
+            toCenterX = (toTableBounds.xMin + toTableBounds.xMax) / 2;
+
+            const deltaCenterX = Math.abs(fromCenterX - toCenterX);
+            if (deltaCenterX <= 300) {
+                useVerticalConnection = true;
+            }
+        }
+
+        if (useVerticalConnection) {
+            const cellSize = this.gridSize;
+            let horizontalDelta = p2.x - p1.x;
+            if (horizontalDelta === 0 && fromCenterX !== null && toCenterX !== null) {
+                horizontalDelta = toCenterX - fromCenterX;
+            }
+
+            const dirY = p2.y >= p1.y ? 1 : -1;
+            let midY = Math.round(((p1.y + p2.y) / 2) / cellSize) * cellSize;
+            if (midY === p1.y) {
+                midY -= directionY * cellSize;
+            }
+            if (midY === p2.y) {
+                midY -= dirY * cellSize;
+            }
+
+            let sideFrom = horizontalDelta >= 0 ? 1 : -1;
+            let sideTo = -sideFrom;
+
+            if (fromTableBounds && toTableBounds) {
+                sideFrom = fromCenterX <= toCenterX ? 1 : -1;
+                sideTo = -sideFrom;
+            }
+
+            const exitX = Math.round((p1.x + sideFrom * cellSize) / cellSize) * cellSize;
+            const entryX = Math.round((p2.x + sideTo * cellSize) / cellSize) * cellSize;
+
+            const directionY = p2.y >= p1.y ? 1 : -1;
+
+            const pB = { x: exitX, y: p1.y };
+            const pC = { x: exitX, y: midY };
+            const pD = { x: entryX, y: midY };
+            const pE = { x: entryX, y: p2.y };
+
+            let path = `M ${p1.x} ${p1.y}`;
+            path += ` L ${pB.x} ${pB.y}`;
+            path += ` L ${pC.x} ${pC.y}`;
+            path += ` L ${pD.x} ${pD.y}`;
+            path += ` L ${pE.x} ${pE.y}`;
+            path += ` L ${p2.x} ${p2.y}`;
+
+            return path;
+        }
+
+        // Calcula distâncias (já calculadas acima, mas recalcula após ajustes)
         const deltaX = Math.abs(p2.x - p1.x);
         const deltaY = Math.abs(p2.y - p1.y);
 
@@ -204,7 +420,6 @@ export default (relationships) => ({
         if (Math.abs(p1.x - midX) < curveRadius * 2) {
             midX = isfromElLeft ? p1.x + curveRadius * 2 : p1.x - curveRadius * 2;
         }
-
 
         let path = `M ${p1.x} ${p1.y}`;
 
