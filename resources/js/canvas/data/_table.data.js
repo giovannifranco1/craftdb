@@ -34,6 +34,7 @@ export default (x, y) => ({
         this.$el.addEventListener('mousedown', (e) => this.startDrag(e));
         this.$refs.canvasRoot.addEventListener('mousemove', (e) => this.drag(e));
         this.$refs.canvasRoot.addEventListener('mouseup', (e) => this.endDrag(e));
+        this.$refs.canvasRoot.addEventListener('mouseleave', (e) => this.endDrag(e)); // chama endDrag ao sair do canvasRoot
         this.$root.addEventListener('dropdown-menu::opened', () => this.setHighestZIndex());
     },
 
