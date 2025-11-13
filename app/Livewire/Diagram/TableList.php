@@ -3,14 +3,10 @@
 namespace App\Livewire\Diagram;
 
 use App\Actions\Diagram\AddRelationship;
-use App\Enums\RelationshipType;
 use App\Models\Diagram;
-use App\Models\Relationship;
-use App\Models\Table;
 use App\Support\Helpers;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Lazy;
 use Livewire\Attributes\On;
@@ -65,7 +61,7 @@ class TableList extends Component
         $this->dispatch('alert', message: "Table $count added successfully.");
     }
 
-     /**
+    /**
      * @param int $diagramId
      * @param array<int, array{id:int, x:int, y:int}> $tables
      */

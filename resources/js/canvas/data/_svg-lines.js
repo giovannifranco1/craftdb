@@ -8,6 +8,7 @@ export default (relationships) => ({
     initialTransform: null,
     highlightedTableId: null,
     highlightedColumnIds: [],
+    colorLines: '#73ABEF',
 
     init() {
         this.gridSize = Alpine.raw(this.canvas).cellSize;
@@ -26,7 +27,7 @@ export default (relationships) => ({
         window.addEventListener('table::expanded', () => this.compute());
         window.addEventListener('table-side-editor::open', e => this.highlightTableConnections(e.detail?.table || e.detail?.tableId));
         window.addEventListener('table-side-editor::closed', () => this.clearHighlight());
-        window.addEventListener('relationships::fresh', (event) => this.relationships = event.detail.relationships);
+        window.addEventListener('relationships::fresh', (event) => this.relationships = event.detail.relationships || []);
         window.addEventListener('tables-list::inicializeted', () => this.debouncedCompute());
 
         Livewire.hook('morphed',  ({ component }) => {
@@ -416,12 +417,10 @@ export default (relationships) => ({
 
             const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
             path.setAttribute('d', conn.path);
-            path.setAttribute('stroke', '#888');
+            path.setAttribute('stroke', this.colorLines); //default #888
             path.setAttribute('fill', 'none');
-            path.setAttribute('stroke-width', '2');
+            path.setAttribute('stroke-width', '2.2');
             path.setAttribute('pointer-events', 'stroke');
-            path.setAttribute('stroke-linecap', 'round');
-            path.setAttribute('stroke-linejoin', 'round');
 
             connGroup.appendChild(path);
 
@@ -480,7 +479,7 @@ export default (relationships) => ({
                 // Se não estiver destacada pela tabela, remove o highlight
                 if (!isTableHighlighted) {
                     connGroup.querySelectorAll('path').forEach(el => {
-                        el.setAttribute('stroke', '#888');
+                        el.setAttribute('stroke', this.colorLines);
                         el.setAttribute('stroke-width', '2');
                         el.setAttribute('stroke-linecap', 'round');
                         el.setAttribute('stroke-linejoin', 'round');
@@ -528,7 +527,7 @@ export default (relationships) => ({
         const bar = document.createElementNS('http://www.w3.org/2000/svg', 'path');
 
         bar.setAttribute('d', `M ${ox} ${oy - half} L ${ox} ${oy + half}`);
-        bar.setAttribute('stroke', '#888');
+        bar.setAttribute('stroke', this.colorLines);
         bar.setAttribute('fill', 'none');
         bar.setAttribute('stroke-width', '2');
         bar.setAttribute('stroke-linecap', 'round');
@@ -565,7 +564,7 @@ export default (relationships) => ({
 
             const seg = document.createElementNS('http://www.w3.org/2000/svg', 'path');
             seg.setAttribute('d', `M ${ox} ${oy} L ${x2} ${y2}`);
-            seg.setAttribute('stroke', '#888');
+            seg.setAttribute('stroke', this.colorLines);
             seg.setAttribute('fill', 'none');
             seg.setAttribute('stroke-width', '2');
             seg.setAttribute('pointer-events', 'stroke');
@@ -608,7 +607,7 @@ export default (relationships) => ({
 
                 // Restaura o estilo padrão das linhas
                 connGroup.querySelectorAll('path').forEach(el => {
-                    el.setAttribute('stroke', '#888');
+                    el.setAttribute('stroke', this.colorLines);
                     el.setAttribute('stroke-width', '2');
                     el.setAttribute('stroke-linecap', 'round');
                     el.setAttribute('stroke-linejoin', 'round');

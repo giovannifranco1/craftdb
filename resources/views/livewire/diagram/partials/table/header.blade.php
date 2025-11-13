@@ -3,7 +3,8 @@
         loading: false,
         mouseDownPos: null,
         clickThreshold: 5, // pixels de tolerância para considerar como clique
-
+        isEventRename: false,
+        name: $wire.entangle('name'),
         handleMouseDown(e) {
             this.mouseDownPos = {
                 x: e.clientX,
@@ -52,6 +53,7 @@
     @mousedown="handleMouseDown($event)"
     @mouseup="eventMouseUp($event)"
     @mouseleave="mouseDownPos = null"
+    @table::renaming.window="if (($event.detail?.el || null) === ($el.closest('[table-box]') || $el)) isEventRename = true"
     @table-side-editor::opened.window="loading = false;"
     :style="`height: ${getGridSize()/2 + getGridSize()}px; cursor: ${loading ? 'wait' : ''};`"
     class="bg-blue-500 flex-none border-b border-gray-200 px-3 py-1 rounded-t-xl table-header-beauty"
@@ -77,7 +79,30 @@
                 </button>
             </div>
 
-            <span class="text-white font-normal text-[12pt] font-[Kalam]">{{ $table->name }}</span>
+
+            <div
+                wire:loading
+                wire:target="renameTable"
+                class="animate-spin inline-block size-3 border-3 border-current border-t-transparent text-white rounded-full dark:text-dark-500" role="status" aria-label="loading">
+                <span class="sr-only">Loading...</span>
+            </div>
+
+            <input
+                name="name"
+                x-show="isEventRename"
+                x-trap="isEventRename"
+                x-model="name"
+                type="text"
+                class="bg-transparent border-none outline-none shadow-none text-white font-normal text-[12pt] font-[Kalam] p-0 m-0 w-auto"
+                style="background: transparent !important; box-shadow: none !important;"
+                @mousedown.stop
+                @keydown.stop
+                @keydown.enter="$wire.renameTable()"
+                @keydown.escape="isEventRename = false; $wire.resetName()"
+                @table::renamed.window="isEventRename = false;"
+                @blur="isEventRename = false; $wire.resetName()"
+            />
+            <span x-show="!isEventRename" class="text-white font-normal text-[12pt] font-[Kalam]">{{ $table->name }}</span>
         </h3>
 
         <button @mousedown.stop="toggleExpanded($el.closest('[table-box]'))"

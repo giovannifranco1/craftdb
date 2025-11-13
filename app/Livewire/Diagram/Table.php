@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Diagram;
 
+use App\Models\Diagram;
 use App\Models\Table as TableModel;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
@@ -20,6 +21,11 @@ class Table extends Component
     #[Locked]
     public TableModel $table;
 
+    #[Locked]
+    public int $diagramId;
+
+    public ?string $name = null;
+
     public $relationship = [
         'from_column_id' => '',
         'to_column_id'   => '',
@@ -29,6 +35,8 @@ class Table extends Component
     public function mount(TableModel $table): void
     {
         $this->table = $table;
+        $this->diagramId = $table->diagram_id;
+        $this->name = $table->name;
     }
 
     #[Computed]
@@ -38,6 +46,20 @@ class Table extends Component
             ->columns()
             ->orderBy('order')
             ->get();
+    }
+
+    public function renameTable(): void
+    {
+        $this->table->name = $this->name;
+        $this->table->save();
+        $this->dispatch('table::renamed');
+        $this->refreshTableWithCounts();
+    }
+
+    public function resetName(): void
+    {
+        $this->name = $this->table->name;
+        $this->refreshTableWithCounts();
     }
 
     public function setColor(string $color): void
@@ -51,6 +73,7 @@ class Table extends Component
         $this->table->save();
 
         $this->dispatch('alert', message: "Color Updated");
+        $this->refreshTableWithCounts();
         $this->dispatch('table::color-saved');
     }
 
@@ -101,7 +124,7 @@ class Table extends Component
 
         $this->dispatch('alert', message: "Table Removed");
         $this->dispatch('table::removed');
-        $this->dispatch('relationships::fresh');
+        $this->dispatch('relationships::fresh', Diagram::find($this->diagramId)->relationships()->get());
     }
 
     public function render(): View
