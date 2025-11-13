@@ -191,6 +191,8 @@ export default (relationships) => ({
         let useVerticalConnection = false;
         let fromCenterX = null;
         let toCenterX = null;
+        const directionY = p2.y >= p1.y ? 1 : -1;
+
 
         if (fromTableBounds && toTableBounds) {
             fromCenterX = (fromTableBounds.xMin + fromTableBounds.xMax) / 2;
@@ -228,8 +230,6 @@ export default (relationships) => ({
 
             const exitX = Math.round((p1.x + sideFrom * cellSize) / cellSize) * cellSize;
             const entryX = Math.round((p2.x + sideTo * cellSize) / cellSize) * cellSize;
-
-            const directionY = p2.y >= p1.y ? 1 : -1;
 
             const pB = { x: exitX, y: p1.y };
             const pC = { x: exitX, y: midY };
