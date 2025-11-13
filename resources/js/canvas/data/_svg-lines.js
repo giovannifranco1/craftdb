@@ -197,7 +197,7 @@ export default (relationships) => ({
             toCenterX = (toTableBounds.xMin + toTableBounds.xMax) / 2;
 
             const deltaCenterX = Math.abs(fromCenterX - toCenterX);
-            if (deltaCenterX <= 300) {
+            if (deltaCenterX <= 350) {
                 useVerticalConnection = true;
             }
         }
@@ -236,12 +236,73 @@ export default (relationships) => ({
             const pD = { x: entryX, y: midY };
             const pE = { x: entryX, y: p2.y };
 
+            const baseRadius = Math.min(12, cellSize / 2);
+            const dirHorizontal1 = Math.sign(pB.x - p1.x);
+            const dirVertical1 = Math.sign(pC.y - pB.y);
+            const dirHorizontal2 = Math.sign(pD.x - pC.x);
+            const dirVertical2 = Math.sign(pE.y - pD.y);
+            const dirHorizontal3 = Math.sign(p2.x - pE.x);
+
+            const radius1 = Math.min(baseRadius, Math.abs(pB.x - p1.x), Math.abs(pC.y - pB.y));
+            const radius2 = Math.min(baseRadius, Math.abs(pC.y - pB.y), Math.abs(pD.x - pC.x));
+            const radius3 = Math.min(baseRadius, Math.abs(pD.x - pC.x), Math.abs(pE.y - pD.y));
+            const radius4 = Math.min(baseRadius, Math.abs(pE.y - pD.y), Math.abs(p2.x - pE.x));
+
             let path = `M ${p1.x} ${p1.y}`;
-            path += ` L ${pB.x} ${pB.y}`;
-            path += ` L ${pC.x} ${pC.y}`;
-            path += ` L ${pD.x} ${pD.y}`;
-            path += ` L ${pE.x} ${pE.y}`;
-            path += ` L ${p2.x} ${p2.y}`;
+            let currentX = p1.x;
+            let currentY = p1.y;
+
+            const lineTo = (x, y) => {
+                if (currentX === x && currentY === y) {
+                    return;
+                }
+                path += ` L ${x} ${y}`;
+                currentX = x;
+                currentY = y;
+            };
+
+            const quadTo = (cx, cy, x, y) => {
+                if (currentX === x && currentY === y) {
+                    return;
+                }
+                path += ` Q ${cx} ${cy}, ${x} ${y}`;
+                currentX = x;
+                currentY = y;
+            };
+
+            const corner1LineX = radius1 > 0 ? pB.x - dirHorizontal1 * radius1 : pB.x;
+            lineTo(corner1LineX, p1.y);
+            if (radius1 > 0 && dirVertical1 !== 0) {
+                quadTo(pB.x, pB.y, pB.x, pB.y + dirVertical1 * radius1);
+            } else {
+                lineTo(pB.x, pB.y);
+            }
+
+            const corner2LineY = radius2 > 0 && dirVertical1 !== 0 ? pC.y - dirVertical1 * radius2 : pC.y;
+            lineTo(pC.x, corner2LineY);
+            if (radius2 > 0 && dirHorizontal2 !== 0) {
+                quadTo(pC.x, pC.y, pC.x + dirHorizontal2 * radius2, pC.y);
+            } else {
+                lineTo(pC.x, pC.y);
+            }
+
+            const corner3LineX = radius3 > 0 && dirHorizontal2 !== 0 ? pD.x - dirHorizontal2 * radius3 : pD.x;
+            lineTo(corner3LineX, pD.y);
+            if (radius3 > 0 && dirVertical2 !== 0) {
+                quadTo(pD.x, pD.y, pD.x, pD.y + dirVertical2 * radius3);
+            } else {
+                lineTo(pD.x, pD.y);
+            }
+
+            const corner4LineY = radius4 > 0 && dirVertical2 !== 0 ? pE.y - dirVertical2 * radius4 : pE.y;
+            lineTo(pE.x, corner4LineY);
+            if (radius4 > 0 && dirHorizontal3 !== 0) {
+                quadTo(pE.x, pE.y, pE.x + dirHorizontal3 * radius4, pE.y);
+            } else {
+                lineTo(pE.x, pE.y);
+            }
+
+            lineTo(p2.x, p2.y);
 
             return path;
         }
