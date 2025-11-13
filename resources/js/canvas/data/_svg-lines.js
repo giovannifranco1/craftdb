@@ -173,121 +173,6 @@ export default (relationships) => ({
             yMax: bottomRight.y
         };
     },
-    isPointInsideTable(point, tableBounds) {
-        if (!point || !tableBounds) return false;
-
-        return point.x >= tableBounds.xMin &&
-               point.x <= tableBounds.xMax &&
-               point.y >= tableBounds.yMin &&
-               point.y <= tableBounds.yMax;
-    },
-    isPointOnTableYAxis(point, tableBounds) {
-        if (!point || !tableBounds) return false;
-
-        // Verifica se o ponto está no eixo Y da tabela (Y entre yMin e yMax)
-        return point.y >= tableBounds.yMin && point.y <= tableBounds.yMax;
-    },
-    shouldAdjustPointForLateralExit(point, tableBounds) {
-        if (!point || !tableBounds) return false;
-
-        // REGRA SIMPLES: Se o ponto está no eixo Y da tabela (Y entre yMin e yMax), SEMPRE ajustar
-        // Não importa se o X está dentro ou fora - se está no eixo Y, força saída pela lateral
-        const isOnYAxis = point.y >= tableBounds.yMin && point.y <= tableBounds.yMax;
-
-        return isOnYAxis;
-    },
-    adjustPointToExitTable(point, tableBounds, exitSide, gridSize) {
-        if (!point || !tableBounds) return point;
-
-        // Mantém o Y original
-        let newX = point.x;
-        const offset = gridSize; // Offset para garantir que a linha saia completamente da tabela
-
-        if (exitSide === 'right') {
-            // Ajusta para sair pela direita (X maior)
-            newX = tableBounds.xMax + offset;
-        } else {
-            // Ajusta para sair pela esquerda (X menor)
-            newX = tableBounds.xMin - offset;
-        }
-
-        // Alinha ao grid
-        newX = Math.round(newX / gridSize) * gridSize;
-
-        return {
-            x: newX,
-            y: point.y
-        };
-    },
-    adjustPointForVerticalConnection(point, tableBounds, position, gridSize) {
-        if (!point || !tableBounds) return point;
-
-        const centerX = (tableBounds.xMin + tableBounds.xMax) / 2;
-        let newY = point.y;
-        const offset = gridSize;
-
-        if (position === 'bottom') {
-            newY = tableBounds.yMax + offset;
-        } else if (position === 'top') {
-            newY = tableBounds.yMin - offset;
-        }
-
-        return {
-            x: Math.round(centerX / gridSize) * gridSize,
-            y: Math.round(newY / gridSize) * gridSize
-        };
-    },
-    // Função para verificar se a linha está abaixo da tabela
-    isLineBelowTable(p1, p2, tableEl, ) {
-        if (!tableEl) return false;
-
-        const group = this.$el.querySelector('#lines-layer');
-        if (!group) return false;
-
-        // Obtém o bounding box da tabela em coordenadas de tela
-        const rect = tableEl.getBoundingClientRect();
-
-        // Converte os cantos do retângulo para coordenadas SVG
-        const pt = this.$el.createSVGPoint();
-        const gCTM = group.getScreenCTM();
-
-        // Canto superior esquerdo
-        pt.x = rect.left;
-        pt.y = rect.top;
-        const topLeft = pt.matrixTransform(gCTM.inverse());
-
-        // Canto inferior direito
-        pt.x = rect.right;
-        pt.y = rect.bottom;
-        const bottomRight = pt.matrixTransform(gCTM.inverse());
-
-        // Coordenadas da tabela no espaço SVG
-        const tableXMin = topLeft.x;
-        const tableXMax = bottomRight.x;
-        const tableYMin = topLeft.y;
-        const tableYMax = bottomRight.y;
-
-        // Verifica se a linha está abaixo no eixo Y
-        // (Y aumenta para baixo, então "abaixo" = Y maior)
-        const isBelowY = p1.y > tableYMax && p2.y > tableYMax;
-
-        // Verifica se a linha está abaixo/à direita no eixo X
-        // (X aumenta para a direita, então "abaixo" pode significar "à direita")
-        const isBelowX = p1.x > tableXMax && p2.x > tableXMax;
-
-        // Retorna um objeto com os resultados
-        return {
-            belowY: isBelowY,        // Linha está abaixo no eixo Y
-            belowX: isBelowX,        // Linha está à direita no eixo X
-            completelyBelow: isBelowY && isBelowX,  // Está abaixo em ambos os eixos
-            tableBounds: {
-                xMin: tableXMin,
-                xMax: tableXMax,
-                yMin: tableYMin,
-                yMax: tableYMax
-            }
-        };
-    },
     createCurvedPath(p1, p2, fromTableEl, toTableEl) {
         const group = this.$el.querySelector('#lines-layer');
 
@@ -474,6 +359,8 @@ export default (relationships) => ({
             path.setAttribute('fill', 'none');
             path.setAttribute('stroke-width', '2');
             path.setAttribute('pointer-events', 'stroke');
+            path.setAttribute('stroke-linecap', 'round');
+            path.setAttribute('stroke-linejoin', 'round');
 
             connGroup.appendChild(path);
 
@@ -505,6 +392,8 @@ export default (relationships) => ({
                 connGroup.querySelectorAll('path').forEach(el => {
                     el.setAttribute('stroke', '#eab308');
                     el.setAttribute('stroke-width', '2.25');
+                    el.setAttribute('stroke-linecap', 'round');
+                    el.setAttribute('stroke-linejoin', 'round');
                 });
 
                 // Ensure highlighted connection renders on top (SVG uses DOM order)
@@ -532,6 +421,8 @@ export default (relationships) => ({
                     connGroup.querySelectorAll('path').forEach(el => {
                         el.setAttribute('stroke', '#888');
                         el.setAttribute('stroke-width', '2');
+                        el.setAttribute('stroke-linecap', 'round');
+                        el.setAttribute('stroke-linejoin', 'round');
                     });
 
                     const fe = document.getElementById(conn.fromId);
@@ -580,6 +471,7 @@ export default (relationships) => ({
         bar.setAttribute('fill', 'none');
         bar.setAttribute('stroke-width', '2');
         bar.setAttribute('stroke-linecap', 'round');
+        bar.setAttribute('stroke-linejoin', 'round');
         bar.setAttribute('pointer-events', 'stroke');
 
         group.appendChild(bar);
@@ -616,6 +508,8 @@ export default (relationships) => ({
             seg.setAttribute('fill', 'none');
             seg.setAttribute('stroke-width', '2');
             seg.setAttribute('pointer-events', 'stroke');
+            seg.setAttribute('stroke-linecap', 'round');
+            seg.setAttribute('stroke-linejoin', 'round');
 
             group.appendChild(seg);
         });
@@ -655,6 +549,8 @@ export default (relationships) => ({
                 connGroup.querySelectorAll('path').forEach(el => {
                     el.setAttribute('stroke', '#888');
                     el.setAttribute('stroke-width', '2');
+                    el.setAttribute('stroke-linecap', 'round');
+                    el.setAttribute('stroke-linejoin', 'round');
                 });
             });
         }
@@ -689,6 +585,8 @@ export default (relationships) => ({
         connGroup.querySelectorAll('path').forEach(el => {
             el.setAttribute('stroke', '#eab308');
             el.setAttribute('stroke-width', '2.25');
+            el.setAttribute('stroke-linecap', 'round');
+            el.setAttribute('stroke-linejoin', 'round');
         });
 
         // Move para o topo (renderiza por último)
@@ -731,6 +629,8 @@ export default (relationships) => ({
             connGroup.querySelectorAll('path').forEach(el => {
                 el.setAttribute('stroke', '#eab308');
                 el.setAttribute('stroke-width', '2.25');
+                el.setAttribute('stroke-linecap', 'round');
+                el.setAttribute('stroke-linejoin', 'round');
             });
 
             // Move para o topo (renderiza por último)
