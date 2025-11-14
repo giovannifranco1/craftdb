@@ -15,7 +15,22 @@ export default (cellSize = 25, isInitialLoad = false, [offsetX, offsetY] = []) =
     },
 
     init() {
+        this.setupListeners();
+
+        if (isInitialLoad) {
+            confetti({
+                particleCount: 200,
+                spread: 70,
+                origin: { y: 0.6 }
+            });
+        }
+    },
+
+    setupListeners() {
+        // Listener para teclas de atalho
         window.addEventListener('keydown', (e) => this.keydownListeners(e));
+
+        // Listener para salvar posições das tabelas
         this.$el.addEventListener('save-positions', () => this.saveTablesPositions());
 
         // Listener para spotlight selecionar tabela
@@ -61,15 +76,6 @@ export default (cellSize = 25, isInitialLoad = false, [offsetX, offsetY] = []) =
             });
         }
 
-        if (isInitialLoad) {
-            confetti({
-                particleCount: 200,
-                spread: 70,
-                origin: { y: 0.6 }
-            });
-        }
-
-
         this.$watch('isInRelationshipEvent', (value) => {
             const body = document.querySelector('body');
 
@@ -77,26 +83,15 @@ export default (cellSize = 25, isInitialLoad = false, [offsetX, offsetY] = []) =
                 if (value) {
                     body.style.cursor = 'crosshair';
                 } else {
-                    body.style.cursor = `url(${cursorBase}) 6 6, pointer`;
+                    body.style.cursor = `url(${cursorBase}) 3.5 3.5, auto`;
                 }
             }
         });
-
     },
 
     keydownListeners(e) {
-        // this.handleSpotlight(e);
         this.handleMetaS(e);
     },
-
-    // handleSpotlight(e) {
-    //     const isMetaK = e.metaKey && e.key === 'k';
-    //     const isCtrlK = e.ctrlKey && e.key === 'k';
-
-    //     if (isMetaK || isCtrlK) {
-    //        this.$flux.modal('spotlight').show();
-    //     }
-    // },
 
     handleMetaS(e) {
         const isMetaS = e.metaKey && e.key === 's';

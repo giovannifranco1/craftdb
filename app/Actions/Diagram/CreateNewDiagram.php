@@ -31,7 +31,7 @@ class CreateNewDiagram
     {
         $this->_validate($data);
 
-        $slug = str()->slug($data['name']) . str()->random(10);
+        $slug = str()->slug($data['name']) . '-' . str()->random(10);
 
         if (data_has($data, 'file')) {
             $this->_parse(data_get($data, 'file'));
