@@ -6,7 +6,7 @@
         @wheel.stop
     >
         <div class="bg-white p-2 rounded-2xl">
-            <flux:input x-trap="true" wire:model.live="search" kbd="⌘K" icon="magnifying-glass" placeholder="Search..."/>
+            <flux:input autocomplete="off" x-trap="true" wire:model.live="search" kbd="⌘K" icon="magnifying-glass" placeholder="Search..."/>
         </div>
 
         <div class="mt-3">
