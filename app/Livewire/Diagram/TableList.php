@@ -27,6 +27,10 @@ class TableList extends Component
     public function mount(Diagram $diagram): void
     {
         $this->diagram = $diagram;
+
+        $offsets = Helpers::getPositionCanvasByDiagram($this->diagram);
+
+        $this->dispatch('table-list::inicializeted', ...$offsets);
     }
 
     /**

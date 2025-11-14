@@ -28,7 +28,7 @@ export default (relationships) => ({
         window.addEventListener('table-side-editor::open', e => this.highlightTableConnections(e.detail?.table || e.detail?.tableId));
         window.addEventListener('table-side-editor::closed', () => this.clearHighlight());
         window.addEventListener('relationships::fresh', (event) => this.relationships = event.detail.relationships || []);
-        window.addEventListener('tables-list::inicializeted', (event) => {
+        window.addEventListener('table-list::inicializeted', (event) => {
             const offsets = event.detail;
 
             if (offsets) {

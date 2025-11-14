@@ -1,12 +1,4 @@
-@use('App\Support\Helpers')
-
-@php
-
-    $offsets = Helpers::getPositionCanvasByDiagram($this->diagram);
-
-@endphp
-
-<div x-init="$dispatch('tables-list::inicializeted', @js($offsets))" style="position: static; inset: auto; transform: none; contain: layout;">
+<div style="position: static; inset: auto; transform: none; contain: layout;">
     @php
         $maxPerRow = 5;
         $spacingX = 500;

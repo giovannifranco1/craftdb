@@ -25,6 +25,7 @@ export class InfiniteCanvas {
 
             if (context) {
                 this.context = context;
+
                 // Se offsetX e offsetY são números válidos, ajusta os offsets iniciais
                 if (typeof offsetX === 'number' && typeof offsetY === 'number') {
                     this.#offsetX = offsetX / this.#scale;
