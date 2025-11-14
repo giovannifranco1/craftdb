@@ -15,8 +15,42 @@ export default (cellSize = 25, isInitialLoad = false, [offsetX, offsetY] = []) =
     },
 
     init() {
-        window.addEventListener('keydown', (e) => this.handleMetaS(e));
+        window.addEventListener('keydown', (e) => this.keydownListeners(e));
         this.$el.addEventListener('save-positions', () => this.saveTablesPositions());
+
+        // Listener para spotlight selecionar tabela
+        window.addEventListener('spotlight::table-selected', (e) => {
+            const { tableId, x, y } = e.detail[0];
+
+            if (x && y) {
+                // Calcula offsets para centralizar a tabela na viewport
+                const canvas = Alpine.raw(this.canvas);
+                const scale = canvas.getScale();
+                const canvasElement = document.getElementById('canvas');
+
+                if (canvasElement) {
+                    const canvasWidth = canvasElement.clientWidth;
+                    const canvasHeight = canvasElement.clientHeight;
+
+                    const tableWidth = 300;
+                    const tableHeight = 200; // altura aproximada
+
+                    const offsetX = x - (canvasWidth / 2 - tableWidth / 2) / scale;
+                    const offsetY = y - (canvasHeight / 2 - tableHeight / 2) / scale;
+
+                    canvas.setPositionOffsets(offsetX, offsetY);
+                }
+            }
+
+            // Abre o table-side-editor
+            if (window.Livewire) {
+                window.Livewire.dispatch('table-side-editor::open', { table: tableId });
+            } else {
+                $dispatch('table-side-editor::open', { table: tableId });
+            }
+
+            setTimeout(() => this.$flux.modal('spotlight')?.close(), 200);
+        });
 
         // Captura a posição do clique direito no canvas
         const canvasElement = document.getElementById('canvas');
@@ -50,6 +84,30 @@ export default (cellSize = 25, isInitialLoad = false, [offsetX, offsetY] = []) =
 
     },
 
+    keydownListeners(e) {
+        // this.handleSpotlight(e);
+        this.handleMetaS(e);
+    },
+
+    // handleSpotlight(e) {
+    //     const isMetaK = e.metaKey && e.key === 'k';
+    //     const isCtrlK = e.ctrlKey && e.key === 'k';
+
+    //     if (isMetaK || isCtrlK) {
+    //        this.$flux.modal('spotlight').show();
+    //     }
+    // },
+
+    handleMetaS(e) {
+        const isMetaS = e.metaKey && e.key === 's';
+        const isCtrlS = e.ctrlKey && e.key === 's';
+
+        if (isMetaS || isCtrlS) {
+            e.preventDefault();
+            this.saveTablesPositions();
+        }
+    },
+
     saveTablesPositions() {
         const tables = [];
         const tableElements = this.$el.querySelectorAll('[table-box][table-id]');
@@ -76,15 +134,5 @@ export default (cellSize = 25, isInitialLoad = false, [offsetX, offsetY] = []) =
             });
         }
     },
-
-    handleMetaS(e) {
-        const isMetaS = e.metaKey && e.key === 's';
-        const isCtrlS = e.ctrlKey && e.key === 's';
-
-        if (isMetaS || isCtrlS) {
-            e.preventDefault();
-            this.saveTablesPositions();
-        }
-    }
 
 });

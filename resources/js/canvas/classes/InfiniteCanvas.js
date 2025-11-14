@@ -151,11 +151,6 @@ export class InfiniteCanvas {
 
     #applyContainerTransform() {
         if (this.tablesContainer) {
-            // A transformação pan/zoom deve compensar a posição do grid.
-            // O grid move-se visualmente com offsetX e offsetY.
-            // O conteúdo DOM deve mover-se na direção OPOSTA (-offsetX, -offsetY)
-            // e aplicar a mesma escala.
-
             const transformX = -this.#offsetX * this.#scale;
             const transformY = -this.#offsetY * this.#scale;
 
@@ -185,16 +180,91 @@ export class InfiniteCanvas {
 
         window.addEventListener("wheel", (event) => {
             const sidePanel = event.target.closest('section[aria-modal="true"]');
+            const fluxModal = event.target.closest('[data-flux-modal], [role="dialog"]');
 
-            if (sidePanel) {
-                return; // Não processa eventos de wheel dentro do painel lateral
+            if (event.metaKey || event.ctrlKey) {
+                event.preventDefault();
+                this.#zoomWheel(event);
+                return;
+            }
+
+            if (sidePanel || fluxModal) {
+                return; // Não processa eventos de wheel dentro do painel lateral ou modais
             }
 
             event.preventDefault();
             this.#onWheel(event.deltaX, event.deltaY)
         }, { passive: false });
 
+
         window.addEventListener("resize", () => this.#draw());
+    }
+
+    #zoomWheel(event) {
+        const zoomStep = 1.05;
+        const minScale = 0.2;
+        const maxScale = 4.0;
+
+        let zoomAmount;
+
+        if (event.deltaY < 0) {
+            zoomAmount = zoomStep;
+        } else if (event.deltaY > 0) {
+            zoomAmount = 1 / zoomStep;
+        } else {
+            return;
+        }
+
+        if (this.canvas) {
+            const rect = this.canvas.getBoundingClientRect();
+            const pointerX = event.clientX - rect.left;
+            const pointerY = event.clientY - rect.top;
+
+            // Posição virtual antes do zoom
+            const prevScale = this.getScale();
+            const prevOffsetX = this.getOffsetX();
+            const prevOffsetY = this.getOffsetY();
+
+            // Virtual position do ponteiro antes do zoom
+            const preZoomVirtualX = pointerX / prevScale + prevOffsetX;
+            const preZoomVirtualY = pointerY / prevScale + prevOffsetY;
+
+            // Calcula o novo scale com limite
+            let newScale = prevScale * zoomAmount;
+            if (newScale < minScale) {
+                newScale = minScale;
+            }
+            if (newScale > maxScale) {
+                newScale = maxScale;
+            }
+            // Calcula o quanto o zoom realmente mudou, pode ser menor se atingiu limite
+            zoomAmount = newScale / prevScale;
+
+            // Aplica o zoom (altera scale)
+            this.#scale = newScale;
+
+            // Após zoom, corrigir o offset para manter o ponto sob o ponteiro fixo
+            this.#offsetX = preZoomVirtualX - (pointerX / newScale);
+            this.#offsetY = preZoomVirtualY - (pointerY / newScale);
+
+            // Redesenha e avisa que mudou
+            this.#draw();
+            this.#dispatchTransformChanged();
+        } else {
+            // fallback, zoom normal
+            const prevScale = this.getScale();
+            let newScale = prevScale * zoomAmount;
+            if (newScale < minScale) {
+                newScale = minScale;
+            }
+            if (newScale > maxScale) {
+                newScale = maxScale;
+            }
+            zoomAmount = newScale / prevScale;
+            this.#scale = newScale;
+            this.#draw();
+            this.#dispatchTransformChanged();
+        }
     }
 
     #onWheel(deltaX, deltaY) {
@@ -351,7 +421,7 @@ export class InfiniteCanvas {
             }
 
             // Desenha somente um traço central entre vértices (formato "+ - +")
-            const dashLen = 2; // comprimento do traço em pixels de tela
+            const dashLen = 3; // comprimento do traço em pixels de tela
             this.context.beginPath();
 
             // Dashes em linhas verticais (pequeno segmento vertical no meio de cada célula)
@@ -374,7 +444,7 @@ export class InfiniteCanvas {
             this.context.stroke();
 
             // Desenha marcadores de vértice em formato "+"
-            const markerColor = "rgb(209,213,219)"; // um pouco mais escuro
+            const markerColor = "rgb(220, 224, 232)"; // um pouco mais claro
             const arm = 5; // tamanho do braço do "+" em pixels de tela
             this.context.strokeStyle = markerColor;
             this.context.lineWidth = 1;

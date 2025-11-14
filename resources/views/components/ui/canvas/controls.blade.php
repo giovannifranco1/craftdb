@@ -15,4 +15,10 @@
     <button class="p-1 me-2 rounded-sm transition-colors cursor-pointer hover:bg-gray-200" type="button" id="zoom-in" @click="Alpine.raw(canvas).zoom(0.85)">
         <flux:icon.magnifying-glass-minus class="size-6"/>
     </button>
+
+
+
+    <flux:modal.trigger name="spotlight" shortcut="cmd.k">
+        <flux:button>Edit profile</flux:button>
+    </flux:modal.trigger>
 </div>
