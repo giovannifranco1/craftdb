@@ -70,13 +70,18 @@ body {
 
 #controls {
     position: fixed;
-    bottom: 1rem;
-    left: 50%;
-    transform: translateX(-50%);
+    top: 50%;
+    left: 2rem;
+    transform: translateY(-50%);
     z-index: 10;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
 
-    display: flex;
-    column-gap: 0.5rem;
+#controls button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
 }
 
 /* Ensure interactive elements keep the custom cursor from body */

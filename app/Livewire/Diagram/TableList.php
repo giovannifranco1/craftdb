@@ -50,10 +50,10 @@ class TableList extends Component
             ->get();
     }
 
-    #[On('add-table')]
+    #[On('table::add')]
     public function addTable(int $x = 100, int $y = 100): void
     {
-        $this->diagram->tables()->create([
+        $table = $this->diagram->tables()->create([
             'name'  => 'teste',
             'x'     => $x,
             'y'     => $y,
@@ -63,6 +63,7 @@ class TableList extends Component
         $count = $this->diagram->tables()->count();
 
         $this->dispatch('alert', message: "Table $count added successfully.");
+        $this->dispatch('table::added', tableId: $table->id);
     }
 
     /**

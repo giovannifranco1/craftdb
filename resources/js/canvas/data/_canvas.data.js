@@ -5,9 +5,12 @@ import confetti from 'canvas-confetti'; 'canvas-confetti';
 // @Alpine.js data
 export default (cellSize = 25, isInitialLoad = false, [offsetX, offsetY] = []) => ({
     canvas: new InfiniteCanvas(cellSize, [offsetX, offsetY]),
+    canvasElement: document.getElementById('canvas'),
     zoomPercent: 75,
     contextMenuPosition: { x: 100, y: 100 },
     isInRelationshipEvent: false,
+    isInAddTableEvent: false,
+    addTableClickHandler: null,
     relationshipEvent: {
         from_table_id: null,
         to_table_id: null,
@@ -33,6 +36,32 @@ export default (cellSize = 25, isInitialLoad = false, [offsetX, offsetY] = []) =
         // Listener para salvar posições das tabelas
         this.$el.addEventListener('save-positions', () => this.saveTablesPositions());
 
+        // Listener para ativar modo de adicionar tabela
+        this.$el.addEventListener('table::adding', () => {
+            this.isInAddTableEvent = true;
+        });
+
+        // Listener para renomear table
+        window.addEventListener('table::added', (e) => {
+            const tableId = e.detail?.tableId || e.detail?.[0]?.tableId || (typeof e.detail === 'number' ? e.detail : null);
+
+            if (tableId) {
+                requestAnimationFrame(() => {
+                    const findTableElement = (attempts = 0) => {
+                        const tableElement = document.querySelector(`[table-box][table-id="${tableId}"]`);
+
+                        if (tableElement) {
+                            this.$dispatch('table::renaming', { el: tableElement });
+                        } else if (attempts < 20) {
+                            setTimeout(() => findTableElement(attempts + 1), 50);
+                        }
+                    };
+
+                    findTableElement();
+                });
+            }
+        });
+
         // Listener para spotlight selecionar tabela
         window.addEventListener('spotlight::table-selected', (e) => {
             const { tableId, x, y } = e.detail[0];
@@ -41,11 +70,10 @@ export default (cellSize = 25, isInitialLoad = false, [offsetX, offsetY] = []) =
                 // Calcula offsets para centralizar a tabela na viewport
                 const canvas = Alpine.raw(this.canvas);
                 const scale = canvas.getScale();
-                const canvasElement = document.getElementById('canvas');
 
-                if (canvasElement) {
-                    const canvasWidth = canvasElement.clientWidth;
-                    const canvasHeight = canvasElement.clientHeight;
+                if (this.canvasElement) {
+                    const canvasWidth = this.canvasElement.clientWidth;
+                    const canvasHeight = this.canvasElement.clientHeight;
 
                     const tableWidth = 300;
                     const tableHeight = 200; // altura aproximada
@@ -67,10 +95,8 @@ export default (cellSize = 25, isInitialLoad = false, [offsetX, offsetY] = []) =
             setTimeout(() => this.$flux.modal('spotlight')?.close(), 200);
         });
 
-        // Captura a posição do clique direito no canvas
-        const canvasElement = document.getElementById('canvas');
-        if (canvasElement) {
-            canvasElement.addEventListener('contextmenu', (e) => {
+        if (this.canvasElement) {
+            this.canvasElement.addEventListener('contextmenu', (e) => {
                 const virtualPos = Alpine.raw(this.canvas).clientToVirtual(e.clientX, e.clientY);
                 this.contextMenuPosition = virtualPos;
             });
@@ -84,6 +110,50 @@ export default (cellSize = 25, isInitialLoad = false, [offsetX, offsetY] = []) =
                     body.style.cursor = 'crosshair';
                 } else {
                     body.style.cursor = `url(${cursorBase}) 3.5 3.5, auto`;
+                }
+            }
+        });
+
+        this.$watch('isInAddTableEvent', (value) => {
+            const body = document.querySelector('body');
+
+            if (body) {
+                if (value) {
+                    body.style.cursor = 'crosshair';
+                } else {
+                    body.style.cursor = `url(${cursorBase}) 3.5 3.5, auto`;
+                }
+            }
+
+            if (this.canvasElement) {
+                if (this.addTableClickHandler) {
+                    this.canvasElement.removeEventListener('click', this.addTableClickHandler);
+                    this.addTableClickHandler = null;
+                }
+
+                if (value) {
+                    this.addTableClickHandler = (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const virtualPos = Alpine.raw(this.canvas).clientToVirtual(e.clientX, e.clientY);
+
+                        if (window.Livewire) {
+                            window.Livewire.dispatch('table::add', {
+                                x: Math.round(virtualPos.x),
+                                y: Math.round(virtualPos.y)
+                            });
+                        }
+
+                        this.isInAddTableEvent = false;
+
+                        if (this.addTableClickHandler) {
+                            this.canvasElement.removeEventListener('click', this.addTableClickHandler);
+                            this.addTableClickHandler = null;
+                        }
+                    };
+
+                    this.canvasElement.addEventListener('click', this.addTableClickHandler, { once: true });
                 }
             }
         });
