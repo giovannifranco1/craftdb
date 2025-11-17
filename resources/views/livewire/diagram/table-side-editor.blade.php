@@ -48,7 +48,7 @@
                                     </h2>
                                     <div class="flex items-center">
                                         <div
-                                            class="w-4 h-4 bg-[var(--table-base-bg)] rounded-full shadow-sm"
+                                            class="w-3 h-3 bg-[var(--table-base-bg)] rounded-full shadow-sm"
                                             title="table color: {{ $table->color ?? \App\Models\Table::COLOR_DEFAULT }}"
                                         ></div>
                                     </div>
@@ -73,183 +73,219 @@
                             <div class="border-b border-gray-200 dark:border-neutral-700">
                                 <nav class="flex gap-x-1" aria-label="Tabs" role="tablist" aria-orientation="horizontal">
                                     <button type="button" class="hs-tab-active:font-semibold hs-tab-active:border-[var(--table-base-bg)] hs-tab-active:text-[var(--table-base-bg)] py-4 px-1 inline-flex items-center gap-x-2 border-b-2 border-transparent text-sm whitespace-nowrap text-gray-500 hover:text-[var(--table-base-bg)] focus:outline-hidden focus:text-[var(--table-base-bg)] disabled:opacity-50 disabled:pointer-events-none dark:text-neutral-400 dark:hover:text-blue-500 active" id="tabs-with-badges-item-1" aria-selected="true" data-hs-tab="#tab-columns" aria-controls="tab-columns" role="tab">
-                                        Columns<span class="hs-tab-active:bg-[var(--table-base-bg)]/20 hs-tab-active:text-[var(--table-base-bg)] dark:hs-tab-active:bg-blue-800 dark:hs-tab-active:text-white ms-1 py-0.5 px-1.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-neutral-700 dark:text-neutral-300">{{ $this->getColumns()->count() }}</span>
+                                        Columns<span class="hs-tab-active:bg-[var(--table-base-bg)]/20 hs-tab-active:text-[var(--table-base-bg)] dark:hs-tab-active:bg-blue-800 dark:hs-tab-active:text-white ms-1 py-0.5 px-1.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-neutral-700 dark:text-neutral-300">{{ $this->getColumns()?->count() }}</span>
                                     </button>
                                     <button type="button" class="hs-tab-active:font-semibold hs-tab-active:border-[var(--table-base-bg)] hs-tab-active:text-[var(--table-base-bg)] py-4 px-1 inline-flex items-center gap-x-2 border-b-2 border-transparent text-sm whitespace-nowrap text-gray-500 hover:text-[var(--table-base-bg)] focus:outline-hidden focus:text-[var(--table-base-bg)] disabled:opacity-50 disabled:pointer-events-none dark:text-neutral-400 dark:hover:text-blue-500" id="tabs-with-badges-item-2" aria-selected="false" data-hs-tab="#tab-foreign-keys" aria-controls="tab-foreign-keys" role="tab">
-                                        Foreign Keys<span class="hs-tab-active:bg-[var(--table-base-bg)]/20 hs-tab-active:text-[var(--table-base-bg)] dark:hs-tab-active:bg-blue-800 dark:hs-tab-active:text-white ms-1 py-0.5 px-1.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-neutral-700 dark:text-neutral-300">{{ $this->getForeignKeys()->count() }}</span>
+                                        Foreign Keys<span class="hs-tab-active:bg-[var(--table-base-bg)]/20 hs-tab-active:text-[var(--table-base-bg)] dark:hs-tab-active:bg-blue-800 dark:hs-tab-active:text-white ms-1 py-0.5 px-1.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-neutral-700 dark:text-neutral-300">{{ $this->getForeignKeys()?->count() }}</span>
                                     </button>
                                 </nav>
                             </div>
 
                             <div class="mt-3">
+
                                 <div id="tab-columns" role="tabpanel" aria-labelledby="tabs-with-badges-item-1">
 
                                     <div class="mb-3 flex justify-end">
-                                        <flux:button icon="plus-circle" size="sm" wire:click="openCreateColumnModal" variant="primary">
+                                        <flux:button icon="plus-circle" size="sm" wire:click="addColumn()" variant="primary">
                                             Adicionar Coluna
                                         </flux:button>
                                     </div>
 
-                                    <div class="space-y-1.5 overflow-y-scroll h-89.5">
+                                    <div class="space-y-2 overflow-y-scroll h-150">
                                         @forelse($this->getColumns() as $column)
                                             <div
+                                                x-data="{ open: false }"
                                                 @class([
-                                                    'bg-white border-l-4 rounded-l-md rounded border p-2 transition-all flex gap-2 justify-between',
-                                                    'border-gray-200 hover:border-gray-300' => $selectedColumnId !== $column->id,
-                                                    'border-blue-300 table-column-border-left ring-1 table-column-border-ring' => $selectedColumnId === $column->id,
+                                                    'bg-white border-l-4 rounded-lg border shadow-sm transition-all overflow-hidden',
+                                                    'border-gray-200 hover:border-gray-300 hover:shadow-md' => $selectedColumnId !== $column->id,
+                                                    'border-blue-500 ring-2 ring-blue-200 shadow-md' => $selectedColumnId === $column->id,
                                                 ])
-                                                wire:click="selectColumn({{ $column->id }})"
                                             >
-                                                <div class="flex items-center gap-1.5 mb-1 flex-1">
-                                                    {!! Helpers::getIconDiamondByTypeColumn($column) !!}
-                                                    @if($editingColumnId === $column->id)
-                                                        <div class="flex items-center gap-1 flex-1" @click.stop>
-                                                            <flux:input
-                                                                wire:model="editingColumnName"
-                                                                wire:keydown.enter="updateColumnName({{ $column->id }})"
-                                                                wire:keydown.escape="cancelEditingColumnName"
-                                                                class="text-[9pt] font-medium font-[Poppins]"
-                                                                style="all: unset; height: 10px;"
-                                                                autofocus
-                                                            />
-                                                            <flux:icon
-                                                                wire:click="updateColumnName({{ $column->id }})"
-                                                                name="check"
-                                                                class="size-3 block"
-                                                            />
-                                                            <flux:icon
-                                                                wire:click="cancelEditingColumnName"
-                                                                name="x-mark"
-                                                                class="size-3 block"
-                                                            />
+                                                <!-- Header do Collapse -->
+                                                <div
+                                                    @class([
+                                                        'flex items-center justify-between px-4 py-3 cursor-pointer transition-all',
+                                                        'bg-gradient-to-r from-gray-50 to-white hover:from-gray-100 hover:to-gray-50' => $selectedColumnId !== $column->id,
+                                                        'bg-gradient-to-r from-blue-50 to-blue-100/50' => $selectedColumnId === $column->id,
+                                                    ])
+                                                    @click="open = !open"
+                                                >
+                                                    <div class="flex items-center gap-2.5 flex-1 min-w-0">
+                                                        <div class="flex-shrink-0">
+                                                            {!! Helpers::getIconDiamondByTypeColumn($column) !!}
                                                         </div>
-                                                    @else
-                                                        <span
-                                                            class="text-xs font-medium text-gray-900 font-[Poppins] cursor-pointer hover:text-blue-600"
-                                                            wire:click.stop="startEditingColumnName({{ $column->id }})"
-                                                            title="Clique para editar o nome"
-                                                        >{{ $column->name }}</span>
-                                                    @endif
+                                                        <div class="flex-1 min-w-0">
+                                                            <div class="flex items-center gap-2 flex-wrap">
+                                                                <span
+                                                                    class="text-xs font-semibold text-gray-900 font-[Poppins] cursor-pointer hover:text-blue-600 truncate transition-colors flex-1 min-w-0"
+                                                                    title="Clique para editar o nome"
+                                                                >{{ $column->name }}
+                                                                </span>
+                                                                <span class="text-[10px] text-gray-500 font-mono bg-gray-100 px-1.5 py-0.5 rounded flex-shrink-0">
+                                                                    {{ $column->length > 0 ? "$column->type($column->length)" : $column->type }}
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Checkboxes compactos -->
+                                                    <flux:fieldset wire:click.stop class="text-xs">
+                                                        <div class="flex gap-2 *:gap-x-1">
+                                                            <flux:checkbox value="pk" label="pk" />
+                                                            <flux:checkbox value="fk" label="fk" />
+                                                            <flux:checkbox value="nullable" label="n" />
+                                                        </div>
+                                                    </flux:fieldset>
+
+                                                    <!-- Ícone de collapse -->
+                                                    <svg
+                                                        class="w-5 h-5 text-gray-400 ml-3 flex-shrink-0 transition-transform duration-300"
+                                                        :class="{ 'rotate-180': open }"
+                                                        fill="none"
+                                                        stroke="currentColor"
+                                                        viewBox="0 0 24 24"
+                                                    >
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                                    </svg>
                                                 </div>
 
-                                                <div class="flex flex-wrap items-center gap-1">
-                                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[7pt] font-medium bg-gray-100 text-gray-800">
-                                                        {{ $column->length > 0 ? "$column->type($column->length)" : $column->type }}
-                                                    </span>
+                                                <!-- Conteúdo do Collapse com Formulário -->
+                                                <div
+                                                    x-show="open"
+                                                    x-collapse
+                                                    class="overflow-hidden"
+                                                >
+                                                    <div class="px-4 pb-4 pt-3 border-t border-gray-200 bg-gray-50/50 space-y-4">
+                                                        @if($selectedColumnId === $column->id)
+                                                            <!-- Formulário de Edição -->
+                                                            <form wire:submit.prevent="updateColumn({{ $column->id }})" class="space-y-3">
+                                                                <!-- Nome da Coluna -->
+                                                                <div>
+                                                                    <label class="block text-xs font-semibold text-gray-700 mb-1.5">Nome</label>
+                                                                    <input
+                                                                        type="text"
+                                                                        wire:model="columnName"
+                                                                        class="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                                                        placeholder="Nome da coluna"
+                                                                    />
+                                                                    @error('columnName') <span class="text-xs text-red-600">{{ $message }}</span> @enderror
+                                                                </div>
 
-                                                    @if($column->is_primary)
-                                                        <span class="inline-flex items-center px-1 py-0.5 rounded text-[7pt] font-medium bg-amber-100 text-amber-800">PK</span>
-                                                    @endif
-                                                    @if($column->is_foreign)
-                                                        <span class="inline-flex items-center px-1 py-0.5 rounded text-[7pt] font-medium bg-red-100 text-red-800">FK</span>
-                                                    @endif
-                                                    @if($column->is_nullable)
-                                                        <span class="inline-flex items-center px-1 py-0.5 rounded text-[7pt] font-medium bg-blue-100 text-blue-800">NULL</span>
-                                                    @endif
-                                                    @if($column->default_value)
-                                                        <span class="inline-flex items-center px-1 py-0.5 rounded text-[7pt] font-medium bg-green-100 text-green-800" title="Default: {{ $column->default_value }}">
-                                                            Default
-                                                        </span>
-                                                    @endif
+                                                                <!-- Tipo e Length -->
+                                                                <div class="grid grid-cols-2 gap-3">
+                                                                    <div>
+                                                                        <label class="block text-xs font-semibold text-gray-700 mb-1.5">Tipo</label>
+                                                                        <select
+                                                                            wire:model="columnType"
+                                                                            class="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                                                        >
+                                                                            @foreach($this->getColumnTypes() as $type => $label)
+                                                                                <option value="{{ $type }}">{{ $label }}</option>
+                                                                            @endforeach
+                                                                        </select>
+                                                                        @error('columnType') <span class="text-xs text-red-600">{{ $message }}</span> @enderror
+                                                                    </div>
+                                                                    <div>
+                                                                        <label class="block text-xs font-semibold text-gray-700 mb-1.5">Length</label>
+                                                                        <input
+                                                                            type="number"
+                                                                            wire:model="columnLength"
+                                                                            min="0"
+                                                                            class="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                                                            placeholder="Ex: 255"
+                                                                        />
+                                                                        @error('columnLength') <span class="text-xs text-red-600">{{ $message }}</span> @enderror
+                                                                    </div>
+                                                                </div>
+
+                                                                <!-- Default Value -->
+                                                                <div>
+                                                                    <label class="block text-xs font-semibold text-gray-700 mb-1.5">Valor Padrão</label>
+                                                                    <input
+                                                                        type="text"
+                                                                        wire:model="columnDefaultValue"
+                                                                        class="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                                                        placeholder="Ex: 'default' ou NULL"
+                                                                    />
+                                                                    @error('columnDefaultValue') <span class="text-xs text-red-600">{{ $message }}</span> @enderror
+                                                                </div>
+
+                                                                <!-- Comment -->
+                                                                <div>
+                                                                    <label class="block text-xs font-semibold text-gray-700 mb-1.5">Comentário</label>
+                                                                    <textarea
+                                                                        wire:model="columnComment"
+                                                                        rows="2"
+                                                                        class="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
+                                                                        placeholder="Descrição da coluna..."
+                                                                    ></textarea>
+                                                                    @error('columnComment') <span class="text-xs text-red-600">{{ $message }}</span> @enderror
+                                                                </div>
+
+                                                                <!-- Botões de Ação -->
+                                                                <div class="flex items-center justify-end gap-2 pt-2 border-t border-gray-200">
+                                                                    <button
+                                                                        type="button"
+                                                                        wire:click="selectColumn({{ $column->id }})"
+                                                                        class="px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                                                                    >
+                                                                        Cancelar
+                                                                    </button>
+                                                                    <button
+                                                                        type="submit"
+                                                                        class="px-4 py-1.5 text-xs font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                                                                    >
+                                                                        Salvar
+                                                                    </button>
+                                                                </div>
+                                                            </form>
+                                                        @else
+                                                            <!-- Visualização dos Detalhes -->
+                                                            <div class="space-y-2.5">
+                                                                @if($column->default_value)
+                                                                    <div class="flex items-start gap-2 text-xs">
+                                                                        <span class="font-semibold text-gray-600 min-w-[60px]">Default:</span>
+                                                                        <span class="text-gray-900 font-mono bg-white px-2 py-1 rounded border border-gray-200">{{ $column->default_value }}</span>
+                                                                    </div>
+                                                                @endif
+                                                                @if($column->comment)
+                                                                    <div class="flex items-start gap-2 text-xs">
+                                                                        <span class="font-semibold text-gray-600 min-w-[60px]">Comment:</span>
+                                                                        <span class="text-gray-700 flex-1 bg-white px-2 py-1 rounded border border-gray-200">{{ $column->comment }}</span>
+                                                                    </div>
+                                                                @endif
+                                                                @if(!$column->default_value && !$column->comment)
+                                                                    <div class="text-center py-3">
+                                                                        <p class="text-xs text-gray-400">Nenhum detalhe adicional</p>
+                                                                        <button
+                                                                            type="button"
+                                                                            wire:click.stop="selectColumn({{ $column->id }})"
+                                                                            class="mt-2 text-xs text-blue-600 hover:text-blue-700 font-medium"
+                                                                        >
+                                                                            Editar coluna
+                                                                        </button>
+                                                                    </div>
+                                                                @else
+                                                                    <div class="pt-1">
+                                                                        <button
+                                                                            type="button"
+                                                                            wire:click.stop="selectColumn({{ $column->id }})"
+                                                                            class="w-full text-xs px-3 py-1.5 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors font-medium"
+                                                                        >
+                                                                            Editar Detalhes
+                                                                        </button>
+                                                                    </div>
+                                                                @endif
+                                                            </div>
+                                                        @endif
+                                                    </div>
                                                 </div>
                                             </div>
                                         @empty
-                                            <div class="bg-white rounded-lg border border-gray-200 p-8 text-center">
+                                            <div class="bg-white rounded-lg h-150 flex justify-center items-center border border-gray-200 p-8 text-center">
                                                 <p class="text-sm text-gray-500">No columns found</p>
                                             </div>
                                         @endforelse
-                                    </div>
-
-                                    <div class="relative flex items-center my-3">
-                                        <div class="flex-grow border-t border-gray-200"></div>
-                                        <span class="mx-3 text-[10px] uppercase tracking-wide text-gray-400">Detalhes</span>
-                                        <div class="flex-grow border-t border-gray-200"></div>
-                                    </div>
-
-                                    <div class="h-70 relative">
-                                        @php($selected = $this->getSelectedColumn())
-                                        @if($selected)
-                                            <div wire:loading.delay class="absolute inset-0 backdrop-blur-sm rounded-lg z-10">
-                                                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8">
-                                                    <div class="absolute inset-0 rounded-full border-2 border-gray-300/30 border-t-[var(--table-base-bg)] animate-spin"></div>
-                                                </div>
-                                            </div>
-                                            <div class="bg-white table-column-border-left rounded-lg border-l-4 border border-gray-200 p-4 shadow-sm h-full">
-                                                <div class="flex items-start justify-between">
-                                                    <div class="flex items-center gap-2">
-                                                        {!! Helpers::getIconDiamondByTypeColumn($selected) !!}
-                                                        <h3 class="text-sm font-semibold text-gray-900">{{ $selected->name }}</h3>
-                                                    </div>
-                                                    <div class="flex flex-wrap items-center gap-1">
-                                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[7pt] font-medium bg-gray-100 text-gray-800">
-                                                            {{ $selected->length > 0 ? "$selected->type($selected->length)" : $selected->type }}
-                                                        </span>
-                                                        @if($selected->is_primary)
-                                                            <span class="inline-flex items-center px-1 py-0.5 rounded text-[7pt] font-medium bg-amber-100 text-amber-800">PK</span>
-                                                        @endif
-                                                        @if($selected->is_foreign)
-                                                            <span class="inline-flex items-center px-1 py-0.5 rounded text-[7pt] font-medium bg-red-100 text-red-800">FK</span>
-                                                        @endif
-                                                        @if($selected->is_nullable)
-                                                            <span class="inline-flex items-center px-1 py-0.5 rounded text-[7pt] font-medium bg-blue-100 text-blue-800">NULL</span>
-                                                        @endif
-                                                    </div>
-                                                </div>
-
-                                                <dl class="mt-4 grid grid-cols-2 gap-3 text-xs">
-                                                    <div class="space-y-0.5">
-                                                        <dt class="text-gray-500">Type</dt>
-                                                        <dd class="text-gray-900 font-medium">{{ $selected->type }}</dd>
-                                                    </div>
-                                                    <div class="space-y-0.5">
-                                                        <dt class="text-gray-500">Length</dt>
-                                                        <dd class="text-gray-900 font-medium">{{ $selected->length ?: '—' }}</dd>
-                                                    </div>
-                                                    <div class="space-y-0.5">
-                                                        <dt class="text-gray-500">Nullable</dt>
-                                                        <dd class="text-gray-900 font-medium">{{ $selected->is_nullable ? 'Yes' : 'No' }}</dd>
-                                                    </div>
-                                                    <div class="space-y-0.5">
-                                                        <dt class="text-gray-500">Primary</dt>
-                                                        <dd class="text-gray-900 font-medium">{{ $selected->is_primary ? 'Yes' : 'No' }}</dd>
-                                                    </div>
-                                                    <div class="space-y-0.5">
-                                                        <dt class="text-gray-500">Foreign</dt>
-                                                        <dd class="text-gray-900 font-medium">{{ $selected->is_foreign ? 'Yes' : 'No' }}</dd>
-                                                    </div>
-                                                    <div class="space-y-0.5">
-                                                        <dt class="text-gray-500">Default</dt>
-                                                        <dd class="text-gray-900 font-medium">{{ $selected->default_value ?? '—' }}</dd>
-                                                    </div>
-                                                </dl>
-
-                                                <dt class="text-xs text-gray-500 mb-2 mt-4">Comment</dt>
-
-                                                <div class="grid gap-2 grid-cols-6 items-start">
-                                                    <div class="col-span-5">
-                                                        <div class="rounded-md border border-gray-200 bg-gray-50 px-3 py-1 min-h-12 max-h-24 overflow-y-auto">
-                                                            <p class="text-[11px] leading-5 text-gray-700">{{ $selected->comment ?: '—' }}</p>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="flex col-auto flex-col gap-1 justify-start">
-                                                        <flux:button size="sm" wire:click="openEditColumnModal({{ $selected->id }})" variant="ghost" class="text-xs">
-                                                            <flux:icon.pencil class="size-3" />
-                                                        </flux:button>
-                                                        <flux:button size="sm" wire:click="deleteColumn" wire:confirm="Tem certeza que deseja deletar esta coluna?" variant="ghost" class="text-xs text-red-600 hover:text-red-700">
-                                                            <flux:icon.trash class="size-3" />
-                                                        </flux:button>
-                                                        <flux:button size="sm" wire:click="clearSelection" variant="ghost" class="text-xs">
-                                                            <flux:icon.x-mark class="size-3" />
-                                                        </flux:button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        @else
-                                            <div class="bg-gray-50 rounded-lg border border-l-4 border-dashed border-gray-200 p-6 h-full flex items-center justify-center">
-                                                <p class="text-xs text-gray-500">Selecione uma coluna para ver os detalhes</p>
-                                            </div>
-                                        @endif
                                     </div>
 
                                 </div>
@@ -278,13 +314,14 @@
                                         </div>
                                     </div>
                                 </div>
+
                             </div>
                         </article>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
+
 
 </section>

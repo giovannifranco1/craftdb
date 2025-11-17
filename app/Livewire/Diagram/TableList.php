@@ -5,16 +5,19 @@ namespace App\Livewire\Diagram;
 use App\Actions\Diagram\AddRelationship;
 use App\Models\Diagram;
 use App\Support\Helpers;
+use DB;
+use Illuminate\Contracts\Database\Query\Builder as QueryBuilder;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Lazy;
+use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
-#[Lazy]
 class TableList extends Component
 {
+    #[Locked]
     public Diagram $diagram;
 
     /** @var array<string, string>  */
@@ -36,7 +39,7 @@ class TableList extends Component
     /**
      * @return Collection<int, \App\Models\Table>
      */
-    #[Computed]
+    #[Computed(persist: true)]
     public function getTables(): Collection
     {
         $tables = $this->diagram->tables();
@@ -47,6 +50,8 @@ class TableList extends Component
         return $tables
             ->withCount('columns')
             ->with(['diagram'])
+            ->with(['columns' => fn(QueryBuilder $query) => $query->orderBy('order')])
+            ->with(['foreignKeys' => fn(QueryBuilder $query) => $query->orderByDesc('order')])
             ->get();
     }
 
@@ -77,14 +82,16 @@ class TableList extends Component
             return;
         }
 
-        foreach ($tables as $tableData) {
-            $this->diagram->tables()
-                ->where('id', $tableData['id'])
-                ->update([
-                    'x' => (int) $tableData['x'],
-                    'y' => (int) $tableData['y'],
-                ]);
-        }
+        DB::transaction(function () use ($tables) {
+            foreach ($tables as $t) {
+                $this->diagram->tables()
+                    ->where('id', $t['id'])
+                    ->update([
+                        'x' => $t['x'],
+                        'y' => $t['y'],
+                    ]);
+            }
+        });
 
         $this->dispatch('alert', message: 'Posições das tabelas salvas com sucesso!');
     }

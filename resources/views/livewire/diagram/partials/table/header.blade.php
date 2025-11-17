@@ -36,7 +36,7 @@
 
             this.loading = true;
             this.mouseDownPos = null;
-            $dispatch('table-side-editor::open', { table: @js($table->id) })
+            $dispatch('table-side-editor::open', { table: @js($table) })
         },
 
         addRelationship() {

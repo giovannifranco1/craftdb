@@ -57,7 +57,7 @@
             <x-ui.diagram.table.dropdown-menu-color :table="$table" />
         </flux:button>
 
-        <flux:button @mousedown.stop="$wire.addColum()" variant="primary" class="font-[Poppins] text-xs">
+        <flux:button @mousedown.stop="$wire.addColumn()" variant="primary" class="font-[Poppins] text-xs">
             <flux:icon.plus-circle variant="solid" class="size-3.5"/>
             Add Column
         </flux:button>

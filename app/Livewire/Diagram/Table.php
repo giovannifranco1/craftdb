@@ -40,13 +40,10 @@ class Table extends Component
         $this->name = $table->name;
     }
 
-    #[Computed]
+    #[Computed(persist: true)]
     public function getColumns(): Collection
     {
-        return $this->table
-            ->columns()
-            ->orderBy('order')
-            ->get();
+        return $this->table->columns;
     }
 
     public function renameTable(): void
@@ -87,7 +84,7 @@ class Table extends Component
         $this->dispatch('table::column-renamed');
     }
 
-    public function addColum(): void
+    public function addColumn(): void
     {
         $minOrder = $this->table->columns()->min('order');
         $newOrder = $minOrder === null

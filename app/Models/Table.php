@@ -112,4 +112,9 @@ class Table extends Model
             })
             ->with(['fromTable', 'toTable', 'fromColumn', 'toColumn']);
     }
+
+    public function foreignKeys()
+    {
+        return $this->hasMany(Column::class, 'table_id')->where('is_foreign', true);
+    }
 }

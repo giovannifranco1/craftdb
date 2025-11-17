@@ -3,7 +3,6 @@
 namespace App\Livewire\Diagram;
 
 use App\Concerns\HasSidePanel;
-use App\Models\Column;
 use App\Models\Table;
 use Illuminate\Database\Eloquent\Collection;
 use Livewire\Attributes\Computed;
@@ -65,28 +64,16 @@ final class TableSideEditor extends Component
         $this->dispatch('table-side-editor::opened', tableId: $table->id);
     }
 
-    public function openCreateColumnModal(): void
-    {
-        $this->resetForms();
-        $this->js('$flux.modal("create-column").show()');
-    }
-
-    #[Computed]
+    #[Computed(persist: true)]
     public function getColumns(): Collection
     {
-        return $this->table
-            ->columns()
-            ->orderByDesc('order')
-            ->get();
+        return $this->table->columns->sortBy('order');
     }
 
-    public function getForeignKeys(): Collection
+    #[Computed(persist: true)]
+    public function getForeignKeys(): ?Collection
     {
-        return $this->table
-            ->columns()
-            ->filterByForeignKeys()
-            ->orderByDesc('order')
-            ->get();
+        return $this->table?->foreignKeys ?? new Collection();
     }
 
     #[Computed]
@@ -102,55 +89,21 @@ final class TableSideEditor extends Component
             ->first();
     }
 
-    public function selectColumn(int $columnId): void
+    public function addColumn(): void
     {
-        $this->selectedColumnId = $columnId;
-        $this->showEditForm = false;
-    }
+        $minOrder = $this->table->columns()->min('order');
+        $newOrder = $minOrder === null
+        ? 100
+        : max(1, (int) ($minOrder / 2));
 
-    public function clearSelection(): void
-    {
-        $this->selectedColumnId = null;
-        $this->showEditForm = false;
-    }
+        $baseColumn = [
+            'name'  => 'new_column',
+            'type'  => 'varchar',
+            'order' => $newOrder,
+        ];
 
-
-    public function openEditColumnModal(int $columnId): void
-    {
-        $column = $this->table->columns()->whereKey($columnId)->first();
-
-        if (!$column) {
-            return;
-        }
-
-        $this->selectedColumnId = $columnId;
-        $this->columnName = $column->name;
-        $this->columnType = $column->type;
-        $this->columnLength = $column->length;
-        $this->columnIsPrimary = $column->is_primary;
-        $this->columnIsForeign = $column->is_foreign;
-        $this->columnIsNullable = $column->is_nullable;
-        $this->columnDefaultValue = $column->default_value;
-        $this->columnComment = $column->comment;
-
-        $this->modal("edit-column")->show();
-    }
-
-    public function startEditingColumnName(int $columnId): void
-    {
-        $column = $this->table->columns()->whereKey($columnId)->first();
-        if (!$column) {
-            return;
-        }
-
-        $this->editingColumnId = $columnId;
-        $this->editingColumnName = $column->name;
-    }
-
-    public function cancelEditingColumnName(): void
-    {
-        $this->editingColumnId = null;
-        $this->editingColumnName = '';
+        $this->table->columns()->create($baseColumn);
+        $this->dispatch('table-side-editor::column-added');
     }
 
     public function updateColumnName(int $columnId): void
@@ -172,54 +125,18 @@ final class TableSideEditor extends Component
         $this->dispatch('table::column-saved');
     }
 
-    public function cancelForm(): void
-    {
-        $this->resetForms();
-        $this->js('$flux.modal("create-column").close()');
-    }
-
-    public function cancelEditForm(): void
-    {
-        $this->resetForms();
-        $this->js('$flux.modal("edit-column").close()');
-    }
-
-    public function createColumn(): void
+    public function updateColumn(int $columnId): void
     {
         $this->validate();
 
-        $maxOrder = $this->table->columns()->max('order') ?? 0;
-
-        Column::create([
-            'table_id' => $this->table->id,
-            'name' => $this->columnName,
-            'type' => $this->columnType,
-            'length' => $this->columnLength,
-            'is_primary' => $this->columnIsPrimary,
-            'is_foreign' => $this->columnIsForeign,
-            'is_nullable' => $this->columnIsNullable,
-            'default_value' => $this->columnDefaultValue,
-            'comment' => $this->columnComment,
-            'order' => $maxOrder + 1,
-        ]);
-
-        $this->resetForms();
-        $this->js('$flux.modal("create-column").close()');
-        $this->dispatch('table::column-saved');
-    }
-
-    public function updateColumn(): void
-    {
-        $this->validate();
-
-        $column = $this->getSelectedColumn();
+        $column = $this->table->columns()->whereKey($columnId)->first();
         if (!$column) {
             return;
         }
 
         $column->update([
             'name' => $this->columnName,
-            'type' => $this->columnType,
+            'type' => strtolower($this->columnType),
             'length' => $this->columnLength,
             'is_primary' => $this->columnIsPrimary,
             'is_foreign' => $this->columnIsForeign,
@@ -229,8 +146,7 @@ final class TableSideEditor extends Component
         ]);
 
         $this->resetForms();
-        $this->js('$flux.modal("edit-column").close()');
-        $this->dispatch('column-updated');
+        $this->dispatch('table::column-saved');
     }
 
     public function deleteColumn(): void
@@ -243,6 +159,91 @@ final class TableSideEditor extends Component
         $column->delete();
         $this->resetForms();
         $this->dispatch('column-deleted');
+    }
+
+    public function toggleNullable(int $columnId): void
+    {
+        $column = $this->table->columns()->whereKey($columnId)->first();
+        if (!$column) {
+            return;
+        }
+
+        $column->update([
+            'is_nullable' => !$column->is_nullable,
+        ]);
+
+        $this->dispatch('table::column-saved');
+    }
+
+    public function togglePrimaryKey(int $columnId): void
+    {
+        $column = $this->table->columns()->whereKey($columnId)->first();
+        if (!$column) {
+            return;
+        }
+
+        $column->update([
+            'is_primary' => !$column->is_primary,
+        ]);
+
+        $this->dispatch('table::column-saved');
+    }
+
+    public function toggleForeignKey(int $columnId): void
+    {
+        $column = $this->table->columns()->whereKey($columnId)->first();
+        if (!$column) {
+            return;
+        }
+
+        $column->update([
+            'is_foreign' => !$column->is_foreign,
+        ]);
+
+        $this->dispatch('table::column-saved');
+    }
+
+    public function selectColumn(int $columnId): void
+    {
+        $this->selectedColumnId = $this->selectedColumnId === $columnId ? null : $columnId;
+
+        if ($this->selectedColumnId === $columnId) {
+            $this->loadColumnData($columnId);
+        }
+    }
+
+    public function loadColumnData(int $columnId): void
+    {
+        $column = $this->table->columns()->whereKey($columnId)->first();
+        if (!$column) {
+            return;
+        }
+
+        $this->columnName = $column->name;
+        $this->columnType = strtoupper($column->type);
+        $this->columnLength = $column->length;
+        $this->columnIsPrimary = $column->is_primary;
+        $this->columnIsForeign = $column->is_foreign;
+        $this->columnIsNullable = $column->is_nullable;
+        $this->columnDefaultValue = $column->default_value;
+        $this->columnComment = $column->comment;
+    }
+
+    public function startEditingColumnName(int $columnId): void
+    {
+        $column = $this->table->columns()->whereKey($columnId)->first();
+        if (!$column) {
+            return;
+        }
+
+        $this->editingColumnId = $columnId;
+        $this->editingColumnName = $column->name;
+    }
+
+    public function cancelEditingColumnName(): void
+    {
+        $this->editingColumnId = null;
+        $this->editingColumnName = '';
     }
 
     private function resetForms(): void
