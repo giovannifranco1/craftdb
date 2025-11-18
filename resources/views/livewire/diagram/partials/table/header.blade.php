@@ -13,7 +13,7 @@
         },
 
         eventMouseUp(e) {
-            if (!this.mouseDownPos) return;
+            if (!this.mouseDownPos || Alpine.raw(this.canvas).getGrabMode() || Alpine.raw(this.canvas).getIsSpacePressed()) return;
 
             // Calcula a distância percorrida desde o mousedown
             const distance = Math.sqrt(
@@ -55,6 +55,7 @@
     @mouseleave="mouseDownPos = null"
     @table::renaming.window="if (($event.detail?.el || null) === ($el.closest('[table-box]') || $el)) isEventRename = true"
     @table-side-editor::opened.window="loading = false;"
+    @canvas::space.window="if ($event.detail.isSpacePressed) $el.style.cursor = 'grab'; else $el.style.cursor = ''"
     :style="`height: ${getGridSize()/2 + getGridSize()}px; cursor: ${loading ? 'wait' : ''};`"
     class="bg-blue-500 flex-none border-b border-gray-200 px-3 py-1 rounded-t-xl table-header-beauty"
 >
@@ -101,6 +102,7 @@
                 @keydown.escape="isEventRename = false; $wire.resetName()"
                 @table::renamed.window="isEventRename = false;"
                 @blur="isEventRename = false; $wire.resetName()"
+                autocomplete="off"
             />
             <span x-show="!isEventRename" class="text-white font-normal text-[12pt] font-[Kalam]">{{ $table->name }}</span>
         </h3>

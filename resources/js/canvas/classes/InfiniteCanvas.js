@@ -8,6 +8,13 @@ export class InfiniteCanvas {
     #offsetX = 0;
     #offsetY = 0;
 
+    // --- [Private fields para mouse pan + space] ---
+    #isSpacePressed = false;
+    #isDragging = false;
+    #lastDragPos = { x: 0, y: 0 };
+    #grabModeEnabled = false; // modo grab permanente (sem precisar space)
+    // ---[/Private fields]---
+
     #touchMode = "single"; // "single" | "double"
     #prevTouch = [null, null]; // [Touch | null, Touch | null]
 
@@ -115,6 +122,27 @@ export class InfiniteCanvas {
         return this.#offsetY;
     }
 
+    setGrabMode(enabled) {
+        this.#grabModeEnabled = enabled;
+        if (this.canvas) {
+            if (enabled) {
+                this.canvas.style.cursor = 'grab';
+                window.dispatchEvent(new CustomEvent('canvas::space', { detail: { isSpacePressed: true } }));
+            } else {
+                this.canvas.style.cursor = '';
+                window.dispatchEvent(new CustomEvent('canvas::space', { detail: { isSpacePressed: false } }));
+            }
+        }
+    }
+
+    getGrabMode() {
+        return this.#grabModeEnabled;
+    }
+
+    getIsSpacePressed() {
+        return this.#isSpacePressed;
+    }
+
     clientToVirtual(clientX, clientY) {
         if (!this.canvas) {
             return { x: 0, y: 0 };
@@ -190,16 +218,76 @@ export class InfiniteCanvas {
             }
 
             if (sidePanel || fluxModal) {
-                return; // Não processa eventos de wheel dentro do painel lateral ou modais
+                return;
             }
 
             event.preventDefault();
             this.#onWheel(event.deltaX, event.deltaY)
         }, { passive: false });
 
-
-        window.addEventListener("resize", () => this.#draw());
+        this.#setupMousePan(canvas); // refatorado para método separado
     }
+
+    // --- [Refatoração: pan do mouse] ---
+    #setupMousePan(canvas) {
+        // Helper para verificar se pode fazer pan (space OU grab mode)
+        const canPan = () => this.#isSpacePressed || this.#grabModeEnabled;
+
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                if (this.#grabModeEnabled) {
+                    return;
+                }
+
+                this.#isSpacePressed = true;
+                if (!this.#isDragging && !this.#grabModeEnabled) {
+                    canvas.style.cursor = 'grab';
+                }
+
+                window.dispatchEvent(new CustomEvent('canvas::space', { detail: { isSpacePressed: true } }));
+            }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            if (e.code === 'Space') {
+                if (this.#grabModeEnabled) {
+                    return;
+                }
+
+                this.#isSpacePressed = false;
+                if (!this.#isDragging) {
+                    canvas.style.cursor = this.#grabModeEnabled ? 'grab' : '';
+                }
+
+                window.dispatchEvent(new CustomEvent('canvas::space', { detail: { isSpacePressed: false } }));
+            }
+        });
+        window.addEventListener('mousedown', (e) => {
+            if (canPan()) {
+                this.#isDragging = true;
+                this.#lastDragPos = { x: e.clientX, y: e.clientY };
+                canvas.style.cursor = 'grabbing';
+            }
+        });
+        window.addEventListener('mouseup', () => {
+            if (this.#isDragging) {
+                this.#isDragging = false;
+                canvas.style.cursor = canPan() ? 'grab' : '';
+            }
+        });
+        window.addEventListener('mousemove', (e) => {
+            if (this.#isDragging) {
+                const dx = e.clientX - this.#lastDragPos.x;
+                const dy = e.clientY - this.#lastDragPos.y;
+                this.#offsetX -= dx / this.#scale;
+                this.#offsetY -= dy / this.#scale;
+                this.#lastDragPos = { x: e.clientX, y: e.clientY };
+                this.#draw();
+                this.#dispatchTransformChanged();
+            }
+        });
+    }
+    // --- [fim refatoração] ---
 
     #zoomWheel(event) {
         const zoomStep = 1.05;

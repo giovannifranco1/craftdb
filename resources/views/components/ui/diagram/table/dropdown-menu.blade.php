@@ -45,7 +45,7 @@
     x-transition:leave-start="opacity-100 translate-y-0"
     x-transition:leave-end="opacity-0 translate-y-1"
     @keydown.escape="isInRelationshipEvent = false; open = false;"
-    @mousedown.outside="open = false;"
+    @mousedown.outside="if (!Alpine.raw(canvas).getIsSpacePressed()) open = false;"
     @dropdown-menu::opened.window="if (($event.detail?.el || null) !== ($el.closest('[table-box]') || $el)) open = false"
     @dropdown-menu::toggle.window="if (($event.detail?.tableBox || null) === ($el.closest('[table-box]') || $el)) open = !open"
     class="absolute -top-20 -left-71.5 mt-2 min-w-60 w-100 justify-between flex gap-2 items-center text-white rounded-md"

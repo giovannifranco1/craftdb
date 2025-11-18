@@ -5,6 +5,8 @@
         zoomPercent: 75,
         showGrid: true,
         isFullscreen: false,
+        grabModeEnabled: false,
+        isSpacePressed: false,
         getFullscreenElement() {
             return document.fullscreenElement ||
                    document.webkitFullscreenElement ||
@@ -43,6 +45,18 @@
                 }
             }
         },
+        toggleGrabMode() {
+            this.grabModeEnabled = !this.grabModeEnabled;
+            if (window.canvas) {
+                Alpine.raw(window.canvas).setGrabMode(this.grabModeEnabled);
+            }
+        },
+        setCursorMode() {
+            this.grabModeEnabled = false;
+            if (window.canvas) {
+                Alpine.raw(window.canvas).setGrabMode(false);
+            }
+        },
         init() {
             // Listener para detectar mudanças no estado de fullscreen
             const updateFullscreen = () => {
@@ -56,6 +70,16 @@
 
             // Atualiza estado inicial
             this.isFullscreen = !!this.getFullscreenElement();
+
+            // Listener para sincronizar com space key
+            window.addEventListener('canvas::space', (e) => {
+                this.isSpacePressed = e.detail.isSpacePressed;
+                // Se space foi pressionado, mostra visualmente no botão grab
+                // Se space foi solto e não está em modo grab permanente, volta ao normal
+                if (!this.grabModeEnabled && !e.detail.isSpacePressed) {
+                    // Não faz nada, apenas atualiza o estado visual
+                }
+            });
         }
     }"
     @canvas-zoom.window="zoomPercent = Math.round($event.detail.scale * 100);">
@@ -114,6 +138,33 @@
             <flux:icon.arrows-pointing-in x-show="isFullscreen" class="size-5"/>
             <span class="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap"
                   x-text="isFullscreen ? 'Sair do Fullscreen' : 'Entrar em Fullscreen'">
+            </span>
+        </button>
+    </div>
+
+    <!-- Grupo: Modo de Cursor -->
+    <div class="flex flex-col items-center gap-1 pb-2 border-b border-gray-200">
+        <button
+            class="p-2 rounded-md transition-all cursor-pointer hover:bg-blue-50 hover:text-blue-600 active:scale-95 group relative"
+            :class="(grabModeEnabled || isSpacePressed) ? 'bg-blue-100 text-blue-600' : 'hover:bg-gray-100'"
+            type="button"
+            title="Modo Grab (Pan sem Space)"
+            @click="toggleGrabMode()">
+            <flux:icon.hand-raised class="size-5"/>
+            <span class="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
+                Modo Grab
+            </span>
+        </button>
+
+        <button
+            class="p-2 rounded-md transition-all cursor-pointer hover:bg-gray-100 active:scale-95 group relative"
+            :class="!grabModeEnabled && !isSpacePressed ? 'bg-gray-100' : ''"
+            type="button"
+            title="Cursor Padrão"
+            @click="setCursorMode()">
+            <x-lucide-mouse-pointer-2 class="size-5"/>
+            <span class="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
+                Cursor Padrão
             </span>
         </button>
     </div>

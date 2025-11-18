@@ -31,6 +31,23 @@ export default (x, y) => ({
         this.$el.style.top = '0px';
         this.minHeight = 13 * this.getGridSize();
 
+        this.canDragBySpace = true;
+
+        window.addEventListener('canvas::space', (e) => {
+            this.canDragBySpace = !e.detail.isSpacePressed;
+            this.updateCursorBySpace();
+        });
+
+        this.updateCursorBySpace = () => {
+            if (!this.canDragBySpace) {
+                this.$el.style.cursor = 'grab';
+            } else {
+                this.$el.style.cursor = '';
+            }
+        };
+
+        this.updateCursorBySpace();
+
         this.$el.addEventListener('mousedown', (e) => this.startDrag(e));
         this.$refs.canvasRoot.addEventListener('mousemove', (e) => this.drag(e));
         this.$refs.canvasRoot.addEventListener('mouseup', (e) => this.endDrag(e));
@@ -42,12 +59,10 @@ export default (x, y) => ({
         return Alpine.raw(this.canvas).getScale();
     },
     getGridSize() {
-        // Tenta pegar do canvas, senão usa 40
         return Alpine.raw(this.canvas).cellSize || 40;
     },
     getSnappedWidth() {
         const grid = this.getGridSize();
-        // Múltiplo mais próximo, nunca menos que 1 quadrado
         return Math.max(grid, Math.round(this.width / grid) * grid);
     },
     snapToGrid(coord) {
@@ -63,6 +78,8 @@ export default (x, y) => ({
         return newZIndex;
     },
     startDrag(e) {
+        if (!this.canDragBySpace) return; // bloqueia o drag se espaço está pressionado
+
         this.isDragging = true;
         this.startX = e.clientX;
         this.startY = e.clientY;
