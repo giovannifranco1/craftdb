@@ -2,14 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\Relationship;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use RuntimeException;
-use InvalidArgumentException;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property int $id
@@ -64,7 +62,7 @@ class Table extends Model
         return $this->belongsTo(Diagram::class, 'diagram_id');
     }
 
-       /**
+    /**
      * @param  Builder<$this> $query
      * @return Builder<$this>
      */
@@ -107,9 +105,9 @@ class Table extends Model
     public function relationships()
     {
         return Relationship::query()->where(function ($query) {
-                $query->where('from_table_id', $this->id)
-                    ->orWhere('to_table_id', $this->id);
-            })
+            $query->where('from_table_id', $this->id)
+                ->orWhere('to_table_id', $this->id);
+        })
             ->with(['fromTable', 'toTable', 'fromColumn', 'toColumn']);
     }
 

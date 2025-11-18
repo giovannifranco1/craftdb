@@ -63,21 +63,49 @@
                                 </button>
                             </div>
                         </header>
+
                         <article class="relative flex-1 px-4 sm:px-6 py-1 min-h-[30vh]">
                             @use('App\Support\Helpers')
 
                             <div class="border-b border-zinc-200/70 dark:border-zinc-800/70 mb-2">
-                                <div class="flex items-center justify-between">
+                                <div x-data="{
+                                    activeTab: 'columns',
+                                    resetToColumnsTab() {
+                                        this.activeTab = 'columns';
+                                        document.getElementById('tab-columns')?.classList.remove('hidden');
+                                        document.getElementById('tab-foreign-keys')?.classList.add('hidden');
+                                    }
+                                }"
+                                @table-side-editor::opened.window="resetToColumnsTab()"
+                                class="flex items-center justify-between">
                                     <nav class="flex gap-x-1" aria-label="Tabs" role="tablist" aria-orientation="horizontal">
-                                        <button type="button" class="hs-tab-active:font-semibold hs-tab-active:border-[var(--table-base-bg)] hs-tab-active:text-[var(--table-base-bg)] py-3 px-2 inline-flex items-center gap-x-2 border-b-2 border-transparent text-sm whitespace-nowrap text-zinc-500 dark:text-zinc-400 hover:text-[var(--table-base-bg)] focus:outline-none focus:text-[var(--table-base-bg)] disabled:opacity-50 disabled:pointer-events-none transition-colors active" id="tabs-with-badges-item-1" aria-selected="true" data-hs-tab="#tab-columns" aria-controls="tab-columns" role="tab">
-                                            Columns<span class="hs-tab-active:bg-[var(--table-base-bg)]/20 hs-tab-active:text-[var(--table-base-bg)] dark:hs-tab-active:bg-[var(--table-base-bg)]/30 dark:hs-tab-active:text-[var(--table-base-bg)] ms-1.5 py-0.5 px-2 rounded-full text-xs font-medium bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300">{{ $this->getColumns()?->count() }}</span>
+                                        <button
+                                            type="button"
+                                            @click="activeTab = 'columns'; document.getElementById('tab-columns').classList.remove('hidden'); document.getElementById('tab-foreign-keys').classList.add('hidden');"
+                                            :class="activeTab === 'columns' ? 'font-semibold border-[var(--table-base-bg)] text-[var(--table-base-bg)]' : 'border-zinc-300 dark:border-zinc-600'"
+                                            class="py-3 px-2 inline-flex items-center gap-x-2 border-b-2 text-sm whitespace-nowrap text-zinc-500 dark:text-zinc-400 hover:text-[var(--table-base-bg)] focus:outline-none focus:text-[var(--table-base-bg)] disabled:opacity-50 disabled:pointer-events-none transition-colors"
+                                            id="tabs-with-badges-item-1"
+                                            :aria-selected="activeTab === 'columns' ? 'true' : 'false'"
+                                            aria-controls="tab-columns"
+                                            role="tab"
+                                        >
+                                            Columns<span class="ms-1.5 py-0.5 px-2 rounded-full text-xs font-medium" :class="activeTab === 'columns' ? 'bg-[var(--table-base-bg)]/20 text-[var(--table-base-bg)] dark:bg-[var(--table-base-bg)]/30' : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300'">{{ $this->getColumns()?->count() }}</span>
                                         </button>
-                                        <button type="button" class="hs-tab-active:font-semibold hs-tab-active:border-[var(--table-base-bg)] hs-tab-active:text-[var(--table-base-bg)] py-3 px-2 inline-flex items-center gap-x-2 border-b-2 border-transparent text-sm whitespace-nowrap text-zinc-500 dark:text-zinc-400 hover:text-[var(--table-base-bg)] focus:outline-none focus:text-[var(--table-base-bg)] disabled:opacity-50 disabled:pointer-events-none transition-colors" id="tabs-with-badges-item-2" aria-selected="false" data-hs-tab="#tab-foreign-keys" aria-controls="tab-foreign-keys" role="tab">
-                                            Foreign Keys<span class="hs-tab-active:bg-[var(--table-base-bg)]/20 hs-tab-active:text-[var(--table-base-bg)] dark:hs-tab-active:bg-[var(--table-base-bg)]/30 dark:hs-tab-active:text-[var(--table-base-bg)] ms-1.5 py-0.5 px-2 rounded-full text-xs font-medium bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300">{{ $this->getForeignKeys()?->count() }}</span>
+                                        <button
+                                            type="button"
+                                            x-on:click="activeTab = 'foreign-keys'; document.getElementById('tab-columns').classList.add('hidden'); document.getElementById('tab-foreign-keys').classList.remove('hidden'); $nextTick(() => { setTimeout(() => { const graph = document.getElementById('foreign-keys-graph'); if (graph && graph._x_dataStack && graph._x_dataStack[0]) { const graphData = graph._x_dataStack[0]; if (!graphData.svg || !graphData.svg.node()) { graphData.setupGraph(); } } }, 300); });"
+                                            :class="activeTab === 'foreign-keys' ? 'font-semibold border-[var(--table-base-bg)] text-[var(--table-base-bg)]' : 'border-zinc-300 dark:border-zinc-600'"
+                                            class="py-3 px-2 inline-flex items-center gap-x-2 border-b-2 text-sm whitespace-nowrap text-zinc-500 dark:text-zinc-400 hover:text-[var(--table-base-bg)] focus:outline-none focus:text-[var(--table-base-bg)] disabled:opacity-50 disabled:pointer-events-none transition-colors"
+                                            id="tabs-with-badges-item-2"
+                                            :aria-selected="activeTab === 'foreign-keys' ? 'true' : 'false'"
+                                            aria-controls="tab-foreign-keys"
+                                            role="tab"
+                                        >
+                                            Foreign Keys<span class="ms-1.5 py-0.5 px-2 rounded-full text-xs font-medium" :class="activeTab === 'foreign-keys' ? 'bg-[var(--table-base-bg)]/20 text-[var(--table-base-bg)] dark:bg-[var(--table-base-bg)]/30' : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300'">{{ $this->getForeignKeys()?->count() }}</span>
                                         </button>
                                     </nav>
-                                    <div id="add-column-button-wrapper" class="hs-tab-active:block hidden" data-hs-tab="#tab-columns">
-                                        <flux:button icon="plus-circle" size="sm" wire:click="addColumn()" variant="primary">
+                                    <div x-show="activeTab === 'columns'" x-cloak>
+                                        <flux:button icon="plus-circle" size="xs" wire:click="addColumn()" variant="primary">
                                             Adicionar Coluna
                                         </flux:button>
                                     </div>
@@ -278,11 +306,17 @@
                                     </div>
                                 </div>
 
-                                <div x-data="{table: @entangle('table') }" id="tab-foreign-keys" class="hidden" role="tabpanel" aria-labelledby="tabs-with-badges-item-2">
-                                    <div class="flex flex-col justify-between h-[50vh]">
-                                        <div class="space-y-2 overflow-y-auto pr-1">
+                                <div
+                                    x-data="{table: @entangle('table') }"
+                                    id="tab-foreign-keys"
+                                    class="hidden"
+                                    role="tabpanel"
+                                    aria-labelledby="tabs-with-badges-item-2">
+                                    <div class="grid grid-cols-[1fr_600px] gap-4 h-[45vh]">
+                                        <!-- Lista de Foreign Keys (Esquerda) -->
+                                        <div class="space-y-1 overflow-y-auto pr-2 h-full">
                                             @forelse($this->getForeignKeys() as $column)
-                                                <div class="bg-white dark:bg-zinc-800/50 rounded-lg border border-zinc-200 dark:border-zinc-700 p-3 hover:border-zinc-300 dark:hover:border-zinc-600 hover:shadow-sm transition-all">
+                                                <div class="bg-white dark:bg-zinc-800/50 rounded-md border border-zinc-200 dark:border-zinc-700 p-2 hover:border-zinc-300 dark:hover:border-zinc-600 hover:shadow-sm transition-all">
                                                     <div class="flex items-center gap-2">
                                                         {!! Helpers::getIconDiamondByTypeColumn($column) !!}
                                                         <span class="text-xs font-medium text-zinc-900 dark:text-zinc-100">{{ $column->name }}</span>
@@ -295,15 +329,22 @@
                                             @endforelse
                                         </div>
 
-                                        <div class="flex justify-end mt-5">
-                                            <flux:button  variant="primary">
-                                                Relationships
-                                            </flux:button>
+                                        <!-- Grafo de Dependências (Direita) -->
+                                        <div class="bg-white dark:bg-zinc-800/50 rounded-md border border-zinc-200 dark:border-zinc-700 h-full overflow-hidden">
+                                            <div class="px-3 py-2 border-b border-zinc-200/70 dark:border-zinc-700/70">
+                                                <h3 class="text-xs font-semibold text-zinc-900 dark:text-zinc-100">Grafo de Dependências</h3>
+                                            </div>
+                                            <div
+                                                id="foreign-keys-graph"
+                                                x-data="foreignKeysGraph(@js($this->getRelationships()), @js($table->id), @js($table->name), @js($this->getTablesWithColors()))"
+                                                class="h-[calc(45vh-50px)] w-full"
+                                            ></div>
                                         </div>
                                     </div>
                                 </div>
 
                             </div>
+
                         </article>
                     </div>
                 </div>

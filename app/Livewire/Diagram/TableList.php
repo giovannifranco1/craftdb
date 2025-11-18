@@ -49,8 +49,8 @@ class TableList extends Component
         return $tables
             ->withCount('columns')
             ->with(['diagram'])
-            ->with(['columns' => fn(QueryBuilder $query) => $query->orderBy('order')])
-            ->with(['foreignKeys' => fn(QueryBuilder $query) => $query->orderByDesc('order')])
+            ->with(['columns' => fn(QueryBuilder $query): QueryBuilder => $query->orderBy('order')])
+            ->with(['foreignKeys' => fn(QueryBuilder $query): QueryBuilder => $query->orderByDesc('order')])
             ->get();
     }
 

@@ -5,6 +5,7 @@ namespace App\Livewire\Diagram;
 use App\Concerns\HasSidePanel;
 use App\Models\Table;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Validate;
@@ -74,6 +75,31 @@ final class TableSideEditor extends Component
     public function getForeignKeys(): ?Collection
     {
         return $this->table?->foreignKeys ?? new Collection();
+    }
+
+    #[Computed]
+    public function getRelationships(): Collection
+    {
+        return $this->table->relationships()->with(['fromTable', 'toTable', 'fromColumn', 'toColumn'])->get();
+    }
+
+    #[Computed]
+    public function getTablesWithColors(): array
+    {
+        $tablesMap = [];
+        $tablesMap[$this->table->id] = $this->table->color ?? Table::COLOR_DEFAULT;
+
+        $this->getRelationships()->each(function (Model $rel) use (&$tablesMap): void {
+
+            if ($rel->fromTable && !isset($tablesMap[$rel->from_table_id])) {
+                $tablesMap[$rel->from_table_id] = $rel->fromTable->color ?? Table::COLOR_DEFAULT;
+            }
+            if ($rel->toTable && !isset($tablesMap[$rel->to_table_id])) {
+                $tablesMap[$rel->to_table_id] = $rel->toTable->color ?? Table::COLOR_DEFAULT;
+            }
+        });
+
+        return $tablesMap;
     }
 
     #[Computed]
