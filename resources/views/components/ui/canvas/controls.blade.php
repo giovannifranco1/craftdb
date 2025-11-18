@@ -47,15 +47,12 @@
         },
         toggleGrabMode() {
             this.grabModeEnabled = !this.grabModeEnabled;
-            if (window.canvas) {
-                Alpine.raw(window.canvas).setGrabMode(this.grabModeEnabled);
-            }
+            Alpine.raw(this.canvas).setGrabMode(this.grabModeEnabled);
+
         },
         setCursorMode() {
             this.grabModeEnabled = false;
-            if (window.canvas) {
-                Alpine.raw(window.canvas).setGrabMode(false);
-            }
+            Alpine.raw(this.canvas).setGrabMode(false);
         },
         init() {
             // Listener para detectar mudanças no estado de fullscreen
