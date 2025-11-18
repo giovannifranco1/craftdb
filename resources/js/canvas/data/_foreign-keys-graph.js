@@ -71,12 +71,18 @@ export default function foreignKeysGraph(relationships, currentTableId, currentT
         setupGraph() {
             if (!this.$el) return;
 
+            // Parar simulação anterior se existir
+            if (this.simulation) {
+                this.simulation.stop();
+                this.simulation = null;
+            }
+
+            // Limpar SVG anterior se existir
+            d3.select(this.$el).selectAll("*").remove();
+            this.svg = null;
+
             // Verificar se há relacionamentos antes de renderizar
             if (!this.relationships || this.relationships.length === 0) {
-                // Limpar SVG anterior se existir
-                d3.select(this.$el).selectAll("*").remove();
-                this.svg = null;
-
                 // Mostrar mensagem de que não há relacionamentos
                 const container = this.$el;
                 this.width = container.clientWidth;
@@ -106,16 +112,6 @@ export default function foreignKeysGraph(relationships, currentTableId, currentT
             if (tabPanel && tabPanel.classList.contains('hidden')) {
                 return; // Não renderizar se a tab estiver escondida
             }
-
-            // Parar simulação anterior se existir
-            if (this.simulation) {
-                this.simulation.stop();
-                this.simulation = null;
-            }
-
-            // Limpar SVG anterior se existir
-            d3.select(this.$el).selectAll("*").remove();
-            this.svg = null;
 
             const container = this.$el;
             this.width = container.clientWidth;

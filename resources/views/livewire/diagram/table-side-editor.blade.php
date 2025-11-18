@@ -337,6 +337,17 @@
                                             <div
                                                 id="foreign-keys-graph"
                                                 x-data="foreignKeysGraph(@js($this->getRelationships()), @js($table->id), @js($table->name), @js($this->getTablesWithColors()))"
+                                                @table-side-editor::column-added.window="
+                                                    // Atualizar dados e re-renderizar gráfico
+                                                    relationships = @js($this->getRelationships());
+                                                    tablesColors = @js($this->getTablesWithColors());
+                                                    svg = null;
+                                                    setTimeout(() => {
+                                                        if ($el && !svg) {
+                                                            setupGraph();
+                                                        }
+                                                    }, 200);
+                                                "
                                                 class="h-[calc(45vh-50px)] w-full"
                                             ></div>
                                         </div>
