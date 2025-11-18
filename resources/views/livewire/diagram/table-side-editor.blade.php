@@ -18,291 +18,279 @@
         x-transition:leave="ease-in-out duration-250"
         x-transition:leave-start="opacity-100"
         x-transition:leave-end="opacity-0"
-        class="fixed inset-0 transition-opacity pointer-events-none"
+        class="fixed inset-0 transition-opacity pointer-events-none bg-black/20"
     ></div>
 
     <div class="fixed inset-0 overflow-hidden pointer-events-none" table-id="{{ $table->id }}">
         <div class="absolute inset-0 overflow-hidden">
-            <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
+            <div class="pointer-events-none fixed inset-x-0 bottom-0 flex max-h-[85vh] overflow-y-auto">
 
                 <div
                     x-show="open"
                     x-cloak
                     x-transition:enter="transform transition ease-in-out duration-250 sm:duration-500"
-                    x-transition:enter-start="translate-x-full"
-                    x-transition:enter-end="translate-x-0"
+                    x-transition:enter-start="translate-y-full"
+                    x-transition:enter-end="translate-y-0"
                     x-transition:leave="transform transition ease-in-out duration-250 sm:duration-500"
-                    x-transition:leave-start="translate-x-0"
-                    x-transition:leave-end="translate-x-full"
-                    class="pointer-events-auto w-screen bg-white max-w-[28rem]"
+                    x-transition:leave-start="translate-y-0"
+                    x-transition:leave-end="translate-y-full"
+                    class="pointer-events-auto w-full max-h-[85vh] min-h-[35vh]"
                 >
                     <div
                         wire:loading.class.delay.shorter="opacity-60"
-                        class="flex h-full flex-col overflow-y-scroll bg-white py-6 shadow-xl"
+                        class="flex flex-col overflow-y-auto bg-white/95 py-2 dark:bg-zinc-900/95 backdrop-blur-md border-t border-zinc-200/70 dark:border-zinc-800/70 shadow-lg shadow-zinc-900/10 rounded-t-2xl min-h-[35vh]"
                     >
-                        <header class="px-4 sm:px-6">
-                            <div class="flex items-start justify-between">
-                                <div class="flex gap-2">
-                                    <h2 class="text-lg font-medium text-gray-900 font-[Poppins]" id="table-title">
+                        <header class="px-4 sm:px-6 py-2 border-b border-zinc-200/70 dark:border-zinc-800/70">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div
+                                        class="w-4 h-4 bg-[var(--table-base-bg)] rounded-full shadow-sm ring-2 ring-white dark:ring-zinc-900"
+                                        title="table color: {{ $table->color ?? \App\Models\Table::COLOR_DEFAULT }}"
+                                    ></div>
+                                    <h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-50 font-[Poppins]" id="table-title">
                                         {{ ucfirst($table->name) }}
                                     </h2>
-                                    <div class="flex items-center">
-                                        <div
-                                            class="w-3 h-3 bg-[var(--table-base-bg)] rounded-full shadow-sm"
-                                            title="table color: {{ $table->color ?? \App\Models\Table::COLOR_DEFAULT }}"
-                                        ></div>
-                                    </div>
                                 </div>
-                                <div class="ml-3 flex h-7 items-center">
-                                    <button
-                                        type="button"
-                                        class="rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                                        @click.stop="open = false; $dispatch('table-side-editor::closed')"
-                                    >
-                                        <span class="sr-only">Close panel</span>
-                                        <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
-                                        </svg>
-                                    </button>
-                                </div>
+                                <button
+                                    type="button"
+                                    class="rounded-lg p-1.5 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:ring-offset-2 dark:focus:ring-offset-zinc-900"
+                                    @click.stop="open = false; $dispatch('table-side-editor::closed')"
+                                >
+                                    <span class="sr-only">Close panel</span>
+                                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+                                    </svg>
+                                </button>
                             </div>
                         </header>
-                        <article class="relative mt-6 flex-1 px-4 sm:px-6">
+                        <article class="relative flex-1 px-4 sm:px-6 py-1 min-h-[30vh]">
                             @use('App\Support\Helpers')
 
-                            <div class="border-b border-gray-200 dark:border-neutral-700">
-                                <nav class="flex gap-x-1" aria-label="Tabs" role="tablist" aria-orientation="horizontal">
-                                    <button type="button" class="hs-tab-active:font-semibold hs-tab-active:border-[var(--table-base-bg)] hs-tab-active:text-[var(--table-base-bg)] py-4 px-1 inline-flex items-center gap-x-2 border-b-2 border-transparent text-sm whitespace-nowrap text-gray-500 hover:text-[var(--table-base-bg)] focus:outline-hidden focus:text-[var(--table-base-bg)] disabled:opacity-50 disabled:pointer-events-none dark:text-neutral-400 dark:hover:text-blue-500 active" id="tabs-with-badges-item-1" aria-selected="true" data-hs-tab="#tab-columns" aria-controls="tab-columns" role="tab">
-                                        Columns<span class="hs-tab-active:bg-[var(--table-base-bg)]/20 hs-tab-active:text-[var(--table-base-bg)] dark:hs-tab-active:bg-blue-800 dark:hs-tab-active:text-white ms-1 py-0.5 px-1.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-neutral-700 dark:text-neutral-300">{{ $this->getColumns()?->count() }}</span>
-                                    </button>
-                                    <button type="button" class="hs-tab-active:font-semibold hs-tab-active:border-[var(--table-base-bg)] hs-tab-active:text-[var(--table-base-bg)] py-4 px-1 inline-flex items-center gap-x-2 border-b-2 border-transparent text-sm whitespace-nowrap text-gray-500 hover:text-[var(--table-base-bg)] focus:outline-hidden focus:text-[var(--table-base-bg)] disabled:opacity-50 disabled:pointer-events-none dark:text-neutral-400 dark:hover:text-blue-500" id="tabs-with-badges-item-2" aria-selected="false" data-hs-tab="#tab-foreign-keys" aria-controls="tab-foreign-keys" role="tab">
-                                        Foreign Keys<span class="hs-tab-active:bg-[var(--table-base-bg)]/20 hs-tab-active:text-[var(--table-base-bg)] dark:hs-tab-active:bg-blue-800 dark:hs-tab-active:text-white ms-1 py-0.5 px-1.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-neutral-700 dark:text-neutral-300">{{ $this->getForeignKeys()?->count() }}</span>
-                                    </button>
-                                </nav>
-                            </div>
-
-                            <div class="mt-3">
-
-                                <div id="tab-columns" role="tabpanel" aria-labelledby="tabs-with-badges-item-1">
-
-                                    <div class="mb-3 flex justify-end">
+                            <div class="border-b border-zinc-200/70 dark:border-zinc-800/70 mb-2">
+                                <div class="flex items-center justify-between">
+                                    <nav class="flex gap-x-1" aria-label="Tabs" role="tablist" aria-orientation="horizontal">
+                                        <button type="button" class="hs-tab-active:font-semibold hs-tab-active:border-[var(--table-base-bg)] hs-tab-active:text-[var(--table-base-bg)] py-3 px-2 inline-flex items-center gap-x-2 border-b-2 border-transparent text-sm whitespace-nowrap text-zinc-500 dark:text-zinc-400 hover:text-[var(--table-base-bg)] focus:outline-none focus:text-[var(--table-base-bg)] disabled:opacity-50 disabled:pointer-events-none transition-colors active" id="tabs-with-badges-item-1" aria-selected="true" data-hs-tab="#tab-columns" aria-controls="tab-columns" role="tab">
+                                            Columns<span class="hs-tab-active:bg-[var(--table-base-bg)]/20 hs-tab-active:text-[var(--table-base-bg)] dark:hs-tab-active:bg-[var(--table-base-bg)]/30 dark:hs-tab-active:text-[var(--table-base-bg)] ms-1.5 py-0.5 px-2 rounded-full text-xs font-medium bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300">{{ $this->getColumns()?->count() }}</span>
+                                        </button>
+                                        <button type="button" class="hs-tab-active:font-semibold hs-tab-active:border-[var(--table-base-bg)] hs-tab-active:text-[var(--table-base-bg)] py-3 px-2 inline-flex items-center gap-x-2 border-b-2 border-transparent text-sm whitespace-nowrap text-zinc-500 dark:text-zinc-400 hover:text-[var(--table-base-bg)] focus:outline-none focus:text-[var(--table-base-bg)] disabled:opacity-50 disabled:pointer-events-none transition-colors" id="tabs-with-badges-item-2" aria-selected="false" data-hs-tab="#tab-foreign-keys" aria-controls="tab-foreign-keys" role="tab">
+                                            Foreign Keys<span class="hs-tab-active:bg-[var(--table-base-bg)]/20 hs-tab-active:text-[var(--table-base-bg)] dark:hs-tab-active:bg-[var(--table-base-bg)]/30 dark:hs-tab-active:text-[var(--table-base-bg)] ms-1.5 py-0.5 px-2 rounded-full text-xs font-medium bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300">{{ $this->getForeignKeys()?->count() }}</span>
+                                        </button>
+                                    </nav>
+                                    <div id="add-column-button-wrapper" class="hs-tab-active:block hidden" data-hs-tab="#tab-columns">
                                         <flux:button icon="plus-circle" size="sm" wire:click="addColumn()" variant="primary">
                                             Adicionar Coluna
                                         </flux:button>
                                     </div>
+                                </div>
+                            </div>
 
-                                    <div class="space-y-2 overflow-y-scroll h-150">
-                                        @forelse($this->getColumns() as $column)
-                                            <div
-                                                x-data="{ open: false }"
-                                                @class([
-                                                    'bg-white border-l-4 rounded-lg border shadow-sm transition-all overflow-hidden',
-                                                    'border-gray-200 hover:border-gray-300 hover:shadow-md' => $selectedColumnId !== $column->id,
-                                                    'border-blue-500 ring-2 ring-blue-200 shadow-md' => $selectedColumnId === $column->id,
-                                                ])
-                                            >
-                                                <!-- Header do Collapse -->
+                            <div>
+
+                                <div id="tab-columns" role="tabpanel" aria-labelledby="tabs-with-badges-item-1">
+                                    <div class="grid grid-cols-[600px_1fr] gap-4 h-[45vh]">
+                                        <!-- Lista de Colunas (Esquerda) -->
+                                        <div class="space-y-1 overflow-y-auto pr-2 h-full">
+                                            @forelse($this->getColumns() as $column)
                                                 <div
                                                     @class([
-                                                        'flex items-center justify-between px-4 py-3 cursor-pointer transition-all',
-                                                        'bg-gradient-to-r from-gray-50 to-white hover:from-gray-100 hover:to-gray-50' => $selectedColumnId !== $column->id,
-                                                        'bg-gradient-to-r from-blue-50 to-blue-100/50' => $selectedColumnId === $column->id,
+                                                        'bg-white dark:bg-zinc-800/50 rounded-md border transition-all',
+                                                        'border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600' => $selectedColumnId !== $column->id,
+                                                        'border-[var(--table-base-bg)] ring-1 ring-[var(--table-base-bg)]/30 bg-[var(--table-base-bg)]/5 dark:bg-[var(--table-base-bg)]/10' => $selectedColumnId === $column->id,
                                                     ])
-                                                    @click="open = !open"
                                                 >
-                                                    <div class="flex items-center gap-2.5 flex-1 min-w-0">
-                                                        <div class="flex-shrink-0">
-                                                            {!! Helpers::getIconDiamondByTypeColumn($column) !!}
-                                                        </div>
-                                                        <div class="flex-1 min-w-0">
-                                                            <div class="flex items-center gap-2 flex-wrap">
-                                                                <span
-                                                                    class="text-xs font-semibold text-gray-900 font-[Poppins] cursor-pointer hover:text-blue-600 truncate transition-colors flex-1 min-w-0"
-                                                                    title="Clique para editar o nome"
-                                                                >{{ $column->name }}
-                                                                </span>
-                                                                <span class="text-[10px] text-gray-500 font-mono bg-gray-100 px-1.5 py-0.5 rounded flex-shrink-0">
-                                                                    {{ $column->length > 0 ? "$column->type($column->length)" : $column->type }}
-                                                                </span>
+                                                    <div class="flex items-center justify-between px-2.5 py-0.5">
+                                                        <div
+                                                            wire:click="selectColumn({{ $column->id }})"
+                                                            class="flex items-center gap-1.5 flex-1 min-w-0 cursor-pointer"
+                                                        >
+                                                            <div class="flex-shrink-0">
+                                                                {!! Helpers::getIconDiamondByTypeColumn($column) !!}
                                                             </div>
+                                                            <span
+                                                                class="text-xs font-medium text-zinc-900 dark:text-zinc-100 truncate flex-1 min-w-0"
+                                                                title="{{ $column->name }}"
+                                                            >{{ $column->name }}</span>
+                                                            <span class="text-[10px] text-zinc-500 dark:text-zinc-400 font-mono bg-zinc-100 dark:bg-zinc-700 px-1 py-0.5 rounded flex-shrink-0">
+                                                                {{ $column->length > 0 ? "$column->type($column->length)" : $column->type }}
+                                                            </span>
+                                                        </div>
+                                                        <!-- Checkboxes e ações -->
+                                                        <div class="flex items-center gap-1.5 ml-2" wire:click.stop>
+                                                            <div class="flex items-center gap-0.5 border-r border-zinc-200 dark:border-zinc-700 pr-1.5 mr-1.5">
+                                                                <button
+                                                                    type="button"
+                                                                    wire:click.stop="togglePrimaryKey({{ $column->id }})"
+                                                                    class="p-0.5 rounded hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
+                                                                    title="Primary Key"
+                                                                >
+                                                                    <span class="text-[9px] font-bold px-1 py-0.5 rounded {{ $column->is_primary ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-300' : 'text-zinc-400 dark:text-zinc-500' }}">
+                                                                        PK
+                                                                    </span>
+                                                                </button>
+                                                                <button
+                                                                    type="button"
+                                                                    wire:click.stop="toggleForeignKey({{ $column->id }})"
+                                                                    class="p-0.5 rounded hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-colors"
+                                                                    title="Foreign Key"
+                                                                >
+                                                                    <span class="text-[9px] font-bold px-1 py-0.5 rounded {{ $column->is_foreign ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300' : 'text-zinc-400 dark:text-zinc-500' }}">
+                                                                        FK
+                                                                    </span>
+                                                                </button>
+                                                                <button
+                                                                    type="button"
+                                                                    wire:click.stop="toggleNullable({{ $column->id }})"
+                                                                    class="p-0.5 rounded hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                                                                    title="Nullable"
+                                                                >
+                                                                    <span class="text-[9px] font-bold px-1 py-0.5 rounded {{ $column->is_nullable ? 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300' : 'text-zinc-400 dark:text-zinc-500' }}">
+                                                                        N
+                                                                    </span>
+                                                                </button>
+                                                            </div>
+                                                            <button
+                                                                type="button"
+                                                                wire:click.stop="deleteColumnById({{ $column->id }})"
+                                                                wire:confirm="Tem certeza que deseja deletar esta coluna?"
+                                                                class="p-1 rounded hover:bg-red-50 dark:hover:bg-red-900/20 text-red-500 dark:text-red-400 hover:text-red-600 dark:hover:text-red-300 transition-colors"
+                                                                title="Deletar coluna"
+                                                            >
+                                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                                                </svg>
+                                                            </button>
                                                         </div>
                                                     </div>
-
-                                                    <!-- Checkboxes compactos -->
-                                                    <flux:fieldset wire:click.stop class="text-xs">
-                                                        <div class="flex gap-2 *:gap-x-1">
-                                                            <flux:checkbox value="pk" label="pk" />
-                                                            <flux:checkbox value="fk" label="fk" />
-                                                            <flux:checkbox value="nullable" label="n" />
-                                                        </div>
-                                                    </flux:fieldset>
-
-                                                    <!-- Ícone de collapse -->
-                                                    <svg
-                                                        class="w-5 h-5 text-gray-400 ml-3 flex-shrink-0 transition-transform duration-300"
-                                                        :class="{ 'rotate-180': open }"
-                                                        fill="none"
-                                                        stroke="currentColor"
-                                                        viewBox="0 0 24 24"
-                                                    >
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                                                    </svg>
                                                 </div>
+                                            @empty
+                                                <div class="bg-white dark:bg-zinc-800/50 rounded-lg min-h-[200px] flex justify-center items-center border border-zinc-200 dark:border-zinc-700 p-8 text-center">
+                                                    <p class="text-sm text-zinc-500 dark:text-zinc-400">No columns found</p>
+                                                </div>
+                                            @endforelse
+                                        </div>
 
-                                                <!-- Conteúdo do Collapse com Formulário -->
-                                                <div
-                                                    x-show="open"
-                                                    x-collapse
-                                                    class="overflow-hidden"
-                                                >
-                                                    <div class="px-4 pb-4 pt-3 border-t border-gray-200 bg-gray-50/50 space-y-4">
-                                                        @if($selectedColumnId === $column->id)
+                                        <!-- Detalhes da Coluna Selecionada (Direita) -->
+                                        <div class="h-full flex flex-col">
+                                            @if($selectedColumnId)
+                                                @php
+                                                    $selectedColumn = $this->getColumns()->firstWhere('id', $selectedColumnId);
+                                                @endphp
+                                                @if($selectedColumn)
+                                                    <div class="bg-white dark:bg-zinc-800/50 rounded-md border border-zinc-200 dark:border-zinc-700 h-full flex flex-col">
+                                                        <div class="px-4 py-3 border-b border-zinc-200/70 dark:border-zinc-700/70 flex-shrink-0">
+                                                            <h3 class="text-sm font-semibold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
+                                                                {!! Helpers::getIconDiamondByTypeColumn($selectedColumn) !!}
+                                                                <span>{{ $selectedColumn->name }}</span>
+                                                            </h3>
+                                                        </div>
+                                                        <div class="p-4 space-y-3 overflow-y-auto flex-1">
                                                             <!-- Formulário de Edição -->
-                                                            <form wire:submit.prevent="updateColumn({{ $column->id }})" class="space-y-3">
+                                                            <form wire:submit.prevent="updateColumn({{ $selectedColumn->id }})" class="space-y-3">
                                                                 <!-- Nome da Coluna -->
                                                                 <div>
-                                                                    <label class="block text-xs font-semibold text-gray-700 mb-1.5">Nome</label>
+                                                                    <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Nome</label>
                                                                     <input
                                                                         type="text"
                                                                         wire:model="columnName"
-                                                                        class="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                                                        class="w-full text-xs border border-zinc-300 dark:border-zinc-600 rounded-md px-2.5 py-1.5 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-[var(--table-base-bg)] focus:border-[var(--table-base-bg)]"
                                                                         placeholder="Nome da coluna"
                                                                     />
-                                                                    @error('columnName') <span class="text-xs text-red-600">{{ $message }}</span> @enderror
+                                                                    @error('columnName') <span class="text-xs text-red-600 dark:text-red-400">{{ $message }}</span> @enderror
                                                                 </div>
 
                                                                 <!-- Tipo e Length -->
-                                                                <div class="grid grid-cols-2 gap-3">
+                                                                <div class="grid grid-cols-2 gap-2">
                                                                     <div>
-                                                                        <label class="block text-xs font-semibold text-gray-700 mb-1.5">Tipo</label>
+                                                                        <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Tipo</label>
                                                                         <select
                                                                             wire:model="columnType"
-                                                                            class="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                                                            class="w-full text-xs border border-zinc-300 dark:border-zinc-600 rounded-md px-2.5 py-1.5 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-[var(--table-base-bg)] focus:border-[var(--table-base-bg)]"
                                                                         >
                                                                             @foreach($this->getColumnTypes() as $type => $label)
                                                                                 <option value="{{ $type }}">{{ $label }}</option>
                                                                             @endforeach
                                                                         </select>
-                                                                        @error('columnType') <span class="text-xs text-red-600">{{ $message }}</span> @enderror
+                                                                        @error('columnType') <span class="text-xs text-red-600 dark:text-red-400">{{ $message }}</span> @enderror
                                                                     </div>
                                                                     <div>
-                                                                        <label class="block text-xs font-semibold text-gray-700 mb-1.5">Length</label>
+                                                                        <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Length</label>
                                                                         <input
                                                                             type="number"
                                                                             wire:model="columnLength"
                                                                             min="0"
-                                                                            class="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                                                            class="w-full text-xs border border-zinc-300 dark:border-zinc-600 rounded-md px-2.5 py-1.5 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-[var(--table-base-bg)] focus:border-[var(--table-base-bg)]"
                                                                             placeholder="Ex: 255"
                                                                         />
-                                                                        @error('columnLength') <span class="text-xs text-red-600">{{ $message }}</span> @enderror
+                                                                        @error('columnLength') <span class="text-xs text-red-600 dark:text-red-400">{{ $message }}</span> @enderror
                                                                     </div>
                                                                 </div>
 
                                                                 <!-- Default Value -->
                                                                 <div>
-                                                                    <label class="block text-xs font-semibold text-gray-700 mb-1.5">Valor Padrão</label>
+                                                                    <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Valor Padrão</label>
                                                                     <input
                                                                         type="text"
                                                                         wire:model="columnDefaultValue"
-                                                                        class="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                                                        class="w-full text-xs border border-zinc-300 dark:border-zinc-600 rounded-md px-2.5 py-1.5 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-[var(--table-base-bg)] focus:border-[var(--table-base-bg)]"
                                                                         placeholder="Ex: 'default' ou NULL"
                                                                     />
-                                                                    @error('columnDefaultValue') <span class="text-xs text-red-600">{{ $message }}</span> @enderror
+                                                                    @error('columnDefaultValue') <span class="text-xs text-red-600 dark:text-red-400">{{ $message }}</span> @enderror
                                                                 </div>
 
                                                                 <!-- Comment -->
                                                                 <div>
-                                                                    <label class="block text-xs font-semibold text-gray-700 mb-1.5">Comentário</label>
+                                                                    <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Comentário</label>
                                                                     <textarea
                                                                         wire:model="columnComment"
                                                                         rows="2"
-                                                                        class="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
+                                                                        class="w-full text-xs border border-zinc-300 dark:border-zinc-600 rounded-md px-2.5 py-1.5 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-[var(--table-base-bg)] focus:border-[var(--table-base-bg)] resize-none"
                                                                         placeholder="Descrição da coluna..."
                                                                     ></textarea>
-                                                                    @error('columnComment') <span class="text-xs text-red-600">{{ $message }}</span> @enderror
+                                                                    @error('columnComment') <span class="text-xs text-red-600 dark:text-red-400">{{ $message }}</span> @enderror
                                                                 </div>
 
                                                                 <!-- Botões de Ação -->
-                                                                <div class="flex items-center justify-end gap-2 pt-2 border-t border-gray-200">
+                                                                <div class="flex items-center justify-end gap-2 pt-2 border-t border-zinc-200/70 dark:border-zinc-700/70">
                                                                     <button
                                                                         type="button"
-                                                                        wire:click="selectColumn({{ $column->id }})"
-                                                                        class="px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                                                                        wire:click="selectColumn(null)"
+                                                                        class="px-2.5 py-1 text-xs font-medium text-zinc-700 dark:text-zinc-300 bg-white dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-600 rounded-md hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-colors"
                                                                     >
                                                                         Cancelar
                                                                     </button>
                                                                     <button
                                                                         type="submit"
-                                                                        class="px-4 py-1.5 text-xs font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                                                                        class="px-3 py-1 text-xs font-medium text-white bg-[var(--table-base-bg)] rounded-md hover:opacity-90 transition-opacity focus:outline-none focus:ring-1 focus:ring-[var(--table-base-bg)] focus:ring-offset-1 dark:focus:ring-offset-zinc-800"
                                                                     >
                                                                         Salvar
                                                                     </button>
                                                                 </div>
                                                             </form>
-                                                        @else
-                                                            <!-- Visualização dos Detalhes -->
-                                                            <div class="space-y-2.5">
-                                                                @if($column->default_value)
-                                                                    <div class="flex items-start gap-2 text-xs">
-                                                                        <span class="font-semibold text-gray-600 min-w-[60px]">Default:</span>
-                                                                        <span class="text-gray-900 font-mono bg-white px-2 py-1 rounded border border-gray-200">{{ $column->default_value }}</span>
-                                                                    </div>
-                                                                @endif
-                                                                @if($column->comment)
-                                                                    <div class="flex items-start gap-2 text-xs">
-                                                                        <span class="font-semibold text-gray-600 min-w-[60px]">Comment:</span>
-                                                                        <span class="text-gray-700 flex-1 bg-white px-2 py-1 rounded border border-gray-200">{{ $column->comment }}</span>
-                                                                    </div>
-                                                                @endif
-                                                                @if(!$column->default_value && !$column->comment)
-                                                                    <div class="text-center py-3">
-                                                                        <p class="text-xs text-gray-400">Nenhum detalhe adicional</p>
-                                                                        <button
-                                                                            type="button"
-                                                                            wire:click.stop="selectColumn({{ $column->id }})"
-                                                                            class="mt-2 text-xs text-blue-600 hover:text-blue-700 font-medium"
-                                                                        >
-                                                                            Editar coluna
-                                                                        </button>
-                                                                    </div>
-                                                                @else
-                                                                    <div class="pt-1">
-                                                                        <button
-                                                                            type="button"
-                                                                            wire:click.stop="selectColumn({{ $column->id }})"
-                                                                            class="w-full text-xs px-3 py-1.5 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors font-medium"
-                                                                        >
-                                                                            Editar Detalhes
-                                                                        </button>
-                                                                    </div>
-                                                                @endif
-                                                            </div>
-                                                        @endif
+                                                        </div>
                                                     </div>
+                                                @endif
+                                            @else
+                                                <div class="bg-white dark:bg-zinc-800/50 rounded-lg h-full flex justify-center items-center border border-zinc-200 dark:border-zinc-700 p-8 text-center">
+                                                    <p class="text-sm text-zinc-500 dark:text-zinc-400">Selecione uma coluna para ver os detalhes</p>
                                                 </div>
-                                            </div>
-                                        @empty
-                                            <div class="bg-white rounded-lg h-150 flex justify-center items-center border border-gray-200 p-8 text-center">
-                                                <p class="text-sm text-gray-500">No columns found</p>
-                                            </div>
-                                        @endforelse
+                                            @endif
+                                        </div>
                                     </div>
-
                                 </div>
 
                                 <div x-data="{table: @entangle('table') }" id="tab-foreign-keys" class="hidden" role="tabpanel" aria-labelledby="tabs-with-badges-item-2">
-                                    <div class="flex flex-col justify-between h-150">
-                                        <div class="space-y-1.5 overflow-y-scroll">
+                                    <div class="flex flex-col justify-between h-[50vh]">
+                                        <div class="space-y-2 overflow-y-auto pr-1">
                                             @forelse($this->getForeignKeys() as $column)
-                                                <div class="bg-white rounded border border-gray-200 p-2 hover:border-gray-300 transition-all">
-                                                    <div class="flex items-center gap-1.5 mb-1">
+                                                <div class="bg-white dark:bg-zinc-800/50 rounded-lg border border-zinc-200 dark:border-zinc-700 p-3 hover:border-zinc-300 dark:hover:border-zinc-600 hover:shadow-sm transition-all">
+                                                    <div class="flex items-center gap-2">
                                                         {!! Helpers::getIconDiamondByTypeColumn($column) !!}
-                                                        <span class="text-xs font-medium text-gray-900">{{ $column->name }}</span>
+                                                        <span class="text-xs font-medium text-zinc-900 dark:text-zinc-100">{{ $column->name }}</span>
                                                     </div>
                                                 </div>
                                             @empty
-                                                <div class="bg-white rounded-lg border border-gray-200 p-8 text-center">
-                                                    <p class="text-sm text-gray-500">No foreign keys found</p>
+                                                <div class="bg-white dark:bg-zinc-800/50 rounded-lg border border-zinc-200 dark:border-zinc-700 p-8 text-center">
+                                                    <p class="text-sm text-zinc-500 dark:text-zinc-400">No foreign keys found</p>
                                                 </div>
                                             @endforelse
                                         </div>

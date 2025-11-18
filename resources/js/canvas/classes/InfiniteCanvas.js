@@ -225,6 +225,8 @@ export class InfiniteCanvas {
             this.#onWheel(event.deltaX, event.deltaY)
         }, { passive: false });
 
+        window.addEventListener("resize", () => this.#draw());
+
         this.#setupMousePan(canvas); // refatorado para método separado
     }
 
@@ -290,9 +292,9 @@ export class InfiniteCanvas {
     // --- [fim refatoração] ---
 
     #zoomWheel(event) {
-        const zoomStep = 1.05;
+        const zoomStep = 1.025;
         const minScale = 0.2;
-        const maxScale = 4.0;
+        const maxScale = 3.0;
 
         let zoomAmount;
 

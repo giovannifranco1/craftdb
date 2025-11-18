@@ -161,6 +161,23 @@ final class TableSideEditor extends Component
         $this->dispatch('column-deleted');
     }
 
+    public function deleteColumnById(int $columnId): void
+    {
+        $column = $this->table->columns()->whereKey($columnId)->first();
+        if (!$column) {
+            return;
+        }
+
+        $column->delete();
+
+        // Se a coluna deletada estava selecionada, limpar a seleção
+        if ($this->selectedColumnId === $columnId) {
+            $this->resetForms();
+        }
+
+        $this->dispatch('table::column-saved');
+    }
+
     public function toggleNullable(int $columnId): void
     {
         $column = $this->table->columns()->whereKey($columnId)->first();
@@ -203,12 +220,20 @@ final class TableSideEditor extends Component
         $this->dispatch('table::column-saved');
     }
 
-    public function selectColumn(int $columnId): void
+    public function selectColumn(?int $columnId): void
     {
+        if ($columnId === null) {
+            $this->selectedColumnId = null;
+            $this->resetForms();
+            return;
+        }
+
         $this->selectedColumnId = $this->selectedColumnId === $columnId ? null : $columnId;
 
         if ($this->selectedColumnId === $columnId) {
             $this->loadColumnData($columnId);
+        } else {
+            $this->resetForms();
         }
     }
 

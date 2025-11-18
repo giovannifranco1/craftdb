@@ -90,9 +90,12 @@ class TableList extends Component
                         'y' => $t['y'],
                     ]);
             }
+
+            $this->diagram->update(['updated_at' => now()]);
         });
 
-        $this->dispatch('alert', message: 'Posições das tabelas salvas com sucesso!');
+        $this->dispatch('table-list::position-updated', updated_at: $this->diagram->updated_at?->diffForHumans());
+        $this->dispatch('alert', message: __('Table positions saved successfully!'));
     }
 
     public function placeholder(): string

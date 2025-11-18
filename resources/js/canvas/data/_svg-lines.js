@@ -582,19 +582,18 @@ export default (relationships) => ({
             group.appendChild(seg);
         });
     },
-    highlightTableConnections(tableId) {
-        // Limpa o highlight anterior
+    highlightTableConnections(table) {
         this.clearHighlight();
 
-        if (!tableId) {
+        table = typeof table === 'number' ? table : table?.id;
+
+        if (!table) {
             this.highlightedTableId = null;
             return;
         }
 
-        this.highlightedTableId = tableId;
-
-        // Aplica o highlight IMEDIATAMENTE
-        this.applyHighlightToTable(tableId);
+        this.highlightedTableId = table;
+        this.applyHighlightToTable(table);
     },
     clearHighlight() {
         const group = this.$el?.querySelector('#lines-layer');

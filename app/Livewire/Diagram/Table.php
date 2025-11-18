@@ -131,7 +131,7 @@ class Table extends Component
 
         $this->dispatch('alert', message: "Table Removed");
         $this->dispatch('table::removed');
-        $this->dispatch('relationships::fresh', Diagram::find($this->diagramId)->relationships()->get());
+        $this->dispatch('relationships::fresh', relationships: Diagram::find($this->diagramId)->relationships()->get());
     }
 
     public function render(): View

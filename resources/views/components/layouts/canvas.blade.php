@@ -9,10 +9,11 @@
         <x-ui.toast/>
         @endpersist
 
-        <div x-ref="canvasRoot" x-data="runCanvas(25, @js($isInitialLoad))" diagram-id="{{ $diagram->id }}" class="container hs-dropdown [--trigger:contextmenu]">
+        <div x-ref="canvasRoot" x-data="runCanvas(25, @js($isInitialLoad))" diagram-id="{{ $diagram->id }}" class="container hs-dropdown [--trigger:contextmenu] pt-12 pb-8">
             <x-ui.context-menu/>
             <x-ui.canvas.loading/>
             <x-ui.canvas.controls/>
+            <x-ui.canvas.topbar :diagram="$diagram"/>
 
             <canvas id="canvas" class="hs-dropdown-toggle"></canvas>
 
