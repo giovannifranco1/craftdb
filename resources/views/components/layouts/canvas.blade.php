@@ -27,8 +27,10 @@
         </div>
 
         <livewire:diagram.spotlight :$diagram/>
+        <livewire:diagram.graph :$diagram/>
         <livewire:diagram.table-side-editor/>
         <livewire:diagram.table-relationships-side-editor/>
+
         @fluxScripts
     </body>
 </html>

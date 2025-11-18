@@ -7,7 +7,7 @@
     x-transition:leave="transition ease-in duration-75"
     x-transition:leave-start="opacity-100 translate-y-0"
     x-transition:leave-end="opacity-0 translate-y-1"
-    @table::color-saved.window="loadingColor = false"
+    @table::color-updated.window="loadingColor = false"
     @mousedown.outside.window="open = false"
     @keydown.escape="open = false"
     @mousedown.stop

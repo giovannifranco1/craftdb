@@ -21,7 +21,7 @@ class TableList extends Component
 
     /** @var array<string, string>  */
     protected $listeners = [
-        'table::color-saved'  => '$refresh',
+        'table::color-updated'  => '$refresh',
         'table::column-added' => '$refresh',
         'table::removed'      => '$refresh',
     ];

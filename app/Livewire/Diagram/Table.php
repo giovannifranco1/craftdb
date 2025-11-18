@@ -72,7 +72,7 @@ class Table extends Component
 
         $this->dispatch('alert', message: "Color Updated");
         $this->refreshTableWithCounts();
-        $this->dispatch('table::color-saved');
+        $this->dispatch('table::color-updated');
     }
 
     public function renameColumn(Column $column, $newName): void

@@ -43,12 +43,10 @@
             <div x-data="{ updatedAt: @js($updatedAt) }" @table-list::position-updated.window="updatedAt = '{{ __('agora mesmo') }}'" class="flex flex-wrap items-center gap-3 text-[13px] text-zinc-500 dark:text-zinc-400">
                 <flux:separator vertical variant="subtle" class="h-6" />
 
-                <flux:badge size="sm" variant="soft" color="emerald" class="text-[10px] tracking-tight">
-                    {{ __('Atualizado') }}<span class="ms-1" x-text="updatedAt"></span>
+                <flux:badge size="sm" variant="soft" color="emerald" class="text-[11 px] tracking-tight">
+                    {{ __('Updated') }}<span class="ms-1" x-text="updatedAt"></span>
                 </flux:badge>
             </div>
-
-        </div>
 
         <div class="ms-auto flex items-center gap-3 rounded px-3 py-1 bg-gradient-to-r from-blue-50/60 to-emerald-50/70 dark:from-zinc-900/80 dark:to-emerald-900/40 shadow-inner">
             <span class="flex items-center gap-1 text-xs text-zinc-600 dark:text-zinc-200 font-[Space_Mono] tracking-tight select-all">

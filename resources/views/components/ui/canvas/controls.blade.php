@@ -166,8 +166,20 @@
         </button>
     </div>
 
-    <!-- Grupo: Busca -->
+    <!-- Grupo: Gráfico e Busca -->
     <div class="flex flex-col items-center gap-1">
+        <flux:modal.trigger name="diagram-graph">
+            <button
+                class="p-2 rounded-md transition-all cursor-pointer hover:bg-green-50 hover:text-green-600 active:scale-95 group relative"
+                type="button"
+                title="Grafo de Dependências">
+                <flux:icon.graph class="size-5"/>
+                <span class="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
+                    Grafo de Dependências
+                </span>
+            </button>
+        </flux:modal.trigger>
+
         <flux:modal.trigger name="spotlight" shortcut="cmd.k">
             <button
                 class="p-2 rounded-md transition-all cursor-pointer hover:bg-purple-50 hover:text-purple-600 active:scale-95 group relative"
