@@ -186,7 +186,7 @@ export default function foreignKeysGraph(relationships, currentTableId, currentT
                 .append("line")
                 .attr("stroke", linkColor)
                 .attr("stroke-width", 2)
-                .attr("stroke-opacity", 0.6)
+                .attr("stroke-opacity", 1)
                 .attr("marker-end", "url(#arrowhead)");
 
             // Criar marcador de seta
@@ -218,7 +218,7 @@ export default function foreignKeysGraph(relationships, currentTableId, currentT
                 .attr("fill", d => getTableColor(d.id))
                 .attr("stroke", isDark ? "#1e293b" : "#fff")
                 .attr("stroke-width", d => d.id === this.currentTableId ? 3 : 2)
-                .attr("opacity", d => d.id === this.currentTableId ? 1 : 0.9);
+                .attr("opacity", 1);
 
             // Label do nó
             node.append("text")
