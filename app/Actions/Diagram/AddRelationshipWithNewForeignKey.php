@@ -63,7 +63,7 @@ class AddRelationshipWithNewForeignKey
     {
         return DB::transaction(function () use ($fromTable, $toTable, $type) {
             $fromColumnPrimary = $fromTable->columns()->where('is_primary', true)->first() ?? $this->_createDefaultPK($fromTable);
-            $toColumnForeign = $this->_createDefaultFK($toTable);
+            $toColumnForeign = $this->_createDefaultFK($toTable, str()->snake($fromTable->name) . '_id');
 
             return Relationship::create([
                 'from_table_id'  => $fromTable->id,
@@ -86,7 +86,7 @@ class AddRelationshipWithNewForeignKey
     {
         return DB::transaction(function () use ($belongsToTable, $ownerTable) {
             $ownerColumnPrimary = $ownerTable->columns()->where('is_primary', true)->first() ?? $this->_createDefaultPK($ownerTable);
-            $belongsToColumnForeign = $this->_createDefaultFK($belongsToTable);
+            $belongsToColumnForeign = $this->_createDefaultFK($belongsToTable, str()->snake($ownerTable->name) . '_id');
 
             return Relationship::create([
                 'from_table_id'  => $ownerTable->id,
@@ -200,12 +200,12 @@ class AddRelationshipWithNewForeignKey
      * @param Table $table
      * @return Column
      */
-    private function _createDefaultFK(Table $table): Column
+    private function _createDefaultFK(Table $table, ?string $nameColumnForeignKey = null): Column
     {
         $maxOrder = $table->columns()->max('order') ?? 0;
 
         return $table->columns()->create([
-            'name'        => str()->snake($table->name) . '_id',
+            'name'        => $nameColumnForeignKey ?? str()->snake($table->name) . '_id',
             'type'        => 'bigint',
             'is_foreign'  => true,
             'is_nullable' => true,
