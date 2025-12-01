@@ -12,7 +12,7 @@
     @keydown.escape="open = false"
     @mousedown.stop
     @dropdown-menu::opened.window="if (($event.detail?.el || null) !== ($el.closest('[table-box]') || $el)) open = false"
-    class="absolute -top-15 p-3 -left-15 z-50 mt-2 min-w-30 w-50 justify-between flex bg-accent items-center text-white rounded-md"
+    class="absolute -top-15 p-3 -left-15 z-50 mt-2 min-w-30 w-50 justify-between flex bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 shadow-lg dark:shadow-zinc-900/50 items-center rounded-md"
     :style="`cursor: ${loadingColor ? 'wait' : ''};`"
 >
     @foreach($table->diagram->getColors() as $color)

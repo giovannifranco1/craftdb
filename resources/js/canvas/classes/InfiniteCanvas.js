@@ -486,7 +486,23 @@ export class InfiniteCanvas {
     }
     #drawGrid() {
         if (this.canvas && this.context) {
-            this.context.strokeStyle = "rgb(229,231,235)";
+                // Detectar dark mode
+            const isDark = document.documentElement.classList.contains('dark');
+
+            // Cores para light mode
+            let strokeColor = "rgb(229,231,235)"; // zinc-200
+            let markerColor = "rgb(220, 224, 232)"; // zinc-300
+            let textColor = "rgb(63, 63, 70)"; // zinc-700
+
+            // Cores para dark mode (mais suaves e visíveis)
+            if (isDark) {
+                strokeColor = "rgb(63, 63, 70)"; // zinc-700
+                markerColor = "rgb(82, 82, 91)"; // zinc-600
+                textColor = "rgb(161, 161, 170)"; // zinc-400
+            }
+
+            this.context.strokeStyle = strokeColor;
+            this.context.fillStyle = textColor;
             this.context.lineWidth = 1;
             this.context.font = "10px serif";
             this.context.beginPath();
@@ -535,7 +551,6 @@ export class InfiniteCanvas {
             this.context.stroke();
 
             // Desenha marcadores de vértice em formato "+"
-            const markerColor = "rgb(220, 224, 232)"; // um pouco mais claro
             const arm = 5; // tamanho do braço do "+" em pixels de tela
             this.context.strokeStyle = markerColor;
             this.context.lineWidth = 1;

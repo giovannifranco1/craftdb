@@ -32,8 +32,6 @@
     --color-accent: var(--color-slate-800);
     --color-accent-content: var(--color-slate-800);
     --color-accent-foreground: var(--color-white);
-
-    /* Primary color - Flux default (indigo) */
     --color-primary-50: var(--color-slate-50);
     --color-primary-100: var(--color-slate-100);
     --color-primary-200: var(--color-slate-200);

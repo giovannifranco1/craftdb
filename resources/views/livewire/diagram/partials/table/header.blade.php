@@ -57,7 +57,7 @@
     @table-side-editor::opened.window="loading = false;"
     @canvas::space.window="if ($event.detail.isSpacePressed) $el.style.cursor = 'grab'; else $el.style.cursor = ''"
     :style="`height: ${getGridSize()/2 + getGridSize()}px; cursor: ${loading ? 'wait' : ''};`"
-    class="bg-blue-500 flex-none border-b border-gray-200 px-3 py-1 rounded-t-xl table-header-beauty"
+    class="bg-blue-500 dark:bg-blue-600 flex-none border-b border-gray-200 dark:border-zinc-700 px-3 py-1 rounded-t-xl table-header-beauty"
 >
     <div class="flex items-center justify-between">
         <h3 class="text-sm font-semibold text-gray-900 flex items-center gap-2">
@@ -108,7 +108,7 @@
         </h3>
 
         <button @mousedown.stop="toggleExpanded($el.closest('[table-box]'))"
-            class="p-1.5 text-white hover:text-gray-700 hover:bg-gray-100 rounded-md transition-colors">
+            class="p-1.5 text-white hover:text-white/80 hover:bg-white/10 dark:hover:bg-white/20 rounded-md transition-colors">
             <flux:icon.play variant="solid" x-show="expanded" class="size-4 rotate-90" />
             <flux:icon.play variant="solid" x-show="!expanded" class="size-4" />
         </button>

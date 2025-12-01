@@ -29,15 +29,15 @@
 @endphp
 
 <a href="{{ route('diagram.show', [$diagram->team_id, $diagram->slug]) }}" class="block group" {{ $attributes }}>
-    <div class="w-80 h-64 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden">
+    <div class="w-80 h-64 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-[#1A1A1A] shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden">
         <div class="p-6 h-full flex flex-col">
             <!-- Header com ícone, título e badges -->
             <div class="flex items-start gap-4 mb-4">
-                <div class="flex-shrink-0 p-3 rounded-lg bg-primary-800 dark:bg-primary-800">
-                    <flux:icon.graph class="size-6 text-white" />
+                <div class="flex-shrink-0 p-3 rounded-lg bg-primary-800 dark:bg-white">
+                    <flux:icon.graph class="size-6 text-white dark:text-zinc-900" />
                 </div>
                 <div class="flex-1 min-w-0">
-                    <h3 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors duration-300 truncate mb-2">
+                    <h3 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100 group-hover:text-white dark:group-hover:text-zinc-300 transition-colors duration-300 truncate mb-2">
                         {{ $diagram->name }}
                     </h3>
                     <div class="flex items-center gap-2 flex-wrap">
@@ -109,8 +109,8 @@
                     @endif
                 </div>
 
-                <span class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary-800 dark:bg-primary-500 text-white text-sm font-medium shadow-sm group-hover:bg-primary-700 dark:group-hover:bg-primary-800 transition-all duration-300">
-                    Ver Diagrama
+                <span class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary-800 dark:bg-white text-white dark:text-zinc-900 text-sm font-medium shadow-sm group-hover:bg-primary-700 dark:group-hover:bg-zinc-300 transition-all duration-300">
+                    {{ __('View Diagram') }}
                     <flux:icon.arrow-right class="size-4" />
                 </span>
             </div>

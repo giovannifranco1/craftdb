@@ -8,7 +8,7 @@
 @endphp
 
 <div class="canvas-topbar pointer-events-none fixed inset-x-0 top-0 z-10 flex justify-center px-9 pt-5">
-    <flux:header sticky class="pointer-events-auto w-full rounded-lg border-b border-zinc-200/70 bg-white/85 py-1.5 text-sm shadow-sm shadow-zinc-900/5 backdrop-blur-md dark:border-zinc-800/70 dark:bg-zinc-900/80">
+    <flux:header sticky class="pointer-events-auto w-full rounded-lg border-b border-zinc-200/70 bg-white/85 py-1.5 text-sm shadow-sm shadow-zinc-900/5 backdrop-blur-md dark:border-zinc-800/70 dark:bg-[#0F0F0F]">
         <div class="flex flex-col gap-1.5 md:flex-row md:items-center md:justify-between">
              <!-- Logo -->
              <a href="{{ route('home') }}" class="flex me-5 ms-2 items-center space-x-3 rtl:space-x-reverse" wire:navigate>
@@ -43,7 +43,7 @@
             <div x-data="{ updatedAt: @js($updatedAt) }" @table-list::position-updated.window="updatedAt = '{{ __('agora mesmo') }}'" class="flex flex-wrap items-center gap-3 text-[13px] text-zinc-500 dark:text-zinc-400">
                 <flux:separator vertical variant="subtle" class="h-6" />
 
-                <flux:badge size="sm" variant="soft" color="emerald" class="text-[11 px] tracking-tight">
+                <flux:badge size="sm" variant="soft" color="emerald" class="text-[10px] dark:bg-emerald-900/40">
                     {{ __('Updated') }}<span class="ms-1" x-text="updatedAt"></span>
                 </flux:badge>
             </div>
