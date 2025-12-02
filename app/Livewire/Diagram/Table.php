@@ -49,7 +49,7 @@ class Table extends Component
     #[Computed(persist: true)]
     public function getColumns(): Collection
     {
-        return $this->table->columns;
+        return $this->table->columns()->orderBy('order')->get();
     }
 
     public function renameTable(): void

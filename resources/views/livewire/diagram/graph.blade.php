@@ -3,7 +3,7 @@
         <!-- Header -->
         <div class="space-y-3">
             <flux:heading size="lg">
-                Grafo de Dependências do Diagrama
+                {{ __('Graph') }}
             </flux:heading>
         </div>
 

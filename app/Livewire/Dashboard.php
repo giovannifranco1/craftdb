@@ -25,6 +25,7 @@ class Dashboard extends Component
         return Diagram::query()
             ->when($this->search, fn ($q) => $q->where('name', 'like', "%{$this->search}%"))
             ->where('team_id', Team::currentTeam()->getKey())
+            ->orderByDesc('created_at')
             ->paginate();
     }
 

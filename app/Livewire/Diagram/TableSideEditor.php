@@ -149,10 +149,10 @@ final class TableSideEditor extends Component
             return;
         }
 
-        $minOrder = $table->columns()->min('order');
+        $minOrder = $table->columns()->max('order');
         $newOrder = $minOrder === null
         ? 100
-        : max(1, (int) ($minOrder / 2));
+        : max(1, (int) ($minOrder + 1));
 
         $baseColumn = [
             'name'  => 'new_column',
@@ -231,6 +231,7 @@ final class TableSideEditor extends Component
 
         $column->delete();
         $this->resetForms();
+
         $this->dispatch('table-side-editor::column-deleted');
         $this->dispatch('alert', message: __('Column deleted successfully!'));
     }
