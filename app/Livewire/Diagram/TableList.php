@@ -21,9 +21,12 @@ class TableList extends Component
 
     /** @var array<string, string>  */
     protected $listeners = [
-        'table::color-updated'  => '$refresh',
-        'table::column-added' => '$refresh',
-        'table::removed'      => '$refresh',
+        'table::color-updated'                => '$refresh',
+        'table::column-added'                 => '$refresh',
+        'table::removed'                      => '$refresh',
+        'table-side-editor::column-saved'     => '$refresh',
+        'table-side-editor::column-deleted'   => '$refresh',
+        'table-side-editor::column-updated'   => '$refresh',
     ];
 
     public function mount(Diagram $diagram): void

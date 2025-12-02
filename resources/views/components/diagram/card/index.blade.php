@@ -37,7 +37,7 @@
                     <flux:icon.graph class="size-6 text-white dark:text-zinc-900" />
                 </div>
                 <div class="flex-1 min-w-0">
-                    <h3 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100 group-hover:text-white dark:group-hover:text-zinc-300 transition-colors duration-300 truncate mb-2">
+                    <h3 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100 dark:group-hover:text-zinc-300 transition-colors duration-300 truncate mb-2">
                         {{ $diagram->name }}
                     </h3>
                     <div class="flex items-center gap-2 flex-wrap">
@@ -109,10 +109,10 @@
                     @endif
                 </div>
 
-                <span class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary-800 dark:bg-white text-white dark:text-zinc-900 text-sm font-medium shadow-sm group-hover:bg-primary-700 dark:group-hover:bg-zinc-300 transition-all duration-300">
+                <button class="inline-flex cursor-pointer items-center gap-1.5 px-4 py-2 rounded-lg bg-primary-800 dark:bg-white text-white dark:text-zinc-900 text-sm font-medium shadow-sm group-hover:bg-primary-700 dark:group-hover:bg-zinc-300 transition-all duration-300">
                     {{ __('View Diagram') }}
                     <flux:icon.arrow-right class="size-4" />
-                </span>
+                </button>
             </div>
         </div>
     </div>

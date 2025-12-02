@@ -25,7 +25,7 @@ export default (relationships) => ({
         window.addEventListener('canvas::transform', (e) => this.linesLayer.setAttribute('transform', e.detail.transform));
         window.addEventListener('table::move', () => this.debouncedCompute());
         window.addEventListener('table::expanded', () => this.compute());
-        window.addEventListener('table-side-editor::open', e => this.highlightTableConnections(e.detail?.table || e.detail?.tableId));
+        window.addEventListener('table-side-editor::open', e => this.highlightTableConnections(e.detail?.tableId));
         window.addEventListener('table-side-editor::closed', () => this.clearHighlight());
         window.addEventListener('relationships::fresh', (event) => this.relationships = event.detail.relationships || []);
         window.addEventListener('table-list::inicializeted', (event) => {

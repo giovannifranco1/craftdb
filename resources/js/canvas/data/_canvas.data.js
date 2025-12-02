@@ -85,12 +85,7 @@ export default (cellSize = 25, isInitialLoad = false, [offsetX, offsetY] = []) =
                 }
             }
 
-            // Abre o table-side-editor
-            if (window.Livewire) {
-                window.Livewire.dispatch('table-side-editor::open', { table: tableId });
-            } else {
-                $dispatch('table-side-editor::open', { table: tableId });
-            }
+            Livewire.dispatch('table-side-editor::open', { tableId: tableId });
 
             setTimeout(() => this.$flux.modal('spotlight')?.close(), 200);
         });

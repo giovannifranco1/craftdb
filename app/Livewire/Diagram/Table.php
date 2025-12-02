@@ -15,8 +15,13 @@ use Livewire\Component;
 
 class Table extends Component
 {
+    /** @var array<string, string>  */
     protected $listeners = [
         'table::column-saved' => '$refresh',
+        'table-side-editor::column-added'   => '$refresh',
+        'table-side-editor::column-saved'   => '$refresh',
+        'table-side-editor::column-deleted' => '$refresh',
+        'table-side-editor::column-updated' => '$refresh',
     ];
 
     #[Locked]
@@ -27,6 +32,7 @@ class Table extends Component
 
     public ?string $name = null;
 
+    /** @var array<string, string>  */
     public $relationship = [
         'from_column_id' => '',
         'to_column_id'   => '',
@@ -50,6 +56,7 @@ class Table extends Component
     {
         $this->table->name = $this->name;
         $this->table->save();
+
         $this->dispatch('table::renamed');
         $this->refreshTableWithCounts();
     }
