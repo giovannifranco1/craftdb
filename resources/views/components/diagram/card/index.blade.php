@@ -1,5 +1,4 @@
 @php
-    // Por enquanto usando valor padrão, mas pode ser substituído por $diagram->database quando o campo for adicionado
     $database = 'mysql'; // TODO: Adicionar campo database na tabela diagram
     $databaseLabels = [
         'mysql' => 'MySQL',
@@ -28,13 +27,28 @@
     $relationshipsCount = $diagram->relationships()->count();
 @endphp
 
-<a href="{{ route('diagram.show', [$diagram->team_id, $diagram->slug]) }}" class="block group" {{ $attributes }}>
-    <div class="w-80 h-64 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-[#1A1A1A] shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden">
+<div class="block group" {{ $attributes }}>
+    <div class="w-80 h-64 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-[#1A1A1A] shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden relative">
+        <!-- Botão de favoritar -->
+        <button
+            type="button"
+            wire:click.stop="toggleFavorite({{ $diagram->id }})"
+            class="absolute top-4 cursor-pointer right-4 z-10 p-2 rounded-lg bg-white/80 dark:bg-zinc-800/80 backdrop-blur-sm hover:bg-white dark:hover:bg-zinc-800 transition-all duration-300 {{ $diagram->isFavorite() ? 'opacity-100' : 'opacity-0 group-hover:opacity-100' }} focus:opacity-100"
+            title="Favoritar diagrama"
+        >
+
+            @if($diagram->isFavorite())
+                <flux:icon.heart variant="solid" class="size-5 text-red-500" />
+            @else
+                <flux:icon.heart variant="outline" class="size-5 text-zinc-400 dark:text-zinc-500" />
+            @endif
+        </button>
+
         <div class="p-6 h-full flex flex-col">
             <!-- Header com ícone, título e badges -->
             <div class="flex items-start gap-4 mb-4">
                 <div class="flex-shrink-0 p-3 rounded-lg bg-primary-800 dark:bg-white">
-                    <flux:icon.graph class="size-6 text-white dark:text-zinc-900" />
+                    <flux:icon.layout-grid class="size-6 text-white dark:text-zinc-900" />
                 </div>
                 <div class="flex-1 min-w-0">
                     <h3 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100 dark:group-hover:text-zinc-300 transition-colors duration-300 truncate mb-2">
@@ -109,11 +123,11 @@
                     @endif
                 </div>
 
-                <button class="inline-flex cursor-pointer items-center gap-1.5 px-4 py-2 rounded-lg bg-primary-800 dark:bg-white text-white dark:text-zinc-900 text-sm font-medium shadow-sm group-hover:bg-primary-700 dark:group-hover:bg-zinc-300 transition-all duration-300">
+                <a href="{{ route('diagram.show', [$diagram->team_id, $diagram->slug]) }}" class="inline-flex cursor-pointer items-center gap-1.5 px-4 py-2 rounded-lg bg-primary-800 dark:bg-white text-white dark:text-zinc-900 text-sm font-medium shadow-sm group-hover:bg-primary-700 dark:group-hover:bg-zinc-300 transition-all duration-300">
                     {{ __('View Diagram') }}
                     <flux:icon.arrow-right class="size-4" />
-                </button>
+                </a>
             </div>
         </div>
     </div>
-</a>
+</div>

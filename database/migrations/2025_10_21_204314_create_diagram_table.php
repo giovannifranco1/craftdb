@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('style');
             $table->boolean('is_initial_load')->default(true);
             $table->text('description')->nullable();
+            $table->boolean('is_favorite')->default(false);
+            $table->string('database')->nullable();
 
             /** timestamps  */
             $table->timestamps();
@@ -30,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('diagrams');
+        Schema::dropIfExists('diagram');
     }
 };

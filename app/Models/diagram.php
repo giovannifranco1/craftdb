@@ -89,4 +89,9 @@ class Diagram extends Model
     {
         return $query->where('slug', $slug);
     }
+
+    public function isFavorite(): bool
+    {
+        return $this->is_favorite;
+    }
 }

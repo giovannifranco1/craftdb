@@ -1,0 +1,137 @@
+/* Landing Page Custom Styles */
+
+/* CSS Variables for Landing Page Colors */
+:root {
+    --landing-primary: #2563eb;
+    --landing-primary-hover: #1d4ed8;
+    --landing-primary-light: rgba(37, 99, 235, 0.1);
+    --landing-primary-border: rgba(37, 99, 235, 0.3);
+    --landing-cta-text-light: rgba(255, 255, 255, 0.9);
+    --landing-gray-600: rgb(75, 85, 99);
+    --landing-gray-300: rgb(209, 213, 219);
+    --landing-shadow-color: rgba(37, 99, 235, 0.12);
+}
+
+/* Smooth Scroll */
+.landing-smooth-scroll {
+    scroll-behavior: smooth;
+}
+
+/* Primary Color Utilities */
+.landing-primary-color {
+    color: var(--landing-primary);
+}
+
+.landing-primary-bg {
+    background-color: var(--landing-primary);
+}
+
+.landing-primary-bg:hover {
+    background-color: var(--landing-primary-hover);
+}
+
+.landing-primary-border {
+    border-color: var(--landing-primary);
+}
+
+.landing-primary-hover:hover {
+    color: var(--landing-primary-hover);
+}
+
+/* Link Hover Effect */
+.landing-link-hover {
+    color: var(--landing-gray-600);
+}
+
+.landing-link-hover:hover {
+    color: var(--landing-primary);
+}
+
+/* Button Styles */
+.landing-btn-primary {
+    background-color: var(--landing-primary);
+    color: white;
+}
+
+.landing-btn-primary:hover {
+    background-color: var(--landing-primary-hover);
+}
+
+.landing-btn-outline {
+    border-color: var(--landing-gray-300);
+}
+
+.landing-btn-outline:hover {
+    border-color: var(--landing-primary);
+    color: var(--landing-primary);
+}
+
+/* Icon Background */
+.landing-icon-bg {
+    background-color: var(--landing-primary);
+}
+
+/* Card Hover Effect */
+.landing-card-hover {
+    transition: all 0.3s ease;
+}
+
+.landing-card-hover:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px var(--landing-shadow-color);
+    border-color: var(--landing-primary-border);
+}
+
+/* Feature Card Animation */
+.landing-feature-card {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+}
+
+/* Step Item Animation */
+.landing-step-item {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+
+/* Pricing Card */
+.landing-pricing-card {
+    transition: all 0.3s ease;
+}
+
+/* CTA Background */
+.landing-cta-bg {
+    background-color: var(--landing-primary);
+}
+
+/* Animation Keyframes */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(32px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in-up {
+    animation: fadeInUp 0.7s ease-out forwards;
+}
+
+/* Group Hover Effects */
+.group:hover .group-hover\:landing-primary-color {
+    color: var(--landing-primary);
+}
+
+/* CTA Text Color */
+.landing-cta-text {
+    color: var(--landing-cta-text-light);
+}
+
+.landing-cta-bg .text-blue-100 {
+    color: var(--landing-cta-text-light);
+}

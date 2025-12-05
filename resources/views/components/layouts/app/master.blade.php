@@ -9,8 +9,13 @@
         $team = Team::currentTeam();
     @endphp
     <body class="min-h-screen bg-white dark:bg-[#0F0F0F]">
+
+        @persist('toast')
+        <x-ui.toast/>
+        @endpersist
+
         <!-- Horizontal Navigation Header -->
-        <flux:header sticky class="border-b border-zinc-200 bg-zinc-50 dark:border-zinc-600 dark:bg-[#0F0F0F] z-50">
+        <flux:header sticky class="border-b border-zinc-200 bg-zinc-50 dark:border-zinc-600 dark:bg-[#0F0F0F] z-40">
             <div class="flex flex-col w-full">
                 <!-- Top bar -->
                 <div class="flex items-center justify-between w-full my-3">
