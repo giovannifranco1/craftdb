@@ -135,3 +135,34 @@
 .landing-cta-bg .text-blue-100 {
     color: var(--landing-cta-text-light);
 }
+
+/* Tech Background Animation */
+@keyframes techPulse {
+    0%, 100% {
+        opacity: 0.65;
+    }
+    50% {
+        opacity: 0.8;
+    }
+}
+
+@keyframes techGlow {
+    0%, 100% {
+        filter: brightness(1) opacity(1);
+    }
+    50% {
+        filter: brightness(1.3) opacity(1.1);
+    }
+}
+
+.tech-bg-animated svg {
+    animation: techPulse 4s ease-in-out infinite;
+}
+
+.tech-bg-animated svg g[opacity] {
+    animation: techGlow 3s ease-in-out infinite;
+}
+
+.tech-bg-animated svg circle[filter] {
+    animation: techGlow 2.5s ease-in-out infinite;
+}

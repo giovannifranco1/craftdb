@@ -13,7 +13,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/css/landing-page.css'])
     @fluxAppearance
 </head>
@@ -24,17 +24,12 @@
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center space-x-2">
                     <a href="{{ route('landing.index') }}" class="flex items-center space-x-2">
-                        <div class="w-8 h-8 landing-primary-bg rounded flex items-center justify-center">
-                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path>
-                            </svg>
-                        </div>
-                        <span class="text-xl font-semibold text-gray-900">CraftDB</span>
+                        <x-app-logo/>
                     </a>
                 </div>
                 <div class="hidden md:flex items-center space-x-6">
                     <a href="{{ route('landing.index') }}#features" class="text-sm text-gray-600 landing-link-hover transition">Features</a>
-                    <a href="{{ route('landing.pricing') }}" class="text-sm text-gray-600 landing-link-hover transition">Pricing</a>
+                    <a href="{{ route('landing.index') }}#pricing" class="text-sm text-gray-600 landing-link-hover transition">Pricing</a>
                     <a href="{{ route('landing.about') }}" class="text-sm text-gray-600 landing-link-hover transition">Sobre</a>
                     <a href="{{ route('landing.index') }}#contact" class="text-sm text-gray-600 landing-link-hover transition">Contato</a>
                 </div>
@@ -77,7 +72,7 @@
                     <h4 class="text-gray-900 font-medium text-sm mb-3">Produto</h4>
                     <ul class="space-y-2">
                         <li><a href="{{ route('landing.features') }}" class="text-sm text-gray-600 landing-link-hover transition">Features</a></li>
-                        <li><a href="{{ route('landing.pricing') }}" class="text-sm text-gray-600 landing-link-hover transition">Pricing</a></li>
+                        <li><a href="{{ route('landing.index') }}#pricing" class="text-sm text-gray-600 landing-link-hover transition">Pricing</a></li>
                         <li><a href="{{ route('landing.about') }}" class="text-sm text-gray-600 landing-link-hover transition">Sobre</a></li>
                     </ul>
                 </div>

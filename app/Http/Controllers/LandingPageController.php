@@ -11,6 +11,8 @@ class LandingPageController extends Controller
         return view('landing-page.index', [
             'features' => config('landingpage.features'),
             'howItWorks' => config('landingpage.how_it_works'),
+            'plans' => config('landingpage.pricing.plans'),
+            'faq' => config('landingpage.faq'),
             'site' => config('landingpage.site'),
         ]);
     }
