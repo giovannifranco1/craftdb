@@ -52,6 +52,14 @@ class Diagram extends Model
     }
 
     /**
+     * @return HasMany<\App\Models\Area, $this>
+     */
+    public function areas(): HasMany
+    {
+        return $this->hasMany(Area::class, 'diagram_id');
+    }
+
+    /**
      * @return Builder<Relationship>
      */
     public function relationships()

@@ -8,7 +8,7 @@
         'bg-[var(--table-base-bg)]',
         'size-4.5 rounded-full',
         $attributes?->get('class'),
-        'border-2' => $selected,
+        'border-2 border-white dark:border-zinc-700' => $selected,
     ])
     @if ($color) style="background-color: {{ $color }}" @endif
     title="table color: {{ $color ?? \App\Models\Table::COLOR_DEFAULT }}"

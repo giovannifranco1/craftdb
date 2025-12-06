@@ -7,7 +7,7 @@
     $updatedAt = $diagram->updated_at?->diffForHumans() ?? __('agora mesmo');
 @endphp
 
-<div class="canvas-topbar pointer-events-none fixed inset-x-0 top-0 z-10 flex justify-center px-9 pt-5">
+<div class="canvas-topbar pointer-events-none fixed inset-x-0 top-0 z-20 flex justify-center px-9 pt-5">
     <flux:header style="padding-right: 1rem; padding-left: 0.5rem;" sticky class="pointer-events-auto w-full rounded-lg border-b border-zinc-200/70 bg-white/85 py-1.5 text-sm shadow-sm shadow-zinc-900/5 backdrop-blur-md dark:border-zinc-800/70 dark:bg-[#0F0F0F]">
         <div class="flex flex-col gap-1.5 md:flex-row md:items-center md:justify-between">
              <!-- Logo -->

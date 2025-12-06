@@ -45,6 +45,12 @@ body {
     left: 0;
 }
 
+.areas {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
 .table-primary {
     background-color: var(--table-base-bg);
 }
@@ -77,7 +83,6 @@ body {
     top: 50%;
     left: 2rem;
     transform: translateY(-50%);
-    z-index: 10;
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
 }

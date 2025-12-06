@@ -1,6 +1,7 @@
 export class InfiniteCanvas {
     canvas = null;
     tablesContainer = null;
+    areasContainer = null;
     context = null;
     cellSize;
 
@@ -26,6 +27,7 @@ export class InfiniteCanvas {
         if (canvas && canvas instanceof HTMLCanvasElement) {
             this.canvas = canvas;
             this.tablesContainer = document.querySelector('.tables');
+            this.areasContainer = document.querySelector('.areas');
             this.#setupEvents(canvas);
 
             const context = canvas.getContext("2d");
@@ -179,12 +181,16 @@ export class InfiniteCanvas {
     }
 
     #applyContainerTransform() {
-        if (this.tablesContainer) {
-            const transformX = -this.#offsetX * this.#scale;
-            const transformY = -this.#offsetY * this.#scale;
+        const transformX = -this.#offsetX * this.#scale;
+        const transformY = -this.#offsetY * this.#scale;
+        const transformString = `translate3d(${transformX}px, ${transformY}px, 0) scale(${this.#scale})`;
 
-            // Usamos transform3d para melhor performance (aceleração de hardware)
-            this.tablesContainer.style.transform = `translate3d(${transformX}px, ${transformY}px, 0) scale(${this.#scale})`;
+        // Usamos transform3d para melhor performance (aceleração de hardware)
+        if (this.tablesContainer) {
+            this.tablesContainer.style.transform = transformString;
+        }
+        if (this.areasContainer) {
+            this.areasContainer.style.transform = transformString;
         }
     }
 

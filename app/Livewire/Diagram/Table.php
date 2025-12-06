@@ -141,6 +141,14 @@ class Table extends Component
         $this->dispatch('relationships::fresh', relationships: Diagram::find($this->diagramId)->relationships()->get());
     }
 
+    #[On('table::move.{table.id}')]
+    public function updatePosition(int $x, int $y): void
+    {
+        $this->table->x = $x;
+        $this->table->y = $y;
+        $this->table->save();
+    }
+
     public function render(): View
     {
         return view('livewire.diagram.table');

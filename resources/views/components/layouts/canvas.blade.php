@@ -17,12 +17,16 @@
 
             <canvas id="canvas" class="hs-dropdown-toggle"></canvas>
 
-            <svg x-data="runSvgLines(@js($relationships))" id="svg-overlay">
+            <svg x-data="runSvgLines(@js($relationships))" id="svg-overlay" class="z-10">
                 <g id="lines-layer"></g>
             </svg>
 
-            <div class="tables">
+            <div class="tables z-10">
                 {{ $slot }}
+            </div>
+
+            <div class="areas z-5">
+                {{ $areas }}
             </div>
         </div>
 

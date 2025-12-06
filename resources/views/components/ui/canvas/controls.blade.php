@@ -1,6 +1,6 @@
 <div
     id="controls"
-    class="w-[4rem] py-3 h-auto bg-white dark:bg-[#0F0F0F] items-center rounded-lg flex flex-col gap-2 shadow-lg border border-gray-200 dark:border-zinc-700"
+    class="w-[4rem] py-3 z-20 h-auto bg-white dark:bg-[#0F0F0F] items-center rounded-lg flex flex-col gap-2 shadow-lg border border-gray-200 dark:border-zinc-700"
     x-data="{
         zoomPercent: 75,
         showGrid: true,
@@ -81,7 +81,7 @@
     }"
     @canvas-zoom.window="zoomPercent = Math.round($event.detail.scale * 100);">
 
-    <!-- Grupo: Adicionar Tabela -->
+    <!-- Grupo: Adicionar Tabela e Área -->
     <div class="flex flex-col items-center gap-1 pb-2 border-b border-gray-200 dark:border-zinc-700">
         <button
             class="p-2 rounded-md transition-all cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-900/30 hover:text-blue-600 dark:hover:text-blue-400 active:scale-95 group relative text-zinc-700 dark:text-zinc-300"
@@ -91,6 +91,17 @@
             <flux:icon.add-table class="size-5"/>
             <span class="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-lg">
                 Adicionar Tabela
+            </span>
+        </button>
+
+        <button
+            class="p-2 rounded-md transition-all cursor-pointer hover:bg-orange-50 dark:hover:bg-orange-900/30 hover:text-orange-600 dark:hover:text-orange-400 active:scale-95 group relative text-zinc-700 dark:text-zinc-300"
+            type="button"
+            title="Adicionar Área"
+            @click="$dispatch('area::adding')">
+            <flux:icon.square class="size-5"/>
+            <span class="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-lg">
+                Adicionar Área
             </span>
         </button>
     </div>

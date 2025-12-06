@@ -4,9 +4,10 @@ if (typeof window.tableZIndexCounter === 'undefined') {
 }
 
 // @Alpine.js data
-export default (x, y) => ({
+export default (x, y, tableId) => ({
     x: x,
     y: y,
+    tableId: tableId,
     zIndex: null, // z-index será definido quando necessário
     isDragging: false,
     startX: 0,
@@ -125,6 +126,7 @@ export default (x, y) => ({
         this.isDragging = false;
         // Mantém o z-index alto (não reseta, para que a tabela permaneça sobre as outras)
         this.$dispatch('table::move');
+        this.$dispatch(`table::move.${this.tableId}`, { x: this.x, y: this.y });
     },
     toggleExpanded(element) {
         this.expanded = !this.expanded;

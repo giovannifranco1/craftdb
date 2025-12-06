@@ -1,5 +1,5 @@
 <div
-    x-data="runTable(@js($table->x), @js($table->y))"
+    x-data="runTable(@js($table->x), @js($table->y), @js($table->id))"
     x-show="@js($table->id)"
     id="table-{{ $table->id }}"
     table-id="{{ $table->id }}"

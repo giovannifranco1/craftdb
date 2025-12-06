@@ -10,7 +10,9 @@ export default (cellSize = 25, isInitialLoad = false, [offsetX, offsetY] = []) =
     contextMenuPosition: { x: 100, y: 100 },
     isInRelationshipEvent: false,
     isInAddTableEvent: false,
+    isInAddAreaEvent: false,
     addTableClickHandler: null,
+    addAreaClickHandler: null,
     relationshipEvent: {
         from_table_id: null,
         to_table_id: null,
@@ -39,6 +41,11 @@ export default (cellSize = 25, isInitialLoad = false, [offsetX, offsetY] = []) =
         // Listener para ativar modo de adicionar tabela
         this.$el.addEventListener('table::adding', () => {
             this.isInAddTableEvent = true;
+        });
+
+        // Listener para ativar modo de adicionar área
+        this.$el.addEventListener('area::adding', () => {
+            this.isInAddAreaEvent = true;
         });
 
         // Listener para renomear table
@@ -149,6 +156,50 @@ export default (cellSize = 25, isInitialLoad = false, [offsetX, offsetY] = []) =
                     };
 
                     this.canvasElement.addEventListener('click', this.addTableClickHandler, { once: true });
+                }
+            }
+        });
+
+        this.$watch('isInAddAreaEvent', (value) => {
+            const body = document.querySelector('body');
+
+            if (body) {
+                if (value) {
+                    body.style.cursor = 'crosshair';
+                } else {
+                    body.style.cursor = `url(${cursorBase}) 3.5 3.5, auto`;
+                }
+            }
+
+            if (this.canvasElement) {
+                if (this.addAreaClickHandler) {
+                    this.canvasElement.removeEventListener('click', this.addAreaClickHandler);
+                    this.addAreaClickHandler = null;
+                }
+
+                if (value) {
+                    this.addAreaClickHandler = (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const virtualPos = Alpine.raw(this.canvas).clientToVirtual(e.clientX, e.clientY);
+
+                        if (window.Livewire) {
+                            window.Livewire.dispatch('area::add', {
+                                x: Math.round(virtualPos.x),
+                                y: Math.round(virtualPos.y)
+                            });
+                        }
+
+                        this.isInAddAreaEvent = false;
+
+                        if (this.addAreaClickHandler) {
+                            this.canvasElement.removeEventListener('click', this.addAreaClickHandler);
+                            this.addAreaClickHandler = null;
+                        }
+                    };
+
+                    this.canvasElement.addEventListener('click', this.addAreaClickHandler, { once: true });
                 }
             }
         });
