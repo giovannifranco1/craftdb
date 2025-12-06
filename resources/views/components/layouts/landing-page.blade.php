@@ -38,7 +38,7 @@
                         <a href="{{ route('home') }}" class="text-sm text-gray-600 landing-link-hover transition">Dashboard</a>
                     @else
                         <a href="{{ route('login') }}" class="text-sm text-gray-600 landing-link-hover transition">Entrar</a>
-                        <a href="{{ route('register') }}" class="px-4 py-2 landing-primary-bg text-white text-sm rounded transition">Começar Grátis</a>
+                        <a href="{{ route('register') }}" class="px-4 py-2 landing-primary-bg text-white text-sm rounded-lg transition">Começar Grátis</a>
                     @endauth
                 </div>
             </div>

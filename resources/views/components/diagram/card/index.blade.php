@@ -47,8 +47,8 @@
         <div class="p-6 h-full flex flex-col">
             <!-- Header com ícone, título e badges -->
             <div class="flex items-start gap-4 mb-4">
-                <div class="flex-shrink-0 p-3 rounded-lg bg-primary-800 dark:bg-white">
-                    <flux:icon.layout-grid class="size-6 text-white dark:text-zinc-900" />
+                <div class="flex aspect-square size-15 items-center bg-accent-content justify-center rounded-md text-accent-foreground">
+                    <x-app-logo-icon class="size-15 fill-current text-white dark:text-black" />
                 </div>
                 <div class="flex-1 min-w-0">
                     <h3 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100 dark:group-hover:text-zinc-300 transition-colors duration-300 truncate mb-2">
