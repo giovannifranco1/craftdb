@@ -37,6 +37,7 @@ class Dashboard extends Component
     public function toggleFavorite(Diagram $diagram): void
     {
         $diagram->is_favorite = !$diagram->isFavorite();
+        $diagram->timestamps = false;
         $diagram->save();
 
         $this->dispatch('diagram::favorite-toggled', $diagram->id);
