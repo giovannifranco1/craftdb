@@ -297,6 +297,8 @@ export default (cellSize = 25, isInitialLoad = false, [offsetX, offsetY] = []) =
 
     keydownListeners(e) {
         this.handleMetaS(e);
+        this.handleEscape(e);
+        this.handleSpace(e);
     },
 
     handleMetaS(e) {
@@ -306,6 +308,60 @@ export default (cellSize = 25, isInitialLoad = false, [offsetX, offsetY] = []) =
         if (isMetaS || isCtrlS) {
             e.preventDefault();
             this.saveTablesPositions();
+        }
+    },
+
+    handleEscape(e) {
+        if (e.key === 'Escape') {
+            this.cancelAddMode();
+        }
+    },
+
+    handleSpace(e) {
+        // Só cancela se estiver em modo de adicionar e não estiver em um input/textarea
+        const isInputElement = e.target.tagName === 'INPUT' ||
+                              e.target.tagName === 'TEXTAREA' ||
+                              e.target.isContentEditable;
+
+        if (e.key === ' ' && !isInputElement &&
+            (this.isInAddTableEvent || this.isInAddAreaEvent || this.isInAddNoteEvent)) {
+            e.preventDefault();
+            this.cancelAddMode();
+        }
+    },
+
+    cancelAddMode() {
+        // Cancela modo de adicionar tabela
+        if (this.isInAddTableEvent) {
+            this.isInAddTableEvent = false;
+            if (this.addTableClickHandler) {
+                this.$el.removeEventListener('click', this.addTableClickHandler, true);
+                this.addTableClickHandler = null;
+            }
+        }
+
+        // Cancela modo de adicionar área
+        if (this.isInAddAreaEvent) {
+            this.isInAddAreaEvent = false;
+            if (this.addAreaClickHandler && this.canvasElement) {
+                this.canvasElement.removeEventListener('click', this.addAreaClickHandler);
+                this.addAreaClickHandler = null;
+            }
+        }
+
+        // Cancela modo de adicionar nota
+        if (this.isInAddNoteEvent) {
+            this.isInAddNoteEvent = false;
+            if (this.addNoteClickHandler) {
+                this.$el.removeEventListener('click', this.addNoteClickHandler, true);
+                this.addNoteClickHandler = null;
+            }
+        }
+
+        // Restaura cursor padrão
+        const body = document.querySelector('body');
+        if (body) {
+            body.style.cursor = `url(${cursorBase}) 3.5 3.5, auto`;
         }
     },
 

@@ -44,8 +44,8 @@ class NoteList extends Component
             'content' => '',
             'x' => $x,
             'y' => $y,
-            'width' => 300,
-            'height' => 200,
+            'width' => 175,
+            'height' => 100,
             'color' => '#fef08a', // Default yellow post-it color
         ]);
 
