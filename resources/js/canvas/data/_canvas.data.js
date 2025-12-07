@@ -11,8 +11,10 @@ export default (cellSize = 25, isInitialLoad = false, [offsetX, offsetY] = []) =
     isInRelationshipEvent: false,
     isInAddTableEvent: false,
     isInAddAreaEvent: false,
+    isInAddNoteEvent: false,
     addTableClickHandler: null,
     addAreaClickHandler: null,
+    addNoteClickHandler: null,
     relationshipEvent: {
         from_table_id: null,
         to_table_id: null,
@@ -46,6 +48,11 @@ export default (cellSize = 25, isInitialLoad = false, [offsetX, offsetY] = []) =
         // Listener para ativar modo de adicionar área
         this.$el.addEventListener('area::adding', () => {
             this.isInAddAreaEvent = true;
+        });
+
+        // Listener para ativar modo de adicionar nota
+        this.$el.addEventListener('note::adding', () => {
+            this.isInAddNoteEvent = true;
         });
 
         // Listener para renomear table
@@ -200,6 +207,51 @@ export default (cellSize = 25, isInitialLoad = false, [offsetX, offsetY] = []) =
                     };
 
                     this.canvasElement.addEventListener('click', this.addAreaClickHandler, { once: true });
+                }
+            }
+        });
+
+        this.$watch('isInAddNoteEvent', (value) => {
+            const body = document.querySelector('body');
+
+            if (body) {
+                if (value) {
+                    body.style.cursor = 'crosshair';
+                } else {
+                    body.style.cursor = `url(${cursorBase}) 3.5 3.5, auto`;
+                }
+            }
+
+            if (this.canvasElement) {
+                if (this.addNoteClickHandler) {
+                    this.canvasElement.removeEventListener('click', this.addNoteClickHandler);
+                    this.addNoteClickHandler = null;
+                }
+
+                if (value) {
+                    this.addNoteClickHandler = (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const virtualPos = Alpine.raw(this.canvas).clientToVirtual(e.clientX, e.clientY);
+                        const noteData = {
+                            x: Math.round(virtualPos.x),
+                            y: Math.round(virtualPos.y)
+                        };
+
+                        if (window.Livewire) {
+                            window.Livewire.dispatch('note::add', noteData);
+                        }
+
+                        this.isInAddNoteEvent = false;
+
+                        if (this.addNoteClickHandler) {
+                            this.canvasElement.removeEventListener('click', this.addNoteClickHandler);
+                            this.addNoteClickHandler = null;
+                        }
+                    };
+
+                    this.canvasElement.addEventListener('click', this.addNoteClickHandler, { once: true });
                 }
             }
         });

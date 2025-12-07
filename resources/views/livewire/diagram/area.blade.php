@@ -22,7 +22,7 @@
             }"
             @area::renaming.window="if (($event.detail?.el || null) === ($el.closest('[area-box]') || $el)) isEventRename = true"
             @area::renamed.window="isEventRename = false; loading = false"
-            class="px-3 py-3 border-b border-gray-200 dark:border-zinc-700 relative"
+            class="px-3 py-3 relative"
         >
             <!-- Label Badge -->
             <div
@@ -37,6 +37,7 @@
                 @area::renaming.window="if (($event.detail?.el || null) === ($el.closest('[area-box]') || $el)) isEventRename = true"
                 @area::renamed.window="isEventRename = false; loading = false"
             >
+
                 <div
                     class="inline-flex items-center gap-1.5 bg-white dark:bg-zinc-900 border-2 rounded-md px-2 py-0.5 shadow-md cursor-pointer hover:shadow-lg transition-shadow min-w-[80px]"
                     :style="`border-color: {{ $areaColor }};`"
@@ -67,7 +68,7 @@
                             x-trap="isEventRename"
                             x-model="name"
                             type="text"
-                            class="bg-transparent border-none outline-none shadow-none text-[10px] font-semibold text-gray-700 dark:text-zinc-300 uppercase tracking-wide w-full p-0 m-0 min-w-0"
+                            class="bg-transparent border-none outline-none shadow-none text-[10px] font-semibold text-gray-700 dark:text-zinc-300 uppercase tracking-wide p-0 m-0 w-full min-w-[80px]"
                             style="background: transparent !important; box-shadow: none !important;"
                             @mousedown.stop
                             @keydown.stop
@@ -81,18 +82,35 @@
                         <span
                             x-show="!isEventRename"
                             @dblclick.stop="isEventRename = true"
-                            class="text-[10px] font-semibold text-gray-700 dark:text-zinc-300 uppercase tracking-wide truncate"
+                            class="text-[10px] font-[Space Mono] font-semibold text-gray-700 dark:text-zinc-300 uppercase tracking-wide truncate"
                         >{{ $area->name ?? 'Area name...' }}</span>
                     </div>
+
+                    <button
+                        @mousedown.stop="$wire.remove()"
+                        wire:loading.attr="disabled"
+                        class="flex-shrink-0 size-3.5 flex items-center justify-center rounded hover:bg-red-100 dark:hover:bg-red-900/20 transition-colors group"
+                        title="Delete area"
+                    >
+                        <svg
+                            class="size-2.5 text-gray-500 dark:text-zinc-400 group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                            />
+                        </svg>
+                    </button>
                 </div>
 
                 <!-- Color Picker Menu -->
                 <x-ui.diagram.color-picker :model="$area" type="area" position="absolute left-0 -top-12" />
-            </div>
-
-            <!-- Content -->
-            <div class="px-3 py-2 pt-4">
-                <!-- Area content can be added here in the future -->
             </div>
         </div>
 

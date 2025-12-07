@@ -33,7 +33,7 @@
         <button
             type="button"
             wire:click.stop="toggleFavorite({{ $diagram->id }})"
-            class="absolute top-4 cursor-pointer right-4 z-10 p-2 rounded-lg bg-white/80 dark:bg-zinc-800/80 backdrop-blur-sm hover:bg-white dark:hover:bg-zinc-800 transition-all duration-300 {{ $diagram->isFavorite() ? 'opacity-100' : 'opacity-0 group-hover:opacity-100' }} focus:opacity-100"
+            class="absolute top-4 cursor-pointer right-4 z-10 p-2 rounded-lg backdrop-blur-sm transition-all duration-300 {{ $diagram->isFavorite() ? 'opacity-100' : 'opacity-0 group-hover:opacity-100' }} focus:opacity-100"
             title="Favoritar diagrama"
         >
 

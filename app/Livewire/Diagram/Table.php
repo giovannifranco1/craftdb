@@ -147,6 +147,8 @@ class Table extends Component
         $this->table->x = $x;
         $this->table->y = $y;
         $this->table->save();
+
+        $this->refreshTableWithCounts();
     }
 
     public function render(): View

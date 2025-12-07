@@ -60,6 +60,14 @@ class Diagram extends Model
     }
 
     /**
+     * @return HasMany<\App\Models\Note, $this>
+     */
+    public function notes(): HasMany
+    {
+        return $this->hasMany(Note::class, 'diagram_id');
+    }
+
+    /**
      * @return Builder<Relationship>
      */
     public function relationships()

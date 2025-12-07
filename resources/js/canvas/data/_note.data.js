@@ -1,0 +1,290 @@
+// Contador global para z-index (inicia em 600 para notas ficarem acima de áreas)
+if (typeof window.noteZIndexCounter === 'undefined') {
+    window.noteZIndexCounter = 600;
+}
+
+// @Alpine.js data
+export default (x, y, width, height, noteId) => ({
+    x: x,
+    y: y,
+    noteId: noteId,
+    width: width,
+    height: height,
+    zIndex: null,
+    isDragging: false,
+    isResizing: false,
+    resizeDirection: null,
+    startX: 0,
+    startY: 0,
+    initialX: 0,
+    initialY: 0,
+    initialWidth: 0,
+    initialHeight: 0,
+    canDragBySpace: true,
+
+    init() {
+        // Snap inicial ao grid
+        this.x = this.snapToGrid(this.x);
+        this.y = this.snapToGrid(this.y);
+        this.width = this.snapToGrid(this.width);
+        this.height = this.snapToGrid(this.height);
+
+        // Set initial styles
+        this.$el.style.transform = `translate3d(${this.x}px, ${this.y}px, 0)`;
+        this.$el.style.left = '0px';
+        this.$el.style.top = '0px';
+        this.$el.style.width = `${this.width}px`;
+        this.$el.style.height = `${this.height}px`;
+        this.$el.style.maxWidth = `${this.width}px`;
+        this.$el.style.maxHeight = `${this.height}px`;
+
+        window.addEventListener('canvas::space', (e) => {
+            this.canDragBySpace = !e.detail.isSpacePressed;
+            this.updateCursorBySpace();
+        });
+
+        this.updateCursorBySpace = () => {
+            if (!this.canDragBySpace && !this.isResizing) {
+                this.$el.style.cursor = 'grab';
+            } else if (!this.isResizing) {
+                this.$el.style.cursor = '';
+            }
+        };
+
+        this.updateCursorBySpace();
+
+        // Drag listeners
+        this.$el.addEventListener('mousedown', (e) => {
+            const isResizeHandle = e.target.classList.contains('resize-handle') ||
+                                   e.target.closest('.resize-handle') !== null;
+
+            // Ignore drag if clicking on interactive elements (textarea, input, button, etc.)
+            const isInteractiveElement = e.target.tagName === 'TEXTAREA' ||
+                                        e.target.tagName === 'INPUT' ||
+                                        e.target.tagName === 'BUTTON' ||
+                                        e.target.tagName === 'SELECT' ||
+                                        e.target.isContentEditable ||
+                                        e.target.closest('textarea, input, button, select, [contenteditable="true"]') !== null;
+
+            if (!isResizeHandle && !isInteractiveElement && !this.isResizing) {
+                this.startDrag(e);
+            }
+        });
+        this.$refs.canvasRoot.addEventListener('mousemove', (e) => {
+            if (this.isResizing) {
+                this.resize(e);
+            } else if (this.isDragging) {
+                this.drag(e);
+            }
+        });
+        this.$refs.canvasRoot.addEventListener('mouseup', (e) => {
+            this.endDrag();
+            this.endResize();
+        });
+        this.$refs.canvasRoot.addEventListener('mouseleave', (e) => {
+            this.endDrag();
+            this.endResize();
+        });
+    },
+
+    getCanvas() {
+        // Access canvas from canvasRoot Alpine data
+        if (this.$refs.canvasRoot) {
+            const canvasData = Alpine.$data(this.$refs.canvasRoot);
+            if (canvasData && canvasData.canvas) {
+                return Alpine.raw(canvasData.canvas);
+            }
+        }
+        return null;
+    },
+
+    getScale() {
+        const canvas = this.getCanvas();
+        return canvas ? canvas.getScale() : 1;
+    },
+
+    getGridSize() {
+        const canvas = this.getCanvas();
+        return canvas ? (canvas.cellSize || 25) : 25;
+    },
+
+    getSnappedWidth() {
+        const grid = this.getGridSize();
+        return Math.max(grid * 4, Math.round(this.width / grid) * grid);
+    },
+
+    getSnappedHeight() {
+        const grid = this.getGridSize();
+        return Math.max(grid * 4, Math.round(this.height / grid) * grid);
+    },
+
+    snapToGrid(coord) {
+        const gridSize = this.getGridSize();
+        return Math.round(coord / gridSize) * gridSize;
+    },
+
+    setHighestZIndex() {
+        window.noteZIndexCounter += 1;
+        const newZIndex = window.noteZIndexCounter;
+        this.zIndex = newZIndex;
+        this.$el.style.zIndex = newZIndex;
+        return newZIndex;
+    },
+
+    // ---- DRAG ----
+    startDrag(e) {
+        if (!this.canDragBySpace || this.isResizing) return;
+
+        this.isDragging = true;
+        this.startX = e.clientX;
+        this.startY = e.clientY;
+        this.initialX = this.x;
+        this.initialY = this.y;
+        this.$el.style.transition = 'none';
+
+        this.setHighestZIndex();
+    },
+
+    drag(e) {
+        if (!this.isDragging) return;
+        e.preventDefault();
+
+        const scale = this.getScale();
+        const dx = (e.clientX - this.startX) / scale;
+        const dy = (e.clientY - this.startY) / scale;
+
+        let nextX = this.initialX + dx;
+        let nextY = this.initialY + dy;
+
+        const snappedX = this.snapToGrid(nextX);
+        const snappedY = this.snapToGrid(nextY);
+
+        this.x = snappedX;
+        this.y = snappedY;
+
+        this.$el.style.left = '0px';
+        this.$el.style.top = '0px';
+        this.$el.style.transform = `translate3d(${this.x}px, ${this.y}px, 0)`;
+    },
+
+    endDrag() {
+        if (!this.isDragging) return;
+        this.isDragging = false;
+        this.$dispatch(`note::move.${this.noteId}`, { x: this.x, y: this.y });
+    },
+
+    // ---- RESIZE ----
+    startResize(direction, e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        // Prevent drag from starting
+        this.isDragging = false;
+
+        this.isResizing = true;
+        this.resizeDirection = direction;
+        this.startX = e.clientX;
+        this.startY = e.clientY;
+        this.initialX = this.x;
+        this.initialY = this.y;
+        this.initialWidth = this.width;
+        this.initialHeight = this.height;
+        this.$el.style.transition = 'none';
+
+        this.setHighestZIndex();
+
+        // Prevent text selection during resize
+        document.body.style.userSelect = 'none';
+    },
+
+    resize(e) {
+        if (!this.isResizing) return;
+        e.preventDefault();
+        e.stopPropagation();
+
+        const scale = this.getScale();
+        const dx = (e.clientX - this.startX) / scale;
+        const dy = (e.clientY - this.startY) / scale;
+
+        let newX = this.initialX;
+        let newY = this.initialY;
+        let newWidth = this.initialWidth;
+        let newHeight = this.initialHeight;
+
+        const grid = this.getGridSize();
+        const minSize = grid * 4;
+
+        switch (this.resizeDirection) {
+            case 'right':
+                newWidth = Math.max(minSize, this.initialWidth + dx);
+                break;
+            case 'left':
+                newWidth = Math.max(minSize, this.initialWidth - dx);
+                newX = this.initialX + (this.initialWidth - newWidth);
+                break;
+            case 'bottom':
+                newHeight = Math.max(minSize, this.initialHeight + dy);
+                break;
+            case 'top':
+                newHeight = Math.max(minSize, this.initialHeight - dy);
+                newY = this.initialY + (this.initialHeight - newHeight);
+                break;
+            case 'top-right':
+                newHeight = Math.max(minSize, this.initialHeight - dy);
+                newY = this.initialY + (this.initialHeight - newHeight);
+                newWidth = Math.max(minSize, this.initialWidth + dx);
+                break;
+            case 'top-left':
+                newHeight = Math.max(minSize, this.initialHeight - dy);
+                newY = this.initialY + (this.initialHeight - newHeight);
+                newWidth = Math.max(minSize, this.initialWidth - dx);
+                newX = this.initialX + (this.initialWidth - newWidth);
+                break;
+            case 'bottom-right':
+                newWidth = Math.max(minSize, this.initialWidth + dx);
+                newHeight = Math.max(minSize, this.initialHeight + dy);
+                break;
+            case 'bottom-left':
+                newWidth = Math.max(minSize, this.initialWidth - dx);
+                newX = this.initialX + (this.initialWidth - newWidth);
+                newHeight = Math.max(minSize, this.initialHeight + dy);
+                break;
+        }
+
+        // Snap to grid
+        this.x = this.snapToGrid(newX);
+        this.y = this.snapToGrid(newY);
+        this.width = this.snapToGrid(newWidth);
+        this.height = this.snapToGrid(newHeight);
+
+        // Update element styles directly
+        this.$el.style.left = '0px';
+        this.$el.style.top = '0px';
+        this.$el.style.transform = `translate3d(${this.x}px, ${this.y}px, 0)`;
+        this.$el.style.width = `${this.width}px`;
+        this.$el.style.height = `${this.height}px`;
+        this.$el.style.maxWidth = `${this.width}px`;
+        this.$el.style.maxHeight = `${this.height}px`;
+    },
+
+    endResize() {
+        if (!this.isResizing) return;
+
+        const savedWidth = this.width;
+        const savedHeight = this.height;
+        this.isResizing = false;
+        this.resizeDirection = null;
+
+        // Restore text selection
+        document.body.style.userSelect = '';
+
+        // Ensure styles are maintained after resize
+        this.$el.style.width = `${savedWidth}px`;
+        this.$el.style.height = `${savedHeight}px`;
+        this.$el.style.maxWidth = `${savedWidth}px`;
+        this.$el.style.maxHeight = `${savedHeight}px`;
+
+        this.$dispatch(`note::resize.${this.noteId}`, {x: this.x, y: this.y, width: savedWidth, height: savedHeight });
+    },
+});
+

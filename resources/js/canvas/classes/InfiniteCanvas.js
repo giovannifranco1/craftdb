@@ -2,6 +2,7 @@ export class InfiniteCanvas {
     canvas = null;
     tablesContainer = null;
     areasContainer = null;
+    notesContainer = null;
     context = null;
     cellSize;
 
@@ -28,6 +29,7 @@ export class InfiniteCanvas {
             this.canvas = canvas;
             this.tablesContainer = document.querySelector('.tables');
             this.areasContainer = document.querySelector('.areas');
+            this.notesContainer = document.querySelector('.notes');
             this.#setupEvents(canvas);
 
             const context = canvas.getContext("2d");
@@ -191,6 +193,9 @@ export class InfiniteCanvas {
         }
         if (this.areasContainer) {
             this.areasContainer.style.transform = transformString;
+        }
+        if (this.notesContainer) {
+            this.notesContainer.style.transform = transformString;
         }
     }
 

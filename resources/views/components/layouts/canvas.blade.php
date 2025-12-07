@@ -28,6 +28,10 @@
             <div class="areas z-5">
                 {{ $areas }}
             </div>
+
+            <div class="notes z-15">
+                {{ $notes }}
+            </div>
         </div>
 
         <livewire:diagram.spotlight :$diagram/>

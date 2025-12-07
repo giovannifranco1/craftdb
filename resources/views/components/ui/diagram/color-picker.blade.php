@@ -5,15 +5,22 @@
 ])
 
 @php
-    $colorUpdatedEvent = $type === 'table' ? 'table::color-updated' : 'area::color-updated';
+    $colorUpdatedEvent = match($type) {
+        'table' => 'table::color-updated',
+        'area' => 'area::color-updated',
+        'note' => 'note::color-updated',
+        default => 'table::color-updated',
+    };
     $currentColor = $model->color ?? null;
     $colors = $model->diagram->getColors();
 
     // Default positioning based on type
     if ($position === null) {
-        $position = $type === 'table'
-            ? 'absolute -top-15 -left-15 mt-2 min-w-30 w-50'
-            : 'absolute left-0 top-full mt-2';
+        $position = match($type) {
+            'table' => 'absolute -top-15 -left-15 mt-2 min-w-30 w-50',
+            'area', 'note' => 'absolute left-0 top-full mt-2',
+            default => 'absolute left-0 top-full mt-2',
+        };
     }
 @endphp
 

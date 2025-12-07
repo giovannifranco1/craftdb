@@ -104,6 +104,17 @@
                 Adicionar Área
             </span>
         </button>
+
+        <button
+            class="p-2 rounded-md transition-all cursor-pointer hover:bg-yellow-50 dark:hover:bg-yellow-900/30 hover:text-yellow-600 dark:hover:text-yellow-400 active:scale-95 group relative text-zinc-700 dark:text-zinc-300"
+            type="button"
+            title="Adicionar Nota"
+            @click="$dispatch('note::adding')">
+            <flux:icon.add-note class="size-5"/>
+            <span class="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-lg">
+                Adicionar Nota
+            </span>
+        </button>
     </div>
 
     <!-- Grupo: Zoom -->

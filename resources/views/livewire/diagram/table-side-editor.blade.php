@@ -3,7 +3,7 @@
     x-show="open"
     x-cloak
     x-ref="dialog"
-    class="relative z-10"
+    class="relative z-30"
     aria-labelledby="slide-over-title"
     aria-modal="true"
     @keydown.window.escape="$event.stopImmediatePropagation(); open = false; $dispatch('table-side-editor::closed')"
