@@ -34,17 +34,15 @@
     </div>
 
     <!-- Note Content -->
-    <div wire:ignore.self class="relative px-3 py-1 top-[24px] shadow-md bg-[#fef08a]" :style="`width: ${width}px; height: ${height}px; min-height: 125px;`">
-        <div class="flex-1 min-h-0">
-            <textarea
-                class="w-full h-full font-[Kalam] font-light text-[15px] text-black bg-transparent border-none outline-none shadow-none resize-none placeholder-gray-400 dark:placeholder-zinc-500 leading-relaxed"
-                wire:model="content"
-                placeholder="Write your note here..."
-                style="min-height: 125px;"
-                @mousedown.stop
-                @keydown.stop
-            ></textarea>
-        </div>
+    <div wire:ignore.self class="relative px-3 py-1 top-[24px] shadow-md bg-[#fef08a] flex flex-col" :style="`width: ${width}px; height: ${height}px; min-height: 125px;`">
+        <textarea
+            class="flex-1 w-full font-[Kalam] font-light text-[15px] text-black bg-transparent border-none outline-none shadow-none resize-none placeholder-gray-400 dark:placeholder-zinc-500 leading-relaxed box-border"
+            wire:model="content"
+            placeholder="Write your note here..."
+            :style="`width: 100%; height: 100%;`"
+            @mousedown.stop
+            @keydown.stop
+        ></textarea>
 
         <!-- Right -->
         <div
