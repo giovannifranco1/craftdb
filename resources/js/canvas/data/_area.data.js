@@ -58,10 +58,19 @@ export default (x, y, width, height, areaId) => ({
             const isResizeHandle = e.target.classList.contains('resize-handle') ||
                                    e.target.closest('.resize-handle') !== null;
 
+            // Verificar se estamos em modo de adicionar tabela ou nota
+            const isInAddMode = this.isInAddTableOrNoteMode();
+
+            // Se estiver em modo de adicionar, permitir que o evento propague
+            if (isInAddMode) {
+                return;
+            }
+
             if (!isResizeHandle && !this.isResizing) {
                 this.startDrag(e);
             }
         });
+
         this.$refs.canvasRoot.addEventListener('mousemove', (e) => {
             if (this.isResizing) {
                 this.resize(e);
@@ -88,6 +97,22 @@ export default (x, y, width, height, areaId) => ({
             }
         }
         return null;
+    },
+
+    getCanvasData() {
+        // Access canvas data from canvasRoot Alpine data
+        if (this.$refs.canvasRoot) {
+            return Alpine.$data(this.$refs.canvasRoot);
+        }
+        return null;
+    },
+
+    isInAddTableOrNoteMode() {
+        const canvasData = this.getCanvasData();
+        if (canvasData) {
+            return canvasData.isInAddTableEvent || canvasData.isInAddNoteEvent;
+        }
+        return false;
     },
 
     getScale() {

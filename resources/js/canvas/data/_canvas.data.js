@@ -134,14 +134,32 @@ export default (cellSize = 25, isInitialLoad = false, [offsetX, offsetY] = []) =
                 }
             }
 
-            if (this.canvasElement) {
+            // Usar $el (canvasRoot) em vez de canvasElement para capturar cliques em áreas também
+            if (this.$el) {
                 if (this.addTableClickHandler) {
-                    this.canvasElement.removeEventListener('click', this.addTableClickHandler);
+                    this.$el.removeEventListener('click', this.addTableClickHandler, true);
                     this.addTableClickHandler = null;
                 }
 
                 if (value) {
                     this.addTableClickHandler = (e) => {
+                        // Verificar se o clique foi em uma área, tabela ou nota
+                        const clickedArea = e.target.closest('[area-box]');
+                        const clickedTable = e.target.closest('[table-box]');
+                        const clickedNote = e.target.closest('[note-box]');
+
+                        // Se clicou em um resize handle ou elemento interativo, ignorar
+                        const isResizeHandle = e.target.classList.contains('resize-handle') ||
+                                             e.target.closest('.resize-handle') !== null;
+                        const isInteractiveElement = e.target.tagName === 'TEXTAREA' ||
+                                                    e.target.tagName === 'INPUT' ||
+                                                    e.target.tagName === 'BUTTON' ||
+                                                    e.target.closest('textarea, input, button') !== null;
+
+                        if (isResizeHandle || isInteractiveElement) {
+                            return;
+                        }
+
                         e.preventDefault();
                         e.stopPropagation();
 
@@ -157,12 +175,13 @@ export default (cellSize = 25, isInitialLoad = false, [offsetX, offsetY] = []) =
                         this.isInAddTableEvent = false;
 
                         if (this.addTableClickHandler) {
-                            this.canvasElement.removeEventListener('click', this.addTableClickHandler);
+                            this.$el.removeEventListener('click', this.addTableClickHandler, true);
                             this.addTableClickHandler = null;
                         }
                     };
 
-                    this.canvasElement.addEventListener('click', this.addTableClickHandler, { once: true });
+                    // Usar captura de eventos para garantir que seja executado antes
+                    this.$el.addEventListener('click', this.addTableClickHandler, { once: true, capture: true });
                 }
             }
         });
@@ -222,14 +241,32 @@ export default (cellSize = 25, isInitialLoad = false, [offsetX, offsetY] = []) =
                 }
             }
 
-            if (this.canvasElement) {
+            // Usar $el (canvasRoot) em vez de canvasElement para capturar cliques em áreas também
+            if (this.$el) {
                 if (this.addNoteClickHandler) {
-                    this.canvasElement.removeEventListener('click', this.addNoteClickHandler);
+                    this.$el.removeEventListener('click', this.addNoteClickHandler, true);
                     this.addNoteClickHandler = null;
                 }
 
                 if (value) {
                     this.addNoteClickHandler = (e) => {
+                        // Verificar se o clique foi em uma área, tabela ou nota
+                        const clickedArea = e.target.closest('[area-box]');
+                        const clickedTable = e.target.closest('[table-box]');
+                        const clickedNote = e.target.closest('[note-box]');
+
+                        // Se clicou em um resize handle ou elemento interativo, ignorar
+                        const isResizeHandle = e.target.classList.contains('resize-handle') ||
+                                             e.target.closest('.resize-handle') !== null;
+                        const isInteractiveElement = e.target.tagName === 'TEXTAREA' ||
+                                                    e.target.tagName === 'INPUT' ||
+                                                    e.target.tagName === 'BUTTON' ||
+                                                    e.target.closest('textarea, input, button') !== null;
+
+                        if (isResizeHandle || isInteractiveElement) {
+                            return;
+                        }
+
                         e.preventDefault();
                         e.stopPropagation();
 
@@ -246,12 +283,13 @@ export default (cellSize = 25, isInitialLoad = false, [offsetX, offsetY] = []) =
                         this.isInAddNoteEvent = false;
 
                         if (this.addNoteClickHandler) {
-                            this.canvasElement.removeEventListener('click', this.addNoteClickHandler);
+                            this.$el.removeEventListener('click', this.addNoteClickHandler, true);
                             this.addNoteClickHandler = null;
                         }
                     };
 
-                    this.canvasElement.addEventListener('click', this.addNoteClickHandler, { once: true });
+                    // Usar captura de eventos para garantir que seja executado antes
+                    this.$el.addEventListener('click', this.addNoteClickHandler, { once: true, capture: true });
                 }
             }
         });

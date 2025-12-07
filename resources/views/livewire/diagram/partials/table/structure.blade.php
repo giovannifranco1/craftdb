@@ -8,7 +8,7 @@
         <colgroup>
             <col :style="`width: ${colWidths[0]}px`">
             <col :style="`width: ${colWidths[1]}px`">
-            <col style="width: 10%">
+            <col style="width: 7%">
         </colgroup>
 
         <tbody  class="divide-y divide-gray-100 dark:divide-zinc-700">
@@ -46,7 +46,17 @@
                     </td>
 
                     <td>
-                        <span class="inline-flex items-center px-2 rounded text-xs uppercase font-medium bg-gray-100 dark:bg-zinc-700 text-gray-800 dark:text-zinc-200">{{ $column->length > 0 ? "$column->type($column->length)" : $column->type }}</span>
+                        <span class="inline-flex items-center px-2 rounded text-xs uppercase font-medium bg-gray-100 dark:bg-zinc-700 text-gray-800 dark:text-zinc-200">
+                            @if($column->length > 0)
+                                @php
+                                    $lengthStr = (string)$column->length;
+                                    $displayLength = strlen($lengthStr) > 3 ? substr($lengthStr, 0, 3) : $lengthStr;
+                                @endphp
+                                {{ "$column->type($displayLength)" }}
+                            @else
+                                {{ $column->type }}
+                            @endif
+                        </span>
                     </td>
                     <td>
                         <flux:tooltip toggleable position="right">
@@ -59,7 +69,15 @@
                                     <div>
                                         <h4 class="font-semibold text-sm text-white dark:text-zinc-100 mb-1">{{ $column->name }}</h4>
                                         <p class="text-xs text-zinc-400">
-                                            {{ $column->length > 0 ? "$column->type($column->length)" : $column->type }}
+                                            @if($column->length > 0)
+                                                @php
+                                                    $lengthStr = (string)$column->length;
+                                                    $displayLength = strlen($lengthStr) > 3 ? substr($lengthStr, 0, 3) : $lengthStr;
+                                                @endphp
+                                                {{ "$column->type($displayLength)" }}
+                                            @else
+                                                {{ $column->type }}
+                                            @endif
                                         </p>
                                     </div>
 
@@ -92,7 +110,7 @@
                                     @if($column->default_value)
                                         <div class="pt-1 border-t border-gray-200 dark:border-zinc-700">
                                             <p class="text-[10px] font-medium text-gray-500 dark:text-zinc-400 uppercase mb-0.5">Valor Padrão</p>
-                                            <p class="text-xs text-gray-900 dark:text-zinc-100 font-mono bg-gray-50 dark:bg-zinc-800 px-2 py-1 rounded">
+                                            <p class="text-xs text-zinc-300 font-mono rounded">
                                                 {{ $column->default_value }}
                                             </p>
                                         </div>
@@ -102,7 +120,7 @@
                                     @if($column->comment)
                                         <div class="pt-1 border-t border-gray-200 dark:border-zinc-700">
                                             <p class="text-[10px] font-medium text-gray-500 dark:text-zinc-400 uppercase mb-0.5">Comentário</p>
-                                            <p class="text-xs text-gray-700 dark:text-zinc-300 leading-relaxed">
+                                            <p class="text-xs text-zinc-300 leading-relaxed">
                                                 {{ $column->comment }}
                                             </p>
                                         </div>
