@@ -34,7 +34,7 @@
     </div>
 
     <!-- Note Content -->
-    <div wire:ignore.self class="relative px-3 py-1 top-[24px] shadow-md bg-[#fef08a] flex flex-col" :style="`width: ${width}px; height: ${height}px; min-height: 125px;`">
+    <div wire:ignore.self class="relative px-3 py-1 top-[24px] shadow-md bg-[#fef08a] flex flex-col" :style="`width: ${width}px; height: ${height}px; min-height: 75px;`">
         <textarea
             class="flex-1 w-full font-[Kalam] font-light text-[15px] text-black bg-transparent border-none outline-none shadow-none resize-none placeholder-gray-400 dark:placeholder-zinc-500 leading-relaxed box-border"
             wire:model="content"
