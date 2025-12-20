@@ -33,8 +33,8 @@ class DiagramCreate extends Component
     #[Validate('required|in:colorful,neutral')]
     public ?string $style = null;
 
-    #[Validate('required|in:mysql')]
-    public ?string $database = null; // todo: postgresql,sqlite
+    #[Validate('required|in:mysql,postgresql,sqlite')]
+    public ?string $database = null;
 
     /** @return void  */
     public function mount()
