@@ -6,6 +6,7 @@ use App\Actions\Parse\ParseMySQLSchema;
 use App\Models\Diagram;
 use App\Models\Team\Team;
 use Illuminate\Http\UploadedFile;
+use App\Actions\Parse\ParseLaravelMigration;
 
 /**
  * @phpstan-type DTODiagram array{
@@ -14,14 +15,15 @@ use Illuminate\Http\UploadedFile;
  *     database: string,
  *     description?: string|null,
  *     file?: array<UploadedFile>,
- *     type?: 'laravel'|'sql',
+ *     type?: 'migration'|'sql',
  * }
  */
 class CreateNewDiagram
 {
 
     public function __construct(
-        public ParseMySQLSchema $parseMySQLSchemaAction
+        public ParseMySQLSchema $parseMySQLSchemaAction,
+        public ParseLaravelMigration $parseLaravelMigrationAction
     ) {}
 
     /**
@@ -37,12 +39,20 @@ class CreateNewDiagram
             'name'        => $data['name'],
             'description' => data_get($data, 'description'),
             'style'       => data_get($data, 'style'),
+            'database'    => data_get($data, 'database'),
             'team_id'     => Team::currentTeam()->getKey(),
             'slug'        => $slug,
         ]);
 
         if (data_has($data, 'file')) {
-            $this->_parse(data_get($data, 'file'), $diagram);
+            $diagram->imported_at = now();
+            $diagram->save();
+
+            match (data_get($data, 'type')) {
+                'sql' => $this->_parseSqlFile(data_get($data, 'file'), $diagram),
+                'migration' => $this->_parseMigrationFile(data_get($data, 'file'), $diagram),
+                default => throw new \Exception('Invalid file type'),
+            };
         }
 
         return $diagram;
@@ -66,8 +76,18 @@ class CreateNewDiagram
     /**
      * @param array<UploadedFile> $file
      */
-    private function _parse(array $file, Diagram $diagram): void
+    private function _parseSqlFile(array $file, Diagram $diagram): void
     {
-        $this->parseMySQLSchemaAction->exec($file, $diagram);
+        match ($diagram->database) {
+            'mysql' => $this->parseMySQLSchemaAction->exec($file, $diagram),
+        };
+    }
+
+    /**
+     * @param array<UploadedFile> $file
+     */
+    private function _parseMigrationFile(array $file, Diagram $diagram): void
+    {
+        $this->parseLaravelMigrationAction->exec($file, $diagram);
     }
 }

@@ -3,8 +3,6 @@
 use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\Pages\DiagramController;
 use App\Livewire\Dashboard;
-use App\Livewire\Diagram\DiagramCreate;
-use App\Livewire\Diagram\DiagramImport;
 use App\Livewire\MyFavorites;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
@@ -16,9 +14,12 @@ Route::get('/features', [LandingPageController::class, 'features'])->name('landi
 Route::get('/pricing', [LandingPageController::class, 'pricing'])->name('landing.pricing');
 Route::get('/about', [LandingPageController::class, 'about'])->name('landing.about');
 
+/** Homepage */
+Route::get('/', fn () => view('landing-page.index'))->name('home');
+
 /** Dashboard */
-Route::get('/dashboard', Dashboard::class)->middleware(['auth', 'verified'])->name('home');
-Route::get('/my-favorites', MyFavorites::class)->middleware(['auth', 'verified'])->name('home.my-favorites');
+Route::get('/dashboard', Dashboard::class)->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/my-favorites', MyFavorites::class)->middleware(['auth', 'verified'])->name('dashboard.my-favorites');
 
 /** Settings */
 Route::middleware(['auth'])->group(function () {

@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('database')->nullable();
 
             /** timestamps  */
+            $table->timestamp('imported_at')->nullable()->comment('when the diagram was imported');
             $table->timestamps();
         });
     }

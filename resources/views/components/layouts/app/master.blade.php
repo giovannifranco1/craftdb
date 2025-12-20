@@ -21,13 +21,13 @@
                 <div class="flex items-center justify-between w-full my-3">
                     <div class="flex items-center">
                         <!-- Logo -->
-                        <a href="{{ route('home') }}" class="flex me-5 ms-2 items-center space-x-3 rtl:space-x-reverse" wire:navigate>
+                        <a href="{{ route('dashboard') }}" class="flex me-5 ms-2 items-center space-x-3 rtl:space-x-reverse" wire:navigate>
                             <x-app-logo />
                         </a>
 
                         @if(request()->routeIs('diagram.show'))
                             <flux:breadcrumbs class="ms-5">
-                                <flux:breadcrumbs.item href="{{ route('home') }}">Diagrams</flux:breadcrumbs.item>
+                                <flux:breadcrumbs.item href="{{ route('dashboard') }}">Diagrams</flux:breadcrumbs.item>
                                 <flux:breadcrumbs.item href="{{ route('diagram.show', [$team->id, $diagram->slug])}}">{{ $diagram->name }}</flux:breadcrumbs.item>
                             </flux:breadcrumbs>
                         @endif
@@ -88,7 +88,7 @@
 
                 <!-- Navbar -->
                 <flux:navbar class="-mb-px max-lg:hidden mt-2">
-                    <flux:navbar.item badge="Pro" badge:color="lime" href="#" :href="route('home')" :current="request()->routeIs('home')" wire:navigate>{{ __('Diagrams') }}</flux:navbar.item>
+                    <flux:navbar.item badge="Pro" badge:color="lime" href="#" :href="route('dashboard')" :current="request()->routeIs('home')" wire:navigate>{{ __('Diagrams') }}</flux:navbar.item>
                     <flux:separator vertical variant="subtle" class="my-2"/>
                 </flux:navbar>
             </div>

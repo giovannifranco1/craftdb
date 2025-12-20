@@ -23,19 +23,19 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center space-x-2">
-                    <a href="{{ route('landing.index') }}" class="flex items-center space-x-2">
+                    <a href="{{ route('home') }}" class="flex items-center space-x-2">
                         <x-app-logo/>
                     </a>
                 </div>
                 <div class="hidden md:flex items-center space-x-6">
-                    <a href="{{ route('landing.index') }}#features" class="text-sm text-gray-600 landing-link-hover transition">Features</a>
-                    <a href="{{ route('landing.index') }}#pricing" class="text-sm text-gray-600 landing-link-hover transition">Pricing</a>
-                    <a href="{{ route('landing.about') }}" class="text-sm text-gray-600 landing-link-hover transition">Sobre</a>
-                    <a href="{{ route('landing.index') }}#contact" class="text-sm text-gray-600 landing-link-hover transition">Contato</a>
+                    <a href="{{ route('home') }}#features" class="text-sm text-gray-600 landing-link-hover transition">Features</a>
+                    <a href="{{ route('home') }}#pricing" class="text-sm text-gray-600 landing-link-hover transition">Pricing</a>
+                    <a href="{{ route('home') }}" class="text-sm text-gray-600 landing-link-hover transition">Sobre</a>
+                    <a href="{{ route('home') }}#contact" class="text-sm text-gray-600 landing-link-hover transition">Contato</a>
                 </div>
                 <div class="flex items-center space-x-3">
                     @auth
-                        <a href="{{ route('home') }}" class="text-sm text-gray-600 landing-link-hover transition">Dashboard</a>
+                        <a href="{{ route('dashboard') }}" class="text-sm text-gray-600 landing-link-hover transition">Dashboard</a>
                     @else
                         <a href="{{ route('login') }}" class="text-sm text-gray-600 landing-link-hover transition">Entrar</a>
                         <a href="{{ route('register') }}" class="px-4 py-2 landing-primary-bg text-white text-sm rounded-lg transition">Começar Grátis</a>
@@ -72,15 +72,15 @@
                     <h4 class="text-gray-900 font-medium text-sm mb-3">Produto</h4>
                     <ul class="space-y-2">
                         <li><a href="{{ route('landing.features') }}" class="text-sm text-gray-600 landing-link-hover transition">Features</a></li>
-                        <li><a href="{{ route('landing.index') }}#pricing" class="text-sm text-gray-600 landing-link-hover transition">Pricing</a></li>
-                        <li><a href="{{ route('landing.about') }}" class="text-sm text-gray-600 landing-link-hover transition">Sobre</a></li>
+                        <li><a href="{{ route('home') }}#pricing" class="text-sm text-gray-600 landing-link-hover transition">Pricing</a></li>
+                        <li><a href="{{ route('home') }}" class="text-sm text-gray-600 landing-link-hover transition">Sobre</a></li>
                     </ul>
                 </div>
 
                 <div>
                     <h4 class="text-gray-900 font-medium text-sm mb-3">Recursos</h4>
                     <ul class="space-y-2">
-                        <li><a href="{{ route('landing.index') }}#features" class="text-sm text-gray-600 landing-link-hover transition">Documentação</a></li>
+                        <li><a href="{{ route('home') }}#features" class="text-sm text-gray-600 landing-link-hover transition">Documentação</a></li>
                         <li><a href="#" class="text-sm text-gray-600 landing-link-hover transition">API</a></li>
                         <li><a href="#" class="text-sm text-gray-600 landing-link-hover transition">Suporte</a></li>
                     </ul>

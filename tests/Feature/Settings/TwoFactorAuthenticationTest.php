@@ -16,6 +16,8 @@ beforeEach(function () {
 });
 
 test('two factor settings page can be rendered', function () {
+    /** @var TestCase $this */
+
     $user = User::factory()->withoutTwoFactor()->create();
 
     $this->actingAs($user)
@@ -27,6 +29,8 @@ test('two factor settings page can be rendered', function () {
 });
 
 test('two factor settings page requires password confirmation when enabled', function () {
+    /** @var TestCase $this */
+
     $user = User::factory()->create();
 
     $response = $this->actingAs($user)
@@ -36,6 +40,8 @@ test('two factor settings page requires password confirmation when enabled', fun
 });
 
 test('two factor settings page returns forbidden response when two factor is disabled', function () {
+    /** @var TestCase $this */
+
     config(['fortify.features' => []]);
 
     $user = User::factory()->create();
@@ -48,6 +54,8 @@ test('two factor settings page returns forbidden response when two factor is dis
 });
 
 test('two factor authentication disabled when confirmation abandoned between requests', function () {
+    /** @var TestCase $this */
+
     $user = User::factory()->create();
 
     $user->forceFill([

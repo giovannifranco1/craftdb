@@ -8,7 +8,7 @@ use Livewire\Form;
 
 class ImportForm extends Form
 {
-    /** @var 'file'|'laravel'|null */
+    /** @var 'file'|'migration'|null */
     public ?string $type = null;
 
     /**
@@ -32,13 +32,13 @@ class ImportForm extends Form
                 'file',
                 new ImportValidFileType
             ],
-            'type' => 'nullable|in:sql,laravel'
+            'type' => 'nullable|in:sql,migration'
         ];
 
         if ($this->hasImport) {
             $rules = array_merge($rules, [
                 'file' => 'required|array',
-                'type' => 'required|in:sql,laravel'
+                'type' => 'required|in:sql,migration'
             ]);
         }
 

@@ -42,20 +42,20 @@
                     wire:target="importForm.type"
                     @class([
                         'relative cursor-pointer rounded-xl border-1 px-4 py-5 flex flex-col items-center min-h-24 transition-all duration-150 text-center group',
-                        'border-primary-300 ring-primary-200 dark:ring-primary-900 bg-primary-50/40 dark:bg-primary-950/60' => $importForm->type === 'framework',
-                        'border-zinc-300 hover:border-zinc-400 dark:border-zinc-600 dark:hover:border-zinc-600 bg-white/90 dark:bg-zinc-900/50' => $importForm->type !== 'framework',
+                        'border-primary-300 ring-primary-200 dark:ring-primary-900 bg-primary-50/40 dark:bg-primary-950/60' => $importForm->type === 'migration',
+                        'border-zinc-300 hover:border-zinc-400 dark:border-zinc-600 dark:hover:border-zinc-600 bg-white/90 dark:bg-zinc-900/50' => $importForm->type !== 'migration',
                     ])
                 >
                     <input
                         type="radio"
                         wire:model.live="importForm.type"
-                        value="laravel"
+                        value="migration"
                         class="sr-only"
                     />
                     <flux:icon.framework.laravel class="size-10 mb-2 text-[#FF2D20]" />
                     <span class="font-light text-sm">{{ __('Laravel Migration') }}</span>
                     <span class="absolute top-2 right-2">
-                        @if ($importForm->type === 'laravel')
+                        @if ($importForm->type === 'migration')
                             <flux:icon.check-circle variant="solid" class="size-5" />
                         @endif
                     </span>
@@ -66,7 +66,7 @@
                 <flux:label badge="Required" class="pb-3">{{ __('Import Files') }}</flux:label>
                 <div class="bg-[#fafbfc] dark:bg-zinc-900/50 min-h-[15rem] rounded-lg flex flex-col justify-center items-center gap-3 p-4 border border-zinc-200 dark:border-zinc-700">
                     <p class="text-sm text-zinc-600 dark:text-zinc-400 text-center max-w-md">
-                        @if ($importForm->type === 'laravel')
+                        @if ($importForm->type === 'migration')
                             {!! __('Import <span class="font-bold">.zip</span> or <span class="font-bold">.php</span> files to automatically create your diagram structure.') !!}
                         @else
                             {!! __('Import <span class="font-bold">.sql</span> files to automatically create your diagram structure.') !!}
@@ -78,7 +78,7 @@
                         class="sr-only"
                         wire:model="importForm.file"
                         type="file"
-                        accept="{{ $importForm->type === 'laravel' ? '.php, .zip' : '.sql' }}"
+                        accept="{{ $importForm->type === 'migration' ? '.php, .zip' : '.sql' }}"
                     >
 
                     @empty ($importForm->file)

@@ -62,9 +62,9 @@
 
             @if(($importForm->type || !empty($importForm->file)) && $importForm->hasImport)
                 <div class="mt-3 w-full">
-                    @if($importForm->type === 'laravel')
+                    @if($importForm->type === 'migration')
                         <div class="flex items-center gap-2">
-                            <span class="text-sm text-zinc-600 dark:text-zinc-400">{{ ucfirst($importForm->type ?? '') }}</span>
+                            <span class="text-sm text-zinc-600 dark:text-zinc-400">{{ __('Laravel Migration') }}</span>
                             <flux:icon.framework.laravel class="size-3 text-[#FF2D20]" />
                         </div>
                     @endif

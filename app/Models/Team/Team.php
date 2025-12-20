@@ -76,7 +76,7 @@ class Team extends Model
         }
 
         /** @var User */
-        $user = auth()->user;
+        $user = auth()->user();
 
         return $user->ownedTeams()->get()->first();
     }
