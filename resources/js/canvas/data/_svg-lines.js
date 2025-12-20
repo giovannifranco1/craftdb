@@ -438,7 +438,13 @@ export default (relationships) => ({
 
             // Crow's foot (pé de galinha) só no lado 'n' para 1:n, e em ambos no n:n
             const isOneToMany = conn.type === '1:n';
+            const isManyToOne = conn.type === 'n:1';
             const isManyToMany = conn.type === 'n:n';
+
+            if (isManyToOne) {
+                this.drawCrowsFoot(connGroup, conn.p1, conn.aSide);
+                this.drawBar(connGroup, conn.p2, conn.bSide, 12);
+            }
 
             if (isOneToMany) {
                 this.drawCrowsFoot(connGroup, conn.p2, conn.bSide);
@@ -450,7 +456,7 @@ export default (relationships) => ({
                 this.drawCrowsFoot(connGroup, conn.p2, conn.bSide);
             }
 
-            if (!isManyToMany && !isOneToMany) {
+            if (!isManyToMany && !isOneToMany && !isManyToOne) {
                 this.drawBar(connGroup, conn.p2, conn.bSide, 12);
                 this.drawBar(connGroup, conn.p1, conn.aSide, 12);
             }

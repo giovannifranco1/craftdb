@@ -143,9 +143,10 @@ return [
 
         // Pattern 2: foreignId with explicit table name
         // Example: $table->foreignId('user_id')->constrained('users')
+        // Example: $table->foreignId('diagram_id')->constrained('diagram', indexName: 'diagram_id_foreign')
         'foreign_id_explicit' => [
-            'regex' => '/\$\w+\s*->\s*foreignId\s*\(\s*[\'"]([^\'"]+)[\'"]\s*\).*?->\s*constrained\s*\(\s*[\'"]([^\'"]+)[\'"]\s*\)/is',
-            'description' => 'ForeignId with explicit table name in constrained()',
+            'regex' => '/\$\w+\s*->\s*foreignId\s*\(\s*[\'"]([^\'"]+)[\'"]\s*\).*?->\s*constrained\s*\(\s*[\'"]([^\'"]+)[\'"](?:\s*,\s*[^)]+)?\s*\)/is',
+            'description' => 'ForeignId with explicit table name in constrained() (with optional parameters like indexName)',
             'groups' => [
                 1 => 'column_name',
                 2 => 'referenced_table',

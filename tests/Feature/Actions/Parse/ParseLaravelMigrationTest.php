@@ -287,6 +287,24 @@ describe('Foreign key detection', function (): void {
             ->and($foreignKeys[0]['ref_table'])->toBe('users')
             ->and($foreignKeys[0]['ref_column'])->toBe('id');
     });
+
+    it('can detect foreignId with indexName parameter', function () {
+        $content = "\$table->foreignId('diagram_id')->constrained('diagram', indexName: 'diagram_id_foreign');";
+
+        /** @disregard */
+        $reflection = new ReflectionClass($this->parser);
+        $method = $reflection->getMethod('extractForeignKeysFromBlueprint');
+
+        $foreignKeys = [];
+        /** @disregard */
+        $method->invokeArgs($this->parser, [$content, 'table', &$foreignKeys]);
+
+        expect($foreignKeys)->toHaveCount(1)
+            ->and($foreignKeys[0]['table'])->toBe('table')
+            ->and($foreignKeys[0]['column'])->toBe('diagram_id')
+            ->and($foreignKeys[0]['ref_table'])->toBe('diagram')
+            ->and($foreignKeys[0]['ref_column'])->toBe('id');
+    });
 });
 
 describe('Relationship creation', function (): void {
@@ -337,6 +355,36 @@ describe('Relationship creation', function (): void {
         })->get();
 
         expect($relationships)->toHaveCount(2);
+    });
+
+    it('can create relationship with indexName parameter', function () {
+        $diagramFile = createMigrationFile('diagram', '$table->id();');
+        $tableFile = createMigrationFile('table', <<<'PHP'
+            $table->id();
+            $table->foreignId('diagram_id')->constrained('diagram', indexName: 'diagram_id_foreign');
+        PHP);
+
+        /** @disregard */
+        $this->parser->exec([$diagramFile, $tableFile], $this->diagram);
+
+        /** @disregard */
+        $diagramTable = Table::where('diagram_id', $this->diagram->id)
+            ->where('name', 'diagram')
+            ->first();
+
+        /** @disregard */
+        $tableTable = Table::where('diagram_id', $this->diagram->id)
+            ->where('name', 'table')
+            ->first();
+
+        expect($diagramTable)->not->toBeNull()
+            ->and($tableTable)->not->toBeNull();
+
+        $relationship = Relationship::where('from_table_id', $diagramTable->id)
+            ->where('to_table_id', $tableTable->id)
+            ->first();
+
+        expect($relationship)->not->toBeNull();
     });
 });
 
