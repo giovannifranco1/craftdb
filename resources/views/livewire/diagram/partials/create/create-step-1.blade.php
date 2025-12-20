@@ -10,7 +10,13 @@
         <flux:label class="pb-2">{{ __('Style') }}</flux:label>
 
         <div class="flex flex-col gap-4 grow pt-2 pb-3">
-            <label class="relative border rounded-xl p-6 cursor-pointer hover:border-primary-300 hover:bg-primary-50/60 transition flex flex-col @if($style === 'colorful') border-primary-400 bg-primary-50 @else border-zinc-300 bg-white @endif">
+            <label
+                @class([
+                    'relative border rounded-xl p-6 cursor-pointer dark:hover:border-primary-400 dark:hover:bg-primary-950/50 dark:bg-primary-900/50 hover:border-primary-300 hover:bg-primary-50/60 transition flex flex-col',
+                    'border-primary-400 dark:border-primary-500 dark:hover:bg-primary-950/50 bg-primary-50 dark:bg-primary-950/60' => $style === 'colorful',
+                    'border-zinc-300 dark:border-zinc-700 dark:hover:border-zinc-600 dark:bg-zinc-900/50' => $style !== 'colorful',
+                ])
+            >
                 <input
                     type="radio"
                     class="sr-only"
@@ -31,8 +37,15 @@
                 </span>
             </label>
 
-            <label class="relative border rounded-xl p-6 cursor-pointer hover:border-primary-300 hover:bg-primary-50/60 transition flex flex-col @if($style === 'neutral') border-primary-400 bg-primary-50 @else border-zinc-300 bg-white @endif">
-                <input type="radio"
+            <label
+                @class([
+                    'relative border rounded-xl p-6 cursor-pointer hover:border-primary-300 hover:bg-primary-50/60 dark:hover:bg-primary-950/50 transition flex flex-col',
+                    'border-primary-400 dark:border-primary-500 dark:hover:bg-primary-950/50 bg-primary-50 dark:bg-primary-950/60' => $style === 'neutral',
+                    'border-zinc-300 dark:border-zinc-700 dark:hover:border-zinc-600 dark:bg-zinc-900/50' => $style !== 'neutral',
+                ])
+            >
+                <input
+                    type="radio"
                     class="sr-only"
                     wire:model.live="style"
                     value="neutral">

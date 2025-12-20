@@ -93,4 +93,57 @@ class Helpers
 
         return "rgba({$r}, {$g}, {$b}, {$opacity})";
     }
+
+    /**
+     * Calculate grid position with random offset for diagram tables
+     *
+     * @param int $index The index of the item (1-based)
+     * @param int $maxPerRow Maximum items per row
+     * @param int $spacingX Horizontal spacing between items
+     * @param int $spacingY Vertical spacing between items
+     * @param int $offsetX Maximum random offset on X axis
+     * @param int $offsetY Maximum random offset on Y axis
+     * @return array{x: int, y: int}
+     */
+    public static function calculateGridPosition(
+        int $index,
+        int $maxPerRow = 5,
+        int $spacingX = 500,
+        int $spacingY = 400,
+        int $offsetX = 22,
+        int $offsetY = 20
+    ): array {
+        $row = (int) floor(($index - 1) / $maxPerRow);
+        $col = ($index - 1) % $maxPerRow;
+
+        // Use deterministic random seed based on index for consistent positioning
+        mt_srand($index * 2157 + 123);
+        $dx = mt_rand(-$offsetX, $offsetX);
+        $dy = mt_rand(-$offsetY, $offsetY);
+
+        $x = $col * $spacingX + $dx;
+        $y = $row * $spacingY + $dy;
+
+        return ['x' => $x, 'y' => $y];
+    }
+
+    /**
+     * Calculate the next order value based on the current maximum order
+     *
+     * @param int|float|null $maxOrder The current maximum order value
+     * @param int $defaultOrder Default order value when max is null (default: 100)
+     * @param int $minOrder Minimum order value (default: 1)
+     * @return int The next order value to use
+     */
+    public static function calculateNextOrder(
+        int|float|null $maxOrder,
+        int $defaultOrder = 0,
+        int $minOrder = 1
+    ): int {
+        if ($maxOrder === null) {
+            return $defaultOrder;
+        }
+
+        return max($minOrder, (int) ($maxOrder + 1));
+    }
 }

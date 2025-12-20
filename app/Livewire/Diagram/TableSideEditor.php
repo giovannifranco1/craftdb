@@ -6,6 +6,7 @@ use App\Concerns\HasSidePanel;
 use App\Livewire\Forms\Diagram\ColumnForm;
 use App\Models\Column;
 use App\Models\Table;
+use App\Support\Helpers;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -61,6 +62,9 @@ final class TableSideEditor extends Component
         $this->tableId = $tableId;
         $this->open = true;
         $this->resetForms();
+
+        // Normaliza as ordens ao abrir o painel
+        $this->normalizeColumnOrders();
 
         $this->dispatch('table-side-editor::opened', tableId: $tableId);
     }
@@ -145,14 +149,13 @@ final class TableSideEditor extends Component
     public function addColumn(): void
     {
         $table = $this->getTable();
+
         if (!$table) {
             return;
         }
 
-        $minOrder = $table->columns()->max('order');
-        $newOrder = $minOrder === null
-        ? 100
-        : max(1, (int) ($minOrder + 1));
+        $maxOrder = $table->columns()->max('order');
+        $newOrder = Helpers::calculateNextOrder($maxOrder);
 
         $baseColumn = [
             'name'  => 'new_column',
@@ -312,6 +315,93 @@ final class TableSideEditor extends Component
         ]);
 
         $this->dispatch('table-side-editor::column-saved');
+    }
+
+    /**
+     * Normaliza as ordens das colunas para serem sequenciais (1, 2, 3, 4...)
+     */
+    private function normalizeColumnOrders(): void
+    {
+        $table = $this->getTable();
+        if (!$table) {
+            return;
+        }
+
+        $columns = $table->columns()->orderBy('order', 'asc')->get();
+
+        $order = 1;
+        foreach ($columns as $column) {
+            if ($column->order !== $order) {
+                $column->update(['order' => $order]);
+            }
+            $order++;
+        }
+    }
+
+    public function moveColumnUp(int $columnId): void
+    {
+        $table = $this->getTable();
+        if (!$table) {
+            return;
+        }
+
+        // Primeiro normaliza as ordens
+        $this->normalizeColumnOrders();
+
+        $column = $table->columns()->whereKey($columnId)->first();
+        if (!$column) {
+            return;
+        }
+
+        // Encontra a coluna anterior (com ordem menor)
+        $previousColumn = $table->columns()
+            ->where('order', '<', $column->order)
+            ->orderBy('order', 'desc')
+            ->first();
+
+        if (!$previousColumn) {
+            return; // Já é a primeira coluna
+        }
+
+        // Troca as ordens
+        $tempOrder = $column->order;
+        $column->update(['order' => $previousColumn->order]);
+        $previousColumn->update(['order' => $tempOrder]);
+
+        $this->dispatch('table-side-editor::column-reordered');
+    }
+
+    public function moveColumnDown(int $columnId): void
+    {
+        $table = $this->getTable();
+        if (!$table) {
+            return;
+        }
+
+        // Primeiro normaliza as ordens
+        $this->normalizeColumnOrders();
+
+        $column = $table->columns()->whereKey($columnId)->first();
+        if (!$column) {
+            return;
+        }
+
+        // Encontra a próxima coluna (com ordem maior)
+        $nextColumn = $table->columns()
+            ->where('order', '>', $column->order)
+            ->orderBy('order', 'asc')
+            ->first();
+
+        if (!$nextColumn) {
+            return; // Já é a última coluna
+        }
+
+        // Troca as ordens
+        $tempOrder = $column->order;
+        $column->update(['order' => $nextColumn->order]);
+        $nextColumn->update(['order' => $tempOrder]);
+
+        $this->dispatch('table-side-editor::column-reordered');
     }
 
     public function selectColumn(?int $columnId): void

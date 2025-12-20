@@ -43,4 +43,9 @@ class Dashboard extends Component
         $this->dispatch('diagram::favorite-toggled', $diagram->id);
         $this->dispatch('alert', message: $diagram->isFavorite() ? __('Diagram :name was added to your favorites', ['name' => $diagram->name]) : __('Diagram :name was removed from your favorites', ['name' => $diagram->name]));
     }
+
+    public function placeholder(): View
+    {
+        return view('components.placeholders.placeholder-dashboard');
+    }
 }

@@ -33,17 +33,19 @@ class CreateNewDiagram
 
         $slug = str()->slug($data['name']) . '-' . str()->random(10);
 
-        if (data_has($data, 'file')) {
-            $this->_parse(data_get($data, 'file'));
-        }
-
-        return Diagram::create([
+        $diagram = Diagram::create([
             'name'        => $data['name'],
             'description' => data_get($data, 'description'),
             'style'       => data_get($data, 'style'),
             'team_id'     => Team::currentTeam()->getKey(),
             'slug'        => $slug,
         ]);
+
+        if (data_has($data, 'file')) {
+            $this->_parse(data_get($data, 'file'), $diagram);
+        }
+
+        return $diagram;
     }
 
     /**
@@ -64,8 +66,8 @@ class CreateNewDiagram
     /**
      * @param array<UploadedFile> $file
      */
-    private function _parse(array $file): void
+    private function _parse(array $file, Diagram $diagram): void
     {
-        $this->parseMySQLSchemaAction->exec($file);
+        $this->parseMySQLSchemaAction->exec($file, $diagram);
     }
 }

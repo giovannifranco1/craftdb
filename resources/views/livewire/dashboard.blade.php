@@ -4,8 +4,8 @@
     <div class="flex items-center mb-5">
         <h2 class="font-sans me-auto text-2xl">My Diagrams</h2>
 
-        <div class="w-80">
-            <flux:input wire:model.live.debounce.350ms="search" icon="magnifying-glass" size="sm" placeholder="Nome do diagrama"  kbd="⌘K" />
+        <div class="w-80 mr-7">
+            <flux:input wire:model.live.debounce.350ms="search" icon="magnifying-glass" size="sm" placeholder="Nome do diagrama" kbd="⌘K"/>
         </div>
     </div>
 
@@ -49,7 +49,7 @@
             </div>
         </div>
         @if($this->getDiagrams()->hasPages())
-            <div class="mt-5 flex-shrink-0">
+            <div class="mt-5 flex-shrink-0 mr-7">
                 {{ $this->getDiagrams()->links() }}
             </div>
         @endif

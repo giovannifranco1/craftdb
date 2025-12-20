@@ -6,7 +6,6 @@ use App\Enums\RelationshipType;
 use App\Models\Column;
 use App\Models\Relationship;
 use App\Models\Table;
-use App\Models\Team\Team;
 use App\Support\Helpers;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
@@ -202,14 +201,15 @@ class AddRelationshipWithNewForeignKey
      */
     private function _createDefaultFK(Table $table, ?string $nameColumnForeignKey = null): Column
     {
-        $maxOrder = $table->columns()->max('order') ?? 0;
+        $maxOrder = $table->columns()->max('order');
+        $newOrder = Helpers::calculateNextOrder($maxOrder);
 
         return $table->columns()->create([
             'name'        => $nameColumnForeignKey ?? str()->snake($table->name) . '_id',
             'type'        => 'bigint',
             'is_foreign'  => true,
             'is_nullable' => true,
-            'order'       => $maxOrder + 1,
+            'order'       => $newOrder,
         ]);
     }
 }

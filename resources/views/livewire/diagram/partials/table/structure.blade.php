@@ -41,7 +41,13 @@
                                 @table::column-renamed.window="isEventRenameColumn = false; loadingRenameColumn = false;"
                                 @blur="isEventRenameColumn = false; $wire.refreshTableWithCounts()"
                             />
-                            <span x-show="!isEventRenameColumn" class="text-xs font-medium text-gray-900 dark:text-zinc-200 font-[Comic_Relief]">{{ $column->name }}</span>
+                            <span
+                                x-show="!isEventRenameColumn"
+                                class="text-xs font-medium text-gray-900 dark:text-zinc-200 font-[Comic_Relief] max-w-[120px] truncate block"
+                                title="{{ $column->name }}"
+                            >
+                                {{ $column->name }}
+                            </span>
                         </div>
                     </td>
 
@@ -58,6 +64,7 @@
                             @endif
                         </span>
                     </td>
+
                     <td>
                         <flux:tooltip toggleable position="right">
                             <button>

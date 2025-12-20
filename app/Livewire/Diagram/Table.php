@@ -5,6 +5,7 @@ namespace App\Livewire\Diagram;
 use App\Models\Column;
 use App\Models\Diagram;
 use App\Models\Table as TableModel;
+use App\Support\Helpers;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
@@ -93,10 +94,8 @@ class Table extends Component
 
     public function addColumn(): void
     {
-        $minOrder = $this->table->columns()->min('order');
-        $newOrder = $minOrder === null
-        ? 100
-        : max(1, (int) ($minOrder / 2));
+        $maxOrder = $this->table->columns()->max('order');
+        $newOrder = Helpers::calculateNextOrder($maxOrder);
 
         $baseColumn = [
             'name'  => 'new_column',

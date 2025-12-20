@@ -115,7 +115,12 @@
 
                                 <div>
 
-                                    <div id="tab-columns" role="tabpanel" aria-labelledby="tabs-with-badges-item-1">
+                                    <div
+                                        id="tab-columns"
+                                        role="tabpanel"
+                                        aria-labelledby="tabs-with-badges-item-1"
+                                        @table-side-editor::column-reordered.window="$wire.$refresh()"
+                                    >
                                         <div class="grid grid-cols-[600px_1fr] gap-4 h-[45vh]">
                                             <!-- Lista de Colunas (Esquerda) -->
                                             <div class="space-y-1 overflow-y-auto pr-2 h-full">
@@ -183,10 +188,10 @@
                                                                     wire:confirm="Tem certeza que deseja deletar esta coluna?"
                                                                     class="p-1 rounded hover:bg-red-50 dark:hover:bg-red-900/20 text-red-500 dark:text-red-400 hover:text-red-600 dark:hover:text-red-300 transition-colors"
                                                                     title="Deletar coluna"
+                                                                    wire:loading.attr="disabled"
+                                                                    wire:loading.class="opacity-50 cursor-not-allowed"
                                                                 >
-                                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                                                    </svg>
+                                                                    <flux:icon.trash class="size-3 text-red-500 dark:text-red-400"/>
                                                                 </button>
                                                             </div>
                                                         </div>
@@ -206,11 +211,49 @@
                                                     @endphp
                                                     @if($selectedColumn)
                                                         <div class="bg-white dark:bg-zinc-800/50 rounded-md border border-zinc-200 dark:border-zinc-700 h-full flex flex-col">
-                                                            <div class="px-4 py-3 border-b border-zinc-200/70 dark:border-zinc-700/70 flex-shrink-0">
-                                                                <h3 class="text-sm font-semibold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
-                                                                    {!! Helpers::getIconDiamondByTypeColumn($selectedColumn) !!}
-                                                                    <span>{{ $selectedColumn->name }}</span>
-                                                                </h3>
+                                                            <div class="px-4 py-3 justify-between border-b border-zinc-200/70 dark:border-zinc-700/70 flex-shrink-0">
+                                                                <div class="flex items-center justify-between w-full">
+                                                                    <h3 class="text-sm font-semibold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
+                                                                        {!! Helpers::getIconDiamondByTypeColumn($selectedColumn) !!}
+                                                                        <span>{{ $selectedColumn->name }}</span>
+                                                                    </h3>
+
+                                                                    <!-- Controles de Ordem -->
+                                                                    <div class="flex items-center gap-2">
+                                                                        <button
+                                                                            type="button"
+                                                                            wire:click="moveColumnUp({{ $selectedColumn->id }})"
+                                                                            class="p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-700 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                                                                            title="Mover para cima"
+                                                                            @if($this->getColumns()->first()?->id === $selectedColumn->id) disabled @endif
+                                                                        >
+                                                                            <flux:icon.chevron-up class="cursor-pointer size-3 text-zinc-600 dark:text-zinc-400"/>
+                                                                        </button>
+
+                                                                        @php
+                                                                            $position = $this->getColumns()->search(function($col) use ($selectedColumn) {
+                                                                                return $col->id === $selectedColumn->id;
+                                                                            }) + 1;
+                                                                        @endphp
+
+                                                                        <div class="flex flex-col items-center">
+                                                                            <span class="text-xs font-semibold text-zinc-700 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-700 px-2.5 py-1 rounded-md min-w-[40px] text-center">
+                                                                                {{ $position }} / {{ $this->getColumns()->count() }}
+                                                                            </span>
+
+                                                                        </div>
+
+                                                                        <button
+                                                                            type="button"
+                                                                            wire:click="moveColumnDown({{ $selectedColumn->id }})"
+                                                                            class="p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-700 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                                                                            title="Mover para baixo"
+                                                                            @if($this->getColumns()->last()?->id === $selectedColumn->id) disabled @endif
+                                                                        >
+                                                                            <flux:icon.chevron-down class="cursor-pointer size-3 text-zinc-600 dark:text-zinc-400"/>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                             <div class="p-4 space-y-3 overflow-y-auto flex-1">
                                                                 <!-- Formulário de Edição -->
@@ -280,19 +323,8 @@
 
                                                                     <!-- Botões de Ação -->
                                                                     <div class="flex items-center justify-end gap-2 pt-2 border-t border-zinc-200/70 dark:border-zinc-700/70">
-                                                                        <button
-                                                                            type="button"
-                                                                            wire:click="selectColumn(null)"
-                                                                            class="px-2.5 py-1 text-xs font-medium text-zinc-700 dark:text-zinc-300 bg-white dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-600 rounded-md hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-colors"
-                                                                        >
-                                                                            Cancelar
-                                                                        </button>
-                                                                        <button
-                                                                            type="submit"
-                                                                            class="px-3 py-1 text-xs font-medium text-white bg-[var(--table-base-bg)] rounded-md hover:opacity-90 transition-opacity focus:outline-none focus:ring-1 focus:ring-[var(--table-base-bg)] focus:ring-offset-1 dark:focus:ring-offset-zinc-800"
-                                                                        >
-                                                                            Salvar
-                                                                        </button>
+                                                                        <flux:button size="xs" wire:click="selectColumn(null)">{{ __('Cancel') }}</flux:button>
+                                                                        <flux:button type="submit" size="xs" style="background-color: var(--table-base-bg); color: white;">{{ __('Save') }}</flux:button>
                                                                     </div>
                                                                 </form>
                                                             </div>

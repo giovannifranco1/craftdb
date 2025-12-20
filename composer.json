@@ -19,6 +19,7 @@
         "livewire/volt": "^1.7.0",
         "luvi-ui/laravel-luvi": "^0.6.0",
         "mallardduck/blade-lucide-icons": "^1.23",
+        "phpmyadmin/sql-parser": "^6.0",
         "spatie/livewire-filepond": "^1.5"
     },
     "require-dev": {
