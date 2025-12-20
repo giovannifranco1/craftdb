@@ -13,13 +13,20 @@
         <!-- Import Type Selection -->
         <div>
             <div class="grid grid-cols-2 gap-3 mb-4">
+                @php
+                    $isSqlLocked = in_array($database, ['postgresql', 'sqlite']);
+                @endphp
+
                 <label
                     wire:loading.class.delay.shorter="opacity-25"
                     wire:target="importForm.type"
                     @class([
-                        'relative cursor-pointer rounded-xl border-1 px-4 py-5 flex flex-col items-center min-h-24 transition-all duration-150 text-center group',
-                        'border-primary-300 ring-primary-200 dark:ring-primary-900 bg-primary-50/40 dark:bg-primary-950/60' => $importForm->type === 'file',
-                        'border-zinc-300 hover:border-zinc-400 dark:border-zinc-600 dark:hover:border-zinc-600 bg-white/90 dark:bg-zinc-900/50' => $importForm->type !== 'file',
+                        'relative rounded-xl border-1 px-4 py-5 flex flex-col items-center min-h-24 transition-all duration-150 text-center group',
+                        'cursor-pointer' => !$isSqlLocked,
+                        'cursor-not-allowed opacity-50' => $isSqlLocked,
+                        'border-primary-300 ring-primary-200 dark:ring-primary-900 bg-primary-50/40 dark:bg-primary-950/60' => $importForm->type === 'sql' && !$isSqlLocked,
+                        'border-zinc-300 hover:border-zinc-400 dark:border-zinc-600 dark:hover:border-zinc-600 bg-white/90 dark:bg-zinc-900/50' => $importForm->type !== 'sql' && !$isSqlLocked,
+                        'border-zinc-200 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-800/30' => $isSqlLocked,
                     ])
                 >
                     <input
@@ -27,12 +34,15 @@
                         wire:model.live="importForm.type"
                         value="sql"
                         class="sr-only"
+                        @if($isSqlLocked) disabled @endif
                     />
                     <flux:icon.circle-stack class="size-10 text-zinc-600 mb-2" />
                     <span class="font-light text-sm">{{ __('SQL File') }}</span>
                     <span class="absolute top-2 right-2">
-                        @if ($importForm->type === 'sql')
+                        @if ($importForm->type === 'sql' && !$isSqlLocked)
                             <flux:icon.check-circle variant="solid" class="size-5" />
+                        @elseif ($isSqlLocked)
+                            <flux:icon.lock-closed variant="solid" class="size-5 text-zinc-400 dark:text-zinc-500" />
                         @endif
                     </span>
                 </label>

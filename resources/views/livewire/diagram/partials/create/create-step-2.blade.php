@@ -7,19 +7,13 @@
                 'postgresql' => 'PostgreSQL',
                 'sqlite' => 'SQLite',
             ] as $key => $label)
-                @php
-                    $isLocked = in_array($key, ['postgresql', 'sqlite']);
-                @endphp
                 <label
                     wire:loading.class.delay.shorter="opacity-25"
                     wire:target="database"
                     @class([
-                        'relative rounded-xl border-1 px-4 py-5 flex flex-col items-center min-h-28 transition-all duration-150 text-center group',
-                        'cursor-pointer' => !$isLocked,
-                        'cursor-not-allowed opacity-50' => $isLocked,
-                        'border-primary-300 ring-primary-200 dark:ring-primary-900 bg-primary-50/40 dark:bg-primary-950/60' => $database === $key && !$isLocked,
-                        'border-zinc-300 hover:border-zinc-400 dark:border-zinc-600 dark:hover:border-zinc-600 bg-white/90 dark:bg-zinc-900/50' => $database !== $key && !$isLocked,
-                        'border-zinc-200 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-800/30' => $isLocked,
+                        'relative cursor-pointer rounded-xl border-1 px-4 py-5 flex flex-col items-center min-h-28 transition-all duration-150 text-center group',
+                        'border-primary-300 ring-primary-200 dark:ring-primary-900 bg-primary-50/40 dark:bg-primary-950/60' => $database === $key,
+                        'border-zinc-300 hover:border-zinc-400 dark:border-zinc-600 dark:hover:border-zinc-600 bg-white/90 dark:bg-zinc-900/50' => $database !== $key,
                     ])
                 >
                     <input
@@ -27,17 +21,14 @@
                         wire:model.live="database"
                         value="{{ $key }}"
                         class="sr-only"
-                        @if($isLocked) disabled @endif
                     />
 
                     <flux:icon name="database.{{ $key }}" class="size-13" />
                     <span class="font-light absolute text-sm bottom-2 start-4">{{ __($label) }}</span>
 
                     <span class="absolute top-2 right-2">
-                        @if ($database === $key && !$isLocked)
+                        @if ($database === $key)
                             <flux:icon.check-circle variant="solid" class="size-5" />
-                        @elseif ($isLocked)
-                            <flux:icon.lock-closed variant="solid" class="size-5 text-zinc-400 dark:text-zinc-500" />
                         @endif
                     </span>
                 </label>
