@@ -1,4 +1,4 @@
-<div class="bg-gray-50 dark:bg-zinc-800 flex-none pl-3 pr-2 py-px rounded-b-xl table-footer-beauty">
+<div class="bg-gray-50 dark:bg-zinc-800 flex-none pl-3 pr-4 py-px rounded-b-xl table-footer-beauty">
     <div class="flex items-center justify-between text-xs text-gray-500 dark:text-zinc-400">
         <div class="flex gap-3">
             <span>{{ $table->columns_count }} campos</span>

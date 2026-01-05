@@ -8,11 +8,13 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Lazy;
+use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
 
 #[Lazy]
+#[Title('Dashboard')]
 class Dashboard extends Component
 {
     use WithPagination;
@@ -22,6 +24,13 @@ class Dashboard extends Component
 
     #[Url]
     public bool $favorites = false;
+
+    public function mount(): void
+    {
+        session()->put('diagrams_count', Diagram::query()
+            ->where('team_id', Team::currentTeam()->getKey())
+            ->count());
+    }
 
     #[Computed]
     public function getDiagrams(): LengthAwarePaginator

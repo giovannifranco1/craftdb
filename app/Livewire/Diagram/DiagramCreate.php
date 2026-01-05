@@ -119,6 +119,7 @@ class DiagramCreate extends Component
         $this->modal('diagram-create')->close();
 
         session()->flash('message', __("Diagram created successfully."));
+        session()->put('diagrams_count', session()->get('diagrams_count') + 1);
 
         $this->redirect(route('diagram.show', [
             Team::currentTeam()->getKey(),

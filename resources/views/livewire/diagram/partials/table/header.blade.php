@@ -108,7 +108,7 @@
         </h3>
 
         <button @mousedown.stop="toggleExpanded($el.closest('[table-box]'))"
-            class="p-1.5 text-white hover:text-white/80 hover:bg-white/10 dark:hover:bg-white/20 rounded-md transition-colors">
+            class="py-1.5 px-1 text-white hover:text-white/80 hover:bg-white/10 dark:hover:bg-white/20 rounded-md transition-colors">
             <flux:icon.play variant="solid" x-show="expanded" class="size-4 rotate-90" />
             <flux:icon.play variant="solid" x-show="!expanded" class="size-4" />
         </button>
