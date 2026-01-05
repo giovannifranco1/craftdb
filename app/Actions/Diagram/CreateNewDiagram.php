@@ -80,6 +80,8 @@ class CreateNewDiagram
     {
         match ($diagram->database) {
             'mysql' => $this->parseMySQLSchemaAction->exec($file, $diagram),
+            //todo: add other database types => postgresql, sqlite
+            default => throw new \Exception('Invalid database type'),
         };
     }
 

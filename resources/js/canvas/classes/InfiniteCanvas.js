@@ -172,6 +172,14 @@ export class InfiniteCanvas {
         return `translate(${x}, ${y}) scale(${this.#scale})`;
     }
 
+    organize() {
+        // Posiciona o ponto virtual (0,0) no canto superior esquerdo da tela
+        this.#offsetX = 0;
+        this.#offsetY = 0;
+        this.#draw();
+        this.#dispatchTransformChanged();
+    }
+
     #dispatchTransformChanged() {
         const event = new CustomEvent('canvas::transform', {
             detail: {

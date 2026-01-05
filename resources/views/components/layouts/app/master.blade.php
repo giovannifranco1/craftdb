@@ -16,9 +16,9 @@
 
         <!-- Horizontal Navigation Header -->
         <flux:header sticky class="border-b border-zinc-200 bg-zinc-50 dark:border-zinc-600 dark:bg-[#0F0F0F] z-40">
-            <div class="flex flex-col w-full">
+            <div class="flex w-full">
                 <!-- Top bar -->
-                <div class="flex items-center justify-between w-full my-3">
+                <div class="flex items-center w-full my-3">
                     <div class="flex items-center">
                         <!-- Logo -->
                         <a href="{{ route('dashboard') }}" class="flex me-5 ms-2 items-center space-x-3 rtl:space-x-reverse" wire:navigate>
@@ -33,7 +33,12 @@
                         @endif
                     </div>
 
-                    <div class="flex items-center space-x-4">
+                    <!-- Navbar -->
+                    <flux:navbar class="-mb-px max-lg:hidden">
+                        {{-- <flux:navbar.item badge="Pro" badge:color="lime" href="#" :href="route('dashboard')" :current="request()->routeIs('home')" wire:navigate>{{ __('Diagrams') }}</flux:navbar.item> --}}
+                    </flux:navbar>
+
+                    <div class="flex items-center space-x-4 ml-auto">
                         <flux:button @click="$flux.modal('diagram-create').show()" icon="plus" variant="primary" size="sm">
                             Novo Diagrama
                         </flux:button>
@@ -85,12 +90,6 @@
                         </flux:dropdown>
                     </div>
                 </div>
-
-                <!-- Navbar -->
-                <flux:navbar class="-mb-px max-lg:hidden mt-2">
-                    <flux:navbar.item badge="Pro" badge:color="lime" href="#" :href="route('dashboard')" :current="request()->routeIs('home')" wire:navigate>{{ __('Diagrams') }}</flux:navbar.item>
-                    <flux:separator vertical variant="subtle" class="my-2"/>
-                </flux:navbar>
             </div>
         </flux:header>
 
