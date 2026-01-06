@@ -1,5 +1,5 @@
 <x-layouts.app.master :title="$title ?? null">
-    <x-flux::main>
+    <x-flux::main style="padding-bottom: 0px;">
         <div class="flex items-start p-0">
             <aside class="p-0">
                 @isset($aside) {{ $aside }}
@@ -13,4 +13,6 @@
             </main>
         </div>
     </x-flux::main>
+
+    
 </x-layouts.app.master>

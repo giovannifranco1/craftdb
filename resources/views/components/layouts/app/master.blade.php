@@ -95,6 +95,10 @@
 
         {{ $slot }}
 
+        <x-flux::footer style="margin: 0px; padding: 0px;">
+            @include('partials.footer')
+        </x-flux::footer>
+
         @livewire('diagram.diagram-create')
         @filepondScripts
         @fluxScripts

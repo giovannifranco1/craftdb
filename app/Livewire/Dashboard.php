@@ -19,6 +19,8 @@ class Dashboard extends Component
 {
     use WithPagination;
 
+    public $teste = 10;
+
     #[Url]
     public string $search = '';
 

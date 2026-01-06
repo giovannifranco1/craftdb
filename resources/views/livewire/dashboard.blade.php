@@ -7,7 +7,7 @@
         </div>
     </div>
 
-    <div class="flex flex-col h-[37rem]">
+    <div class="flex flex-col h-[40.2rem]">
         <div class="flex-1 overflow-y-auto">
             <div class="h-full grid lg:grid-cols-2 xl:grid-cols-3 gap-4">
                 @forelse($this->getDiagrams() as $diagram)
