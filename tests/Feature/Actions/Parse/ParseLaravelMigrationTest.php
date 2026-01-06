@@ -1,4 +1,5 @@
 <?php
+namespace Tests\Feature\Actions\Parse;
 
 use App\Actions\Diagram\AddRelationshipWithExistingForeignKey;
 use App\Actions\Parse\ParseLaravelMigration;

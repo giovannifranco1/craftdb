@@ -44,7 +44,7 @@ class CreateNewDiagram
             'slug'        => $slug,
         ]);
 
-        if (data_has($data, 'file')) {
+        if (data_has($data, 'file') && !empty(data_get($data, 'file')) && data_has($data, 'type')) {
             $diagram->imported_at = now();
             $diagram->save();
 
