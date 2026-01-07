@@ -76,6 +76,11 @@ class Helpers
         return $colors[array_rand($colors)];
     }
 
+    public static function isColorValid(string $color): bool
+    {
+        return in_array($color, array_merge(config('color.colorful'), config('color.neutral')));
+    }
+
     /**
      * Convert hex color to rgba with opacity
      */

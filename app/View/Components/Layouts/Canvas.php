@@ -11,6 +11,8 @@ class Canvas extends Component
 {
     public $relationships;
     public bool $isInitialLoad;
+    public ?string $title;
+
     /**
      * Create a new component instance.
      */
@@ -26,6 +28,8 @@ class Canvas extends Component
             $diagram->is_initial_load = false;
             $diagram->save();
         }
+
+        $this->title = $diagram->slug;
     }
 
     /**

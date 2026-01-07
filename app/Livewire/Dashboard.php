@@ -19,8 +19,6 @@ class Dashboard extends Component
 {
     use WithPagination;
 
-    public $teste = 10;
-
     #[Url]
     public string $search = '';
 
@@ -43,6 +41,11 @@ class Dashboard extends Component
             ->where('team_id', Team::currentTeam()->getKey())
             ->orderByDesc('created_at')
             ->paginate(10);
+    }
+
+    public function resetSearch(): void
+    {
+        $this->reset('search');
     }
 
     public function toggleFavorite(Diagram $diagram): void

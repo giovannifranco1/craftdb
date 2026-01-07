@@ -3,9 +3,11 @@
 namespace App\Livewire\Diagram;
 
 use App\Models\Area as AreaModel;
+use App\Support\Helpers;
 use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
+use Livewire\Attributes\Validate;
 use Livewire\Component;
 
 class Area extends Component
@@ -22,6 +24,7 @@ class Area extends Component
     #[Locked]
     public int $diagramId;
 
+    #[Validate('nullable|string|max:255')]
     public ?string $name = null;
 
     public function mount(AreaModel $area): void
@@ -51,6 +54,9 @@ class Area extends Component
 
     public function renameArea(): void
     {
+        $this->authorize('update', $this->area->diagram);
+        $this->validateOnly('name');
+
         $this->area->name = $this->name;
         $this->area->save();
 
@@ -64,21 +70,19 @@ class Area extends Component
 
     public function setColor(string $color): void
     {
+        $this->authorize('update', $this->area->diagram);
+        if (!Helpers::isColorValid($color)) return;
+
         $this->area->color = $color;
-
-        if (!in_array($color, array_merge(config('color.colorful'), config('color.neutral')))) {
-            return;
-        }
-
         $this->area->save();
-        $this->area = $this->area->fresh();
 
-        $this->dispatch('alert', message: "Color Updated");
         $this->dispatch('area::color-updated');
     }
 
     public function remove(): void
     {
+        $this->authorize('delete', $this->area->diagram);
+
         $this->area->delete();
 
         $this->dispatch('alert', message: "Area Removed");

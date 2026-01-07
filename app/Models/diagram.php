@@ -110,4 +110,9 @@ class Diagram extends Model
     {
         return $this->is_favorite;
     }
+
+    public function getTeamId(): int
+    {
+        return $this->team_id;
+    }
 }

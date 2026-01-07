@@ -3,6 +3,7 @@
 namespace App\Livewire\Diagram;
 
 use App\Models\Note as NoteModel;
+use App\Models\Team\Team;
 use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
@@ -53,6 +54,10 @@ class Note extends Component
 
     public function renameNote(): void
     {
+        if ($this->note->diagram->team_id != Team::currentTeam()->getKey()) {
+            abort(403, 'Unauthorized access to diagram');
+        }
+
         $this->note->name = $this->name;
         $this->note->save();
 
@@ -66,6 +71,10 @@ class Note extends Component
 
     public function updateContent(): void
     {
+        if (!$this->note->diagram->team_id == Team::currentTeam()->getKey()) {
+            abort(403, 'Unauthorized access to diagram');
+        }
+
         $this->note->content = $this->content;
         $this->note->save();
 

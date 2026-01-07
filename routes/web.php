@@ -42,6 +42,6 @@ Route::middleware(['auth'])->group(function () {
 });
 
 /** Diagram */
-Route::middleware(['auth', 'role:team_id'])->group(function () {
+Route::middleware(['auth', 'role:team_id', 'throttle:60,1'])->group(function () {
     Route::get('{team_id}/diagram/{diagram:slug}', [DiagramController::class, 'show'])->name('diagram.show');
 });

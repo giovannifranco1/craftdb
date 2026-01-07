@@ -5,6 +5,7 @@ namespace App\Livewire\Diagram;
 use App\Models\Column;
 use App\Models\Diagram;
 use App\Models\Table as TableModel;
+use App\Models\Team\Team;
 use App\Support\Helpers;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
@@ -12,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
+use Livewire\Attributes\Validate;
 use Livewire\Component;
 
 class Table extends Component
@@ -31,6 +33,7 @@ class Table extends Component
     #[Locked]
     public int $diagramId;
 
+    #[Validate('required|string|max:255')]
     public ?string $name = null;
 
     /** @var array<string, string>  */
@@ -55,6 +58,9 @@ class Table extends Component
 
     public function renameTable(): void
     {
+        $this->authorize('update', $this->table->diagram);
+        $this->validateOnly('name');
+
         $this->table->name = $this->name;
         $this->table->save();
 
@@ -70,15 +76,12 @@ class Table extends Component
 
     public function setColor(string $color): void
     {
+        $this->authorize('update', $this->table->diagram);
+        if (!Helpers::isColorValid($color)) return;
+
         $this->table->color = $color;
-
-        if (!in_array($color, array_merge(config('color.colorful'), config('color.neutral')))) {
-            return;
-        };
-
         $this->table->save();
 
-        $this->dispatch('alert', message: "Color Updated");
         $this->refreshTableWithCounts();
         $this->dispatch('table::color-updated');
     }

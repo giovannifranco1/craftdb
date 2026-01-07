@@ -1,9 +1,16 @@
-<div>
+<div
+    x-data="{
+        searchFocused: false,
+    }"
+    @keydown.meta.k.window="searchFocused = true;"
+    @keydown.ctrl.k.window="searchFocused = true;"
+    @keydown.escape.window="searchFocused = false; $wire.resetSearch()"
+>
     <div class="flex items-center mb-5">
         <h2 class="font-sans me-auto text-2xl">{{ __('My Diagrams') }}</h2>
 
         <div class="w-80 mr-7">
-            <flux:input wire:model.live.debounce.350ms="search" icon="magnifying-glass" size="sm" placeholder="{{ __('Search for a diagram') }}" kbd="⌘K"/>
+            <flux:input x-ref="searchInput" x-trap="searchFocused" wire:model.live.debounce.350ms="search" icon="magnifying-glass" size="sm" placeholder="{{ __('Search for a diagram') }}" kbd="⌘K"/>
         </div>
     </div>
 

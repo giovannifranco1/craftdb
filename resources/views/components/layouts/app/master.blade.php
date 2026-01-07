@@ -100,7 +100,6 @@
         </x-flux::footer>
 
         @livewire('diagram.diagram-create')
-        @filepondScripts
         @fluxScripts
     </body>
 </html>
