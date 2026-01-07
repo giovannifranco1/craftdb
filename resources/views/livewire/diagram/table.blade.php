@@ -10,7 +10,7 @@
     <x-ui.diagram.table.dropdown-menu :table="$table"/>
 
     <!-- Table -->
-    <div @teste.window="console.log('teste', $event)" class="rounded-xl w-full h-full flex flex-col relative">
+    <div class="rounded-xl w-full h-full flex flex-col relative">
 
         <!-- Header -->
         @include('livewire.diagram.partials.table.header')

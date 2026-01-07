@@ -125,7 +125,6 @@ export default (x, y, tableId) => ({
         if (!this.isDragging) return;
         this.isDragging = false;
         // Mantém o z-index alto (não reseta, para que a tabela permaneça sobre as outras)
-        this.$dispatch('table::move');
         this.$dispatch(`table::move.${this.tableId}`, { x: this.x, y: this.y });
     },
     toggleExpanded(element) {

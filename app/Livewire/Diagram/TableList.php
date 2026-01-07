@@ -60,6 +60,8 @@ class TableList extends Component
     #[On('table::add')]
     public function addTable(int $x = 100, int $y = 100): void
     {
+        $this->authorize('update', $this->diagram);
+
         $table = $this->diagram->tables()->create([
             'name'  => 'teste',
             'x'     => $x,
@@ -80,9 +82,32 @@ class TableList extends Component
     #[On('save-tables-positions')]
     public function saveTablesPositions(int $diagramId, array $tables): void
     {
+        $this->authorize('update', $this->diagram);
+
         if ($this->diagram->id != $diagramId) {
             return;
         }
+
+        //validate tables
+        $validator = validator()->make($tables, [
+            '*.id' => ['required', 'integer', 'exists:table,id'],
+            '*.x' => ['required', 'integer'],
+            '*.y' => ['required', 'integer'],
+        ]);
+
+        if ($validator->fails()) {
+            $this->dispatch('alert', message: $validator->errors()->first(), type: 'error');
+            return;
+        }
+
+        // validate if the tables are owned by the diagram
+        $validator->after(function ($validator) use ($tables) {
+            foreach ($tables as $table) {
+                if ($this->diagram->tables()->where('id', $table['id'])->doesntExist()) {
+                    $validator->errors()->add('tables', 'The table is not owned by the diagram.');
+                }
+            }
+        });
 
         DB::transaction(function () use ($tables) {
             foreach ($tables as $t) {
@@ -98,7 +123,6 @@ class TableList extends Component
         });
 
         $this->dispatch('table-list::position-updated', updated_at: $this->diagram->updated_at?->diffForHumans());
-        $this->dispatch('alert', message: __('Table positions saved successfully!'));
     }
 
     public function placeholder(): string
