@@ -17,7 +17,7 @@
     // Default positioning based on type
     if ($position === null) {
         $position = match($type) {
-            'table' => 'absolute -top-15 -left-15 mt-2 min-w-30 w-50',
+            'table' => 'absolute -top-15 -left-15 mt-2 min-w-30 w-43',
             'area', 'note' => 'absolute left-0 top-full mt-2',
             default => 'absolute left-0 top-full mt-2',
         };
@@ -34,6 +34,7 @@
     x-transition:leave-start="opacity-100 translate-y-0"
     x-transition:leave-end="opacity-0 translate-y-1"
     @area::color-updated.window="loadingColor = false"
+    @table::color-updated.window="loadingColor = false"
     @mousedown.outside.window="open = false"
     @keydown.escape="open = false"
     @mousedown.stop
