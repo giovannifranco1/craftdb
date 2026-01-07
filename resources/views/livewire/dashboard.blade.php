@@ -9,6 +9,13 @@
     <div class="flex items-center mb-5">
         <h2 class="font-sans me-auto text-2xl">{{ __('My Diagrams') }}</h2>
 
+        <div class="mr-3">
+            <flux:select wire:model.live="orderByDesc" size="sm">
+                <option value="0">{{ __('Newest First') }}</option>
+                <option value="1">{{ __('Oldest First') }}</option>
+            </flux:select>
+        </div>
+
         <div class="w-80 mr-7">
             <flux:input x-ref="searchInput" x-trap="searchFocused" wire:model.live.debounce.350ms="search" icon="magnifying-glass" size="sm" placeholder="{{ __('Search for a diagram') }}" kbd="⌘K"/>
         </div>

@@ -25,6 +25,9 @@ class Dashboard extends Component
     #[Url]
     public bool $favorites = false;
 
+    #[Url]
+    public int $orderByDesc = 0;
+
     public function mount(): void
     {
         session()->put('diagrams_count', Diagram::query()
@@ -39,7 +42,7 @@ class Dashboard extends Component
             ->when($this->favorites, fn ($q) => $q->where('is_favorite', true))
             ->when($this->search, fn ($q) => $q->where('name', 'like', "%{$this->search}%"))
             ->where('team_id', Team::currentTeam()->getKey())
-            ->orderByDesc('created_at')
+            ->orderBy('created_at', $this->orderByDesc ? 'asc' : 'desc')
             ->paginate(10);
     }
 
