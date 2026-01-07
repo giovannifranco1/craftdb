@@ -162,11 +162,11 @@
 
                             <flux:menu.separator />
 
-                            <flux:menu.item icon="bars-3-bottom-left">
+                            <flux:menu.item x-data x-on:click="Alpine.raw(canvas).setIsMarkedForDrag(true)" icon="bars-3-bottom-left">
                                 {{ __('Mostrar régua') }}
                             </flux:menu.item>
 
-                            <flux:menu.item icon="x-mark">
+                            <flux:menu.item x-data x-on:click="Alpine.raw(canvas).setIsMarkedForDrag(false)" icon="x-mark">
                                 {{ __('Remover régua') }}
                             </flux:menu.item>
 

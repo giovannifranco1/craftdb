@@ -15,6 +15,7 @@ export class InfiniteCanvas {
     #isDragging = false;
     #lastDragPos = { x: 0, y: 0 };
     #grabModeEnabled = false; // modo grab permanente (sem precisar space)
+    #isMarkedForDrag = false;
     // ---[/Private fields]---
 
     #touchMode = "single"; // "single" | "double"
@@ -170,6 +171,15 @@ export class InfiniteCanvas {
         const x = -this.#offsetX * this.#scale;
         const y = -this.#offsetY * this.#scale;
         return `translate(${x}, ${y}) scale(${this.#scale})`;
+    }
+
+    setIsMarkedForDrag(isMarked) {
+        this.#isMarkedForDrag = isMarked;
+        this.#draw();
+    }
+
+    getIsMarkedForDrag() {
+        return this.#isMarkedForDrag;
     }
 
     organize() {
@@ -535,15 +545,17 @@ export class InfiniteCanvas {
             const startY = (-this.#offsetY % this.cellSize) * this.#scale;
 
             // Desenha rótulos dos eixos nas posições das linhas de grade
-            for (let x = startX; x <= width; x += step) {
-                const source = x;
-                const virtualX = this.toVirtualX(source / this.#scale);
-                this.context.fillText(`${virtualX.toFixed(0)}`, source, 10);
-            }
-            for (let y = startY; y <= height; y += step) {
-                const destination = y;
-                const virtualY = this.toVirtualY(destination / this.#scale);
-                this.context.fillText(`${virtualY.toFixed(0)}`, 0, destination);
+            if (this.#isMarkedForDrag) {
+                for (let x = startX; x <= width; x += step) {
+                    const source = x;
+                    const virtualX = this.toVirtualX(source / this.#scale);
+                    this.context.fillText(`${virtualX.toFixed(0)}`, source, 10);
+                }
+                for (let y = startY; y <= height; y += step) {
+                    const destination = y;
+                    const virtualY = this.toVirtualY(destination / this.#scale);
+                    this.context.fillText(`${virtualY.toFixed(0)}`, 0, destination);
+                }
             }
 
             // Desenha somente um traço central entre vértices (formato "+ - +")
