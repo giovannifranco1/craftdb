@@ -10,6 +10,8 @@ class Note extends Model
 {
     use HasFactory;
 
+    const DEFAULT_COLOR = '#fef08a';
+
     protected $table = 'note';
 
     protected $fillable = [

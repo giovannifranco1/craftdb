@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('column', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('table_id')->constrained('table', indexName: 'table_id_foreign');
+            $table->foreignId('table_id')->index('column_table_id_index')->constrained('table', indexName: 'column_table_id_foreign');
             $table->string('name');
             $table->string('type');
             $table->boolean('is_primary')->default(false);

@@ -13,7 +13,9 @@ return new class extends Migration
     {
         Schema::create('area', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('diagram_id')->constrained('diagram', indexName: 'area_diagram_id_foreign');
+            $table->foreignId('diagram_id')
+                ->index('area_diagram_id_index')
+                ->constrained('diagram', indexName: 'area_diagram_id_foreign');
             $table->string('name')->nullable();
             $table->integer('x')->comment('position x in diagram');
             $table->integer('y')->comment('position y in diagram');

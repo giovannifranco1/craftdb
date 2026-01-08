@@ -12,7 +12,9 @@ return new class () extends Migration {
     {
         Schema::create('role', static function (Blueprint $table) {
             $table->id();
-            $table->foreignId(config()->get('teams.foreign_keys.team_id', 'team_id'))->constrained()->cascadeOnDelete();
+            $table->foreignId(config()->get('teams.foreign_keys.team_id', 'team_id'))
+                ->index('role_team_id_index')
+                ->constrained(config()->get('teams.tables.teams', 'team'), indexName: 'role_team_id_foreign');
             $table->string('code');
             $table->string('name')->nullable();
             $table->string('description')->nullable();

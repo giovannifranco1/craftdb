@@ -63,11 +63,33 @@ class Team extends Model
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
-        $this->table = Config::get('teams.tables.teams', 'teams');
+        $this->table = Config::get('teams.tables.teams', 'team');
     }
 
+    /**
+     * Bootstrap the model and its traits.
+     */
+    protected static function booted(): void
+    {
+        static::created(function ($team) {
+            // Create default roles automatically
+            Role::create([
+                'team_id' => $team->id,
+                'code' => 'editor',
+                'name' => 'Editor',
+                'description' => 'Can create, edit and view diagrams',
+            ]);
 
-    public static function currentTeam()
+            Role::create([
+                'team_id' => $team->id,
+                'code' => 'viewer',
+                'name' => 'Viewer',
+                'description' => 'Can only view diagrams',
+            ]);
+        });
+    }
+
+    public static function currentTeam(): ?self
     {
         $team = session('current_team');
 
@@ -75,9 +97,14 @@ class Team extends Model
             return $team;
         }
 
-        /** @var User */
+        /** @var User|null */
+        /** @disregard  */
         $user = auth()->user();
 
-        return $user->ownedTeams()->get()->first();
+        if (!$user) {
+            return null;
+        }
+
+        return $user->ownedTeams()->first();
     }
 }

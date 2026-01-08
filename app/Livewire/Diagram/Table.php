@@ -2,14 +2,15 @@
 
 namespace App\Livewire\Diagram;
 
+use App\Concerns\HandlesDiagramAuthorizationWithAlertError;
 use App\Models\Column;
 use App\Models\Diagram;
 use App\Models\Table as TableModel;
-use App\Models\Team\Team;
 use App\Support\Helpers;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
@@ -18,6 +19,8 @@ use Livewire\Component;
 
 class Table extends Component
 {
+    use HandlesDiagramAuthorizationWithAlertError;
+
     /** @var array<string, string>  */
     protected $listeners = [
         'table::column-saved' => '$refresh',
@@ -58,7 +61,10 @@ class Table extends Component
 
     public function renameTable(): void
     {
-        $this->authorize('update', $this->table->diagram);
+        if (!$this->authorizeDiagramWithAlert('update', $this->table->diagram)) {
+            return;
+        }
+
         $this->validateOnly('name');
 
         $this->table->name = $this->name;
@@ -70,13 +76,21 @@ class Table extends Component
 
     public function resetName(): void
     {
+        if (!$this->authorizeDiagramWithAlert('update', $this->table->diagram)) {
+            return;
+        }
+
         $this->name = $this->table->name;
         $this->refreshTableWithCounts();
     }
 
     public function setColor(string $color): void
     {
-        $this->authorize('update', $this->table->diagram);
+        if (!$this->authorizeDiagramWithAlert('update', $this->table->diagram)) {
+            $this->dispatch('table::color-updated-error');
+            return;
+        }
+
         if (!Helpers::isColorValid($color)) return;
 
         $this->table->color = $color;
@@ -88,6 +102,10 @@ class Table extends Component
 
     public function renameColumn(Column $column, $newName): void
     {
+        if (!$this->authorizeDiagramWithAlert('update', $this->table->diagram)) {
+            return;
+        }
+
         $column->name = $newName;
         $column->save();
 
@@ -97,6 +115,10 @@ class Table extends Component
 
     public function addColumn(): void
     {
+        if (!$this->authorizeDiagramWithAlert('update', $this->table->diagram)) {
+            return;
+        }
+
         $maxOrder = $this->table->columns()->max('order');
         $newOrder = Helpers::calculateNextOrder($maxOrder);
 
@@ -132,6 +154,10 @@ class Table extends Component
 
     public function remove(): void
     {
+        if (!$this->authorizeDiagramWithAlert('update', $this->table->diagram)) {
+            return;
+        }
+
         DB::transaction(function () {
             $this->table->relationships()->delete();
             $this->table->columns()->delete();
@@ -146,6 +172,10 @@ class Table extends Component
     #[On('table::move.{table.id}')]
     public function updatePosition(int $x, int $y): void
     {
+        if(Gate::denies('update', $this->table->diagram)) {
+            return;
+        }
+
         $this->table->x = $x;
         $this->table->y = $y;
         $this->table->save();

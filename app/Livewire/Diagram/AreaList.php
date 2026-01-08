@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Diagram;
 
-use App\Models\Area;
+use App\Concerns\HandlesDiagramAuthorizationWithAlertError;
 use App\Models\Diagram;
 use App\Support\Helpers;
 use Illuminate\Contracts\View\View;
@@ -14,6 +14,8 @@ use Livewire\Component;
 
 class AreaList extends Component
 {
+    use HandlesDiagramAuthorizationWithAlertError;
+
     #[Locked]
     public Diagram $diagram;
 
@@ -41,6 +43,10 @@ class AreaList extends Component
     #[On('area::add')]
     public function addArea(int $x = 100, int $y = 100): void
     {
+        if (!$this->authorizeDiagramWithAlert('update', $this->diagram)) {
+            return;
+        }
+
         $area = $this->diagram->areas()->create([
             'name' => 'New Area',
             'x' => $x,

@@ -2,7 +2,9 @@
 
 namespace App\Livewire\Diagram;
 
+use App\Concerns\HandlesDiagramAuthorizationWithAlertError;
 use App\Models\Diagram;
+use App\Models\Note;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
 use Livewire\Attributes\Computed;
@@ -12,6 +14,8 @@ use Livewire\Component;
 
 class NoteList extends Component
 {
+    use HandlesDiagramAuthorizationWithAlertError;
+
     #[Locked]
     public Diagram $diagram;
 
@@ -39,6 +43,10 @@ class NoteList extends Component
     #[On('note::add')]
     public function addNote(int $x = 100, int $y = 100): void
     {
+        if (!$this->authorizeDiagramWithAlert('update', $this->diagram)) {
+            return;
+        }
+
         $note = $this->diagram->notes()->create([
             'name' => 'New Note',
             'content' => '',
@@ -46,7 +54,7 @@ class NoteList extends Component
             'y' => $y,
             'width' => 175,
             'height' => 75,
-            'color' => '#fef08a', // Default yellow post-it color
+            'color' => Note::DEFAULT_COLOR,
         ]);
 
         $count = $this->diagram->notes()->count();

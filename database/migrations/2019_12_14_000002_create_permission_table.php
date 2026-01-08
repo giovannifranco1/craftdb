@@ -12,7 +12,9 @@ return new class () extends Migration {
     {
         Schema::create('permission', static function (Blueprint $table) {
             $table->id();
-            $table->foreignId(config()->get('teams.foreign_keys.team_id', 'team_id'))->constrained()->cascadeOnDelete();
+            $table->foreignId(config()->get('teams.foreign_keys.team_id', 'team_id'))
+                ->index('permission_team_id_index')
+                ->constrained(config()->get('teams.tables.teams', 'team'), indexName: 'permission_team_id_foreign');
             $table->string('name')->nullable();
             $table->string('code');
 

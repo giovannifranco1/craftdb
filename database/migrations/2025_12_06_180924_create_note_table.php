@@ -13,7 +13,10 @@ return new class extends Migration
     {
         Schema::create('note', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('diagram_id')->constrained('diagram', indexName: 'note_diagram_id_foreign');
+            $table->foreignId('diagram_id')
+                ->index('note_diagram_id_index')
+                ->constrained('diagram', indexName: 'note_diagram_id_foreign');
+
             $table->string('name')->nullable();
             $table->text('content')->nullable();
             $table->integer('x')->comment('position x in diagram');

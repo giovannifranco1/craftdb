@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Diagram;
 
+use App\Concerns\HandlesDiagramAuthorizationWithAlertError;
 use App\Concerns\HasSidePanel;
 use App\Livewire\Forms\Diagram\ColumnForm;
 use App\Models\Column;
@@ -17,6 +18,7 @@ use Livewire\Component;
 
 final class TableSideEditor extends Component
 {
+    use HandlesDiagramAuthorizationWithAlertError;
     use HasSidePanel;
 
     #[Locked]
@@ -148,6 +150,10 @@ final class TableSideEditor extends Component
 
     public function addColumn(): void
     {
+        if (!$this->authorizeDiagramWithAlert('update', $this->getTable()->diagram)) {
+            return;
+        }
+
         $table = $this->getTable();
 
         if (!$table) {

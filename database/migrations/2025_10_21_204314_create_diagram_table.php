@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('diagram', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('team_id')->index('team_id_foreign');
+            $table->foreignId('team_id')->index('diagram_team_id_index')->constrained('team', indexName: 'diagram_team_id_foreign');
             $table->string('name');
             $table->string('slug');
             $table->string('style');

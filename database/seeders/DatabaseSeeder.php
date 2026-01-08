@@ -24,9 +24,7 @@ class DatabaseSeeder extends Seeder
 
         // Run seeders in the correct order (respecting dependencies)
         $this->call([
-            DiagramSeeder::class,
-            TableSeeder::class,
-            ColumnSeeder::class,
+            DefaultRolesSeeder::class,
             // RelationshipSeeder::class,
         ]);
     }

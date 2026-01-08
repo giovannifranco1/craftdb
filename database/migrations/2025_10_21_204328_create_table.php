@@ -13,7 +13,9 @@ return new class extends Migration
     {
         Schema::create('table', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('diagram_id')->constrained('diagram', indexName: 'diagram_id_foreign');
+            $table->foreignId('diagram_id')
+                ->index('table_diagram_id_index')
+                ->constrained('diagram', indexName: 'table_diagram_id_foreign');
             $table->string('name');
             $table->boolean('is_pivot')->default(false);
             $table->integer('x')->comment('position x in diagram');

@@ -3,8 +3,10 @@
 namespace App\Policies;
 
 use App\Models\Diagram;
+use App\Models\Team\Membership;
+use App\Models\Team\Role;
+use App\Models\Team\Team;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class DiagramPolicy
 {
@@ -21,7 +23,29 @@ class DiagramPolicy
      */
     public function view(User $user, Diagram $diagram): bool
     {
-        return $user->getKey() == $diagram->getTeamId();
+        $team = Team::find($diagram->getTeamId());
+
+        if (!$team) {
+            return false;
+        }
+
+        // Owner can always view
+        if ($user->ownsTeam($team)) {
+            return true;
+        }
+
+        // Check if user is a member with viewer or editor role
+        if ($user->belongsToTeam($team)) {
+            $membership = Membership::forTeam($team->id, $user->id)->first();
+
+            if (!$membership) {
+                return false;
+            }
+
+            return in_array($membership->role->code, [Role::CODE_VIEWER, Role::CODE_EDITOR]);
+        }
+
+        return false;
     }
 
     /**
@@ -29,6 +53,24 @@ class DiagramPolicy
      */
     public function create(User $user): bool
     {
+        $team = Team::find(Team::currentTeam()->id);
+
+        // Owner can always create
+        if ($user->ownsTeam($team)) {
+            return true;
+        }
+
+        // Check if user is a member with editor role
+        if ($user->belongsToTeam($team)) {
+            $membership = Membership::forTeam($team->id, $user->id)->first();
+
+            if (!$membership) {
+                return false;
+            }
+
+            return in_array($membership->role->code, [Role::CODE_EDITOR, Role::CODE_VIEWER]);
+        }
+
         return false;
     }
 
@@ -37,7 +79,29 @@ class DiagramPolicy
      */
     public function update(User $user, Diagram $diagram): bool
     {
-        return $user->getKey() == $diagram->getTeamId();
+        $team = Team::find($diagram->getTeamId());
+
+        if (!$team) {
+            return false;
+        }
+
+        // Owner can always update
+        if ($user->ownsTeam($team)) {
+            return true;
+        }
+
+        // Check if user is a member with editor role
+        if ($user->belongsToTeam($team)) {
+            $membership = Membership::forTeam($team->id, $user->id)->first();
+
+            if (!$membership) {
+                return false;
+            }
+
+            return $membership->role->code === Role::CODE_EDITOR;
+        }
+
+        return false;
     }
 
     /**
@@ -45,7 +109,29 @@ class DiagramPolicy
      */
     public function delete(User $user, Diagram $diagram): bool
     {
-        return $user->getKey() == $diagram->getTeamId();
+        $team = Team::find($diagram->getTeamId());
+
+        if (!$team) {
+            return false;
+        }
+
+        // Owner can always delete
+        if ($user->ownsTeam($team)) {
+            return true;
+        }
+
+        // Check if user is a member with editor role
+        if ($user->belongsToTeam($team)) {
+            $membership = Membership::forTeam($team->id, $user->id)->first();
+
+            if (!$membership) {
+                return false;
+            }
+
+            return $membership->role->code === Role::CODE_EDITOR;
+        }
+
+        return false;
     }
 
     /**

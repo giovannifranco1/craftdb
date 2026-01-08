@@ -33,6 +33,9 @@ class Role extends Model
 {
     protected $table = 'role';
 
+    const CODE_EDITOR = 'editor';
+    const CODE_VIEWER = 'viewer';
+
     /**
      * The attributes that are mass assignable.
      *

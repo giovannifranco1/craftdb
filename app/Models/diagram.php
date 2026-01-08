@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Team\Team;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Arr;
 
 /**
@@ -114,5 +117,31 @@ class Diagram extends Model
     public function getTeamId(): int
     {
         return $this->team_id;
+    }
+
+    public function team(): BelongsTo
+    {
+        return $this->belongsTo(Team::class, 'team_id', 'id');
+    }
+
+    /**
+     * @return BelongsToMany<User>
+     */
+    public function viewers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'diagram_views', 'diagram_id', 'user_id')
+            ->withPivot('last_viewed_at')
+            ->withTimestamps()
+            ->orderByPivot('last_viewed_at', 'desc');
+    }
+
+    /**
+     * Registra que o usuário visualizou o diagrama
+     */
+    public function recordView(User $user): void
+    {
+        $this->viewers()->syncWithoutDetaching([
+            $user->id => ['last_viewed_at' => now()]
+        ]);
     }
 }

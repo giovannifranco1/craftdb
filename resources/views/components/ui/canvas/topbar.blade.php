@@ -1,5 +1,4 @@
 @props(['diagram'])
-
 @php
     $team = $diagram->team ?? null;
     $teamId = $diagram->team_id ?? $team?->id;
@@ -95,13 +94,36 @@
                         </flux:dropdown>
                     </div>
 
-                    {{-- User Menu --}}
-                    <div>
-                        <span class="relative flex h-8 w-8 shrink-0 overflow-hidden rounded-lg">
-                            <span class="flex h-full w-full items-center justify-center rounded-full bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white">
-                                {{ auth()->user()->initials() }}
+                    @php
+                        $colors = config('color.colorful');
+                        $viewers = $diagram->viewers()->limit(4)->get();
+                        $totalViewers = $diagram->viewers()->count();
+                        $remainingViewers = max(0, $totalViewers - 4);
+                    @endphp
+
+                    {{-- Diagram Viewers Avatars --}}
+                    <div class="flex items-center ml-2">
+                        @foreach ($viewers as $viewer)
+                            <span
+                                class="relative flex h-8 w-8 -ml-2.5 first:ml-0 shrink-0 overflow-hidden rounded-full transition-transform hover:scale-110 hover:z-10"
+                                title="{{ $viewer->name }} • {{ __('Visto') }} {{ \Carbon\Carbon::parse($viewer->pivot->last_viewed_at)->diffForHumans() }}"
+                            >
+                                <span
+                                    style="background-color: {{ $colors[$viewer->id % count($colors)] }};"
+                                    class="flex h-full w-full items-center justify-center border-2 border-white dark:border-zinc-900 rounded-full text-white text-xs font-medium"
+                                >
+                                    {{ $viewer->initials() }}
+                                </span>
                             </span>
-                        </span>
+                        @endforeach
+
+                        @if ($remainingViewers > 0)
+                            <span class="relative flex h-8 w-8 -ml-2.5 shrink-0 overflow-hidden rounded-lg">
+                                <span class="flex h-full w-full items-center justify-center rounded-full bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white">
+                                    +{{ $remainingViewers }}
+                                </span>
+                            </span>
+                        @endif
                     </div>
                 </div>
 

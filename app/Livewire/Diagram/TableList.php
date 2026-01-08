@@ -3,12 +3,14 @@
 namespace App\Livewire\Diagram;
 
 use App\Actions\Diagram\AddRelationship;
+use App\Concerns\HandlesDiagramAuthorizationWithAlertError;
 use App\Models\Diagram;
 use App\Support\Helpers;
 use DB;
 use Illuminate\Contracts\Database\Query\Builder as QueryBuilder;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
@@ -16,6 +18,8 @@ use Livewire\Component;
 
 class TableList extends Component
 {
+    use HandlesDiagramAuthorizationWithAlertError;
+
     #[Locked]
     public Diagram $diagram;
 
@@ -60,7 +64,9 @@ class TableList extends Component
     #[On('table::add')]
     public function addTable(int $x = 100, int $y = 100): void
     {
-        $this->authorize('update', $this->diagram);
+        if (!$this->authorizeDiagramWithAlert('update', $this->diagram)) {
+            return;
+        }
 
         $table = $this->diagram->tables()->create([
             'name'  => 'teste',
@@ -82,7 +88,9 @@ class TableList extends Component
     #[On('save-tables-positions')]
     public function saveTablesPositions(int $diagramId, array $tables): void
     {
-        $this->authorize('update', $this->diagram);
+        if (!$this->authorizeDiagramWithAlert('update', $this->diagram)) {
+            return;
+        }
 
         if ($this->diagram->id != $diagramId) {
             return;
@@ -135,6 +143,10 @@ class TableList extends Component
     #[On('table::add-relationship')]
     public function addRelationship(int $fromTableId, int $toTableId, string $type, AddRelationship $action): void
     {
+        if (!$this->authorizeDiagramWithAlert('update', $this->diagram)) {
+            return;
+        }
+
         $data = validator()->make([
             'fromTableId' => $fromTableId,
             'toTableId'   => $toTableId,

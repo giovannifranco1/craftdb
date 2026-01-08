@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('relationship', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('from_table_id')->constrained('table', indexName: 'table_id_foreign');
-            $table->foreignId('from_column_id')->constrained('column', indexName: 'column_id_foreign');
-            $table->foreignId('to_table_id')->constrained('table', indexName: 'table_id_foreign');
-            $table->foreignId('to_column_id')->constrained('column', indexName: 'column_id_foreign');
-            $table->foreignId('parent_n_n_pivot_id')->nullable()->constrained('table',  indexName: 'parent_n_n_pivot_id_foreign');
+            $table->foreignId('from_table_id')->index('relationship_from_table_id_index')->constrained('table', indexName: 'relationship_from_table_id_foreign');
+            $table->foreignId('from_column_id')->index('relationship_from_column_id_index')->constrained('column', indexName: 'relationship_from_column_id_foreign');
+            $table->foreignId('to_table_id')->index('relationship_to_table_id_index')->constrained('table', indexName: 'relationship_to_table_id_foreign');
+            $table->foreignId('to_column_id')->index('relationship_to_column_id_index')->constrained('column', indexName: 'relationship_to_column_id_foreign');
+            $table->foreignId('parent_n_n_pivot_id')->nullable()->index('relationship_parent_n_n_pivot_id_index')->constrained('table',  indexName: 'relationship_parent_n_n_pivot_id_foreign');
             $table->enum('type', ['1:1', '1:n', 'n:1']);
             $table->string('label')->nullable();
 

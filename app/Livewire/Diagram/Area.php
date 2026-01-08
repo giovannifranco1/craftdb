@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Diagram;
 
+use App\Concerns\HandlesDiagramAuthorizationWithAlertError;
 use App\Models\Area as AreaModel;
 use App\Support\Helpers;
 use Illuminate\Contracts\View\View;
@@ -12,6 +13,8 @@ use Livewire\Component;
 
 class Area extends Component
 {
+    use HandlesDiagramAuthorizationWithAlertError;
+
     /** @var array<string, string>  */
     protected $listeners = [
         'area::color-updated' => '$refresh',
@@ -37,6 +40,10 @@ class Area extends Component
     #[On('area::move.{area.id}')]
     public function updatePosition(int $x, int $y): void
     {
+        if (!$this->authorizeDiagramWithAlert('update', $this->area->diagram)) {
+            return;
+        }
+
         $this->area->x = $x;
         $this->area->y = $y;
         $this->area->save();
@@ -45,6 +52,10 @@ class Area extends Component
     #[On('area::resize.{area.id}')]
     public function updateSize(int $x, int $y, int $width, int $height): void
     {
+        if (!$this->authorizeDiagramWithAlert('update', $this->area->diagram)) {
+            return;
+        }
+
         $this->area->width = $width;
         $this->area->height = $height;
         $this->area->x = $x;
@@ -54,7 +65,10 @@ class Area extends Component
 
     public function renameArea(): void
     {
-        $this->authorize('update', $this->area->diagram);
+        if (!$this->authorizeDiagramWithAlert('update', $this->area->diagram)) {
+            return;
+        }
+
         $this->validateOnly('name');
 
         $this->area->name = $this->name;
@@ -65,12 +79,20 @@ class Area extends Component
 
     public function resetName(): void
     {
+        if (!$this->authorizeDiagramWithAlert('update', $this->area->diagram)) {
+            return;
+        }
+
         $this->name = $this->area->name;
     }
 
     public function setColor(string $color): void
     {
-        $this->authorize('update', $this->area->diagram);
+        if (!$this->authorizeDiagramWithAlert('update', $this->area->diagram)) {
+            $this->dispatch('area::color-updated-error');
+            return;
+        }
+
         if (!Helpers::isColorValid($color)) return;
 
         $this->area->color = $color;
@@ -81,7 +103,9 @@ class Area extends Component
 
     public function remove(): void
     {
-        $this->authorize('delete', $this->area->diagram);
+        if (!$this->authorizeDiagramWithAlert('update', $this->area->diagram)) {
+            return;
+        }
 
         $this->area->delete();
 

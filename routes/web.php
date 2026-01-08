@@ -39,9 +39,13 @@ Route::middleware(['auth'])->group(function () {
             ),
         )
         ->name('two-factor.show');
+
+    Volt::route('settings/team', 'settings.team')->name('team.edit');
+    Volt::route('settings/team/members', 'settings.team.members')->name('team.members.edit');
+    Volt::route('settings/team/invitations', 'settings.team.invitations')->name('team.invitations.edit');
 });
 
 /** Diagram */
-Route::middleware(['auth', 'role:team_id', 'throttle:60,1'])->group(function () {
+Route::middleware(['auth', 'role:viewer|editor', 'throttle:60,1'])->group(function () {
     Route::get('{team_id}/diagram/{diagram:slug}', [DiagramController::class, 'show'])->name('diagram.show');
 });

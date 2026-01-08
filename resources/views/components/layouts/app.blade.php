@@ -13,6 +13,4 @@
             </main>
         </div>
     </x-flux::main>
-
-    
 </x-layouts.app.master>

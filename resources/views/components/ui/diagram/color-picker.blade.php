@@ -35,6 +35,8 @@
     x-transition:leave-end="opacity-0 translate-y-1"
     @area::color-updated.window="loadingColor = false"
     @table::color-updated.window="loadingColor = false"
+    @area::color-updated-error.window="loadingColor = false"
+    @table::color-updated-error.window="loadingColor = false"
     @mousedown.outside.window="open = false"
     @keydown.escape="open = false"
     @mousedown.stop

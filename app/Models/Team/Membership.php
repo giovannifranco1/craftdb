@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Support\Facades\Config;
 use Jurager\Teams\Support\Facades\Teams as TeamsFacade;
 use Exception;
+use Illuminate\Database\Eloquent\Builder;
 
 /**
  * @property int $id
@@ -72,5 +73,12 @@ class Membership extends Pivot
     public function role(): BelongsTo
     {
         return $this->belongsTo(TeamsFacade::model('role'), 'role_id', 'id');
+    }
+
+    public function scopeForTeam(Builder $query, int $teamId, int $userId): Builder
+    {
+        return $query->where('team_id', $teamId)
+            ->where('user_id', $userId)
+            ->with('role');
     }
 }

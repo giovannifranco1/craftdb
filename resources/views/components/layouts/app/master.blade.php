@@ -52,7 +52,7 @@
                                 data-test="sidebar-menu-button"
                             />
 
-                            <flux:menu class="w-[220px]">
+                            <flux:menu class="w-[250px]">
                                 <flux:menu.radio.group>
                                     <div class="p-0 text-sm font-normal">
                                         <div class="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
@@ -72,7 +72,9 @@
                                     </div>
                                 </flux:menu.radio.group>
 
-                                <flux:menu.separator />
+                                <flux:menu.separator/>
+
+                                <livewire:team-switcher/>
 
                                 <flux:menu.radio.group>
                                     <flux:menu.item :href="route('profile.edit')" icon="cog" wire:navigate>{{ __('Settings') }}</flux:menu.item>

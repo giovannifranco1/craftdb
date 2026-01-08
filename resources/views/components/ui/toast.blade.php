@@ -1,8 +1,11 @@
-<div class="absolute z-50 max-w-sm w-full top-12 end-12">
+@php($top = request()->is('dashboard', 'settings/*') ? 'top-20' : 'top-30')
+
+<div class="fixed z-50 max-w-sm w-full {{ $top }} end-9">
     <div
         x-data="{
             messageToast: null,
             descriptionToast: null,
+            typeToast: 'success',
             progress: 100,
             progressInterval: null,
             timeoutId: null,
@@ -22,8 +25,8 @@
 
                 // Reseta o progresso
                 this.progress = 100;
-                const duration = 3000; // 5 segundos
-                const interval = 50; // atualiza a cada 50ms
+                const duration = 3000;
+                const interval = 50;
                 const decrement = (100 / (duration / interval));
 
                 // Inicia o intervalo de progresso
@@ -40,6 +43,10 @@
                 this.timeoutId = setTimeout(() => {
                     this.messageToast = null;
                     this.timeoutId = null;
+                    // Reseta o tipo após a transição terminar (200ms)
+                    setTimeout(() => {
+                        this.typeToast = 'success';
+                    }, 200);
                 }, 3000);
             }
         }"
@@ -53,32 +60,56 @@
         x-init="() => {
             @if(session('message'))
                 messageToast = @js(session('message'));
+                typeToast = @js(session('type', 'success'));
                 startProgress();
             @endif
 
-            Livewire.on('alert', ({ message, description }) => {
+            Livewire.on('alert', ({ message, description, type }) => {
                 messageToast = message;
                 descriptionToast = description;
+                typeToast = type || 'success';
                 startProgress();
             })
         }"
         style="display: none"
         class="relative"
     >
-        <flux:callout inline>
-            <x-slot name="icon">
-                <flux:icon.check-circle variant="solid" class="size-5" color="green"/>
-            </x-slot>
+        <!-- Toast de Success -->
+        <div x-show="typeToast === 'success'">
+            <flux:callout inline variant="success">
+                <x-slot name="icon">
+                    <flux:icon.check-circle variant="solid" class="size-5" color="green"/>
+                </x-slot>
 
-            <flux:callout.heading x-text="messageToast"></flux:callout.heading>
-        </flux:callout>
+                <flux:callout.heading x-text="messageToast"></flux:callout.heading>
+            </flux:callout>
 
-        <!-- Barra de Progresso -->
-        <div class="absolute bottom-0 left-0 right-0 h-1 bg-gray-200 rounded-b-lg overflow-hidden">
-            <div
-                class="h-full bg-green-500 transition-all ease-linear"
-                :style="`width: ${progress}%`"
-            ></div>
+            <!-- Barra de Progresso -->
+            <div class="absolute bottom-0 left-0 right-0 h-1 bg-gray-200 dark:bg-zinc-800 rounded-b-lg overflow-hidden">
+                <div
+                    class="h-full transition-all ease-linear bg-green-500"
+                    :style="`width: ${progress}%`"
+                ></div>
+            </div>
+        </div>
+
+        <!-- Toast de Error -->
+        <div x-show="typeToast === 'error'">
+            <flux:callout inline variant="danger">
+                <x-slot name="icon">
+                    <flux:icon.x-circle variant="solid" class="size-5" color="red"/>
+                </x-slot>
+
+                <flux:callout.heading x-text="messageToast"></flux:callout.heading>
+            </flux:callout>
+
+            <!-- Barra de Progresso -->
+            <div class="absolute bottom-0 left-0 right-0 h-1 bg-gray-200 dark:bg-zinc-800 rounded-b-lg overflow-hidden">
+                <div
+                    class="h-full transition-all ease-linear bg-red-500"
+                    :style="`width: ${progress}%`"
+                ></div>
+            </div>
         </div>
     </div>
 </div>
