@@ -6,12 +6,12 @@
 return [
 
     'neutral' => [
-        '#7C7C7C', // Medium Gray - neutro e vibrante
-        '#8B7D6B', // Warm Beige - acolhedor e vivo
+        '#808080', // Medium Gray - neutro e equilibrado
+        '#5F6B7A', // Slate Gray - moderno e profissional
         '#6B8E9F', // Blue Gray - suave mas com presença
-        '#9A8B7A', // Taupe - elegante e quente
+        '#6D7278', // Charcoal Gray - elegante e neutro
         '#7A8B8B', // Teal Gray - refrescante e neutro
-        '#A68B7A', // Blush Gray - suave e acolhedor
+        '#6A7B8C', // Steel Gray - clean e contemporâneo
     ],
 
     'colorful' => [
