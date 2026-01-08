@@ -1,3 +1,5 @@
+@use('App\Models\Team\Team')
+
 <div class="flex items-start max-md:flex-col">
     <div class="me-10 w-full pb-4 md:w-[220px]">
         <flux:navlist>
@@ -8,13 +10,15 @@
             @endif
             <flux:navlist.item :href="route('appearance.edit')" wire:navigate>{{ __('Appearance') }}</flux:navlist.item>
 
-            <flux:separator class="my-2" />
+            @if (Team::currentTeam()->owner->id === auth()->user()->id)
+                <flux:separator class="my-2" />
 
-            <flux:navlist.group expandable heading="{{ __('Team Settings') }}" class="mt-2">
-                <flux:navlist.item :href="route('team.edit')" wire:navigate>{{ __('Team Information') }}</flux:navlist.item>
-                <flux:navlist.item :href="route('team.members.edit')" wire:navigate>{{ __('Members') }}</flux:navlist.item>
-                <flux:navlist.item :href="route('team.invitations.edit')" wire:navigate>{{ __('Invitations') }}</flux:navlist.item>
-            </flux:navlist.group>
+                <flux:navlist.group expandable heading="{{ __('Team Settings') }}" class="mt-2">
+                    <flux:navlist.item :href="route('team.edit')" wire:navigate>{{ __('Team Information') }}</flux:navlist.item>
+                    <flux:navlist.item :href="route('team.members.edit')" wire:navigate>{{ __('Members') }}</flux:navlist.item>
+                    <flux:navlist.item :href="route('team.invitations.edit')" wire:navigate>{{ __('Invitations') }}</flux:navlist.item>
+                </flux:navlist.group>
+            @endif
         </flux:navlist>
     </div>
 

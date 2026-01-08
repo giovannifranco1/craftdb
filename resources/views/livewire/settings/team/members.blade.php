@@ -14,6 +14,8 @@ new class extends Component {
 
     public function mount(): void
     {
+        $this->authorize('addTeamMember', Team::currentTeam());
+
         $this->team = Team::currentTeam();
         $roles = $this->team->roles;
         $this->role_id = $roles->first()?->id ?? 0;
@@ -21,6 +23,8 @@ new class extends Component {
 
     public function addMember(): void
     {
+        $this->authorize('addTeamMember', Team::currentTeam());
+
         $validated = $this->validate([
             'email' => ['required', 'email', 'exists:users,email'],
             'role_id' => ['required', 'exists:role,id'],
@@ -51,6 +55,8 @@ new class extends Component {
 
     public function removeMember(int $userId): void
     {
+        $this->authorize('removeTeamMember', Team::currentTeam());
+
         if ($this->team->user_id === $userId) {
             $this->dispatch('alert', message: __('You cannot remove the team owner.'), type: 'error');
             return;
@@ -63,10 +69,7 @@ new class extends Component {
 
     public function updateRole(int $userId, int $roleId): void
     {
-        if ($this->team->user_id === $userId) {
-            $this->dispatch('alert', message: __('You cannot change the role of the team owner.'), type: 'error');
-            return;
-        }
+        $this->authorize('updateTeamMember', Team::currentTeam());
 
         $membership = Membership::where('team_id', $this->team->id)
             ->where('user_id', $userId)
@@ -167,14 +170,14 @@ new class extends Component {
                     <div class="flex items-center gap-3">
                         <flux:avatar
                             size="sm"
-                            :initials="auth()->user()->initials()"
+                            :initials="$team->owner->initials()"
                         />
                         <div>
                             <div class="font-medium text-sm">
-                                {{ auth()->user()->name }}
+                                {{ $team->owner->name }}
                                 <flux:badge color="blue" size="sm" class="ml-2">{{ __('Team Owner') }}</flux:badge>
                             </div>
-                            <div class="text-xs text-zinc-500 dark:text-zinc-400">{{ auth()->user()->email }}</div>
+                            <div class="text-xs text-zinc-500 dark:text-zinc-400">{{ $team->owner->email }}</div>
                         </div>
                     </div>
 
@@ -188,6 +191,7 @@ new class extends Component {
                     @php
                         $currentRoleId = $user->membership->role_id;
                     @endphp
+
                     <div class="flex items-center justify-between p-4 rounded-lg border border-zinc-200 dark:border-zinc-700">
                         <div class="flex items-center gap-3">
                             <flux:avatar

@@ -13,6 +13,8 @@ new class extends Component {
 
     public function mount(): void
     {
+        $this->authorize('update', Team::currentTeam());
+
         $this->team = Team::currentTeam();
         $roles = $this->team->roles()->get();
         $this->role_id = $roles->first()?->id ?? 0;
@@ -20,6 +22,8 @@ new class extends Component {
 
     public function sendInvitation(): void
     {
+        $this->authorize('update', Team::currentTeam());
+
         $validated = $this->validate([
             'email' => ['required', 'email'],
             'role_id' => ['required', 'exists:role,id'],

@@ -13,6 +13,8 @@ new class extends Component {
      */
     public function mount(): void
     {
+        $this->authorize('updateTeamMember', Team::currentTeam());
+
         $this->team = Team::currentTeam();
         $this->name = $this->team->name ?? '';
     }
@@ -22,6 +24,8 @@ new class extends Component {
      */
     public function updateTeamInformation(): void
     {
+        $this->authorize('updateTeam', Team::currentTeam());
+
         $validated = $this->validate([
             'name' => ['required', 'string', 'max:255'],
         ]);
