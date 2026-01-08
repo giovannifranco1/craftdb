@@ -58,7 +58,7 @@
                             @endphp
                             @foreach ($viewers as $viewer)
                                 <span
-                                    class="relative flex h-8 w-8 -ml-2.5 first:ml-0 shrink-0 overflow-hidden rounded-full transition-transform hover:scale-110 hover:z-10"
+                                    class="relative flex h-9 w-9 -ml-2.5 first:ml-0 shrink-0 overflow-hidden rounded-full transition-transform hover:scale-110 hover:z-10"
                                     title="{{ $viewer->name }} • {{ __('Visto') }} {{ \Carbon\Carbon::parse($viewer->pivot->last_viewed_at)->diffForHumans() }}"
                                 >
                                     <span
@@ -132,7 +132,7 @@
                         x-data
                         x-on:click="toggleFavorite({{ $diagram->isFavorite() }})"
                         class="cursor-pointer p-2 rounded-lg backdrop-blur-sm transition-all duration-300 {{ $diagram->isFavorite() ? 'opacity-100' : '' }}"
-                        title="{{ $diagram->isFavorite() ? __('Remove from favorites') : __('Add to favorites') }}"
+                        title="{{ $diagram->isFavorite() ? __('Unmark as favorite') : __('Mark as favorite') }}"
                     >
                         <flux:icon.heart variant="solid" class="size-5 text-red-500 js-icon-favorite {{ $diagram->isFavorite() ? 'block' : 'hidden' }}" />
                         <flux:icon.heart variant="outline" class="size-5 text-zinc-400 dark:text-zinc-500 js-icon-unfavorite {{ $diagram->isFavorite() ? 'hidden' : 'block' }}" />

@@ -2,6 +2,8 @@
 
 namespace App\Livewire;
 
+use App\Concerns\HandlesDiagramAuthorizationWithAlertError;
+use App\Actions\Diagram\DeleteDiagram as DeleteDiagramAction;
 use App\Models\Diagram;
 use App\Models\Team\Team;
 use Illuminate\Contracts\View\View;
@@ -17,7 +19,7 @@ use Livewire\WithPagination;
 #[Title('Dashboard')]
 class Dashboard extends Component
 {
-    use WithPagination;
+    use WithPagination, HandlesDiagramAuthorizationWithAlertError;
 
     #[Url]
     public string $search = '';
@@ -59,6 +61,19 @@ class Dashboard extends Component
 
         $this->dispatch('diagram::favorite-toggled', $diagram->id);
         $this->dispatch('alert', message: $diagram->isFavorite() ? __('Diagram :name was added to your favorites', ['name' => $diagram->name]) : __('Diagram :name was removed from your favorites', ['name' => $diagram->name]));
+    }
+
+    public function deleteDiagram(Diagram $diagram, DeleteDiagramAction $action): void
+    {
+        if (!$this->authorizeDiagramWithAlert('delete', $diagram)) {
+            return;
+        }
+
+        if (!$action->exec($diagram)) {
+            return;
+        }
+
+        $this->dispatch('alert', message: __('Diagram :name was deleted', ['name' => $diagram->name]));
     }
 
     public function placeholder(): View

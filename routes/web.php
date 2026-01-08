@@ -41,6 +41,7 @@ Route::middleware(['auth'])->group(function () {
         ->name('two-factor.show');
 
     Route::middleware(['auth'])->group(function () {
+        Volt::route('settings/team/create', 'settings.team.create')->name('team.create');
         Volt::route('settings/team', 'settings.team')->name('team.edit');
         Volt::route('settings/team/members', 'settings.team.members')->name('team.members.edit');
         Volt::route('settings/team/invitations', 'settings.team.invitations')->name('team.invitations.edit');

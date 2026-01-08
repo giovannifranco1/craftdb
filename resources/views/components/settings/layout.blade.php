@@ -10,11 +10,12 @@
             @endif
             <flux:navlist.item :href="route('appearance.edit')" wire:navigate>{{ __('Appearance') }}</flux:navlist.item>
 
-            @if (Team::currentTeam()->owner->id === auth()->user()->id)
+            @if (Team::currentTeam() && Team::currentTeam()->owner && Team::currentTeam()->owner->id === auth()->user()->id)
 
             <flux:separator class="my-2" />
             <flux:navlist.group expandable heading="{{ __('Team Settings') }}" class="mt-2">
                 <flux:navlist.item :href="route('team.edit')" wire:navigate>{{ __('Team Information') }}</flux:navlist.item>
+                <flux:navlist.item :href="route('team.create')" wire:navigate>{{ __('Create Team') }}</flux:navlist.item>
                     <flux:navlist.item :href="route('team.members.edit')" wire:navigate>{{ __('Members') }}</flux:navlist.item>
                     <flux:navlist.item :href="route('team.invitations.edit')" wire:navigate>{{ __('Invitations') }}</flux:navlist.item>
                 </flux:navlist.group>

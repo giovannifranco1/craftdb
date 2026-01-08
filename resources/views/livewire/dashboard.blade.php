@@ -30,7 +30,7 @@
                     <div class="col-span-1 lg:col-span-3 w-full h-full flex flex-col items-center justify-center gap-6 px-4">
                         <div class="flex flex-col items-center gap-4">
                             <div class="rounded-full bg-zinc-100 dark:bg-zinc-800 p-6">
-                                <flux:icon.layout-grid class="size-12 text-zinc-400 dark:text-zinc-500" />
+                                <img src="{{ Vite::asset('resources/images/craftdb_logo_transparent_dark.png') }}" alt="CraftDB Logo" class="size-15 text-zinc-400 dark:text-zinc-500" />
                             </div>
                             @if($this->favorites)
                                 <flux:heading size="lg" class="text-zinc-900 dark:text-zinc-100">
@@ -51,10 +51,11 @@
                         <flux:button
                             @click="$flux.modal('diagram-create').show()"
                             icon="plus"
+                            class="cursor-pointer"
                             variant="primary"
                             size="sm"
                         >
-                            {{ __('Create Diagram') }}
+                            {{ __('New Diagram') }}
                         </flux:button>
                     </div>
                 @endforelse

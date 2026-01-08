@@ -268,5 +268,9 @@
   "Import files or framework migrations to automatically create your diagram structure.": "Importe arquivos ou migrations de framework para criar automaticamente a estrutura do seu diagrama.",
   "Select File": "Selecionar Arquivo",
   "Diagram :name was added to your favorites": "Diagrama :name foi adicionado aos seus favoritos",
-  "Diagram :name was removed from your favorites": "Diagrama :name foi removido dos seus favoritos"
+  "Diagram :name was removed from your favorites": "Diagrama :name foi removido dos seus favoritos",
+  "Create a new team to collaborate with others.": "Crie um novo time para colaborar com outros.",
+  "Enter team name": "Digite o nome do time",
+  "Mark as favorite": "Marcar como favorito",
+  "Unmark as favorite": "Desmarcar como favorito"
 }

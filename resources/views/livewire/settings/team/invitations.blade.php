@@ -86,7 +86,7 @@ new class extends Component {
 <section class="w-full">
     @include('partials.settings-heading')
 
-    <x-settings.team-layout :heading="__('Team Invitations')" :subheading="__('Manage pending invitations to your team.')">
+    <x-settings.layout :heading="__('Team Invitations')" :subheading="__('Manage pending invitations to your team.')">
         <!-- Send Invitation Form -->
         <div class="my-6">
             <form wire:submit="sendInvitation" class="space-y-4">
@@ -207,5 +207,5 @@ new class extends Component {
                 </div>
             @endif
         </div>
-    </x-settings.team-layout>
+    </x-settings.layout>
 </section>

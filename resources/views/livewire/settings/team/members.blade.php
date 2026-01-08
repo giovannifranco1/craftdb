@@ -25,7 +25,7 @@ new class extends Component {
     {
         $this->authorize('addTeamMember', Team::currentTeam());
 
-        $validated = $this->validate([
+        $validated = $this->validate(   [
             'email' => ['required', 'email', 'exists:users,email'],
             'role_id' => ['required', 'exists:role,id'],
         ], [
@@ -85,7 +85,7 @@ new class extends Component {
 <section class="w-full">
     @include('partials.settings-heading')
 
-    <x-settings.team-layout :heading="__('Team Members')" :subheading="__('All of the people that are part of this team.')">
+    <x-settings.layout :heading="__('Team Members')" :subheading="__('All of the people that are part of this team.')">
         <!-- Add Member Form -->
         <div class="my-6">
             <form wire:submit="addMember" class="space-y-4">
@@ -175,7 +175,6 @@ new class extends Component {
                         <div>
                             <div class="font-medium text-sm">
                                 {{ $team->owner->name }}
-                                <flux:badge color="blue" size="sm" class="ml-2">{{ __('Team Owner') }}</flux:badge>
                             </div>
                             <div class="text-xs text-zinc-500 dark:text-zinc-400">{{ $team->owner->email }}</div>
                         </div>
@@ -238,5 +237,5 @@ new class extends Component {
                 @endforeach
             </div>
         </div>
-    </x-settings.team-layout>
+    </x-settings.layout>
 </section>

@@ -40,7 +40,7 @@ new class extends Component {
 <section class="w-full">
     @include('partials.settings-heading')
 
-    <x-settings.team-layout :heading="__('Team Settings')" :subheading="__('The team\'s name and owner information.')">
+    <x-settings.layout :heading="__('Team Settings')" :subheading="__('The team\'s name and owner information.')">
         <form wire:submit="updateTeamInformation" class="my-6 w-full space-y-6">
             <flux:input
                 wire:model="name"
@@ -74,5 +74,5 @@ new class extends Component {
                 </x-action-message>
             </div>
         </form>
-    </x-settings.team-layout>
+    </x-settings.layout>
 </section>

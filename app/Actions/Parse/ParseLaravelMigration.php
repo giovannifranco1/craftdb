@@ -24,6 +24,10 @@ class ParseLaravelMigration extends BaseSQLParse
      */
     public function exec(array $files, Diagram $diagram): void
     {
+        $tableObserver = Table::getEventDispatcher();
+
+        Table::unsetEventDispatcher();
+
         $this->diagram = $diagram;
         $this->tableIndex = 0; // Reset for this import
 
@@ -79,6 +83,8 @@ class ParseLaravelMigration extends BaseSQLParse
             // Second pass: Create all relationships now that all tables exist
             $this->createRelationships($allForeignKeys, $allTables);
         });
+
+        Table::setEventDispatcher($tableObserver);
     }
 
     /**

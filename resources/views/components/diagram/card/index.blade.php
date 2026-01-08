@@ -30,19 +30,30 @@
 <div class="block group" {{ $attributes }}>
     <div class="w-80 h-64 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-[#1A1A1A] shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden relative">
         <!-- Botão de favoritar -->
-        <button
-            type="button"
-            wire:click.stop="toggleFavorite({{ $diagram->id }})"
-            class="absolute top-4 cursor-pointer right-4 z-10 p-2 rounded-lg backdrop-blur-sm transition-all duration-300 {{ $diagram->isFavorite() ? 'opacity-100' : 'opacity-0 group-hover:opacity-100' }} focus:opacity-100"
-            title="Favoritar diagrama"
-        >
 
-            @if($diagram->isFavorite())
-                <flux:icon.heart variant="solid" class="size-5 text-red-500" />
-            @else
-                <flux:icon.heart variant="outline" class="size-5 text-zinc-400 dark:text-zinc-500" />
-            @endif
-        </button>
+        <div class="absolute top-4 right-4 z-10 flex items-center gap-2">
+            <button
+                type="button"
+                wire:click.stop="toggleFavorite({{ $diagram->id }})"
+                class="cursor-pointer p-2 rounded-lg backdrop-blur-sm"
+                title="{{ $diagram->isFavorite() ? __('Unmark as favorite') : __('Mark as favorite') }}"
+            >
+
+                @if($diagram->isFavorite())
+                    <flux:icon.heart variant="solid" class="size-5 text-red-500" />
+                @else
+                    <flux:icon.heart variant="outline" class="size-5 text-zinc-400 dark:text-zinc-500" />
+                @endif
+            </button>
+
+            <flux:dropdown position="bottom" align="end" offset="-15" gap="2">
+                <flux:button icon="ellipsis-vertical" variant="ghost" size="xs" />
+                <flux:menu>
+                    <flux:menu.item icon="pencil" wire:click="editDiagram({{ $diagram->id }})">{{ __('Edit') }}</flux:menu.item>
+                    <flux:menu.item icon="trash" wire:click="deleteDiagram({{ $diagram->id }})" variant="danger">{{ __('Delete') }}</flux:menu.item>
+                </flux:menu>
+            </flux:dropdown>
+        </div>
 
         <div class="p-6 h-full flex flex-col">
             <!-- Header com ícone, título e badges -->
