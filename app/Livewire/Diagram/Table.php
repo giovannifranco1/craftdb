@@ -176,9 +176,10 @@ class Table extends Component
             return;
         }
 
-        $this->table->x = $x;
-        $this->table->y = $y;
-        $this->table->save();
+       $this->table->update([
+            'x' => $x,
+            'y' => $y,
+        ]);
 
         $this->refreshTableWithCounts();
     }

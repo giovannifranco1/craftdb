@@ -47,8 +47,41 @@
                         </flux:breadcrumbs>
                     </div>
 
-                    {{-- Share Button with Dropdown --}}
+                    {{-- Diagram Viewers Avatars --}}
                     <div class="ms-auto">
+                        <div class="flex items-center ml-2">
+                            @php
+                                $colors = config('color.colorful');
+                                $viewers = $diagram->viewers()->limit(4)->get();
+                                $totalViewers = $diagram->viewers()->count();
+                                $remainingViewers = max(0, $totalViewers - 4);
+                            @endphp
+                            @foreach ($viewers as $viewer)
+                                <span
+                                    class="relative flex h-8 w-8 -ml-2.5 first:ml-0 shrink-0 overflow-hidden rounded-full transition-transform hover:scale-110 hover:z-10"
+                                    title="{{ $viewer->name }} • {{ __('Visto') }} {{ \Carbon\Carbon::parse($viewer->pivot->last_viewed_at)->diffForHumans() }}"
+                                >
+                                    <span
+                                        style="background-color: {{ $colors[$viewer->id % count($colors)] }};"
+                                        class="flex h-full w-full items-center justify-center border-2 border-white dark:border-zinc-900 rounded-full text-white text-xs font-medium"
+                                    >
+                                        {{ $viewer->initials() }}
+                                    </span>
+                                </span>
+                            @endforeach
+
+                            @if ($remainingViewers > 0)
+                                <span class="relative flex h-8 w-8 -ml-2.5 shrink-0 overflow-hidden rounded-lg">
+                                    <span class="flex h-full w-full items-center justify-center rounded-full bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white">
+                                        +{{ $remainingViewers }}
+                                    </span>
+                                </span>
+                            @endif
+                        </div>
+                    </div>
+
+                    {{-- Share Button with Dropdown --}}
+                    <div>
                         <flux:dropdown>
                             <flux:button class="font-light" size="sm" variant="primary" icon="share">
                                 {{ __('Compartilhar') }}
@@ -94,37 +127,61 @@
                         </flux:dropdown>
                     </div>
 
-                    @php
-                        $colors = config('color.colorful');
-                        $viewers = $diagram->viewers()->limit(4)->get();
-                        $totalViewers = $diagram->viewers()->count();
-                        $remainingViewers = max(0, $totalViewers - 4);
-                    @endphp
+                    <button
+                        type="button"
+                        x-data
+                        x-on:click="toggleFavorite({{ $diagram->isFavorite() }})"
+                        class="cursor-pointer p-2 rounded-lg backdrop-blur-sm transition-all duration-300 {{ $diagram->isFavorite() ? 'opacity-100' : '' }}"
+                        title="{{ $diagram->isFavorite() ? __('Remove from favorites') : __('Add to favorites') }}"
+                    >
+                        <flux:icon.heart variant="solid" class="size-5 text-red-500 js-icon-favorite {{ $diagram->isFavorite() ? 'block' : 'hidden' }}" />
+                        <flux:icon.heart variant="outline" class="size-5 text-zinc-400 dark:text-zinc-500 js-icon-unfavorite {{ $diagram->isFavorite() ? 'hidden' : 'block' }}" />
+                    </button>
 
-                    {{-- Diagram Viewers Avatars --}}
-                    <div class="flex items-center ml-2">
-                        @foreach ($viewers as $viewer)
-                            <span
-                                class="relative flex h-8 w-8 -ml-2.5 first:ml-0 shrink-0 overflow-hidden rounded-full transition-transform hover:scale-110 hover:z-10"
-                                title="{{ $viewer->name }} • {{ __('Visto') }} {{ \Carbon\Carbon::parse($viewer->pivot->last_viewed_at)->diffForHumans() }}"
-                            >
-                                <span
-                                    style="background-color: {{ $colors[$viewer->id % count($colors)] }};"
-                                    class="flex h-full w-full items-center justify-center border-2 border-white dark:border-zinc-900 rounded-full text-white text-xs font-medium"
-                                >
-                                    {{ $viewer->initials() }}
-                                </span>
-                            </span>
-                        @endforeach
+                          <!-- User Menu -->
+                          <flux:dropdown position="bottom" align="end">
+                            <flux:profile
+                                :initials="auth()->user()->initials()"
+                            />
 
-                        @if ($remainingViewers > 0)
-                            <span class="relative flex h-8 w-8 -ml-2.5 shrink-0 overflow-hidden rounded-lg">
-                                <span class="flex h-full w-full items-center justify-center rounded-full bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white">
-                                    +{{ $remainingViewers }}
-                                </span>
-                            </span>
-                        @endif
-                    </div>
+                            <flux:menu class="w-[250px]">
+                                <flux:menu.radio.group>
+                                    <div class="p-0 text-sm font-normal">
+                                        <div class="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
+                                            <span class="relative flex h-8 w-8 shrink-0 overflow-hidden rounded-lg">
+                                                <span
+                                                    class="flex h-full w-full items-center justify-center rounded-lg bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white"
+                                                >
+                                                    {{ auth()->user()->initials() }}
+                                                </span>
+                                            </span>
+
+                                            <div class="grid flex-1 text-start text-sm leading-tight">
+                                                <span class="truncate font-semibold">{{ auth()->user()->name }}</span>
+                                                <span class="truncate text-xs">{{ auth()->user()->email }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </flux:menu.radio.group>
+
+                                <flux:menu.separator/>
+
+                                <livewire:team-switcher/>
+
+                                <flux:menu.radio.group>
+                                    <flux:menu.item :href="route('profile.edit')" icon="cog" wire:navigate>{{ __('Settings') }}</flux:menu.item>
+                                </flux:menu.radio.group>
+
+                                <flux:menu.separator />
+
+                                <form method="POST" action="{{ route('logout') }}" class="w-full">
+                                    @csrf
+                                    <flux:menu.item as="button" type="submit" icon="arrow-right-start-on-rectangle" class="w-full" data-test="logout-button">
+                                        {{ __('Log Out') }}
+                                    </flux:menu.item>
+                                </form>
+                            </flux:menu>
+                        </flux:dropdown>
                 </div>
 
                 {{-- Actions Menu --}}
@@ -200,7 +257,27 @@
                         </flux:menu>
                     </flux:dropdown>
 
-                    <div x-data="{ updatedAt: @js($updatedAt) }" @table-list::position-updated.window="updatedAt = '{{ __('agora mesmo') }}'" class="flex flex-wrap items-center gap-3 text-[13px] text-zinc-500 dark:text-zinc-400">
+                    <div
+                        x-data="{ updatedAt: @js($updatedAt) }"
+                        @table-list::position-updated.window="updatedAt = '{{ __('agora mesmo') }}'"
+                        @table::updated.window="updatedAt = '{{ __('agora mesmo') }}'"
+                        @table::renamed.window="updatedAt = '{{ __('agora mesmo') }}'"
+                        @table::color-updated.window="updatedAt = '{{ __('agora mesmo') }}'"
+                        @table::relationship-added.window="updatedAt = '{{ __('agora mesmo') }}'"
+                        @table::removed.window="updatedAt = '{{ __('agora mesmo') }}'"
+                        @table::column-added.window="updatedAt = '{{ __('agora mesmo') }}'"
+                        @table::column-updated.window="updatedAt = '{{ __('agora mesmo') }}'"
+                        @table::column-deleted.window="updatedAt = '{{ __('agora mesmo') }}'"
+                        @table::move.window="updatedAt = '{{ __('agora mesmo') }}'"
+                        @area::updated.window="updatedAt = '{{ __('agora mesmo') }}'"
+                        @area::renamed.window="updatedAt = '{{ __('agora mesmo') }}'"
+                        @area::color-updated.window="updatedAt = '{{ __('agora mesmo') }}'"
+                        @area::relationship-added.window="updatedAt = '{{ __('agora mesmo') }}'"
+                        @area::removed.window="updatedAt = '{{ __('agora mesmo') }}'"
+                        @area::column-added.window="updatedAt = '{{ __('agora mesmo') }}'"
+                        @area::column-updated.window="updatedAt = '{{ __('agora mesmo') }}'"
+                        @area::column-deleted.window="updatedAt = '{{ __('agora mesmo') }}'"
+                        class="flex flex-wrap items-center gap-3 text-[13px] text-zinc-500 dark:text-zinc-400">
                         <flux:badge size="sm" variant="soft" color="emerald" class="text-[10px] dark:bg-emerald-900/40">
                             {{ __('Updated') }}<span class="ms-1" x-text="updatedAt"></span>
                         </flux:badge>

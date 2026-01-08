@@ -131,7 +131,7 @@
             </span>
         </button>
 
-        <div class="px-2 py-1 bg-gray-50 dark:bg-zinc-800 rounded text-xs font-medium text-gray-700 dark:text-zinc-300 min-w-[3rem] text-center"
+        <div class="py-1 bg-gray-50 dark:bg-zinc-800 rounded text-xs font-medium text-gray-700 dark:text-zinc-300 min-w-[2.5rem] text-center"
              x-text="`${zoomPercent}%`"
              title="Nível de Zoom">
         </div>

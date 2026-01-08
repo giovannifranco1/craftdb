@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Models\Relationship;
+use App\Observers\TableObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -37,6 +39,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Table withPrimaryCount()
  * @mixin \Eloquent
  */
+#[ObservedBy(TableObserver::class)]
 class Table extends Model
 {
     const COLOR_DEFAULT = '#2563eb';

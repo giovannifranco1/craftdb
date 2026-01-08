@@ -57,26 +57,25 @@
         x-transition:leave="transition ease-in duration-200"
         x-transition:leave-start="opacity-100 transform translate-y-0"
         x-transition:leave-end="opacity-0 transform translate-y-2"
+        @alert.window="($event) => {
+            messageToast = $event.detail.message;
+            descriptionToast = $event.detail.description;
+            typeToast = $event.detail.type || 'success';
+            startProgress();
+        }"
         x-init="() => {
             @if(session('message'))
                 messageToast = @js(session('message'));
                 typeToast = @js(session('type', 'success'));
                 startProgress();
             @endif
-
-            Livewire.on('alert', ({ message, description, type }) => {
-                messageToast = message;
-                descriptionToast = description;
-                typeToast = type || 'success';
-                startProgress();
-            })
         }"
         style="display: none"
         class="relative"
     >
         <!-- Toast de Success -->
         <div x-show="typeToast === 'success'">
-            <flux:callout inline variant="success">
+            <flux:callout class="dark:bg-[#0F0F0F]" inline variant="success">
                 <x-slot name="icon">
                     <flux:icon.check-circle variant="solid" class="size-5" color="green"/>
                 </x-slot>

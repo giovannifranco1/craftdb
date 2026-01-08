@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
+<html id="canvas-html" lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
     <head>
         @include('partials.head-canvas')
     </head>
@@ -9,7 +9,7 @@
         <x-ui.toast/>
         @endpersist
 
-        <div x-ref="canvasRoot" x-data="runCanvas(25, @js($isInitialLoad))" diagram-id="{{ $diagram->id }}" class="container hs-dropdown [--trigger:contextmenu] pt-12 pb-8">
+        <div x-ref="canvasRoot" x-data="runCanvas(25, @js($isInitialLoad))" diagram-id="{{ $diagram->id }}" diagram-slug="{{ $diagram->slug }}" team-id="{{ $diagram->team_id }}" class="container hs-dropdown [--trigger:contextmenu] pt-12 pb-8">
             <x-ui.context-menu/>
             <x-ui.canvas.loading/>
             <x-ui.canvas.controls/>

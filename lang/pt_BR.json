@@ -260,5 +260,13 @@
   "You cannot add the team owner as a member.": "Você não pode adicionar o proprietário do time como membro.",
   "You do not have access to this team.": "Você não tem acesso a este time.",
   "Switched to team: ": "Mudou para o time: ",
-  "You are not authorized to perform this action on this diagram.": "Você não tem permissão para realizar esta ação neste diagrama."
+  "You are not authorized to perform this action on this diagram.": "Você não tem permissão para realizar esta ação neste diagrama.",
+  "Import in two simple steps.": "Importe em dois passos simples.",
+  "Import Source": "Origem da Importação",
+  "Import a SQL file or Laravel migration to criar automaticamente a estrutura do seu diagrama.": "Importe um arquivo SQL ou Laravel migration para criar automaticamente a estrutura do seu diagrama.",
+  "Import Files": "Arquivos de Importação",
+  "Import files or framework migrations to automatically create your diagram structure.": "Importe arquivos ou migrations de framework para criar automaticamente a estrutura do seu diagrama.",
+  "Select File": "Selecionar Arquivo",
+  "Diagram :name was added to your favorites": "Diagrama :name foi adicionado aos seus favoritos",
+  "Diagram :name was removed from your favorites": "Diagrama :name foi removido dos seus favoritos"
 }

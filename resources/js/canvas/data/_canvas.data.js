@@ -1,6 +1,7 @@
 import { InfiniteCanvas } from '../classes/InfiniteCanvas.js'
 import cursorBase from '@images/icons/cursor.svg';
 import confetti from 'canvas-confetti'; 'canvas-confetti';
+import axios from 'axios';
 
 // @Alpine.js data
 export default (cellSize = 25, isInitialLoad = false, [offsetX, offsetY] = []) => ({
@@ -392,4 +393,20 @@ export default (cellSize = 25, isInitialLoad = false, [offsetX, offsetY] = []) =
         }
     },
 
+    toggleFavorite(favorite) {
+        axios.post(`/${this.$refs.canvasRoot.getAttribute('team-id')}/diagram/${this.$refs.canvasRoot.getAttribute('diagram-slug')}/toggle-favorite`).then(({data}) => {
+            const icon = this.$el.querySelector('.js-icon-favorite');
+            const unicon = this.$el.querySelector('.js-icon-unfavorite');
+
+            if (favorite) {
+                icon.classList.toggle('hidden');
+                unicon.classList.toggle('hidden');
+            } else {
+                icon.classList.toggle('hidden');
+                unicon.classList.toggle('hidden');
+            }
+
+            this.$dispatch('alert', { message: data.message });
+        });
+    }
 });

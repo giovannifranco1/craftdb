@@ -48,6 +48,7 @@ Route::middleware(['auth'])->group(function () {
 });
 
 /** Diagram */
-Route::middleware(['auth', 'role:viewer|editor', 'throttle:60,1'])->group(function () {
+Route::middleware(['auth', 'role:viewer|editor', 'role:team_id', 'throttle:60,1'])->group(function () {
     Route::get('{team_id}/diagram/{diagram:slug}', [DiagramController::class, 'show'])->name('diagram.show');
+    Route::post('{team_id}/diagram/{diagram:slug}/toggle-favorite', [DiagramController::class, 'toggleFavorite'])->name('diagram.toggle-favorite');
 });

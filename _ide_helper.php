@@ -5,7 +5,7 @@
 
 /**
  * A helper file for Laravel, to provide autocomplete information to your IDE
- * Generated for Laravel 12.45.2.
+ * Generated for Laravel 12.46.0.
  *
  * This file should not be included in your code, only analyzed by your IDE!
  *
@@ -24133,11 +24133,11 @@ namespace Livewire {
         /**
          * @static
          */
-        public static function snapshot($component, $context = null)
+        public static function snapshot($component)
         {
             //Method inherited from \Livewire\LivewireManager 
             /** @var \Livewire\Volt\LivewireManager $instance */
-            return $instance->snapshot($component, $context);
+            return $instance->snapshot($component);
         }
 
         /**
@@ -24447,14 +24447,6 @@ namespace Livewire {
             }
     }
 
-namespace LuviUI\LaravelLuvi\Facades {
-    /**
-     * @see \LuviUI\LaravelLuvi\LaravelLuvi
-     */
-    class LaravelLuvi {
-            }
-    }
-
 namespace Illuminate\Support {
     /**
      * @template TKey of array-key
@@ -24565,40 +24557,20 @@ namespace Illuminate\Routing {
 namespace Illuminate\View {
     /**
      */
+    class Factory {
+        /**
+         * @see \Flux\FluxServiceProvider::bootMacros()
+         * @static
+         */
+        public static function getCurrentComponentData()
+        {
+            return \Illuminate\View\Factory::getCurrentComponentData();
+        }
+
+            }
+    /**
+     */
     class ComponentAttributeBag {
-        /**
-         * @see \TailwindMerge\Laravel\TailwindMergeServiceProvider::registerAttributesBagMacros()
-         * @param mixed $args
-         * @return \Illuminate\View\ComponentAttributeBag
-         * @static
-         */
-        public static function twMerge(...$args)
-        {
-            return \Illuminate\View\ComponentAttributeBag::twMerge(...$args);
-        }
-
-        /**
-         * @see \TailwindMerge\Laravel\TailwindMergeServiceProvider::registerAttributesBagMacros()
-         * @param string $for
-         * @param mixed $args
-         * @return \Illuminate\View\ComponentAttributeBag
-         * @static
-         */
-        public static function twMergeFor($for, ...$args)
-        {
-            return \Illuminate\View\ComponentAttributeBag::twMergeFor($for, ...$args);
-        }
-
-        /**
-         * @see \TailwindMerge\Laravel\TailwindMergeServiceProvider::registerAttributesBagMacros()
-         * @return \Illuminate\View\ComponentAttributeBag
-         * @static
-         */
-        public static function withoutTwMergeClasses()
-        {
-            return \Illuminate\View\ComponentAttributeBag::withoutTwMergeClasses();
-        }
-
         /**
          * @see \Flux\FluxServiceProvider::bootMacros()
          * @param mixed $key
@@ -24618,19 +24590,6 @@ namespace Illuminate\View {
         public static function wire($name)
         {
             return \Illuminate\View\ComponentAttributeBag::wire($name);
-        }
-
-            }
-    /**
-     */
-    class Factory {
-        /**
-         * @see \Flux\FluxServiceProvider::bootMacros()
-         * @static
-         */
-        public static function getCurrentComponentData()
-        {
-            return \Illuminate\View\Factory::getCurrentComponentData();
         }
 
             }
@@ -29673,7 +29632,6 @@ namespace  {
     class Teams extends \Jurager\Teams\Support\Facades\Teams {}
     class Flux extends \Flux\Flux {}
     class Livewire extends \Livewire\Livewire {}
-    class LaravelLuvi extends \LuviUI\LaravelLuvi\Facades\LaravelLuvi {}
 }
 
 
