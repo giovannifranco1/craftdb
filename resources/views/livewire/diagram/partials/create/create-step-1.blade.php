@@ -6,6 +6,17 @@
         <flux:error name="name" />
     </flux:field>
 
+    <flux:field>
+        <flux:label badge="Optional">{{ __('Description') }}</flux:label>
+        <flux:textarea
+            placeholder="{{ __('Add a description for your diagram') }}"
+            class="mt-1"
+            wire:model="description"
+            rows="3"
+        />
+        <flux:error name="description" />
+    </flux:field>
+
     <div class="space-y-2">
         <flux:label class="pb-2">{{ __('Style') }}</flux:label>
 

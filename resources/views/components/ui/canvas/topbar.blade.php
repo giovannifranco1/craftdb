@@ -194,17 +194,17 @@
 
                         <flux:menu class="min-w-52">
                             <flux:menu.item disabled icon="document-duplicate">
-                                {{ __('Duplicar diagrama') }} (Em breve)
+                                {{ __('Clone (Coming Soon)') }}
                             </flux:menu.item>
 
                             <flux:menu.separator />
 
                             <flux:menu.item disabled icon="arrow-down-tray">
-                                {{ __('Exportar') }} (Em breve)
+                                {{ __('Export (Coming Soon)') }}
                             </flux:menu.item>
 
                             <flux:menu.item icon="arrow-up-tray">
-                                {{ __('Importar') }}
+                                {{ __('Import (Coming Soon)') }}
                             </flux:menu.item>
                         </flux:menu>
                     </flux:dropdown>
@@ -212,11 +212,11 @@
                     {{-- Editar Menu --}}
                     <flux:dropdown>
                         <flux:button icon="pencil-square" variant="ghost" size="xs">
-                            {{ __('Editar') }}
+                            {{ __('Edit') }}
                         </flux:button>
                         <flux:menu class="min-w-52">
                             <flux:menu.item icon="squares-2x2" x-data x-on:click="Alpine.raw(canvas).organize()">
-                                {{ __('Organizar automaticamente') }}
+                                {{ __('Organize automatically') }}
                             </flux:menu.item>
                         </flux:menu>
                     </flux:dropdown>

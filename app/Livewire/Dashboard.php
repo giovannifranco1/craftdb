@@ -63,6 +63,19 @@ class Dashboard extends Component
         $this->dispatch('alert', message: $diagram->isFavorite() ? __('Diagram :name was added to your favorites', ['name' => $diagram->name]) : __('Diagram :name was removed from your favorites', ['name' => $diagram->name]));
     }
 
+    protected $listeners = ['diagram-updated' => '$refresh'];
+
+    public function editDiagram(int $diagramId): void
+    {
+        $diagram = Diagram::findOrFail($diagramId);
+
+        if (!$this->authorizeDiagramWithAlert('update', $diagram)) {
+            return;
+        }
+
+        $this->dispatch('open-diagram-edit-modal', diagramId: $diagramId);
+    }
+
     public function deleteDiagram(Diagram $diagram, DeleteDiagramAction $action): void
     {
         if (!$this->authorizeDiagramWithAlert('delete', $diagram)) {

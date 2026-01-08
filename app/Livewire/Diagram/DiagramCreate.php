@@ -60,6 +60,7 @@ class DiagramCreate extends Component
         $this->validate([
             'name'  => 'required|string|max:255',
             'style' => 'required|in:colorful,neutral',
+            'description' => 'nullable|string|max:255',
         ]);
 
         $this->step = 2;

@@ -51,6 +51,7 @@
                 <flux:menu>
                     <flux:menu.item icon="pencil" wire:click="editDiagram({{ $diagram->id }})">{{ __('Edit') }}</flux:menu.item>
                     <flux:menu.item icon="trash" wire:click="deleteDiagram({{ $diagram->id }})" variant="danger">{{ __('Delete') }}</flux:menu.item>
+                    <flux:menu.item icon="document-duplicate" disabled>{{ __('Clone (Coming Soon)') }}</flux:menu.item>
                 </flux:menu>
             </flux:dropdown>
         </div>
@@ -91,7 +92,7 @@
             <!-- Descrição -->
             <div class="flex-1 mb-4 min-h-0">
                 @if (!is_null($diagram->description))
-                    <p class="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed line-clamp-2 mb-3">
+                    <p class="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed line-clamp-1 mb-3">
                         {{ $diagram->description }}
                     </p>
                 @else
