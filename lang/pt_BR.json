@@ -314,5 +314,7 @@
   "Table columns limit reached": "Limite de colunas atingido",
   "You have reached the maximum number of tables for this diagram.": "Você atingiu o número máximo de tabelas para este diagrama.",
   "Table :count added successfully.": "Tabela :count adicionada com sucesso.",
-  "Table Removed": "Tabela Removida"
+  "Table Removed": "Tabela Removida",
+  "Table limit reached": "Limite de tabelas atingido",
+  "Table limit": "Limite de tabelas"
 }
