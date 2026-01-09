@@ -200,11 +200,12 @@ return [
     | Schema Extraction Patterns
     |--------------------------------------------------------------------------
     |
-    | Patterns to extract Schema::create() blocks from migration files.
+    | Patterns to extract Schema blocks from migration files.
     |
     */
     'schema_patterns' => [
         'create_table' => '/Schema::create\s*\(\s*[\'"]([^\'"]+)[\'"]\s*,\s*function\s*\([^)]*\)\s*{(.*?)}\s*\)/s',
+        'alter_table' => '/Schema::table\s*\(\s*[\'"]([^\'"]+)[\'"]\s*,\s*function\s*\([^)]*\)\s*{(.*?)}\s*\)/s',
     ],
 
     /*
@@ -266,10 +267,40 @@ return [
         '->foreign(',
         '->index(',
         '->primary(',
+        '->unique(',
         '->dropForeign(',
         '->dropIndex(',
         '->dropPrimary(',
         '->dropUnique(',
+        '->dropColumn(',
+        '->renameColumn(',
+        '->dropTimestamps(',
+        '->dropSoftDeletes(',
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Drop Column Patterns
+    |--------------------------------------------------------------------------
+    |
+    | Patterns to detect column drops in Schema::table() blocks.
+    |
+    */
+    'drop_column_patterns' => [
+        // Single column: $table->dropColumn('column_name')
+        'single' => '/\$\w+\s*->\s*dropColumn\s*\(\s*[\'"]([^\'"]+)[\'"]\s*\)/i',
+        // Multiple columns: $table->dropColumn(['col1', 'col2'])
+        'multiple' => '/\$\w+\s*->\s*dropColumn\s*\(\s*\[(.*?)\]\s*\)/is',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Modify Column Patterns
+    |--------------------------------------------------------------------------
+    |
+    | Patterns to detect column modifications in Schema::table() blocks.
+    |
+    */
+    'modify_column_pattern' => '/->change\s*\(\s*\)/i',
 ];
 

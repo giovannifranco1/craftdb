@@ -80,6 +80,28 @@ class ParseLaravelMigration extends BaseSQLParse
                 }
             }
 
+            // Process Schema::table() blocks to add/modify columns in existing tables
+            foreach ($files as $file) {
+                $content = $this->getFileContent($file);
+                $tablePatterns = $this->extractSchemaTableBlocks($content);
+
+                foreach ($tablePatterns as $schemaBlock) {
+                    $tableName = $schemaBlock['table'];
+                    $blueprint = $schemaBlock['blueprint'];
+
+                    // Check if table exists in our imported tables
+                    if (isset($allTables[$tableName])) {
+                        $table = $allTables[$tableName];
+
+                        // Parse new columns from blueprint
+                        $this->parseColumns($blueprint, $table);
+
+                        // Extract foreign keys from blueprint
+                        $this->extractForeignKeysFromBlueprint($blueprint, $tableName, $allForeignKeys);
+                    }
+                }
+            }
+
             // Second pass: Create all relationships now that all tables exist
             $this->createRelationships($allForeignKeys, $allTables);
         });
@@ -110,13 +132,40 @@ class ParseLaravelMigration extends BaseSQLParse
     }
 
     /**
+     * Extract Schema::table() blocks from migration content
+     *
+     * @return array<array{table: string, blueprint: string}>
+     */
+    private function extractSchemaTableBlocks(string $content): array
+    {
+        $blocks = [];
+        $pattern = config('migration-parser.schema_patterns.alter_table',
+            '/Schema::table\s*\(\s*[\'"](\w+)[\'"]\s*,\s*function\s*\([^)]*\)\s*{([^}]*)}/s'
+        );
+
+        preg_match_all($pattern, $content, $matches, PREG_SET_ORDER);
+
+        foreach ($matches as $match) {
+            $blocks[] = [
+                'table' => $match[1],
+                'blueprint' => $match[2],
+            ];
+        }
+
+        return $blocks;
+    }
+
+    /**
      * Parse columns from blueprint code
      */
     private function parseColumns(string $blueprint, Table $table): void
     {
         // Split by lines and process each line
         $lines = explode("\n", $blueprint);
-        $order = 0;
+
+        // Get the current max order for existing columns
+        $order = Column::where('table_id', $table->id)->max('order') ?? -1;
+        $order++;
 
         foreach ($lines as $line) {
             $line = trim($line);
@@ -140,18 +189,26 @@ class ParseLaravelMigration extends BaseSQLParse
             $columnData = $this->extractColumnData($line);
 
             if ($columnData) {
-                Column::create([
-                    'table_id' => $table->id,
-                    'name' => $columnData['name'],
-                    'type' => $columnData['type'],
-                    'is_primary' => $columnData['is_primary'],
-                    'is_foreign' => $columnData['is_foreign'],
-                    'is_notnull' => $columnData['is_notnull'],
-                    'order' => $order++,
-                    'length' => $columnData['length'],
-                    'default_value' => $columnData['default_value'],
-                    'comment' => $columnData['comment'],
-                ]);
+                // Check if column already exists (for Schema::table modifications)
+                $existingColumn = Column::where('table_id', $table->id)
+                    ->where('name', $columnData['name'])
+                    ->first();
+
+                if (!$existingColumn) {
+                    // Only create if column doesn't exist
+                    Column::create([
+                        'table_id' => $table->id,
+                        'name' => $columnData['name'],
+                        'type' => $columnData['type'],
+                        'is_primary' => $columnData['is_primary'],
+                        'is_foreign' => $columnData['is_foreign'],
+                        'is_notnull' => $columnData['is_notnull'],
+                        'order' => $order++,
+                        'length' => $columnData['length'],
+                        'default_value' => $columnData['default_value'],
+                        'comment' => $columnData['comment'],
+                    ]);
+                }
             }
         }
     }
@@ -261,18 +318,25 @@ class ParseLaravelMigration extends BaseSQLParse
         foreach ($specialMethods as $method => $config) {
             if (str_contains($line, $method . '()')) {
                 foreach ($config['columns'] as $columnConfig) {
-                    Column::create([
-                        'table_id' => $table->id,
-                        'name' => $columnConfig['name'],
-                        'type' => $columnConfig['type'],
-                        'is_primary' => $columnConfig['is_primary'] ?? false,
-                        'is_foreign' => false,
-                        'is_notnull' => !($columnConfig['nullable'] ?? false),
-                        'order' => $order++,
-                        'length' => $columnConfig['length'] ?? null,
-                        'default_value' => null,
-                        'comment' => null,
-                    ]);
+                    // Check if column already exists
+                    $existingColumn = Column::where('table_id', $table->id)
+                        ->where('name', $columnConfig['name'])
+                        ->first();
+
+                    if (!$existingColumn) {
+                        Column::create([
+                            'table_id' => $table->id,
+                            'name' => $columnConfig['name'],
+                            'type' => $columnConfig['type'],
+                            'is_primary' => $columnConfig['is_primary'] ?? false,
+                            'is_foreign' => false,
+                            'is_notnull' => !($columnConfig['nullable'] ?? false),
+                            'order' => $order++,
+                            'length' => $columnConfig['length'] ?? null,
+                            'default_value' => null,
+                            'comment' => null,
+                        ]);
+                    }
                 }
                 return true;
             }
