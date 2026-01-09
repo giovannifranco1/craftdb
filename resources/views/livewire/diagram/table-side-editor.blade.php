@@ -158,7 +158,7 @@
                                                                         class="p-0.5 rounded hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
                                                                         title="Primary Key"
                                                                     >
-                                                                        <span class="text-[9px] font-bold px-1 py-0.5 rounded {{ $column->is_primary ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-300' : 'text-zinc-400 dark:text-zinc-500' }}">
+                                                                        <span class="text-[8px] font-bold px-1 py-0.5 rounded {{ $column->is_primary ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-300' : 'text-zinc-400 dark:text-zinc-500' }}">
                                                                             PK
                                                                         </span>
                                                                     </button>
@@ -168,7 +168,7 @@
                                                                         class="p-0.5 rounded hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-colors"
                                                                         title="Foreign Key"
                                                                     >
-                                                                        <span class="text-[9px] font-bold px-1 py-0.5 rounded {{ $column->is_foreign ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300' : 'text-zinc-400 dark:text-zinc-500' }}">
+                                                                        <span class="text-[8px] font-bold px-1 py-0.5 rounded {{ $column->is_foreign ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300' : 'text-zinc-400 dark:text-zinc-500' }}">
                                                                             FK
                                                                         </span>
                                                                     </button>
@@ -178,8 +178,8 @@
                                                                         class="p-0.5 rounded hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                                                                         title="Nullable"
                                                                     >
-                                                                        <span class="text-[9px] font-bold px-1 py-0.5 rounded {{ $column->is_nullable ? 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300' : 'text-zinc-400 dark:text-zinc-500' }}">
-                                                                            N
+                                                                        <span class="text-[8px] font-bold px-1 py-0.5 rounded {{ !$column->is_notnull ? 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300' : 'text-zinc-400 dark:text-zinc-500' }}">
+                                                                            NN
                                                                         </span>
                                                                     </button>
                                                                 </div>

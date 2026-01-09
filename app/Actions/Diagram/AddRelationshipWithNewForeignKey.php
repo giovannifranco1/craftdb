@@ -136,7 +136,7 @@ class AddRelationshipWithNewForeignKey
                 'name'        => str()->snake($fromTable->name) . '_id',
                 'type'        => 'bigint',
                 'is_foreign'  => true,
-                'is_nullable' => false,
+                'is_notnull'  => true,
                 'order'       => 1,
             ]);
 
@@ -144,7 +144,7 @@ class AddRelationshipWithNewForeignKey
                 'name'        => str()->snake($toTable->name) . '_id',
                 'type'        => 'bigint',
                 'is_foreign'  => true,
-                'is_nullable' => false,
+                'is_notnull'  => true,
                 'order'       => 2,
             ]);
 
@@ -190,7 +190,7 @@ class AddRelationshipWithNewForeignKey
             'name'        => 'id',
             'type'        => 'bigint',
             'is_primary'  => true,
-            'is_nullable' => false,
+            'is_notnull'  => true,
             'order'       => $order,
         ]);
     }
@@ -208,7 +208,7 @@ class AddRelationshipWithNewForeignKey
             'name'        => $nameColumnForeignKey ?? str()->snake($table->name) . '_id',
             'type'        => 'bigint',
             'is_foreign'  => true,
-            'is_nullable' => true,
+            'is_notnull'  => false,
             'order'       => $newOrder,
         ]);
     }

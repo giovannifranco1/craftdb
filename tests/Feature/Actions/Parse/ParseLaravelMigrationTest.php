@@ -104,7 +104,7 @@ describe('Column parsing', function (): void {
         expect($column)->not->toBeNull()
             ->and($column->type)->toBe('bigint')
             ->and((bool) $column->is_primary)->toBeTrue()
-            ->and((bool) $column->is_nullable)->toBeFalse();
+            ->and((bool) $column->is_notnull)->toBeTrue();
     });
 
     it('can parse string column', function () {
@@ -122,7 +122,7 @@ describe('Column parsing', function (): void {
         expect($column)->not->toBeNull()
             ->and($column->type)->toBe('varchar')
             ->and($column->length)->toBe(255)
-            ->and((bool) $column->is_nullable)->toBeFalse();
+            ->and((bool) $column->is_notnull)->toBeTrue();
     });
 
     it('can parse string column with custom length', function () {
@@ -155,7 +155,7 @@ describe('Column parsing', function (): void {
             ->first();
 
         expect($column)->not->toBeNull()
-            ->and((bool) $column->is_nullable)->toBeTrue();
+            ->and((bool) $column->is_notnull)->toBeFalse();
     });
 
     it('can parse column with default value', function () {
@@ -211,10 +211,10 @@ describe('Special methods', function (): void {
 
         expect($createdAt)->not->toBeNull()
             ->and($createdAt->type)->toBe('timestamp')
-            ->and((bool) $createdAt->is_nullable)->toBeTrue()
+            ->and((bool) $createdAt->is_notnull)->toBeFalse()
             ->and($updatedAt)->not->toBeNull()
             ->and($updatedAt->type)->toBe('timestamp')
-            ->and((bool) $updatedAt->is_nullable)->toBeTrue();
+            ->and((bool) $updatedAt->is_notnull)->toBeFalse();
     });
 
     it('can parse softDeletes()', function () {
@@ -232,7 +232,7 @@ describe('Special methods', function (): void {
 
         expect($deletedAt)->not->toBeNull()
             ->and($deletedAt->type)->toBe('timestamp')
-            ->and((bool) $deletedAt->is_nullable)->toBeTrue();
+            ->and((bool) $deletedAt->is_notnull)->toBeFalse();
     });
 });
 

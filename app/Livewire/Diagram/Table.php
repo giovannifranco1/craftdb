@@ -126,6 +126,7 @@ class Table extends Component
             'name'  => 'new_column',
             'type'  => 'varchar',
             'order' => $newOrder,
+            'is_notnull' => true,
         ];
 
         $this->table->columns()->create($baseColumn);

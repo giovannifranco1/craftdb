@@ -144,7 +144,7 @@ class ParseMySQLSchema extends BaseSQLParse
                         'type' => $columnType,
                         'is_primary' => $isPrimary,
                         'is_foreign' => false,
-                        'is_nullable' => $isNullable,
+                        'is_notnull' => !$isNullable,
                         'order' => $order++,
                         'length' => $length,
                         'default_value' => $defaultValue,

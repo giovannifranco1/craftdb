@@ -18,7 +18,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $type
  * @property int $is_primary
  * @property int $is_foreign
- * @property int $is_nullable
+ * @property int $is_notnull
  * @property int $order
  * @property int|null $length
  * @property string|null $default_value
@@ -40,7 +40,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Column whereDefaultValue($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Column whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Column whereIsForeign($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Column whereIsNullable($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Column whereIsNotnull($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Column whereIsPrimary($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Column whereLength($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Column whereName($value)

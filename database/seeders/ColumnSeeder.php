@@ -76,13 +76,13 @@ class ColumnSeeder extends Seeder
     private function createUserColumns(Table $table): void
     {
         $columns = [
-            ['name' => 'name', 'type' => 'VARCHAR', 'length' => 255, 'is_nullable' => false],
-            ['name' => 'email', 'type' => 'VARCHAR', 'length' => 255, 'is_nullable' => false],
-            ['name' => 'email_verified_at', 'type' => 'DATETIME', 'is_nullable' => true],
-            ['name' => 'password', 'type' => 'VARCHAR', 'length' => 255, 'is_nullable' => false],
-            ['name' => 'remember_token', 'type' => 'VARCHAR', 'length' => 100, 'is_nullable' => true],
-            ['name' => 'created_at', 'type' => 'DATETIME', 'is_nullable' => false],
-            ['name' => 'updated_at', 'type' => 'DATETIME', 'is_nullable' => false],
+            ['name' => 'name', 'type' => 'VARCHAR', 'length' => 255, 'is_notnull' => true],
+            ['name' => 'email', 'type' => 'VARCHAR', 'length' => 255, 'is_notnull' => true],
+            ['name' => 'email_verified_at', 'type' => 'DATETIME', 'is_notnull' => false],
+            ['name' => 'password', 'type' => 'VARCHAR', 'length' => 255, 'is_notnull' => true],
+            ['name' => 'remember_token', 'type' => 'VARCHAR', 'length' => 100, 'is_notnull' => false],
+            ['name' => 'created_at', 'type' => 'DATETIME', 'is_notnull' => true],
+            ['name' => 'updated_at', 'type' => 'DATETIME', 'is_notnull' => true],
         ];
 
         $this->createColumnsFromArray($table, $columns);
@@ -94,13 +94,13 @@ class ColumnSeeder extends Seeder
     private function createPostColumns(Table $table): void
     {
         $columns = [
-            ['name' => 'title', 'type' => 'VARCHAR', 'length' => 255, 'is_nullable' => false],
-            ['name' => 'content', 'type' => 'TEXT', 'is_nullable' => true],
-            ['name' => 'user_id', 'type' => 'BIGINT', 'is_foreign' => true, 'is_nullable' => false],
-            ['name' => 'category_id', 'type' => 'BIGINT', 'is_foreign' => true, 'is_nullable' => true],
-            ['name' => 'published_at', 'type' => 'DATETIME', 'is_nullable' => true],
-            ['name' => 'created_at', 'type' => 'DATETIME', 'is_nullable' => false],
-            ['name' => 'updated_at', 'type' => 'DATETIME', 'is_nullable' => false],
+            ['name' => 'title', 'type' => 'VARCHAR', 'length' => 255, 'is_notnull' => true],
+            ['name' => 'content', 'type' => 'TEXT', 'is_notnull' => false],
+            ['name' => 'user_id', 'type' => 'BIGINT', 'is_foreign' => true, 'is_notnull' => true],
+            ['name' => 'category_id', 'type' => 'BIGINT', 'is_foreign' => true, 'is_notnull' => false],
+            ['name' => 'published_at', 'type' => 'DATETIME', 'is_notnull' => false],
+            ['name' => 'created_at', 'type' => 'DATETIME', 'is_notnull' => true],
+            ['name' => 'updated_at', 'type' => 'DATETIME', 'is_notnull' => true],
         ];
 
         $this->createColumnsFromArray($table, $columns);
@@ -112,11 +112,11 @@ class ColumnSeeder extends Seeder
     private function createCategoryColumns(Table $table): void
     {
         $columns = [
-            ['name' => 'name', 'type' => 'VARCHAR', 'length' => 100, 'is_nullable' => false],
-            ['name' => 'slug', 'type' => 'VARCHAR', 'length' => 100, 'is_nullable' => false],
-            ['name' => 'description', 'type' => 'TEXT', 'is_nullable' => true],
-            ['name' => 'created_at', 'type' => 'DATETIME', 'is_nullable' => false],
-            ['name' => 'updated_at', 'type' => 'DATETIME', 'is_nullable' => false],
+            ['name' => 'name', 'type' => 'VARCHAR', 'length' => 100, 'is_notnull' => true],
+            ['name' => 'slug', 'type' => 'VARCHAR', 'length' => 100, 'is_notnull' => true],
+            ['name' => 'description', 'type' => 'TEXT', 'is_notnull' => false],
+            ['name' => 'created_at', 'type' => 'DATETIME', 'is_notnull' => true],
+            ['name' => 'updated_at', 'type' => 'DATETIME', 'is_notnull' => true],
         ];
 
         $this->createColumnsFromArray($table, $columns);

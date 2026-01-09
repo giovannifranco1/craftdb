@@ -17,7 +17,7 @@ class Helpers
         }
 
         // Foreign key (nullable) - red solid
-        elseif ($column->is_foreign && $column->is_nullable) {
+        elseif ($column->is_foreign && $column->is_notnull) {
             $iconComponent = '<flux:icon.circle-small variant="solid" class="size-2.5 text-red-400"/>';
         }
         // Foreign key (not nullable) - red outline
@@ -25,7 +25,7 @@ class Helpers
             $iconComponent = '<flux:icon.circle-small class="size-2.5 text-red-400"/>';
         }
 
-        elseif ($column->is_nullable) {
+        elseif ($column->is_notnull) {
             $iconComponent = '<flux:icon.circle-small variant="solid" class="size-2.5 text-blue-300"/>';
         }
         // Default case

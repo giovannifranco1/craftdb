@@ -231,7 +231,7 @@ final class TableSideEditor extends Component
             'length'        => $this->columnForm->length,
             'is_primary'    => $this->columnForm->isPrimary,
             'is_foreign'    => $this->columnForm->isForeign,
-            'is_nullable'   => $this->columnForm->isNullable,
+            'is_notnull'    => !$this->columnForm->isNullable,
             'default_value' => $this->columnForm->defaultValue,
             'comment'       => $this->columnForm->comment,
         ]);
@@ -304,7 +304,7 @@ final class TableSideEditor extends Component
         }
 
         $column->update([
-            'is_nullable' => !$column->is_nullable,
+            'is_notnull' => !$column->is_notnull,
         ]);
 
         $this->dispatch('table::column-saved');
@@ -493,7 +493,7 @@ final class TableSideEditor extends Component
         $this->columnForm->length = $column->length;
         $this->columnForm->isPrimary = $column->is_primary;
         $this->columnForm->isForeign = $column->is_foreign;
-        $this->columnForm->isNullable = $column->is_nullable;
+        $this->columnForm->isNullable = !$column->is_notnull;
         $this->columnForm->defaultValue = $column->default_value;
         $this->columnForm->comment = $column->comment;
     }

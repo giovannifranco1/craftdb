@@ -102,7 +102,7 @@
                                                 FOREIGN
                                             </span>
                                         @endif
-                                        @if($column->is_nullable)
+                                        @if(!$column->is_notnull)
                                             <span class="inline-flex items-center gap-1 text-[9px] font-bold px-1.5 py-0.5 rounded bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
                                                 NULL
                                             </span>

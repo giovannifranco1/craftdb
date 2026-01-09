@@ -146,7 +146,7 @@ class ParseLaravelMigration extends BaseSQLParse
                     'type' => $columnData['type'],
                     'is_primary' => $columnData['is_primary'],
                     'is_foreign' => $columnData['is_foreign'],
-                    'is_nullable' => $columnData['is_nullable'],
+                    'is_notnull' => $columnData['is_notnull'],
                     'order' => $order++,
                     'length' => $columnData['length'],
                     'default_value' => $columnData['default_value'],
@@ -159,7 +159,7 @@ class ParseLaravelMigration extends BaseSQLParse
     /**
      * Extract column data from a blueprint line
      *
-     * @return array{name: string, type: string, is_primary: bool, is_foreign: bool, is_nullable: bool, length: int|null, default_value: string|null, comment: string|null}|null
+     * @return array{name: string, type: string, is_primary: bool, is_foreign: bool, is_notnull: bool, length: int|null, default_value: string|null, comment: string|null}|null
      */
     private function extractColumnData(string $line): ?array
     {
@@ -170,7 +170,7 @@ class ParseLaravelMigration extends BaseSQLParse
                 'type' => 'bigint',
                 'is_primary' => true,
                 'is_foreign' => false,
-                'is_nullable' => false,
+                'is_notnull' => true,
                 'length' => null,
                 'default_value' => null,
                 'comment' => null,
@@ -225,7 +225,7 @@ class ParseLaravelMigration extends BaseSQLParse
             'type' => $type,
             'is_primary' => $isPrimary,
             'is_foreign' => $isForeign,
-            'is_nullable' => $isNullable,
+            'is_notnull' => !$isNullable,
             'length' => $length,
             'default_value' => $defaultValue,
             'comment' => $comment,
@@ -267,7 +267,7 @@ class ParseLaravelMigration extends BaseSQLParse
                         'type' => $columnConfig['type'],
                         'is_primary' => $columnConfig['is_primary'] ?? false,
                         'is_foreign' => false,
-                        'is_nullable' => $columnConfig['nullable'] ?? false,
+                        'is_notnull' => !($columnConfig['nullable'] ?? false),
                         'order' => $order++,
                         'length' => $columnConfig['length'] ?? null,
                         'default_value' => null,
