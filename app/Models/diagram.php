@@ -44,6 +44,8 @@ class Diagram extends Model
     /** @use HasFactory<\Database\Factories\DiagramFactory> */
     use HasFactory;
 
+    const TABLE_LIMIT = 30;
+
     protected $table = 'diagram';
 
     /**

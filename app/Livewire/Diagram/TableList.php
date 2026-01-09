@@ -67,6 +67,11 @@ class TableList extends Component
             return;
         }
 
+        if ($this->diagram->tables()->count() >= Diagram::TABLE_LIMIT) {
+            $this->dispatch('alert', message: __('You have reached the maximum number of tables for this diagram.'), type: 'error');
+            return;
+        }
+
         $table = $this->diagram->tables()->create([
             'name'  => 'teste',
             'x'     => $x,
@@ -76,7 +81,7 @@ class TableList extends Component
 
         $count = $this->diagram->tables()->count();
 
-        $this->dispatch('alert', message: "Table $count added successfully.");
+        $this->dispatch('alert', message: __('Table :count added successfully.', ['count' => $count]));
         $this->dispatch('table::added', tableId: $table->id);
     }
 

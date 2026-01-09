@@ -310,5 +310,9 @@
   "Organize automatically": "Organizar automaticamente",
   "Arquivo": "Arquivo",
   "Export": "Exportar",
-  "Import": "Importar"
+  "Import": "Importar",
+  "Table columns limit reached": "Limite de colunas atingido",
+  "You have reached the maximum number of tables for this diagram.": "Você atingiu o número máximo de tabelas para este diagrama.",
+  "Table :count added successfully.": "Tabela :count adicionada com sucesso.",
+  "Table Removed": "Tabela Removida"
 }

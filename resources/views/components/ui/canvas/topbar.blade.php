@@ -6,8 +6,19 @@
     $updatedAt = $diagram->updated_at?->diffForHumans() ?? __('agora mesmo');
 @endphp
 
-<div class="canvas-topbar pointer-events-none fixed inset-x-0 top-0 z-20 flex justify-center px-9 pt-5">
-    <flux:header style="padding-right: 1rem; padding-left: 0.5rem;" sticky class="md:block pointer-events-auto w-full rounded-lg border-b border-zinc-200/70 bg-white/85 pb-1.5 pt-3 text-sm shadow-sm shadow-zinc-900/5 backdrop-blur-md dark:border-zinc-800/70 dark:bg-[#0F0F0F]">
+<div
+    x-data="{ visible: true }"
+    x-init="visible = localStorage.getItem('canvas-topbar-visible') !== 'false'"
+    @topbar-toggled.window="visible = $event.detail.visible"
+    class="canvas-topbar pointer-events-none fixed inset-x-0 top-0 z-20 flex justify-center px-9 transition-transform duration-300"
+    x-bind:class="visible ? 'pt-5' : '-translate-y-full pt-0'"
+>
+    <flux:header
+        style="padding-right: 1rem; padding-left: 0.5rem;"
+        sticky
+        class="md:block pointer-events-auto w-full rounded-lg border-b border-zinc-200/70 bg-white/85 pb-1.5 pt-3 text-sm shadow-sm shadow-zinc-900/5 backdrop-blur-md dark:border-zinc-800/70 dark:bg-[#0F0F0F] transition-all duration-300"
+        x-bind:class="visible ? 'opacity-100' : 'opacity-0'"
+    >
         <div class="flex flex-col gap-2">
 
             <div class="flex flex-col gap-2">
@@ -278,7 +289,7 @@
                         @area::column-updated.window="updatedAt = '{{ __('agora mesmo') }}'"
                         @area::column-deleted.window="updatedAt = '{{ __('agora mesmo') }}'"
                         class="flex flex-wrap items-center gap-3 text-[13px] text-zinc-500 dark:text-zinc-400">
-                        <flux:badge size="sm" variant="soft" color="emerald" class="text-[10px] dark:bg-emerald-900/40">
+                        <flux:badge size="md" variant="soft" color="emerald" class="text-[10px] dark:bg-emerald-900/40">
                             {{ __('Updated') }}<span class="ms-1" x-text="updatedAt"></span>
                         </flux:badge>
                     </div>
@@ -287,5 +298,34 @@
 
         </div>
     </flux:header>
+
+    <!-- Toggle Button (attached to topbar) -->
+    <button
+        @click="visible = !visible; localStorage.setItem('canvas-topbar-visible', visible); $dispatch('topbar-toggled', { visible: visible })"
+        x-show="visible"
+        x-transition
+        class="pointer-events-auto absolute -bottom-8 left-1/2 -translate-x-1/2 rounded-b-lg border border-t-0 border-zinc-200/70 bg-white/95 px-3 py-1 text-zinc-600 shadow-sm backdrop-blur-sm transition-all duration-300 hover:bg-white hover:text-zinc-900 dark:border-zinc-800/70 dark:bg-[#0F0F0F]/95 dark:text-zinc-400 dark:hover:bg-[#0F0F0F] dark:hover:text-zinc-100"
+        title="{{ __('Esconder barra superior') }}"
+    >
+        <flux:icon.chevron-up class="size-4" />
+    </button>
+</div>
+
+<!-- Toggle Button (floating when topbar is hidden) -->
+<div
+    x-data="{ visible: true }"
+    x-init="visible = localStorage.getItem('canvas-topbar-visible') !== 'false'"
+    @topbar-toggled.window="visible = $event.detail.visible"
+    x-show="!visible"
+    x-transition
+    class="pointer-events-none fixed inset-x-0 top-0 z-20 flex justify-center px-9 pt-3"
+>
+    <button
+        @click="visible = !visible; localStorage.setItem('canvas-topbar-visible', visible); $dispatch('topbar-toggled', { visible: visible })"
+        class="pointer-events-auto rounded-b-lg border border-t-0 border-zinc-200/70 bg-white/95 px-3 py-1.5 text-zinc-600 shadow-md backdrop-blur-sm transition-all duration-300 hover:bg-white hover:text-zinc-900 hover:shadow-lg dark:border-zinc-800/70 dark:bg-[#0F0F0F]/95 dark:text-zinc-400 dark:hover:bg-[#0F0F0F] dark:hover:text-zinc-100"
+        title="{{ __('Mostrar barra superior') }}"
+    >
+        <flux:icon.chevron-down class="size-4" />
+    </button>
 </div>
 

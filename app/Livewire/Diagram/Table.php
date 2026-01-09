@@ -36,6 +36,8 @@ class Table extends Component
     #[Locked]
     public int $diagramId;
 
+    public int $maxColumns;
+
     #[Validate('required|string|max:255')]
     public ?string $name = null;
 
@@ -51,6 +53,7 @@ class Table extends Component
         $this->table = $table;
         $this->diagramId = $table->diagram_id;
         $this->name = $table->name;
+        $this->maxColumns = TableModel::MAX_COLUMNS;
     }
 
     #[Computed(persist: true)]
@@ -119,6 +122,11 @@ class Table extends Component
             return;
         }
 
+        if ($this->table->columns()->count() >= $this->maxColumns) {
+            $this->dispatch('alert', message: __('You have reached the maximum number of columns for this table.'), type: 'error');
+            return;
+        }
+
         $maxOrder = $this->table->columns()->max('order');
         $newOrder = Helpers::calculateNextOrder($maxOrder);
 
@@ -165,7 +173,7 @@ class Table extends Component
             $this->table->delete();
         });
 
-        $this->dispatch('alert', message: "Table Removed");
+        $this->dispatch('alert', message: __('Table Removed'));
         $this->dispatch('table::removed');
         $this->dispatch('relationships::fresh', relationships: Diagram::find($this->diagramId)->relationships()->get());
     }

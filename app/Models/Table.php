@@ -47,6 +47,8 @@ class Table extends Model
     /** @use HasFactory<\Database\Factories\TableFactory> */
     use HasFactory;
 
+    const MAX_COLUMNS = 50;
+
     protected $table = 'table';
 
     /**
