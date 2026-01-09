@@ -45,14 +45,4 @@ class TableObserver
             'updated_at' => now(),
         ]);
     }
-
-    /**
-     * Handle the Table "force deleted" event.
-     */
-    public function forceDeleted(Table $table): void
-    {
-        $table->diagram->update([
-            'updated_at' => now(),
-        ]);
-    }
 }

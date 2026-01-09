@@ -23,11 +23,11 @@ class Table extends Component
 
     /** @var array<string, string>  */
     protected $listeners = [
-        'table::column-saved' => '$refresh',
-        'table-side-editor::column-added'   => '$refresh',
-        'table-side-editor::column-saved'   => '$refresh',
-        'table-side-editor::column-deleted' => '$refresh',
-        'table-side-editor::column-updated' => '$refresh',
+        'table::column-saved' => 'refreshTableWithCounts',
+        'table-side-editor::column-added'   => 'refreshTableWithCounts',
+        'table-side-editor::column-saved'   => 'refreshTableWithCounts',
+        'table-side-editor::column-deleted' => 'refreshTableWithCounts',
+        'table-side-editor::column-updated' => 'refreshTableWithCounts',
     ];
 
     #[Locked]

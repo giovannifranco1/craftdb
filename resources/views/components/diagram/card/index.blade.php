@@ -1,5 +1,5 @@
 @php
-    $database = 'mysql'; // TODO: Adicionar campo database na tabela diagram
+
     $databaseLabels = [
         'mysql' => 'MySQL',
         'postgresql' => 'PostgreSQL',
@@ -70,11 +70,11 @@
                         <flux:badge
                             size="sm"
                             variant="soft"
-                            color="{{ $databaseColors[$database] ?? 'blue' }}"
+                            color="{{ $databaseColors[$diagram->database] ?? 'blue' }}"
                             class="shrink-0"
                         >
-                            <flux:icon name="database.{{ $database }}" class="size-3 me-1" />
-                            {{ $databaseLabels[$database] ?? ucfirst($database) }}
+                            <flux:icon name="database.{{ $diagram->database }}" class="size-3 me-1" />
+                            {{ $databaseLabels[$diagram->database] ?? ucfirst($diagram->database) }}
                         </flux:badge>
                         <flux:badge
                             size="sm"

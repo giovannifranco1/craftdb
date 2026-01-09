@@ -39,7 +39,7 @@
                                 @keydown.enter="loadingRenameColumn = true; $wire.renameColumn({{ $column->id }}, $refs.inputColumn?.value || null)"
                                 @keydown.escape.stop="isEventRenameColumn = false;"
                                 @table::column-renamed.window="isEventRenameColumn = false; loadingRenameColumn = false;"
-                                @blur="isEventRenameColumn = false; $wire.refreshTableWithCounts()"
+                                @blur="loadingRenameColumn = true; $wire.renameColumn({{ $column->id }}, $refs.inputColumn?.value || null)"
                             />
                             <span
                                 x-show="!isEventRenameColumn"
@@ -52,7 +52,7 @@
                     </td>
 
                     <td>
-                        <span class="inline-flex items-center px-2 rounded text-xs uppercase font-medium bg-gray-100 dark:bg-zinc-700 text-gray-800 dark:text-zinc-200">
+                        <span class="inline-flex items-center px-2 rounded text-[11px] uppercase font-medium bg-gray-100 dark:bg-zinc-700 text-gray-800 dark:text-zinc-200">
                             @if($column->length > 0)
                                 @php
                                     $lengthStr = (string)$column->length;

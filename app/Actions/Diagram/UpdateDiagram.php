@@ -2,7 +2,9 @@
 
 namespace App\Actions\Diagram;
 
+use App\Models\Column;
 use App\Models\Diagram;
+use Illuminate\Support\Facades\DB;
 
 /**
  * @phpstan-type DTODiagramUpdate array{
@@ -23,9 +25,14 @@ class UpdateDiagram
 
         // If style or database changed, delete all tables
         if ($this->_hasModifiedStyleOrDatabase($diagram, $data)) {
-            $diagram->tables()->delete();
-            $diagram->areas()->delete();
-            $diagram->notes()->delete();
+            DB::transaction(function () use ($diagram) {
+                $tableIds = $diagram->tables()->pluck('id');
+                $diagram->relationships()->delete();
+                Column::whereIn('table_id', $tableIds)->delete();
+                $diagram->tables()->delete();
+                $diagram->areas()->delete();
+                $diagram->notes()->delete();
+            });
         }
 
         // Update basic info

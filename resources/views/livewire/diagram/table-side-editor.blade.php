@@ -120,6 +120,7 @@
                                         role="tabpanel"
                                         aria-labelledby="tabs-with-badges-item-1"
                                         @table-side-editor::column-reordered.window="$wire.$refresh()"
+                                        x-data="{ isEventUpdateColumn: 0 }"
                                     >
                                         <div class="grid grid-cols-[600px_1fr] gap-4 h-[45vh]">
                                             <!-- Lista de Colunas (Esquerda) -->
@@ -134,7 +135,7 @@
                                                     >
                                                         <div class="flex items-center justify-between px-2.5 py-0.5">
                                                             <div
-                                                                wire:click="selectColumn({{ $column->id }})"
+                                                                x-on:click="$wire.selectColumn({{ $column->id }}); isEventUpdateColumn++;"
                                                                 class="flex items-center gap-1.5 flex-1 min-w-0 cursor-pointer"
                                                             >
                                                                 <div class="flex-shrink-0">
@@ -257,11 +258,25 @@
                                                             </div>
                                                             <div class="p-4 space-y-3 overflow-y-auto flex-1">
                                                                 <!-- Formulário de Edição -->
-                                                                <form wire:submit.prevent="updateColumn({{ $selectedColumn->id }})" class="space-y-3">
+                                                                <form
+                                                                    x-trap="isEventUpdateColumn"
+                                                                    x-data="{
+                                                                        init() {
+                                                                            $watch('isEventUpdateColumn', () => {
+                                                                                $nextTick(() => {
+                                                                                    $refs.firstInput?.focus();
+                                                                                });
+                                                                            });
+                                                                        }
+                                                                    }"
+                                                                    wire:submit.prevent="updateColumn({{ $selectedColumn->id }})"
+                                                                    class="space-y-3"
+                                                                >
                                                                     <!-- Nome da Coluna -->
                                                                     <div>
                                                                         <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Nome</label>
                                                                         <input
+                                                                            x-ref="firstInput"
                                                                             type="text"
                                                                             wire:model="columnForm.name"
                                                                             class="w-full text-xs border border-zinc-300 dark:border-zinc-600 rounded-md px-2.5 py-1.5 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-[var(--table-base-bg)] focus:border-[var(--table-base-bg)]"

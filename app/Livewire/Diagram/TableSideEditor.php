@@ -31,6 +31,8 @@ final class TableSideEditor extends Component
     public ?int $editingColumnId = null;
     public string $editingColumnName = '';
 
+    public bool $isEventUpdateColumn = false;
+
     public ColumnForm $columnForm;
 
     public function mount(?Table $table = null): void
@@ -175,6 +177,10 @@ final class TableSideEditor extends Component
 
     public function updateColumnName(int $columnId): void
     {
+        if (!$this->authorizeDiagramWithAlert('update', $this->getTable()->diagram)) {
+            return;
+        }
+
         $this->validate([
             'editingColumnName' => 'required|string|max:255',
         ]);
@@ -194,11 +200,17 @@ final class TableSideEditor extends Component
         ]);
 
         $this->cancelEditingColumnName();
-        $this->dispatch('table::column-saved');
+        $this->dispatch('table-side-editor::column-saved');
     }
 
     public function updateColumn(int $columnId): void
     {
+        if (!$this->authorizeDiagramWithAlert('update', $this->getTable()->diagram)) {
+            return;
+        }
+
+        $this->isEventUpdateColumn = true;
+
         $this->columnForm->validate();
 
         $table = $this->getTable();
@@ -224,14 +236,19 @@ final class TableSideEditor extends Component
             'comment'       => $this->columnForm->comment,
         ]);
 
+        $this->selectedColumnId = null;
         $this->resetForms();
+
         $this->dispatch('table-side-editor::column-updated');
         $this->dispatch('alert', message: __('Column updated successfully!'));
-        $this->selectedColumnId = null;
     }
 
     public function deleteColumn(): void
     {
+        if (!$this->authorizeDiagramWithAlert('update', $this->getTable()->diagram)) {
+            return;
+        }
+
         $column = $this->getSelectedColumn();
 
         if (!$column) {
@@ -247,6 +264,10 @@ final class TableSideEditor extends Component
 
     public function deleteColumnById(int $columnId): void
     {
+        if (!$this->authorizeDiagramWithAlert('update', $this->getTable()->diagram)) {
+            return;
+        }
+
         $table = $this->getTable();
         if (!$table) {
             return;
@@ -268,6 +289,10 @@ final class TableSideEditor extends Component
 
     public function toggleNullable(int $columnId): void
     {
+        if (!$this->authorizeDiagramWithAlert('update', $this->getTable()->diagram)) {
+            return;
+        }
+
         $table = $this->getTable();
         if (!$table) {
             return;
@@ -287,6 +312,10 @@ final class TableSideEditor extends Component
 
     public function togglePrimaryKey(int $columnId): void
     {
+        if (!$this->authorizeDiagramWithAlert('update', $this->getTable()->diagram)) {
+            return;
+        }
+
         $table = $this->getTable();
         if (!$table) {
             return;
@@ -306,6 +335,10 @@ final class TableSideEditor extends Component
 
     public function toggleForeignKey(int $columnId): void
     {
+        if (!$this->authorizeDiagramWithAlert('update', $this->getTable()->diagram)) {
+            return;
+        }
+
         $table = $this->getTable();
         if (!$table) {
             return;
@@ -328,6 +361,10 @@ final class TableSideEditor extends Component
      */
     private function normalizeColumnOrders(): void
     {
+        if (!$this->authorizeDiagramWithAlert('update', $this->getTable()->diagram)) {
+            return;
+        }
+
         $table = $this->getTable();
         if (!$table) {
             return;
@@ -346,6 +383,10 @@ final class TableSideEditor extends Component
 
     public function moveColumnUp(int $columnId): void
     {
+        if (!$this->authorizeDiagramWithAlert('update', $this->getTable()->diagram)) {
+            return;
+        }
+
         $table = $this->getTable();
         if (!$table) {
             return;
@@ -379,6 +420,10 @@ final class TableSideEditor extends Component
 
     public function moveColumnDown(int $columnId): void
     {
+        if (!$this->authorizeDiagramWithAlert('update', $this->getTable()->diagram)) {
+            return;
+        }
+
         $table = $this->getTable();
         if (!$table) {
             return;
@@ -429,6 +474,10 @@ final class TableSideEditor extends Component
 
     public function loadColumnData(int $columnId): void
     {
+        if (!$this->authorizeDiagramWithAlert('update', $this->getTable()->diagram)) {
+            return;
+        }
+
         $table = $this->getTable();
         if (!$table) {
             return;
@@ -452,6 +501,7 @@ final class TableSideEditor extends Component
     public function startEditingColumnName(int $columnId): void
     {
         $table = $this->getTable();
+
         if (!$table) {
             return;
         }
