@@ -8,6 +8,7 @@ use Livewire\Attributes\Computed;
 
 
 new class extends Component {
+
     public function switchTeam(int $teamId): void
     {
         /** @var User */
@@ -64,7 +65,7 @@ new class extends Component {
                 >
                     <div class="flex items-center justify-between w-full">
                         <span>{{ $team->name }}</span>
-                        @if($currentTeam && $currentTeam->id === $team->id)
+                        @if(Team::currentTeam() && Team::currentTeam()->id === $team->id)
                             <flux:icon.check-circle class="size-4 text-[#15B8A5]" />
                         @endif
                     </div>

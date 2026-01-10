@@ -31,6 +31,6 @@ class InviteController extends Controller
         // Accept the invitation
         $team->inviteAccept($invitation->id);
 
-        return redirect('/')->with('status', __('Success! You have accepted the invitation to join the :team team.', ['team' => $team->name]));
+        return redirect('/dashboard')->with('message', __('Success! You have accepted the invitation to join the :team team.', ['team' => $team->name]));
     }
 }

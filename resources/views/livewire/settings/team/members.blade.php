@@ -6,6 +6,10 @@ use App\Models\Team\Role;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 use Livewire\Volt\Component;
+use Livewire\Attributes\Computed;
+use Illuminate\Support\Collection;
+use App\Models\Team\Invitation;
+use App\Notifications\TeamInvitationNotification;
 
 new class extends Component {
     public ?Team $team = null;
@@ -21,11 +25,11 @@ new class extends Component {
         $this->role_id = $roles->first()?->id ?? 0;
     }
 
-    public function addMember(): void
+    public function inviteMember(): void
     {
         $this->authorize('addTeamMember', Team::currentTeam());
 
-        $validated = $this->validate(   [
+        $validated = $this->validate([
             'email' => ['required', 'email', 'exists:users,email'],
             'role_id' => ['required', 'exists:role,id'],
         ], [
@@ -46,11 +50,22 @@ new class extends Component {
             return;
         }
 
-        $this->team->users()->attach($user->id, ['role_id' => $validated['role_id']]);
+
+
+        $invitation = Invitation::create([
+            'team_id' => $this->team->id,
+            'email' => $validated['email'],
+            'role_id' => $validated['role_id'],
+        ]);
+
+        // Load relationships before sending notification
+        $invitation->load(['team', 'role']);
+
+        $user->notify(new TeamInvitationNotification($invitation));
 
         $this->reset('email', 'role_id');
-        $this->dispatch('alert', message: __('Team member added successfully.'));
-        $this->dispatch('member-added');
+        $this->dispatch('alert', message: __('Invitation sent successfully.'));
+        $this->dispatch('invitation-sent');
     }
 
     public function removeMember(int $userId): void
@@ -80,6 +95,45 @@ new class extends Component {
             $this->dispatch('alert', message: __('Member role updated successfully.'));
         }
     }
+
+    #[Computed]
+    public function invitations(): Collection
+    {
+        return Invitation::where('team_id', $this->team->id)->get();
+    }
+
+    public function resendInvitation(int $invitationId): void
+    {
+        $invitation = Invitation::where('team_id', $this->team->id)
+            ->where('id', $invitationId)
+            ->first();
+
+        if ($invitation && $invitation->hasReachedMaxInvitationsPerDay(auth()->user()->email)) {
+            $this->dispatch('alert', message: __('You have reached the maximum number of invitations per day.'), type: 'error');
+            return;
+        }
+
+        $user = User::where('email', $invitation->email)->first();
+
+        if ($invitation && $user) {
+            $user->notify(new TeamInvitationNotification($invitation));
+            $this->dispatch('alert', message: __('Invitation resent successfully.'));
+            $this->dispatch('invitation-resent');
+        }
+    }
+
+    public function cancelInvitation(int $invitationId): void
+    {
+        $invitation = Invitation::where('team_id', $this->team->id)
+            ->where('id', $invitationId)
+            ->first();
+
+        if ($invitation) {
+            $invitation->delete();
+            $this->dispatch('alert', message: __('Invitation cancelled successfully.'));
+            $this->dispatch('invitation-cancelled');
+        }
+    }
 }; ?>
 
 <section class="w-full">
@@ -88,7 +142,7 @@ new class extends Component {
     <x-settings.layout :heading="__('Team Members')" :subheading="__('All of the people that are part of this team.')">
         <!-- Add Member Form -->
         <div class="my-6">
-            <form wire:submit="addMember" class="space-y-4">
+            <form wire:submit="inviteMember" class="space-y-4">
                 <flux:input
                     wire:model="email"
                     :label="__('Email Address')"
@@ -154,7 +208,7 @@ new class extends Component {
                 </div>
 
                 <flux:button variant="primary" type="submit">
-                    {{ __('Add Member') }}
+                    {{ __('Invite Member') }}
                 </flux:button>
             </form>
         </div>
@@ -235,6 +289,49 @@ new class extends Component {
                         </div>
                     </div>
                 @endforeach
+
+                @if(!$this->invitations->isEmpty())
+                    <flux:heading size="lg">{{ __('Pending Invitations') }}</flux:heading>
+
+                    <div class="space-y-3">
+                        @foreach($this->invitations as $invitation)
+                            <div class="flex items-center justify-between p-4 rounded-lg border border-zinc-200 dark:border-zinc-700">
+                                <div class="flex items-center gap-3">
+                                    <div class="flex h-10 w-10 items-center justify-center rounded-full bg-zinc-100 dark:bg-zinc-800">
+                                        <flux:icon.envelope class="size-5 text-zinc-500" />
+                                    </div>
+                                    <div>
+                                        <div class="font-medium text-sm">{{ $invitation->email }}</div>
+                                        <div class="text-xs text-zinc-500 dark:text-zinc-400">
+                                            {{ __('Role') }}: {{ $invitation->role->name ?? $invitation->role->code }}
+                                            <span class="mx-1">•</span>
+                                            {{ __('Sent') }} {{ $invitation->created_at->diffForHumans() }}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center gap-2">
+                                    <flux:button
+                                        wire:click="resendInvitation({{ $invitation->id }})"
+                                        variant="ghost"
+                                        size="sm"
+                                    >
+                                        {{ __('Resend') }}
+                                    </flux:button>
+
+                                    <flux:button
+                                        wire:click="cancelInvitation({{ $invitation->id }})"
+                                        wire:confirm="{{ __('Are you sure you want to cancel this invitation?') }}"
+                                        variant="danger"
+                                        size="sm"
+                                    >
+                                        {{ __('Cancel') }}
+                                    </flux:button>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
             </div>
         </div>
     </x-settings.layout>

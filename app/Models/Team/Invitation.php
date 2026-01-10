@@ -5,6 +5,7 @@ namespace App\Models\Team;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\Config;
 use Jurager\Teams\Support\Facades\Teams as TeamsFacade;
 
@@ -31,6 +32,7 @@ use Jurager\Teams\Support\Facades\Teams as TeamsFacade;
  */
 class Invitation extends Model
 {
+    const MAX_INVITATIONS_PER_DAY = 10;
     protected $table = 'invitation';
 
     /**
@@ -69,5 +71,12 @@ class Invitation extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(TeamsFacade::model('user'), 'email', 'email');
+    }
+
+    public function hasReachedMaxInvitationsPerDay(string $email): bool
+    {
+        return $this->where('email', $email)
+            ->where('created_at', '>=', now()->subDay())
+            ->count() >= self::MAX_INVITATIONS_PER_DAY;
     }
 }

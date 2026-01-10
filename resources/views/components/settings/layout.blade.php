@@ -15,9 +15,8 @@
             <flux:separator class="my-2" />
             <flux:navlist.group expandable heading="{{ __('Team Settings') }}" class="mt-2">
                 <flux:navlist.item :href="route('team.edit')" wire:navigate>{{ __('Team Information') }}</flux:navlist.item>
-                <flux:navlist.item :href="route('team.create')" wire:navigate>{{ __('Create Team') }}</flux:navlist.item>
+                <flux:navlist.item :href="route('team.create')" wire:navigate>{{ __('Create New Team') }}</flux:navlist.item>
                     <flux:navlist.item :href="route('team.members.edit')" wire:navigate>{{ __('Members') }}</flux:navlist.item>
-                    <flux:navlist.item :href="route('team.invitations.edit')" wire:navigate>{{ __('Invitations') }}</flux:navlist.item>
                 </flux:navlist.group>
             @endif
         </flux:navlist>

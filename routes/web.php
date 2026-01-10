@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\InviteController;
 use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\Pages\DiagramController;
 use App\Livewire\Dashboard;
@@ -20,6 +21,11 @@ Route::get('/', fn () => view('landing-page.index'))->name('home');
 /** Dashboard */
 Route::get('/dashboard', Dashboard::class)->middleware(['auth', 'verified'])->name('dashboard');
 Route::get('/my-favorites', MyFavorites::class)->middleware(['auth', 'verified'])->name('dashboard.my-favorites');
+
+/** Invitations */
+Route::middleware(['auth'])->group(function () {
+    Route::get('/invite/{invitation}/accept', [InviteController::class, 'inviteAccept'])->name('invite.accept');
+});
 
 /** Settings */
 Route::middleware(['auth'])->group(function () {

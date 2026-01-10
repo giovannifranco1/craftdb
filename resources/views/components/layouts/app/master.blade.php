@@ -106,6 +106,6 @@
         </x-flux::footer>
 
         <livewire:diagram.diagram-create/>
-        @fluxScripts
+            @fluxScripts
     </body>
 </html>

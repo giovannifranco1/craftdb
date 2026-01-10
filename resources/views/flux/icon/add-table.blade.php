@@ -26,13 +26,8 @@
 @endphp
 <svg
     {{ $attributes->class($classes) }}
-    data-flux-icon aria-hidden="true" width="26" height="26" viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="2">
-    <g clip-path="url(#clip0_2028_107)">
-    <path d="M3.99999 1.99998H20C20.888 2.40084 21.5991 3.112 22 3.99998V14M14 22H3.99999C3.11991 21.7732 2.34328 21.2535 1.79799 20.5265C1.25269 19.7994 0.971246 18.9084 0.999988 18V3.99998C1.3917 3.30614 1.98171 2.74509 2.69437 2.38876C3.40704 2.03242 4.20988 1.89705 4.99999 1.99998M22 17V25M18 21H26M0.999988 7.99998H22" stroke="currentColor" stroke-width="2"/>
-    </g>
-    <defs>
-    <clipPath id="clip0_2028_107">
-    <rect width="26" height="26" fill="white"/>
-    </clipPath>
-    </defs>
+    data-flux-icon
+    width="24" height="23" viewBox="0 0 24 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M3.64155 2.02911H17.7204C18.5018 2.37717 19.1276 2.99467 19.4803 3.76571V12.4487M12.4408 19.3951H3.64155C2.86714 19.1982 2.18376 18.747 1.70394 18.1157C1.22413 17.4844 0.976471 16.7106 1.00176 15.9219V3.76571C1.34644 3.16324 1.86561 2.67608 2.4927 2.36668C3.1198 2.05728 3.82624 1.93973 4.52148 2.02911M19.4803 15.0536V22M15.9606 18.5268H23M1.00176 7.23891H19.4803" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
 </svg>
+
