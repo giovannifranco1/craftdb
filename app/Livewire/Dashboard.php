@@ -8,6 +8,7 @@ use App\Models\Diagram;
 use App\Models\Team\Team;
 use Illuminate\Contracts\View\View;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Cache;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Lazy;
 use Livewire\Attributes\Title;
@@ -32,12 +33,17 @@ class Dashboard extends Component
 
     public function mount(): void
     {
-        session()->put('diagrams_count', Diagram::query()
-            ->where('team_id', Team::currentTeam()->getKey())
-            ->count());
+        session()->put('diagrams_count',
+        Cache::remember(
+            "diagrams_count_{$this->favorites}_{$this->search}_{$this->orderByDesc}",
+            now()->addMinutes(5),
+            fn() => Diagram::query()
+                ->where('team_id', Team::currentTeam()->getKey())
+                ->count()
+        ));
     }
 
-    #[Computed]
+    #[Computed(cache: true, persist: true)]
     public function getDiagrams(): LengthAwarePaginator
     {
         return Diagram::query()

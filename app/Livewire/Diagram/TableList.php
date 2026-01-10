@@ -44,7 +44,7 @@ class TableList extends Component
     /**
      * @return Collection<int, \App\Models\Table>
      */
-    #[Computed(persist: true)]
+    #[Computed()]
     public function getTables(): Collection
     {
         $tables = $this->diagram->tables();

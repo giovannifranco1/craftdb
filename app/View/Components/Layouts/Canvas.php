@@ -30,6 +30,8 @@ class Canvas extends Component
         }
 
         $this->title = $diagram->slug;
+
+        $this->diagram = $this->diagram->load('team');
     }
 
     /**

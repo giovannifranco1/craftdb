@@ -26,16 +26,9 @@
 @endphp
 <svg
     {{ $attributes->class($classes) }}
-    data-flux-icon
-    aria-hidden="true"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    stroke-width="{{ $strokeWidth }}"
-    stroke-linecap="round"
-    stroke-linejoin="round"
->
-    <rect x="3" y="3" width="18" height="18" rx="2" stroke-dasharray="4 2"/>
+    data-flux-icon aria-hidden="true" width="24" height="22" viewBox="0 0 24 22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M19 13V21M15 17H23" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    <path d="M12 19H2C1.44771 19 1 18.5523 1 18V2C1 1.44772 1.44772 1 2 1H18C18.5523 1 19 1.44772 19 2V10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 4"/>
 </svg>
 
 

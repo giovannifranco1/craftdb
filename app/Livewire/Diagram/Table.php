@@ -56,10 +56,10 @@ class Table extends Component
         $this->maxColumns = TableModel::MAX_COLUMNS;
     }
 
-    #[Computed(persist: true)]
+    #[Computed(cache: true)]
     public function getColumns(): Collection
     {
-        return $this->table->columns()->orderBy('order')->get();
+        return $this->table->columns;
     }
 
     public function renameTable(): void

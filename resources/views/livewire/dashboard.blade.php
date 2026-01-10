@@ -24,10 +24,10 @@
     <div class="flex flex-col h-[40.2rem]">
         <div class="flex-1 overflow-y-auto">
             <div class="h-full grid lg:grid-cols-2 xl:grid-cols-3 gap-4">
-                @forelse($this->getDiagrams() as $diagram)
+                @forelse($this->getDiagrams as $diagram)
                     <x-diagram.card wire:key="diagram-card-{{ $diagram->id }}" :diagram="$diagram" />
                 @empty
-                    <div class="col-span-1 lg:col-span-3 w-full h-full flex flex-col items-center justify-center gap-6 px-4">
+                    <div class= "col-span-1 lg:col-span-3 w-full h-full flex flex-col items-center justify-center gap-6 px-4">
                         <div class="flex flex-col items-center gap-4">
                             <div class="rounded-full bg-zinc-100 dark:bg-zinc-800 p-6">
                                 <img src="{{ Vite::asset('resources/images/craftdb_logo_transparent_dark.png') }}" alt="CraftDB Logo" class="size-15 text-zinc-400 dark:text-zinc-500" />
@@ -61,9 +61,9 @@
                 @endforelse
             </div>
         </div>
-        @if($this->getDiagrams()->hasPages())
+        @if($this->getDiagrams->hasPages())
             <div class="mt-5 flex-shrink-0 mr-7">
-                {{ $this->getDiagrams()->links() }}
+                {{ $this->getDiagrams->links() }}
             </div>
         @endif
     </div>

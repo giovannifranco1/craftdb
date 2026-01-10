@@ -26,12 +26,13 @@
 @endphp
 <svg
     {{ $attributes->class($classes) }}
-    data-flux-icon
-    aria-hidden="true"
-    viewBox="0 0 26 26"
-    fill="none"
-    stroke="currentColor"
-    stroke-width="2"
->
-    <path d="M4 2 L20 2 A4 4 0 0 1 22 4 L22 14 M14 22 L4 22 A4 4 0 0 1 1 18 L1 4 A4 4 0 0 1 5 2 M22 17 L22 25 M18 21 L26 21 M1 8 L22 8"></path>
+    data-flux-icon aria-hidden="true" width="26" height="26" viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="2">
+    <g clip-path="url(#clip0_2028_107)">
+    <path d="M3.99999 1.99998H20C20.888 2.40084 21.5991 3.112 22 3.99998V14M14 22H3.99999C3.11991 21.7732 2.34328 21.2535 1.79799 20.5265C1.25269 19.7994 0.971246 18.9084 0.999988 18V3.99998C1.3917 3.30614 1.98171 2.74509 2.69437 2.38876C3.40704 2.03242 4.20988 1.89705 4.99999 1.99998M22 17V25M18 21H26M0.999988 7.99998H22" stroke="currentColor" stroke-width="2"/>
+    </g>
+    <defs>
+    <clipPath id="clip0_2028_107">
+    <rect width="26" height="26" fill="white"/>
+    </clipPath>
+    </defs>
 </svg>

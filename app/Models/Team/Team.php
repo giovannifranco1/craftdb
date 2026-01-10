@@ -105,6 +105,11 @@ class Team extends Model
             return null;
         }
 
-        return $user->ownedTeams()->first();
+        $ownedTeam = $user->ownedTeams()->first();
+
+        session(['current_team' => $ownedTeam]);
+
+        return $ownedTeam;
+
     }
 }

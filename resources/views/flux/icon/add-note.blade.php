@@ -23,10 +23,10 @@
         'micro' => 2.5,
     };
 @endphp
+
 <svg
-    {{ $attributes->class($classes) }} data-flux-icon aria-hidden="true"
-    fill="none" viewBox="0 0 24 24" height="20" width="20" xmlns="http://www.w3.org/2000/svg">
-    <path stroke-linejoin="round" stroke-linecap="round" stroke-width="2" stroke="currentColor" d="M13 2H13.2727C16.5339 2 18.1645 2 19.2969 2.79784C19.6214 3.02643 19.9094 3.29752 20.1523 3.60289C21 4.66867 21 6.20336 21 9.27273V11.8182C21 14.7814 21 16.2629 20.5311 17.4462C19.7772 19.3486 18.1829 20.8491 16.1616 21.5586C14.9044 22 13.3302 22 10.1818 22C8.38275 22 7.48322 22 6.76478 21.7478C5.60979 21.3424 4.69875 20.4849 4.26796 19.3979C4 18.7217 4 17.8751 4 16.1818V12"></path>
-    <path stroke-linejoin="round" stroke-linecap="round" stroke-width="2" stroke="currentColor" d="M21 12C21 13.8409 19.5076 15.3333 17.6667 15.3333C17.0009 15.3333 16.216 15.2167 15.5686 15.3901C14.9935 15.5442 14.5442 15.9935 14.3901 16.5686C14.2167 17.216 14.3333 18.0009 14.3333 18.6667C14.3333 20.5076 12.8409 22 11 22"></path>
-    <path stroke-linecap="round" stroke-width="2" stroke="currentColor" d="M11 6L3 6M7 2V10"></path>
+    {{ $attributes->class($classes) }} data-flux-icon aria-hidden="true" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M9.16666 18.3333H8.93941C6.22174 18.3333 4.86291 18.3333 3.91924 17.6685C3.64882 17.478 3.40882 17.2521 3.20641 16.9976C2.49999 16.1095 2.49999 14.8305 2.49999 12.2727V10.1515C2.49999 7.68218 2.49999 6.44759 2.89074 5.46151C3.51899 3.87618 4.84757 2.62576 6.53199 2.03451C7.57966 1.66668 8.89149 1.66668 11.5152 1.66668C13.0144 1.66668 13.764 1.66668 14.3627 1.87684C15.3252 2.21468 16.0844 2.92926 16.4434 3.83509C16.6667 4.39859 16.6667 5.10409 16.6667 6.51518V10" stroke="currentColor" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M7.66666 1.66667C9.20074 1.66667 10.4444 2.91033 10.4444 4.44442C10.4444 4.99925 10.3472 5.65333 10.4917 6.19283C10.6202 6.67208 10.9946 7.0465 11.4738 7.17492C12.0133 7.31942 12.6674 7.22225 13.2222 7.22225C14.7563 7.22225 16 8.46592 16 10" stroke="currentColor" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M10.3333 15.6667H17M13.6667 19V12.3333" stroke="currentColor" stroke-width="1.66667" stroke-linecap="round"/>
 </svg>

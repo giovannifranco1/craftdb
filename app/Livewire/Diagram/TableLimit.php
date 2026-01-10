@@ -24,7 +24,7 @@ class TableLimit extends Component
         $this->diagram = $diagram;
     }
 
-    #[Computed()]
+    #[Computed(cache: true)]
     public function getTableCount(): int
     {
         return $this->diagram->tables()->count();

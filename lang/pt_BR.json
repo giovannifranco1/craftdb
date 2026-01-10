@@ -316,5 +316,8 @@
   "Table :count added successfully.": "Tabela :count adicionada com sucesso.",
   "Table Removed": "Tabela Removida",
   "Table limit reached": "Limite de tabelas atingido",
-  "Table limit": "Limite de tabelas"
+  "Table limit": "Limite de tabelas",
+  "Mark as primary key": "Marcar como chave primária",
+  "Mark as foreign key": "Marcar como chave estrangeira",
+  "Mark as notnull": "Marcar como não nulo"
 }

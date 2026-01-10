@@ -11,11 +11,11 @@
         <div class="flex-1 min-h-[600px] flex items-center justify-center">
             <div
                 id="diagram-graph-container"
-                x-data="diagramGraph(@js($this->getRelationships()), @js($this->getTablesWithColors()))"
+                x-data="diagramGraph(@js($this->getRelationships), @js($this->getTablesWithColors))"
                 @diagram-graph::refresh.window="
                     // Update data and re-render graph when data changes
-                    relationships = @js($this->getRelationships());
-                    tablesColors = @js($this->getTablesWithColors());
+                    relationships = @js($this->getRelationships);
+                    tablesColors = @js($this->getTablesWithColors);
                     svg = null;
                     if (setupGraphWrapper) {
                         setupGraphWrapper();

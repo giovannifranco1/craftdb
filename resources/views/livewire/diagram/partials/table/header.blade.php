@@ -76,7 +76,7 @@
                         $dispatch('dropdown-menu::toggle', { tableBox: tableBox || $el });
                     "
                 >
-                    <flux:icon.sheet class="size-3"/>
+                    <flux:icon.list-bullet class="size-3"/>
                 </button>
             </div>
 

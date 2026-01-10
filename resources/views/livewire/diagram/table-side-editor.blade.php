@@ -152,16 +152,19 @@
                                                             <!-- Checkboxes e ações -->
                                                             <div class="flex items-center gap-1.5 ml-2" wire:click.stop>
                                                                 <div class="flex items-center gap-0.5 border-r border-zinc-200 dark:border-zinc-700 pr-1.5 mr-1.5">
-                                                                    <button
-                                                                        type="button"
-                                                                        wire:click.stop="togglePrimaryKey({{ $column->id }})"
-                                                                        class="p-0.5 rounded hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
-                                                                        title="Primary Key"
-                                                                    >
-                                                                        <span class="text-[8px] font-bold px-1 py-0.5 rounded {{ $column->is_primary ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-300' : 'text-zinc-400 dark:text-zinc-500' }}">
-                                                                            PK
-                                                                        </span>
-                                                                    </button>
+                                                                    <flux:tooltip :content="__('Mark as primary key')">
+                                                                        <button
+                                                                            type="button"
+                                                                            wire:click.stop="togglePrimaryKey({{ $column->id }})"
+                                                                            class="p-0.5 rounded hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
+                                                                            title="Primary Key"
+                                                                        >
+                                                                            <span class="text-[8px] font-bold px-1 py-0.5 rounded {{ $column->is_primary ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-300' : 'text-zinc-400 dark:text-zinc-500' }}">
+                                                                                PK
+                                                                            </span>
+                                                                        </button>
+                                                                    </flux:tooltip>
+                                                                    <flux:tooltip :content="__('Mark as foreign key')">
                                                                     <button
                                                                         type="button"
                                                                         wire:click.stop="toggleForeignKey({{ $column->id }})"
@@ -169,19 +172,21 @@
                                                                         title="Foreign Key"
                                                                     >
                                                                         <span class="text-[8px] font-bold px-1 py-0.5 rounded {{ $column->is_foreign ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300' : 'text-zinc-400 dark:text-zinc-500' }}">
-                                                                            FK
-                                                                        </span>
-                                                                    </button>
-                                                                    <button
-                                                                        type="button"
-                                                                        wire:click.stop="toggleNullable({{ $column->id }})"
-                                                                        class="p-0.5 rounded hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-                                                                        title="Nullable"
-                                                                    >
-                                                                        <span class="text-[8px] font-bold px-1 py-0.5 rounded {{ !$column->is_notnull ? 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300' : 'text-zinc-400 dark:text-zinc-500' }}">
-                                                                            NN
-                                                                        </span>
-                                                                    </button>
+                                                                                FK
+                                                                            </span>
+                                                                        </button>
+                                                                    </flux:tooltip>
+                                                                    <flux:tooltip :content="__('Mark as notnull')">
+                                                                        <button
+                                                                            type="button"
+                                                                            wire:click.stop="toggleNullable({{ $column->id }})"
+                                                                            class="p-0.5 rounded hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                                                                        >
+                                                                            <span class="text-[8px] font-bold px-1 py-0.5 rounded {{ $column->is_notnull ? 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300' : 'text-zinc-400 dark:text-zinc-500' }}">
+                                                                                N
+                                                                            </span>
+                                                                        </button>
+                                                                    </flux:tooltip>
                                                                 </div>
                                                                 <button
                                                                     type="button"
@@ -383,11 +388,11 @@
                                                 </div>
                                                 <div
                                                     id="foreign-keys-graph"
-                                                    x-data="foreignKeysGraph(@js($this->getRelationships()), @js($table->id), @js($table->name), @js($this->getTablesWithColors()))"
+                                                    x-data="foreignKeysGraph(@js($this->getRelationships), @js($table->id), @js($table->name), @js($this->getTablesWithColors))"
                                                     @table-side-editor::column-added.window="
                                                         // Atualizar dados e re-renderizar gráfico
-                                                        relationships = @js($this->getRelationships());
-                                                        tablesColors = @js($this->getTablesWithColors());
+                                                        relationships = @js($this->getRelationships);
+                                                        tablesColors = @js($this->getTablesWithColors);
                                                         svg = null;
                                                         setTimeout(() => {
                                                             if ($el && !svg) {

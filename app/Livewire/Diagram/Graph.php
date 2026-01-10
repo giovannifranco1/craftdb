@@ -25,7 +25,7 @@ class Graph extends Component
         $this->diagram = $diagram;
     }
 
-    #[Computed]
+    #[Computed(cache: true, key: 'relationships')]
     public function getRelationships(): Collection
     {
         return $this->diagram
@@ -34,7 +34,7 @@ class Graph extends Component
             ->get();
     }
 
-    #[Computed]
+    #[Computed(cache: true, key: 'tables-with-colors')]
     public function getTablesWithColors(): array
     {
         $tablesMap = [];

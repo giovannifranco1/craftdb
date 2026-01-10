@@ -2,7 +2,10 @@
 
 use App\Models\Team\Team;
 use App\Models\User;
+use Illuminate\Support\Facades\Cache;
 use Livewire\Volt\Component;
+use Livewire\Attributes\Computed;
+
 
 new class extends Component {
     public function switchTeam(int $teamId): void
@@ -30,7 +33,8 @@ new class extends Component {
         }
     }
 
-    public function with(): array
+    #[Computed(persist: true)]
+    public function getAllTeams()
     {
         /** @var User */
         $user = auth()->user();
@@ -40,24 +44,20 @@ new class extends Component {
         $ownedTeams = $user->ownedTeams()->get();
         $memberTeams = $user->teams()->get();
 
-        // Merge and remove duplicates
         $allTeams = $ownedTeams->merge($memberTeams)->unique('id')->sortBy('name');
 
-        return [
-            'allTeams' => $allTeams,
-            'currentTeam' => $currentTeam,
-        ];
+        return $allTeams;
     }
 }; ?>
 
 <div>
-    @if($allTeams->count() > 1)
+    @if($this->getAllTeams->count() > 1)
         <flux:menu.radio.group>
             <div class="px-2 py-1.5 text-xs font-semibold text-zinc-500 dark:text-zinc-400">
                 {{ __('Switch Team') }}
             </div>
 
-            @foreach($allTeams as $team)
+            @foreach($this->getAllTeams as $team)
                 <flux:menu.item
                     wire:click="switchTeam({{ $team->id }})"
                     class="cursor-pointer"

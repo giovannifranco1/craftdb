@@ -138,17 +138,18 @@
                         </flux:dropdown>
                     </div>
 
-                    <button
-                        type="button"
-                        x-data
-                        x-on:click="toggleFavorite({{ $diagram->isFavorite() }})"
-                        class="cursor-pointer p-2 rounded-lg backdrop-blur-sm transition-all duration-300 {{ $diagram->isFavorite() ? 'opacity-100' : '' }}"
-                        title="{{ $diagram->isFavorite() ? __('Unmark as favorite') : __('Mark as favorite') }}"
-                    >
-                        <flux:icon.heart variant="solid" class="size-5 text-red-500 js-icon-favorite {{ $diagram->isFavorite() ? 'block' : 'hidden' }}" />
-                        <flux:icon.heart variant="outline" class="size-5 text-zinc-400 dark:text-zinc-500 js-icon-unfavorite {{ $diagram->isFavorite() ? 'hidden' : 'block' }}" />
-                    </button>
-
+                    <flux:tooltip :content="$diagram->isFavorite() ? __('Unmark as favorite') : __('Mark as favorite')">
+                        <button
+                            type="button"
+                            x-data
+                            x-on:click="toggleFavorite({{ $diagram->isFavorite() }})"
+                            class="cursor-pointer p-2 rounded-lg backdrop-blur-sm transition-all duration-300 {{ $diagram->isFavorite() ? 'opacity-100' : '' }}"
+                            title="{{ $diagram->isFavorite() ? __('Unmark as favorite') : __('Mark as favorite') }}"
+                        >
+                            <flux:icon.heart variant="solid" class="size-5 text-red-500 js-icon-favorite {{ $diagram->isFavorite() ? 'block' : 'hidden' }}" />
+                            <flux:icon.heart variant="outline" class="size-5 text-zinc-400 dark:text-zinc-500 js-icon-unfavorite {{ $diagram->isFavorite() ? 'hidden' : 'block' }}" />
+                        </button>
+                    </flux:tooltip>
                           <!-- User Menu -->
                           <flux:dropdown position="bottom" align="end">
                             <flux:profile

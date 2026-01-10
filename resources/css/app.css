@@ -8,9 +8,12 @@
 @source '../../vendor/livewire/flux-pro/stubs/**/*.blade.php';
 @source '../../vendor/livewire/flux/stubs/**/*.blade.php';
 
-
-
 @custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+    --color-background: #18181b;
+}
+:root
 
 /* Re-assign Flux's gray of choice... */
 @theme {
@@ -65,6 +68,11 @@ input:focus[data-flux-control],
 textarea:focus[data-flux-control],
 select:focus[data-flux-control] {
     @apply outline-hidden ring-2 ring-accent ring-offset-2 ring-offset-accent-foreground;
+}
+
+[data-flux-modal] > dialog
+{
+    @apply dark:bg-[var(--color-background)];
 }
 
 /* \[:where(&)\]:size-4 {
