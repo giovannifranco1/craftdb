@@ -3,7 +3,7 @@
 use App\Models\Team\Team;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Livewire\Volt\Volt;
+use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
 
@@ -32,7 +32,7 @@ test('team create page can be rendered', function () {
 
 test('user can create a new team', function () {
     /** @var \Tests\TestCase $this */
-    $component = Volt::test('settings.team.create')
+    $component = Livewire::test('settings.team.create')
         ->set('name', 'My New Team')
         ->call('createTeam');
 
@@ -50,7 +50,7 @@ test('user can create a new team', function () {
 
 test('team name is required', function () {
     /** @var \Tests\TestCase $this */
-    $component = Volt::test('settings.team.create')
+    $component = Livewire::test('settings.team.create')
         ->set('name', '')
         ->call('createTeam');
 
@@ -59,7 +59,7 @@ test('team name is required', function () {
 
 test('team name must not exceed 255 characters', function () {
     /** @var \Tests\TestCase $this */
-    $component = Volt::test('settings.team.create')
+    $component = Livewire::test('settings.team.create')
         ->set('name', str_repeat('a', 256))
         ->call('createTeam');
 
@@ -68,7 +68,7 @@ test('team name must not exceed 255 characters', function () {
 
 test('team creation dispatches events', function () {
     /** @var \Tests\TestCase $this */
-    $component = Volt::test('settings.team.create')
+    $component = Livewire::test('settings.team.create')
         ->set('name', 'Event Test Team')
         ->call('createTeam');
 
@@ -78,7 +78,7 @@ test('team creation dispatches events', function () {
 
 test('created team has default roles', function () {
     /** @var \Tests\TestCase $this */
-    Volt::test('settings.team.create')
+    Livewire::test('settings.team.create')
         ->set('name', 'Team with Roles')
         ->call('createTeam');
 

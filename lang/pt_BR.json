@@ -324,5 +324,6 @@
   "You have been invited to join the team \"\":team\" as :role.": "Você foi convidado para entrar no time \":team\" como :role.",
   "This invitation will allow you to collaborate with the team and access shared diagrams.": "Este convite permitirá que você colabore com o time e acesse diagramas compartilhados.",
   "If you did not expect this invitation, you can safely ignore this email.": "Se você não esperou este convite, você pode ignorar este e-mail com segurança.",
-  "Invitation to join :team": "Convite para entrar no time :team"
+  "Invitation to join :team": "Convite para entrar no time :team",
+  "Watch demo": "Ver demonstração"
 }

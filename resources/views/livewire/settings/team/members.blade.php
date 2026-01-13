@@ -5,7 +5,7 @@ use App\Models\Team\Membership;
 use App\Models\Team\Role;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
-use Livewire\Volt\Component;
+use Livewire\Component;
 use Livewire\Attributes\Computed;
 use Illuminate\Support\Collection;
 use App\Models\Team\Invitation;
@@ -161,7 +161,7 @@ new class extends Component {
                         @if($editorRole)
                             <label
                                     @class([
-                                        'flex items-start gap-3 p-3 rounded-lg border cursor-pointer hover:border-zinc-400 dark:hover:border-zinc-500 transition-colors',
+                                        'flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-colors',
                                         'border-blue-500 bg-blue-50 dark:bg-blue-950/20' => $role_id == $editorRole->id,
                                         'bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-700' => $role_id != $editorRole->id,
                                     ])
@@ -185,7 +185,7 @@ new class extends Component {
                         @if($viewerRole)
                             <label
                                     @class([
-                                        'flex items-start gap-3 p-3 rounded-lg border cursor-pointer hover:border-zinc-400 dark:hover:border-zinc-500 transition-colors',
+                                        'flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-colors',
                                         'border-blue-500 bg-blue-50 dark:bg-blue-950/20' => $role_id == $viewerRole->id,
                                         'bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-700' => $role_id != $viewerRole->id,
                                     ])

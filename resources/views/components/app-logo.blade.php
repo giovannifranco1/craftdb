@@ -2,6 +2,6 @@
     <x-app-logo-icon class="size-9 fill-current text-white dark:text-black" />
 </div>
 <div class="flex items-center gap-2">
-    <span class="text-xl dark:text-white font-[Comic Relief] font-semibold text-gray-900">CraftDB</span>
-    <span class="text-sm dark:text-white font-[Comic Relief] font-semibold text-gray-900 bg-emerald-500/10 rounded-full px-2 py-0.5">Beta</span>
+    <span class="text-xl font-[Inter] font-bold text-gray-900">CraftDB</span>
+    <span class="text-xs font-medium font-[Inter] text-blue-600 border-1 border-blue-500/20 bg-blue-700/10 rounded-full px-2 py-0.5">Beta</span>
 </div>

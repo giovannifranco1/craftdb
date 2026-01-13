@@ -3,7 +3,7 @@
 use App\Actions\Team\CreateNewTeam;
 use App\Models\Team\Team;
 use Illuminate\Support\Facades\Auth;
-use Livewire\Volt\Component;
+use Livewire\Component;
 
 new class extends Component {
     public string $name = '';

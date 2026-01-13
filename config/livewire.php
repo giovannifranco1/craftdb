@@ -38,7 +38,7 @@ return [
     |
     */
 
-    'layout' => 'components.layouts.app',
+    'component_layout' => 'layouts::app',
 
     /*
     |---------------------------------------------------------------------------
@@ -50,7 +50,7 @@ return [
     |
     */
 
-    'lazy_placeholder' => null,
+    'component_placeholder' => null,
 
     /*
     |---------------------------------------------------------------------------
@@ -155,6 +155,20 @@ return [
     | on the page. If you want Bootstrap CSS, you can specify: "bootstrap"
     |
     */
+
+    'smart_wire_keys' => true,
+
+
+    'component_namespaces' => [
+        'layouts' => resource_path('views/layouts'),
+        'pages' => resource_path('views/pages'),
+    ],
+
+    'component_locations' => [
+        resource_path('views/components'),
+        resource_path('views/pages'),
+        resource_path('views/livewire'),
+    ],
 
     'pagination_theme' => 'tailwind',
 ];

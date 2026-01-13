@@ -26,7 +26,6 @@
     $tablesCount = $diagram->tables_count ?? $diagram->tables()->count();
     $relationshipsCount = $diagram->relationships()->count();
 @endphp
-
 <div class="block group" {{ $attributes }}>
     <div class="w-80 h-64 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-[#1A1A1A] shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden relative">
         <!-- Botão de favoritar -->

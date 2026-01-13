@@ -1,7 +1,5 @@
 <?php
 
-namespace App\Livewire;
-
 use App\Concerns\HandlesDiagramAuthorizationWithAlertError;
 use App\Actions\Diagram\DeleteDiagram as DeleteDiagramAction;
 use App\Models\Diagram;
@@ -10,15 +8,11 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Cache;
 use Livewire\Attributes\Computed;
-use Livewire\Attributes\Lazy;
-use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-#[Lazy]
-#[Title('Dashboard')]
-class Dashboard extends Component
+new class extends Component
 {
     use WithPagination, HandlesDiagramAuthorizationWithAlertError;
 
@@ -31,8 +25,11 @@ class Dashboard extends Component
     #[Url]
     public int $orderByDesc = 0;
 
+    public Team $team;
+
     public function mount(): void
     {
+        $this->team = Team::currentTeam();
         session()->put('diagrams_count',
         Cache::remember(
             "diagrams_count_{$this->favorites}_{$this->search}_{$this->orderByDesc}",
@@ -43,7 +40,7 @@ class Dashboard extends Component
         ));
     }
 
-    #[Computed(cache: true, persist: true)]
+    #[Computed]
     public function getDiagrams(): LengthAwarePaginator
     {
         return Diagram::query()
@@ -99,4 +96,4 @@ class Dashboard extends Component
     {
         return view('components.placeholders.placeholder-dashboard');
     }
-}
+};

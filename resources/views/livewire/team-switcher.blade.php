@@ -3,7 +3,7 @@
 use App\Models\Team\Team;
 use App\Models\User;
 use Illuminate\Support\Facades\Cache;
-use Livewire\Volt\Component;
+use Livewire\Component;
 use Livewire\Attributes\Computed;
 
 
