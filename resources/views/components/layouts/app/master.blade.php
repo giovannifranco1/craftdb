@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="light">
     <head>
-        @include('partials.head')
+        @include('_partials.head')
     </head>
 
     @use('App\Models\Team\Team')
@@ -78,7 +78,7 @@
 
                                 <flux:menu.separator/>
 
-                                <livewire:team-switcher/>
+                                <livewire:ui.team-switcher/>
 
                                 <flux:menu.radio.group>
                                     <flux:menu.item :href="route('profile.edit')" icon="cog" wire:navigate>{{ __('Settings') }}</flux:menu.item>
@@ -102,7 +102,7 @@
         {{ $slot }}
 
         <x-flux::footer style="margin: 0px; padding: 0px;">
-            @include('partials.footer')
+            @include('_partials.footer')
         </x-flux::footer>
 
         <livewire:diagram.diagram-create/>

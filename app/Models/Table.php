@@ -74,7 +74,7 @@ class Table extends Model
     public function scopeWithPrimaryCount(Builder $query): Builder
     {
         return $query->withCount([
-            'columns as primary_count' => function ($q) {
+            'columns as primary_count' => function (Builder $q): void {
                 $q->where('is_primary', true);
             },
         ]);
@@ -87,7 +87,7 @@ class Table extends Model
     public function scopeWithForeignCount(Builder $query): Builder
     {
         return $query->withCount([
-            'columns as foreign_count' => function ($q) {
+            'columns as foreign_count' => function (Builder $q): void {
                 $q->where('is_foreign', true);
             },
         ]);
@@ -99,7 +99,7 @@ class Table extends Model
      */
     public function scopeFirstPrimaryColumn(Builder $query): Builder
     {
-        return $query->with(['columns' => function ($q) {
+        return $query->with(['columns' => function (Builder $q): void {
             $q->where('is_primary', true)->orderBy('order')->limit(1);
         }]);
     }
@@ -107,16 +107,16 @@ class Table extends Model
     /**
      * @return Builder<\App\Models\Relationship>
      */
-    public function relationships()
+    public function relationships(): Builder
     {
-        return Relationship::query()->where(function ($query) {
+        return Relationship::query()->where(function (Builder $query): void {
             $query->where('from_table_id', $this->id)
                 ->orWhere('to_table_id', $this->id);
         })
             ->with(['fromTable', 'toTable', 'fromColumn', 'toColumn']);
     }
 
-    public function foreignKeys()
+    public function foreignKeys(): HasMany
     {
         return $this->hasMany(Column::class, 'table_id')->where('is_foreign', true);
     }

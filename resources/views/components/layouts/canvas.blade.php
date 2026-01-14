@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html id="canvas-html" lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
     <head>
-        @include('partials.head-canvas')
+        @include('_partials.head-canvas')
     </head>
 
     <body>
@@ -11,9 +11,9 @@
 
         <div x-ref="canvasRoot" x-data="runCanvas(25, @js($isInitialLoad))" diagram-id="{{ $diagram->id }}" diagram-slug="{{ $diagram->slug }}" team-id="{{ $diagram->team_id }}" class="container hs-dropdown [--trigger:contextmenu] pt-12 pb-8">
             <x-ui.context-menu/>
-            <x-ui.canvas.loading/>
-            <x-ui.canvas.controls/>
-            <x-ui.canvas.topbar :diagram="$diagram"/>
+            <x-canvas.loading/>
+            <x-canvas.controls/>
+            <x-canvas.topbar :diagram="$diagram"/>
 
             <canvas id="canvas" class="hs-dropdown-toggle"></canvas>
 
@@ -36,8 +36,8 @@
 
         <livewire:diagram.spotlight :$diagram/>
         <livewire:diagram.graph :$diagram/>
-        <livewire:diagram.table-side-editor/>
-        <livewire:diagram.table-limit :$diagram/>
+        <livewire:diagram.table.side-editor :$diagram/>
+        <livewire:diagram.table.limit :$diagram/>
         @fluxScripts
     </body>
 </html>

@@ -5,11 +5,14 @@ namespace App\View\Components\Layouts;
 use App\Models\Diagram;
 use Closure;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Collection;
 use Illuminate\View\Component;
 
 class Canvas extends Component
 {
-    public $relationships;
+    /** @var Collection<int, \App\Models\Relationship> */
+    public Collection $relationships;
+
     public bool $isInitialLoad;
     public ?string $title;
 

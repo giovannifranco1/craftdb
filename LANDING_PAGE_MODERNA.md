@@ -26,7 +26,7 @@ resources/
 │   │       └── landing-modern.blade.php  # Layout principal
 │   └── landing-modern/
 │       ├── index.blade.php       # Página principal
-│       ├── partials/
+│       ├── _partials/
 │       │   ├── header.blade.php  # Header com menu mobile
 │       │   └── footer.blade.php  # Footer com CTA e links
 │       └── sections/

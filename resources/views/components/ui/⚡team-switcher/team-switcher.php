@@ -1,0 +1,49 @@
+<?php
+
+use App\Models\Team\Team;
+use App\Models\User;
+use Livewire\Component;
+use Livewire\Attributes\Computed;
+
+new class extends Component {
+
+    public function switchTeam(int $teamId): void
+    {
+        /** @var User */
+        $user = Auth::user();
+
+        // Get all teams the user has access to (owned + member)
+        $ownedTeams = $user->ownedTeams()->pluck('team.id');
+        $memberTeams = $user->teams()->pluck('team.id');
+        $allTeamIds = $ownedTeams->merge($memberTeams)->unique();
+
+        // Check if user has access to this team
+        if (!$allTeamIds->contains($teamId)) {
+            $this->dispatch('alert', message: __('You do not have access to this team.'), type: 'error');
+            return;
+        }
+
+        $team = Team::find($teamId);
+
+        if ($team) {
+            session(['current_team' => $team]);
+            $this->dispatch('alert', message: __('Switched to team: ') . $team->name);
+            $this->redirect(route('dashboard'), navigate: true);
+        }
+    }
+
+    #[Computed]
+    public function getAllTeams()
+    {
+        /** @var User */
+        $user = Auth::user();
+
+        // Get all teams (owned + member)
+        $ownedTeams = $user->ownedTeams()->get();
+        $memberTeams = $user->teams()->get();
+
+        $allTeams = $ownedTeams->merge($memberTeams)->unique('id')->sortBy('name');
+
+        return $allTeams;
+    }
+};

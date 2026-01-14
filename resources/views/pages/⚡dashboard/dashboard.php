@@ -94,6 +94,6 @@ new class extends Component
 
     public function placeholder(): View
     {
-        return view('components.placeholders.placeholder-dashboard');
+        return view('components.diagram.placeholders.placeholder-dashboard');
     }
 };

@@ -9,7 +9,7 @@ use Illuminate\View\Component;
 
 class CssTable extends Component
 {
-    public $color;
+    public string $color;
 
     /**
      * Create a new component instance.
@@ -25,6 +25,6 @@ class CssTable extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.table.css-table');
+        return view('components.diagram.table.css-table');
     }
 }

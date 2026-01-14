@@ -3,7 +3,6 @@
 use App\Http\Controllers\InviteController;
 use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\Pages\DiagramController;
-use App\Livewire\Dashboard;
 use App\Livewire\MyFavorites;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
@@ -14,11 +13,8 @@ Route::get('/features', [LandingPageController::class, 'features'])->name('landi
 Route::get('/pricing', [LandingPageController::class, 'pricing'])->name('landing.pricing');
 Route::get('/about', [LandingPageController::class, 'about'])->name('landing.about');
 
-/** Modern Landing Page */
-Route::get('/modern', fn () => view('landing-modern.index'))->name('landing.modern');
-
-/** Homepage */
-Route::get('/', fn () => view('landing-page.index'))->name('home');
+/** Landing Page */
+Route::get('/', fn () => view('pages::landing-page.index'))->name('home');
 
 /** Dashboard */
 Route::livewire('/dashboard', 'pages::dashboard')->lazy()->middleware(['auth', 'verified'])->name('dashboard');

@@ -267,7 +267,7 @@ return [
         '->foreign(',
         '->index(',
         '->primary(',
-        '->unique(',
+        // '->unique(',
         '->dropForeign(',
         '->dropIndex(',
         '->dropPrimary(',

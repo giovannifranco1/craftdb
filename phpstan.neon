@@ -13,3 +13,5 @@ parameters:
     excludePaths:
         - _ide_helper.php
         - app/Models/Team
+
+    memoryLimit: "2G"
