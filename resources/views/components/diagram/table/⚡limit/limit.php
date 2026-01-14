@@ -7,6 +7,7 @@ use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 new class extends Component {
+    /** @var array<string, string> */
     protected $listeners = [
         'table::added' => '$refresh',
         'table::removed' => '$refresh',

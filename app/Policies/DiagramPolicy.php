@@ -53,7 +53,17 @@ class DiagramPolicy
      */
     public function create(User $user): bool
     {
-        $team = Team::find(Team::currentTeam()->id);
+        $currentTeam = Team::currentTeam();
+
+        if (!$currentTeam) {
+            return false;
+        }
+
+        $team = Team::find($currentTeam->id);
+
+        if (!$team) {
+            return false;
+        }
 
         // Owner can always create
         if ($user->ownsTeam($team)) {

@@ -25,6 +25,9 @@ new class extends Component {
         $this->title = 'Relationships - '.$table->name;
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Collection<int, \App\Models\Relationship>
+     */
     #[Computed]
     public function getRelationships(): Collection
     {

@@ -2,6 +2,7 @@
 
 use App\Models\Team\Team;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
 use Livewire\Component;
 use Livewire\Attributes\Computed;
 
@@ -32,8 +33,11 @@ new class extends Component {
         }
     }
 
+    /**
+     * @return Collection<int,Team>
+    */
     #[Computed]
-    public function getAllTeams()
+    public function getAllTeams(): Collection
     {
         /** @var User */
         $user = Auth::user();
@@ -41,9 +45,9 @@ new class extends Component {
         // Get all teams (owned + member)
         $ownedTeams = $user->ownedTeams()->get();
         $memberTeams = $user->teams()->get();
-
         $allTeams = $ownedTeams->merge($memberTeams)->unique('id')->sortBy('name');
 
+        /** @var Collection<int, Team> $allTeams */
         return $allTeams;
     }
 };

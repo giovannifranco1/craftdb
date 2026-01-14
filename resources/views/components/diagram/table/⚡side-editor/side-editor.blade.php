@@ -22,10 +22,8 @@
     ></div>
 
     @use('App\Support\Helpers')
-    @php
-        $table = $this->getTable();
-    @endphp
-    @if($table)
+
+    @if($this->getTable)
         <div class="fixed inset-0 overflow-hidden pointer-events-none" table-id="{{ $tableId }}">
             <div class="absolute inset-0 overflow-hidden">
                 <div class="pointer-events-none fixed inset-x-0 bottom-0 flex max-h-[85vh] overflow-y-auto">
@@ -47,10 +45,10 @@
                                     <div class="flex items-center gap-3">
                                         <div
                                             class="w-4 h-4 bg-[var(--table-base-bg)] rounded-full shadow-sm ring-2 ring-white dark:ring-zinc-900"
-                                            title="table color: {{ $table->color ?? \App\Models\Table::COLOR_DEFAULT }}"
+                                            title="table color: {{ $this->getTable->color ?? \App\Models\Table::COLOR_DEFAULT }}"
                                         ></div>
                                         <h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-50 font-[Poppins]" id="table-title">
-                                            {{ ucfirst($table->name) }}
+                                            {{ ucfirst($this->getTable->name) }}
                                         </h2>
                                     </div>
                                     <button
@@ -90,7 +88,7 @@
                                                 aria-controls="tab-columns"
                                                 role="tab"
                                             >
-                                                Columns<span class="ms-1.5 py-0.5 px-2 rounded-full text-xs font-medium" :class="activeTab === 'columns' ? 'bg-[var(--table-base-bg)]/20 text-[var(--table-base-bg)] dark:bg-[var(--table-base-bg)]/30' : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300'">{{ $this->getColumns()?->count() }}</span>
+                                                Columns<span class="ms-1.5 py-0.5 px-2 rounded-full text-xs font-medium" :class="activeTab === 'columns' ? 'bg-[var(--table-base-bg)]/20 text-[var(--table-base-bg)] dark:bg-[var(--table-base-bg)]/30' : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300'">{{ $this->getColumns?->count() }}</span>
                                             </button>
                                             <button
                                                 type="button"
@@ -102,7 +100,7 @@
                                                 aria-controls="tab-foreign-keys"
                                                 role="tab"
                                             >
-                                                Foreign Keys<span class="ms-1.5 py-0.5 px-2 rounded-full text-xs font-medium" :class="activeTab === 'foreign-keys' ? 'bg-[var(--table-base-bg)]/20 text-[var(--table-base-bg)] dark:bg-[var(--table-base-bg)]/30' : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300'">{{ $this->getForeignKeys()?->count() }}</span>
+                                                Foreign Keys<span class="ms-1.5 py-0.5 px-2 rounded-full text-xs font-medium" :class="activeTab === 'foreign-keys' ? 'bg-[var(--table-base-bg)]/20 text-[var(--table-base-bg)] dark:bg-[var(--table-base-bg)]/30' : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300'">{{ $this->getForeignKeys?->count() }}</span>
                                             </button>
                                         </nav>
                                         <div x-show="activeTab === 'columns'" x-cloak>
@@ -125,7 +123,7 @@
                                         <div class="grid grid-cols-[600px_1fr] gap-4 h-[45vh]">
                                             <!-- Lista de Colunas (Esquerda) -->
                                             <div class="space-y-1 overflow-y-auto pr-2 h-full">
-                                                @forelse($this->getColumns() as $column)
+                                                @forelse($this->getColumns as $column)
                                                     <div
                                                         @class([
                                                             'bg-white dark:bg-zinc-800/50 rounded-md border transition-all',
@@ -213,7 +211,7 @@
                                             <div class="h-full flex flex-col">
                                                 @if($selectedColumnId)
                                                     @php
-                                                        $selectedColumn = $this->getColumns()->firstWhere('id', $selectedColumnId);
+                                                        $selectedColumn = $this->getColumns->firstWhere('id', $selectedColumnId);
                                                     @endphp
                                                     @if($selectedColumn)
                                                         <div class="bg-white dark:bg-zinc-800/50 rounded-md border border-zinc-200 dark:border-zinc-700 h-full flex flex-col">
@@ -231,20 +229,20 @@
                                                                             wire:click="moveColumnUp({{ $selectedColumn->id }})"
                                                                             class="p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-700 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
                                                                             title="Mover para cima"
-                                                                            @if($this->getColumns()->first()?->id === $selectedColumn->id) disabled @endif
+                                                                            @if($this->getColumns->first()?->id === $selectedColumn->id) disabled @endif
                                                                         >
                                                                             <flux:icon.chevron-up class="cursor-pointer size-3 text-zinc-600 dark:text-zinc-400"/>
                                                                         </button>
 
                                                                         @php
-                                                                            $position = $this->getColumns()->search(function($col) use ($selectedColumn) {
+                                                                            $position = $this->getColumns->search(function($col) use ($selectedColumn) {
                                                                                 return $col->id === $selectedColumn->id;
                                                                             }) + 1;
                                                                         @endphp
 
                                                                         <div class="flex flex-col items-center">
                                                                             <span class="text-xs font-semibold text-zinc-700 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-700 px-2.5 py-1 rounded-md min-w-[40px] text-center">
-                                                                                {{ $position }} / {{ $this->getColumns()->count() }}
+                                                                                {{ $position }} / {{ $this->getColumns->count() }}
                                                                             </span>
 
                                                                         </div>
@@ -254,7 +252,7 @@
                                                                             wire:click="moveColumnDown({{ $selectedColumn->id }})"
                                                                             class="p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-700 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
                                                                             title="Mover para baixo"
-                                                                            @if($this->getColumns()->last()?->id === $selectedColumn->id) disabled @endif
+                                                                            @if($this->getColumns->last()?->id === $selectedColumn->id) disabled @endif
                                                                         >
                                                                             <flux:icon.chevron-down class="cursor-pointer size-3 text-zinc-600 dark:text-zinc-400"/>
                                                                         </button>
@@ -367,7 +365,7 @@
                                         <div class="grid grid-cols-[1fr_600px] gap-4 h-[45vh]">
                                             <!-- Lista de Foreign Keys (Esquerda) -->
                                             <div class="space-y-1 overflow-y-auto pr-2 h-full">
-                                                @forelse($this->getForeignKeys() as $column)
+                                                @forelse($this->getForeignKeys as $column)
                                                     <div class="bg-white dark:bg-zinc-800/50 rounded-md border border-zinc-200 dark:border-zinc-700 p-2 hover:border-zinc-300 dark:hover:border-zinc-600 hover:shadow-sm transition-all">
                                                         <div class="flex items-center gap-2">
                                                             {!! Helpers::getIconDiamondByTypeColumn($column) !!}
@@ -388,7 +386,7 @@
                                                 </div>
                                                 <div
                                                     id="foreign-keys-graph"
-                                                    x-data="foreignKeysGraph(@js($this->getRelationships), @js($table->id), @js($table->name), @js($this->getTablesWithColors))"
+                                                    x-data="foreignKeysGraph(@js($this->getRelationships), @js($this->getTable->id), @js($this->getTable->name), @js($this->getTablesWithColors))"
                                                     @table-side-editor::column-added.window="
                                                         // Atualizar dados e re-renderizar gráfico
                                                         relationships = @js($this->getRelationships);

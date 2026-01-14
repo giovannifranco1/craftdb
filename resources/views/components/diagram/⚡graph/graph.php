@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Diagram;
+use App\Models\Relationship;
 use Illuminate\Database\Eloquent\Collection;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
@@ -22,6 +23,9 @@ new class extends Component {
         $this->diagram = $diagram;
     }
 
+    /**
+     * @return Collection<int,Relationship>
+     */
     #[Computed(cache: true)]
     public function getRelationships(): Collection
     {
@@ -31,6 +35,9 @@ new class extends Component {
             ->get();
     }
 
+    /**
+     * @return array<int, string>
+     */
     #[Computed(cache: true)]
     public function getTablesWithColors(): array
     {

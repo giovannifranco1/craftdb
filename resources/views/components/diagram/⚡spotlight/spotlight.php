@@ -2,6 +2,7 @@
 
 use App\Models\Diagram;
 use App\Models\Table;
+use Illuminate\Support\Collection;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
@@ -17,11 +18,15 @@ new class extends Component {
         $this->diagram = $diagram;
     }
 
+    /**
+     * @return Collection<int,Table>
+     */
     #[Computed]
-    public function results()
+    public function results(): Collection
     {
-            if (empty($this->search)) {
-            return collect();
+        if (empty($this->search)) {
+            $empty = new Collection();
+            return $empty;
         }
 
         return $this->diagram->tables()
@@ -31,7 +36,7 @@ new class extends Component {
             ->get();
     }
 
-    public function selectTable(int $tableId)
+    public function selectTable(int $tableId): void
     {
         $table = Table::find($tableId);
 

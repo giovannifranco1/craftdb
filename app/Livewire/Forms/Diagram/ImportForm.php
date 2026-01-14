@@ -24,6 +24,9 @@ class ImportForm extends Form
     public bool $hasImport = false;
 
 
+    /**
+     * @return array<string, mixed>
+     */
     protected function rules(): array
     {
         $rules = [
@@ -83,9 +86,10 @@ class ImportForm extends Form
      */
     public function removeFile(?int $index = null): void
     {
-        if ($index !== null && is_array($this->file)) {
-            unset($this->file[$index]);
-            $this->file = array_values($this->file); // Reindex array
+        if ($index !== null) {
+            $files = $this->file;
+            unset($files[$index]);
+            $this->file = array_values($files); // Reindex array
         } else {
             $this->file = [];
         }

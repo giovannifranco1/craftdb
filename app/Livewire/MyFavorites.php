@@ -3,12 +3,13 @@
 namespace App\Livewire;
 
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\View as ViewFacade;
 use Livewire\Component;
 
 class MyFavorites extends Component
 {
     public function render(): View
     {
-        return view('livewire.my-favorites');
+        return ViewFacade::make('livewire.my-favorites');
     }
 }

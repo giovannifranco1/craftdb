@@ -2,7 +2,6 @@
 
 use App\Actions\Diagram\UpdateDiagram;
 use App\Models\Diagram;
-use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 
@@ -28,6 +27,7 @@ new class extends Component {
     /** @var int<1,2> */
     public int $step = 1;
 
+    /** @var array<string, string> */
     protected $listeners = ['open-diagram-edit-modal' => 'openModal'];
 
     public function mount(Diagram $diagram): void
@@ -102,8 +102,10 @@ new class extends Component {
 
         $action->exec($this->diagram, $validatedData);
 
-        $this->modal('diagram-edit-' . $this->diagram->id)->close();
-        $this->modal('confirm-update-diagram')->close();
+        $this->modal("diagram-edit-{$this->diagram->id}")->close();
+        $this->modal("confirm-diagram-edit-{$this->diagram->id}")->close();
+
+        $this->reset('showWarning', 'step');
 
         $this->dispatch('alert', message: __("Diagram updated successfully."));
         $this->dispatch('diagram-updated');

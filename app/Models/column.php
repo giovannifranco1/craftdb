@@ -89,7 +89,10 @@ class Column extends Model
         return $this->relationshipsFrom->merge($this->relationshipsTo);
     }
 
-    /** Scope */
+    /**
+     * @param Builder<Column> $query
+     * @return Builder<Column>
+     */
     public function scopeFilterByForeignKeys(Builder $query): Builder
     {
         return $query->where('is_foreign', true);

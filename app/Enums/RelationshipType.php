@@ -29,6 +29,7 @@ enum RelationshipType: string
         return match ($this) {
             self::ONE_TO_ONE => 'One to One',
             self::ONE_TO_MANY => 'One to Many',
+            self::MANY_TO_ONE => 'Many to One',
             self::MANY_TO_MANY => 'Many to Many',
         };
     }

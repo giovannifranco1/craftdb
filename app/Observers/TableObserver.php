@@ -11,9 +11,12 @@ class TableObserver
      */
     public function created(Table $table): void
     {
-        $table->diagram->update([
-            'updated_at' => now(),
-        ]);
+        $diagram = $table->diagram;
+        if ($diagram) {
+            $diagram->update([
+                'updated_at' => now(),
+            ]);
+        }
     }
 
     /**
@@ -21,9 +24,12 @@ class TableObserver
      */
     public function updated(Table $table): void
     {
-        $table->diagram->update([
-            'updated_at' => now(),
-        ]);
+        $diagram = $table->diagram;
+        if ($diagram) {
+            $diagram->update([
+                'updated_at' => now(),
+            ]);
+        }
     }
 
     /**
@@ -31,9 +37,12 @@ class TableObserver
      */
     public function deleted(Table $table): void
     {
-        $table->diagram->update([
-            'updated_at' => now(),
-        ]);
+        $diagram = $table->diagram;
+        if ($diagram) {
+            $diagram->update([
+                'updated_at' => now(),
+            ]);
+        }
     }
 
     /**
@@ -41,8 +50,11 @@ class TableObserver
      */
     public function restored(Table $table): void
     {
-        $table->diagram->update([
-            'updated_at' => now(),
-        ]);
+        $diagram = $table->diagram;
+        if ($diagram) {
+            $diagram->update([
+                'updated_at' => now(),
+            ]);
+        }
     }
 }

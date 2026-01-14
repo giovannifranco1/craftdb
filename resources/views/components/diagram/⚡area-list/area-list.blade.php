@@ -1,5 +1,5 @@
 <div style="position: static; inset: auto; transform: none; contain: layout;">
     @foreach($this->getAreas() as $area)
-        <livewire:diagram.area :$area :key="$area->id" />
+        <livewire:diagram.area :$area :wire:key="$area->id" />
     @endforeach
 </div>

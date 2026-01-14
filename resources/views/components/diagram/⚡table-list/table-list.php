@@ -157,6 +157,7 @@ new class extends Component {
             'type'        => ['required', 'string', 'in:1:n,1:1,n:n,n:1'],
         ])->validated();
 
+        /** @phpstan-ignore-next-line */
         $action->exec($data);
 
         $this->dispatch('table::relationship-added');

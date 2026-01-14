@@ -44,7 +44,7 @@
 
                 @if($step === $STEP_FINAL)
                     <flux:button class="cursor-pointer" variant="subtle" icon="arrow-left" wire:click="prevStep">{{ __('Back') }}</flux:button>
-                    <flux:modal.trigger name="confirm-update-diagram">
+                    <flux:modal.trigger name="confirm-diagram-edit-{{ $diagram->id }}">
                         <flux:button
                             class="cursor-pointer"
                             variant="primary"
@@ -61,7 +61,7 @@
             </div>
         </div>
 
-        <flux:modal :closable="false" :dismissible="false" name="confirm-update-diagram" class="min-w-[25rem]">
+        <flux:modal :closable="false" name="confirm-diagram-edit-{{ $diagram->id }}" class="min-w-[25rem]">
 
             @if($showWarning)
                 <flux:callout variant="warning" class="mb-4" icon="exclamation-triangle">

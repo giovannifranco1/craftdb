@@ -22,7 +22,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Column> $columns
  * @property-read int|null $columns_count
- * @property-read \App\Models\Diagram $diagram
+ * @property-read \App\Models\Diagram|null $diagram
  * @method static \Database\Factories\TableFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Table newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Table newQuery()
@@ -99,7 +99,7 @@ class Table extends Model
      */
     public function scopeFirstPrimaryColumn(Builder $query): Builder
     {
-        return $query->with(['columns' => function (Builder $q): void {
+        return $query->with(['columns' => function ($q): void {
             $q->where('is_primary', true)->orderBy('order')->limit(1);
         }]);
     }
@@ -116,6 +116,9 @@ class Table extends Model
             ->with(['fromTable', 'toTable', 'fromColumn', 'toColumn']);
     }
 
+    /**
+     * @return HasMany<Column, $this>
+     */
     public function foreignKeys(): HasMany
     {
         return $this->hasMany(Column::class, 'table_id')->where('is_foreign', true);

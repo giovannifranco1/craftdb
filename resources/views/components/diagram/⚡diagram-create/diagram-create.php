@@ -116,8 +116,9 @@ new class extends Component {
         session()->flash('message', __("Diagram created successfully."));
         session()->put('diagrams_count', session()->get('diagrams_count') + 1);
 
+        $currentTeam = Team::currentTeam();
         $this->redirect(route('diagram.show', [
-            Team::currentTeam()->getKey(),
+            $currentTeam?->getKey(),
             $diagram->slug,
         ]));
     }

@@ -33,6 +33,12 @@ class CreateNewDiagram
     {
         $this->_validate($data);
 
+        $currentTeam = Team::currentTeam();
+
+        if (!$currentTeam) {
+            throw new \Exception('No team found for the current user.');
+        }
+
         $slug = str()->slug($data['name']) . '-' . str()->random(10);
 
         $diagram = Diagram::create([
@@ -40,7 +46,7 @@ class CreateNewDiagram
             'description' => data_get($data, 'description'),
             'style'       => data_get($data, 'style'),
             'database'    => data_get($data, 'database'),
-            'team_id'     => Team::currentTeam()->getKey(),
+            'team_id'     => $currentTeam->getKey(),
             'slug'        => $slug,
         ]);
 

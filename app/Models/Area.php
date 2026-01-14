@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use Database\Factories\AreaFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Area extends Model
 {
+    /** @use HasFactory<\Database\Factories\AreaFactory> */
     use HasFactory;
 
     protected $table = 'area';

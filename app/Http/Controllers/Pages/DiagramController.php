@@ -20,7 +20,10 @@ class DiagramController extends Controller
         Gate::authorize('view', $diagram);
 
         // Register that the user viewed the diagram
-        $diagram->recordView(Auth::user());
+        $user = Auth::user();
+        if ($user) {
+            $diagram->recordView($user);
+        }
 
         return view('pages.diagram.show', compact('diagram'));
     }

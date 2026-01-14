@@ -15,17 +15,19 @@ class InviteController extends Controller
     /**
      * Accept the given invite.
      *
-     * @param Request $request
-     * @param $invitationId
+     * @param string|int $invitationId
      * @return Application|\Illuminate\Foundation\Application|RedirectResponse|Redirector
      * @throws Exception
      */
-    public function inviteAccept($invitationId): \Illuminate\Foundation\Application|Redirector|Application|RedirectResponse
+    public function inviteAccept(string|int $invitationId): \Illuminate\Foundation\Application|Redirector|Application|RedirectResponse
     {
         // Get the invitation model
-        $invitation = TeamsFacade::instance('invitation')->whereKey($invitationId)->firstOrFail();
+        /** @var \Illuminate\Database\Eloquent\Builder<\Illuminate\Database\Eloquent\Model> $invitationQuery */
+        $invitationQuery = TeamsFacade::instance('invitation');
+        $invitation = $invitationQuery->whereKey($invitationId)->firstOrFail();
 
         // Get the team from invitation
+        /** @var object{team: mixed, id: mixed} $invitation */
         $team = $invitation->team;
 
         // Accept the invitation

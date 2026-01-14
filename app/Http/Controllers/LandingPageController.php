@@ -3,12 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\View as ViewFacade;
 
 class LandingPageController extends Controller
 {
     public function index(): View
     {
-        return view('landing-page.index', [
+        return ViewFacade::make('landing-page.index', [
             'features' => config('landingpage.features'),
             'howItWorks' => config('landingpage.how_it_works'),
             'plans' => config('landingpage.pricing.plans'),
@@ -19,7 +20,7 @@ class LandingPageController extends Controller
 
     public function features(): View
     {
-        return view('landing-page.features', [
+        return ViewFacade::make('landing-page.features', [
             'features' => config('landingpage.features'),
             'site' => config('landingpage.site'),
         ]);
@@ -27,7 +28,7 @@ class LandingPageController extends Controller
 
     public function pricing(): View
     {
-        return view('landing-page.pricing', [
+        return ViewFacade::make('landing-page.pricing', [
             'plans' => config('landingpage.pricing.plans'),
             'faq' => config('landingpage.faq'),
             'site' => config('landingpage.site'),
@@ -36,7 +37,7 @@ class LandingPageController extends Controller
 
     public function about(): View
     {
-        return view('landing-page.about', [
+        return ViewFacade::make('landing-page.about', [
             'site' => config('landingpage.site'),
         ]);
     }

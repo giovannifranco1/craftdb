@@ -6,6 +6,7 @@ parameters:
 
     paths:
         - app/
+        - resources/views/components
 
     # Level 10 is the highest level
     level: 8
@@ -13,5 +14,10 @@ parameters:
     excludePaths:
         - _ide_helper.php
         - app/Models/Team
+        - **/*.test.php
+        - **/*.blade.php
 
-    memoryLimit: "2G"
+    ignoreErrors:
+        # Ignore common Blade component patterns that PHPStan doesn't understand
+        - '#Expression "new class extends \\Livewire\\Component…" on a separate line does not do anything#'
+        - '#Access to an undefined property Livewire\\Component@anonymous.*#'

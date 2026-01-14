@@ -59,6 +59,9 @@ class UpdateDiagram
         ])->validate();
     }
 
+    /**
+     * @param DTODiagramUpdate $data
+     */
     private function _hasModifiedStyleOrDatabase(Diagram $diagram, array $data): bool
     {
         return $diagram->style !== data_get($data, 'style')

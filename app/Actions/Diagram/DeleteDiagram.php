@@ -10,7 +10,6 @@ class DeleteDiagram
 {
     /**
      * @param Diagram $diagram
-     * @return bool
      */
     public function exec(Diagram $diagram): bool
     {
@@ -21,7 +20,7 @@ class DeleteDiagram
             $diagram->tables()->delete();
             $diagram->areas()->delete();
             $diagram->notes()->delete();
-            return $diagram->delete();
+            return (bool) $diagram->delete();
         });
     }
 }

@@ -20,21 +20,20 @@ class Canvas extends Component
      * Create a new component instance.
      */
     public function __construct (
-        public ?Diagram $diagram
+        public Diagram $diagram
     )
     {
         $this->relationships = $diagram->relationships()->get();
-
-        $this->isInitialLoad = $diagram->is_initial_load;
+        $this->isInitialLoad = (bool) $diagram->is_initial_load;
 
         if ($this->isInitialLoad) {
-            $diagram->is_initial_load = false;
+            $diagram->is_initial_load = 0;
             $diagram->save();
         }
 
         $this->title = $diagram->slug;
 
-        $this->diagram = $this->diagram->load('team');
+        $this->diagram = $diagram->load('team');
     }
 
     /**

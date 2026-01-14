@@ -53,6 +53,9 @@ new class extends Component {
         $this->maxColumns = TableModel::MAX_COLUMNS;
     }
 
+    /**
+     * @return Collection<int,Column>
+     */
     #[Computed(cache: true)]
     public function getColumns(): Collection
     {
@@ -67,7 +70,7 @@ new class extends Component {
 
         $this->validateOnly('name');
 
-        $this->table->name = $this->name;
+        $this->table->name = $this->name ?? '';
         $this->table->save();
 
         $this->dispatch('table::renamed');
@@ -100,7 +103,7 @@ new class extends Component {
         $this->dispatch('table::color-updated');
     }
 
-    public function renameColumn(Column $column, $newName): void
+    public function renameColumn(Column $column, string $newName): void
     {
         if (!$this->authorizeDiagramWithAlert('update', $this->table->diagram)) {
             return;
@@ -142,19 +145,19 @@ new class extends Component {
     #[On('table::relationship-added')]
     public function refreshTableWithCounts(): void
     {
-        $this->table = $this->table->fresh([
+        $table = $this->table->fresh([
             'diagram',
-            'columns' => function ($query) {
-                $query->orderBy('order');
-            }
-        ])->loadCount([
+            'columns' => fn ($query) => $query->orderBy('order'),
+        ]);
+
+        if ($table === null) {
+            throw new LogicException('Table não existe mais');
+        }
+
+        $this->table = $table->loadCount([
             'columns',
-            'columns as primary_count' => function ($q) {
-                $q->where('is_primary', true);
-            },
-            'columns as foreign_count' => function ($q) {
-                $q->where('is_foreign', true);
-            },
+            'columns as primary_count' => fn ($q) => $q->where('is_primary', true),
+            'columns as foreign_count' => fn ($q) => $q->where('is_foreign', true),
         ]);
     }
 
@@ -172,7 +175,9 @@ new class extends Component {
 
         $this->dispatch('alert', message: __('Table Removed'));
         $this->dispatch('table::removed');
-        $this->dispatch('relationships::fresh', relationships: Diagram::find($this->diagramId)->relationships()->get());
+        $diagram = Diagram::find($this->diagramId);
+        $relationships = $diagram ? $diagram->relationships()->get() : collect();
+        $this->dispatch('relationships::fresh', relationships: $relationships);
     }
 
     #[On('table::move.{table.id}')]

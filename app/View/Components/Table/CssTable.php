@@ -17,7 +17,7 @@ class CssTable extends Component
     public function __construct(
         public readonly ?Table $table
     ){
-        $this->color = $table?->color ?? Table::COLOR_DEFAULT;
+        $this->color = $table->color ?? Table::COLOR_DEFAULT;
     }
 
     /**

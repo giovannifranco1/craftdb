@@ -43,7 +43,7 @@ class Helpers
 
     /**
      * @param Diagram $diagram
-     * @return array{int offsetX, offsetY}
+     * @return array{int, int}
      */
     public static function getPositionCanvasByDiagram(Diagram $diagram): array
     {

@@ -22,7 +22,7 @@ class FortifyServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->instance(LogoutResponse::class, new class implements LogoutResponse {
-            public function toResponse($request): RedirectResponse|Redirector
+            public function toResponse($request): RedirectResponse
             {
                 return redirect()->route('dashboard');
             }

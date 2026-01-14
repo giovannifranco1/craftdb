@@ -63,7 +63,7 @@ class TeamInvitationNotification extends Notification
             'role_id' => $this->invitation->role_id,
             'role_name' => $this->invitation->role->name ?? $this->invitation->role->code,
             'invitation_id' => $this->invitation->id,
-            'invited_at' => $this->invitation->created_at->toDateTimeString(),
+            'invited_at' => $this->invitation->created_at?->toDateTimeString(),
         ];
     }
 

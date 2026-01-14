@@ -59,7 +59,7 @@ class ParseMySQLSchema extends BaseSQLParse
                     continue;
                 }
 
-                if (!$statement->name || !$statement->fields) {
+                if (!$statement->name || !$statement->name->table || !$statement->fields) {
                     continue;
                 }
 
@@ -88,13 +88,14 @@ class ParseMySQLSchema extends BaseSQLParse
 
                 // Parse columns
                 $order = 0;
-                foreach ($statement->fields as $field) {
+                if (is_iterable($statement->fields)) {
+                    foreach ($statement->fields as $field) {
                     if (!$field->name) {
                         continue;
                     }
 
                     $columnName = $this->cleanIdentifier($field->name);
-                    $columnType = $field->type ? strtolower($field->type->name) : 'varchar';
+                    $columnType = $field->type && $field->type->name ? strtolower($field->type->name) : 'varchar';
                     $length = $field->type && $field->type->parameters ? (int) $field->type->parameters[0] : null;
 
                     // Check if nullable
@@ -150,6 +151,7 @@ class ParseMySQLSchema extends BaseSQLParse
                         'default_value' => $defaultValue,
                         'comment' => $comment,
                     ]);
+                    }
                 }
 
                 // Extract foreign keys
@@ -172,14 +174,16 @@ class ParseMySQLSchema extends BaseSQLParse
         /** @var array<string> */
         $primaryKeys = [];
 
-        if (!$statement->fields) {
+        if (!$statement->fields || !is_iterable($statement->fields)) {
             return $primaryKeys;
         }
 
         foreach ($statement->fields as $field) {
             if ($field->key && $field->key->type === 'PRIMARY KEY' && $field->key->columns) {
                 foreach ($field->key->columns as $column) {
-                    $primaryKeys[] = $this->cleanIdentifier($column['name']);
+                    if (isset($column['name'])) {
+                        $primaryKeys[] = $this->cleanIdentifier($column['name']);
+                    }
                 }
             }
         }
@@ -196,7 +200,7 @@ class ParseMySQLSchema extends BaseSQLParse
      */
     private function extractForeignKeys(CreateStatement $statement, string $tableName, array &$foreignKeys): void
     {
-        if (!$statement->fields) {
+        if (!$statement->fields || !is_iterable($statement->fields)) {
             return;
         }
 
@@ -221,7 +225,7 @@ class ParseMySQLSchema extends BaseSQLParse
             return;
         }
 
-        if (!$field->references || !$field->references->table || !isset($field->references->columns[0])) {
+        if (!$field->references || !$field->references->table || !$field->references->table->table || !isset($field->references->columns[0])) {
             return;
         }
 

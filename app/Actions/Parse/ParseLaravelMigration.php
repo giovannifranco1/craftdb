@@ -106,7 +106,9 @@ class ParseLaravelMigration extends BaseSQLParse
             $this->createRelationships($allForeignKeys, $allTables);
         });
 
-        Table::setEventDispatcher($tableObserver);
+        if ($tableObserver) {
+            Table::setEventDispatcher($tableObserver);
+        }
     }
 
     /**

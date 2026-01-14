@@ -2,6 +2,7 @@
 
 use App\Concerns\HandlesDiagramAuthorizationWithAlertError;
 use App\Concerns\HasSidePanel;
+use App\Enums\ColumnTypes;
 use App\Livewire\Forms\Diagram\ColumnForm;
 use App\Models\Column;
 use App\Models\Table;
@@ -12,6 +13,7 @@ use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
 use Livewire\Component;
+use App\Models\Relationship;
 
 new class extends Component {
     use HandlesDiagramAuthorizationWithAlertError;
@@ -26,32 +28,21 @@ new class extends Component {
     public bool $showEditForm = false;
     public ?int $editingColumnId = null;
     public string $editingColumnName = '';
-
     public bool $isEventUpdateColumn = false;
-
     public ColumnForm $columnForm;
 
-    public function mount(?Table $table = null): void
-    {
-        if ($table) {
-            $this->tableId = $table->id;
-        }
-    }
-
-    #[Computed]
+    #[Computed()]
     public function getTable(): ?Table
     {
-        if (!$this->tableId) {
-            return null;
-        }
-
-        return Table::find($this->tableId);
+        return cache()->remember('table_'.$this->tableId, 60, function () {
+            return Table::query()->find($this->tableId);
+        });
     }
 
     #[On('table-side-editor::open')]
     public function open(int $tableId): void
     {
-        $table = Table::find($tableId);
+        $table = Table::query()->find($tableId);
 
         if (!$table) {
             $this->open = false;
@@ -61,18 +52,19 @@ new class extends Component {
 
         $this->tableId = $tableId;
         $this->open = true;
+
         $this->resetForms();
-
-        // Normaliza as ordens ao abrir o painel
         $this->normalizeColumnOrders();
-
         $this->dispatch('table-side-editor::opened', tableId: $tableId);
     }
 
-    #[Computed]
+    /**
+     * @return \Illuminate\Database\Eloquent\Collection<int, \App\Models\Column>
+     */
+    #[Computed()]
     public function getColumns(): Collection
     {
-        $table = $this->getTable();
+        $table = $this->getTable;
 
         if (!$table) {
             return new Collection();
@@ -81,8 +73,11 @@ new class extends Component {
         return $table->columns()->orderBy('order')->get();
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Collection<int, \App\Models\Column>
+     */
     #[Computed]
-    public function getForeignKeys(): ?Collection
+    public function getForeignKeys(): Collection
     {
         $table = $this->getTable();
 
@@ -93,10 +88,13 @@ new class extends Component {
         return $table->foreignKeys ?? new Collection();
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Collection<int, \App\Models\Relationship>
+     */
     #[Computed]
     public function getRelationships(): Collection
     {
-        $table = $this->getTable();
+        $table = $this->getTable;
         if (!$table) {
             return new Collection();
         }
@@ -104,10 +102,13 @@ new class extends Component {
         return $table->relationships()->with(['fromTable', 'toTable', 'fromColumn', 'toColumn'])->get();
     }
 
+    /**
+     * @return array<int, string>
+     */
     #[Computed]
     public function getTablesWithColors(): array
     {
-        $table = $this->getTable();
+        $table = $this->getTable;
         if (!$table) {
             return [];
         }
@@ -115,13 +116,16 @@ new class extends Component {
         $tablesMap = [];
         $tablesMap[$table->id] = $table->color ?? Table::COLOR_DEFAULT;
 
-        $this->getRelationships()->each(function (Model $rel) use (&$tablesMap): void {
+        $this->getRelationships->each(function (Relationship $rel) use (&$tablesMap): void {
 
             if ($rel->fromTable && !isset($tablesMap[$rel->from_table_id])) {
-                $tablesMap[$rel->from_table_id] = $rel->fromTable->color ?? Table::COLOR_DEFAULT;
+                $fromTable = $rel->fromTable;
+                $tablesMap[$rel->from_table_id] = $fromTable->color ?? Table::COLOR_DEFAULT;
             }
+
             if ($rel->toTable && !isset($tablesMap[$rel->to_table_id])) {
-                $tablesMap[$rel->to_table_id] = $rel->toTable->color ?? Table::COLOR_DEFAULT;
+                $toTable = $rel->toTable;
+                $tablesMap[$rel->to_table_id] = $toTable->color ?? Table::COLOR_DEFAULT;
             }
         });
 
@@ -135,7 +139,7 @@ new class extends Component {
             return null;
         }
 
-        $table = $this->getTable();
+        $table = $this->getTable;
         if (!$table) {
             return null;
         }
@@ -148,11 +152,12 @@ new class extends Component {
 
     public function addColumn(): void
     {
-        if (!$this->authorizeDiagramWithAlert('update', $this->getTable()->diagram)) {
+        $table = $this->getTable;
+        if (!$table || !$this->authorizeDiagramWithAlert('update', $table->diagram)) {
             return;
         }
 
-        $table = $this->getTable();
+        $table = $this->getTable;
 
         if (!$table) {
             return;
@@ -173,7 +178,8 @@ new class extends Component {
 
     public function updateColumnName(int $columnId): void
     {
-        if (!$this->authorizeDiagramWithAlert('update', $this->getTable()->diagram)) {
+        $table = $this->getTable;
+        if (!$table || !$this->authorizeDiagramWithAlert('update', $table->diagram)) {
             return;
         }
 
@@ -181,7 +187,7 @@ new class extends Component {
             'editingColumnName' => 'required|string|max:255',
         ]);
 
-        $table = $this->getTable();
+        $table = $this->getTable;
         if (!$table) {
             return;
         }
@@ -201,7 +207,8 @@ new class extends Component {
 
     public function updateColumn(int $columnId): void
     {
-        if (!$this->authorizeDiagramWithAlert('update', $this->getTable()->diagram)) {
+        $table = $this->getTable;
+        if (!$table || !$this->authorizeDiagramWithAlert('update', $table->diagram)) {
             return;
         }
 
@@ -209,7 +216,7 @@ new class extends Component {
 
         $this->columnForm->validate();
 
-        $table = $this->getTable();
+        $table = $this->getTable;
 
         if (!$table) {
             return;
@@ -241,7 +248,8 @@ new class extends Component {
 
     public function deleteColumn(): void
     {
-        if (!$this->authorizeDiagramWithAlert('update', $this->getTable()->diagram)) {
+        $table = $this->getTable;
+        if (!$table || !$this->authorizeDiagramWithAlert('update', $table->diagram)) {
             return;
         }
 
@@ -260,11 +268,12 @@ new class extends Component {
 
     public function deleteColumnById(int $columnId): void
     {
-        if (!$this->authorizeDiagramWithAlert('update', $this->getTable()->diagram)) {
+        $table = $this->getTable;
+        if (!$table || !$this->authorizeDiagramWithAlert('update', $table->diagram)) {
             return;
         }
 
-        $table = $this->getTable();
+        $table = $this->getTable;
         if (!$table) {
             return;
         }
@@ -285,11 +294,12 @@ new class extends Component {
 
     public function toggleNullable(int $columnId): void
     {
-        if (!$this->authorizeDiagramWithAlert('update', $this->getTable()->diagram)) {
+        $table = $this->getTable;
+        if (!$table || !$this->authorizeDiagramWithAlert('update', $table->diagram)) {
             return;
         }
 
-        $table = $this->getTable();
+        $table = $this->getTable;
         if (!$table) {
             return;
         }
@@ -308,11 +318,13 @@ new class extends Component {
 
     public function togglePrimaryKey(int $columnId): void
     {
-        if (!$this->authorizeDiagramWithAlert('update', $this->getTable()->diagram)) {
+        $table = $this->getTable;
+        if (!$table || !$this->authorizeDiagramWithAlert('update', $table->diagram)) {
             return;
         }
 
-        $table = $this->getTable();
+        $table = $this->getTable;
+
         if (!$table) {
             return;
         }
@@ -331,7 +343,8 @@ new class extends Component {
 
     public function toggleForeignKey(int $columnId): void
     {
-        if (!$this->authorizeDiagramWithAlert('update', $this->getTable()->diagram)) {
+        $table = $this->getTable;
+        if (!$table || !$this->authorizeDiagramWithAlert('update', $table->diagram)) {
             return;
         }
 
@@ -357,11 +370,8 @@ new class extends Component {
      */
     private function normalizeColumnOrders(): void
     {
-        if (!$this->authorizeDiagramWithAlert('update', $this->getTable()->diagram)) {
-            return;
-        }
+        $table = $this->getTable;
 
-        $table = $this->getTable();
         if (!$table) {
             return;
         }
@@ -379,16 +389,16 @@ new class extends Component {
 
     public function moveColumnUp(int $columnId): void
     {
-        if (!$this->authorizeDiagramWithAlert('update', $this->getTable()->diagram)) {
+        $table = $this->getTable;
+        if (!$table || !$this->authorizeDiagramWithAlert('update', $table->diagram)) {
             return;
         }
 
-        $table = $this->getTable();
+        $table = $this->getTable;
         if (!$table) {
             return;
         }
 
-        // Primeiro normaliza as ordens
         $this->normalizeColumnOrders();
 
         $column = $table->columns()->whereKey($columnId)->first();
@@ -416,11 +426,12 @@ new class extends Component {
 
     public function moveColumnDown(int $columnId): void
     {
-        if (!$this->authorizeDiagramWithAlert('update', $this->getTable()->diagram)) {
+        $table = $this->getTable;
+        if (!$table || !$this->authorizeDiagramWithAlert('update', $table->diagram)) {
             return;
         }
 
-        $table = $this->getTable();
+        $table = $this->getTable;
         if (!$table) {
             return;
         }
@@ -470,11 +481,12 @@ new class extends Component {
 
     public function loadColumnData(int $columnId): void
     {
-        if (!$this->authorizeDiagramWithAlert('update', $this->getTable()->diagram)) {
+        $table = $this->getTable;
+        if (!$table || !$this->authorizeDiagramWithAlert('update', $table->diagram)) {
             return;
         }
 
-        $table = $this->getTable();
+        $table = $this->getTable;
         if (!$table) {
             return;
         }
@@ -496,7 +508,8 @@ new class extends Component {
 
     public function startEditingColumnName(int $columnId): void
     {
-        $table = $this->getTable();
+        /** @var Table|null $table */
+        $table = $this->getTable;
 
         if (!$table) {
             return;
@@ -525,27 +538,11 @@ new class extends Component {
         $this->columnForm->reset();
     }
 
+    /**
+     * @return array<int, \App\Enums\ColumnTypes>
+     */
     public function getColumnTypes(): array
     {
-        return [
-            'VARCHAR'   => 'VARCHAR',
-            'CHAR'      => 'CHAR',
-            'TEXT'      => 'TEXT',
-            'INT'       => 'INT',
-            'BIGINT'    => 'BIGINT',
-            'SMALLINT'  => 'SMALLINT',
-            'MEDIUMINT' => 'MEDIUMINT',
-            'TINYINT'   => 'TINYINT',
-            'DECIMAL'   => 'DECIMAL',
-            'FLOAT'     => 'FLOAT',
-            'DOUBLE'    => 'DOUBLE',
-            'BOOLEAN'   => 'BOOLEAN',
-            'DATE'      => 'DATE',
-            'DATETIME'  => 'DATETIME',
-            'TIMESTAMP' => 'TIMESTAMP',
-            'TIME'      => 'TIME',
-            'YEAR'      => 'YEAR',
-            'JSON'      => 'JSON',
-        ];
+        return ColumnTypes::cases();
     }
 };

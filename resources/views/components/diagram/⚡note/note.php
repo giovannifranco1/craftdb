@@ -84,11 +84,13 @@ new class extends Component {
 
     public function updateContent(): void
     {
-        if (!$this->authorizeDiagramWithAlert('update', $this->note->diagram)) {
+        $diagram = $this->note->diagram;
+        if (!$diagram || !$this->authorizeDiagramWithAlert('update', $diagram)) {
             return;
         }
 
-        if (!$this->note->diagram->team_id == Team::currentTeam()->getKey()) {
+        $currentTeam = Team::currentTeam();
+        if (!$currentTeam || $diagram->team_id !== $currentTeam->getKey()) {
             abort(403, 'Unauthorized access to diagram');
         }
 

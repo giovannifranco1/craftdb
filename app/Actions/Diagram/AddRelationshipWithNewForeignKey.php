@@ -22,7 +22,7 @@ class AddRelationshipWithNewForeignKey
 {
     /**
      * @param DTORelationship $data
-     * @return Collection<Relationship>|Relationship
+     * @return Collection<int,Relationship>|Relationship
      */
     public function exec(array $data): Collection | Relationship
     {
@@ -30,6 +30,9 @@ class AddRelationshipWithNewForeignKey
 
         $fromTable = Table::query()->with(['columns', 'diagram'])->find(data_get($data, 'fromTableId'));
         $toTable = Table::query()->with(['columns', 'diagram'])->find(data_get($data, 'toTableId'));
+
+        /** @var Table $fromTable */
+        /** @var Table $toTable */
 
         $type = RelationshipType::from($data['type']);
 
@@ -103,7 +106,7 @@ class AddRelationshipWithNewForeignKey
      *
      * @param Table $fromTable
      * @param Table $toTable
-     * @return Collection<Relationship>
+     * @return Collection<int, Relationship>
      */
     private function _addManyToMany(Table $fromTable, Table $toTable): Collection
     {

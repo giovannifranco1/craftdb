@@ -7,8 +7,14 @@ use Illuminate\Support\Facades\Gate;
 
 trait HandlesDiagramAuthorizationWithAlertError
 {
-    public function authorizeDiagramWithAlert(string $action, Diagram $diagram): bool
+
+    public function authorizeDiagramWithAlert(string $action, ?Diagram $diagram): bool
     {
+        if (is_null($diagram)) {
+            $this->dispatch('alert', message: __('Diagram not found.'), type: 'error');
+            return false;
+        }
+
         if (Gate::denies($action, $diagram)) {
             $this->dispatch('alert', message: __('You are not authorized to perform this action on this diagram.'), type: 'error');
             return false;

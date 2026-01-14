@@ -121,13 +121,16 @@ class Diagram extends Model
         return $this->team_id;
     }
 
+    /**
+     * @return BelongsTo<Team, $this>
+     */
     public function team(): BelongsTo
     {
         return $this->belongsTo(Team::class, 'team_id', 'id');
     }
 
     /**
-     * @return BelongsToMany<User>
+     * @return BelongsToMany<User, $this, \Illuminate\Database\Eloquent\Relations\Pivot>
      */
     public function viewers(): BelongsToMany
     {

@@ -3,7 +3,6 @@
 use App\Concerns\HandlesDiagramAuthorizationWithAlertError;
 use App\Models\Area as AreaModel;
 use App\Support\Helpers;
-use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Validate;
