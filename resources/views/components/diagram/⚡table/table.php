@@ -5,7 +5,6 @@ use App\Models\Column;
 use App\Models\Diagram;
 use App\Models\Table as TableModel;
 use App\Support\Helpers;
-use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;

@@ -36,6 +36,8 @@ describe('Column Management', function() {
         /** @var TestCase&object{table: Table} $this */
 
         $this->component
+            ->dispatch('table-side-editor::open', $this->table->id)
+            ->assertSet('tableId', $this->table->id)
             ->call('addColumn')
             ->assertDispatched('table-side-editor::column-added');
 
@@ -53,6 +55,8 @@ describe('Column Management', function() {
 
         $this->component = Livewire::test('diagram.table.side-editor', ['table' => $this->table]);
         $this->component
+            ->dispatch('table-side-editor::open', $this->table->id)
+            ->assertSet('tableId', $this->table->id)
             ->set('columnForm.name', 'new_name')
             ->call('updateColumn', $column->id)
             ->assertDispatched('table-side-editor::column-updated');
@@ -70,6 +74,8 @@ describe('Column Management', function() {
         ]);
 
         $this->component
+            ->dispatch('table-side-editor::open', $this->table->id)
+            ->assertSet('tableId', $this->table->id)
             ->call('deleteColumnById', $column->id)
             ->assertDispatched('table-side-editor::column-deleted');
 
@@ -86,7 +92,11 @@ describe('Column Management', function() {
             'is_primary' => false,
         ]);
 
-        $this->component->call('togglePrimaryKey', $column->id);
+        $this->component
+            ->dispatch('table-side-editor::open', $this->table->id)
+            ->assertSet('tableId', $this->table->id)
+            ->call('togglePrimaryKey', $column->id)
+            ->assertDispatched('table-side-editor::column-saved');
 
         expect($column->fresh()->is_primary)->toBe(1, 'Column is not primary key');
     });
@@ -100,7 +110,10 @@ describe('Column Management', function() {
             'order' => 1,
         ]);
 
-        $this->component->call('selectColumn', $column->id);
+        $this->component
+            ->dispatch('table-side-editor::open', $this->table->id)
+            ->assertSet('tableId', $this->table->id)
+            ->call('selectColumn', $column->id);
 
         expect($this->component->get('selectedColumnId'))->toBe($column->id);
     });
