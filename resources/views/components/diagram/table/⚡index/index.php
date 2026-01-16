@@ -34,7 +34,7 @@ new class extends Component {
 
     public int $maxColumns;
 
-    #[Validate('required|string|max:255')]
+    #[Validate('required|string|max:255|min:1')]
     public ?string $name = null;
 
     /** @var array<string, string>  */
@@ -55,7 +55,7 @@ new class extends Component {
     /**
      * @return Collection<int,Column>
      */
-    #[Computed(cache: true)]
+    #[Computed()]
     public function getColumns(): Collection
     {
         return $this->table->columns;
@@ -108,7 +108,15 @@ new class extends Component {
             return;
         }
 
-        $column->name = $newName;
+        $validated = Validator::make(['newName' => $newName], ['newName' => 'required|string|max:255|min:1']);
+
+        if ($validated->fails()) {
+            $this->dispatch('alert', message: __('Invalid name'), type: 'error');
+            $this->dispatch('table::column-renamed');
+            return;
+        }
+
+        $column->name = $validated['newName'];
         $column->save();
 
         $this->refreshTableWithCounts();

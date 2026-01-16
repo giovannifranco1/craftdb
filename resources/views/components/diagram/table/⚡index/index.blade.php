@@ -7,7 +7,7 @@
     :style="`transform: translate3d(${x}px, ${y}px, 0); width: ${getSnappedWidth()}px; max-width: ${getSnappedWidth()}px; ${zIndex ? `z-index: ${zIndex};` : ''}`"
     class="absolute h-full select-none rounded-xl shadow-lg dark:shadow-zinc-900/50">
 
-    <x-diagram.table.dropdown-menu :table="$table"/>
+    <x-diagram.table.ui.dropdown-menu :table="$table"/>
 
     <!-- Table -->
     <div class="rounded-xl w-full h-full flex flex-col relative">

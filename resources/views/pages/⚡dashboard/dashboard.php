@@ -68,15 +68,13 @@ new class extends Component
 
     protected $listeners = ['diagram-updated' => '$refresh'];
 
-    public function editDiagram(int $diagramId): void
+    public function editDiagram(Diagram $diagram): void
     {
-        $diagram = Diagram::findOrFail($diagramId);
-
         if (!$this->authorizeDiagramWithAlert('update', $diagram)) {
             return;
         }
 
-        $this->dispatch('open-diagram-edit-modal', diagramId: $diagramId);
+        $this->dispatch('open-diagram-edit-modal', diagramId: $diagram->id);
     }
 
     public function deleteDiagram(Diagram $diagram, DeleteDiagramAction $action): void
@@ -94,6 +92,6 @@ new class extends Component
 
     public function placeholder(): View
     {
-        return view('components.diagram.placeholders.placeholder-dashboard');
+        return view('placeholders::placeholder-dashboard');
     }
 };

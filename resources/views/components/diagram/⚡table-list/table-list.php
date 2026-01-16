@@ -133,13 +133,6 @@ new class extends Component {
         $this->dispatch('table-list::position-updated', updated_at: $this->diagram->updated_at?->diffForHumans());
     }
 
-    public function placeholder(): string
-    {
-        return <<<'HTML'
-            <div></div>
-        HTML;
-    }
-
     #[On('table::add-relationship')]
     public function addRelationship(int $fromTableId, int $toTableId, string $type, AddRelationship $action): void
     {

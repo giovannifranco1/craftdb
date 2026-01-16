@@ -48,7 +48,7 @@
 >
     @foreach($colors as $color)
         @php($isSelected = $currentColor === $color)
-        <x-ui.color-circle
+        <x-diagram.ui.color-circle
             @mousedown.stop="loadingColor = true; $wire.setColor('{{ $color }}')"
             :color="$color"
             :selected="$isSelected"

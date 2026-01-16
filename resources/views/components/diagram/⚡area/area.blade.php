@@ -110,7 +110,7 @@
                 </div>
 
                 <!-- Color Picker Menu -->
-                <x-diagram.color-picker :model="$area" type="area" position="absolute left-0 -top-12" />
+                <x-diagram.ui.color-picker :model="$area" type="area" position="absolute left-0 -top-12" />
             </div>
         </div>
 

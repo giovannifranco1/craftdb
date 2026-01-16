@@ -5,11 +5,11 @@
     </div>
 
     <div class="flex justify-between flex-wrap gap-1 gap-y-5">
-        <x-diagram.card.placeholder/>
-        <x-diagram.card.placeholder/>
-        <x-diagram.card.placeholder/>
-        <x-diagram.card.placeholder/>
-        <x-diagram.card.placeholder/>
-        <x-diagram.card.placeholder/>
+        <x-diagram.ui.card.placeholder/>
+        <x-diagram.ui.card.placeholder/>
+        <x-diagram.ui.card.placeholder/>
+        <x-diagram.ui.card.placeholder/>
+        <x-diagram.ui.card.placeholder/>
+        <x-diagram.ui.card.placeholder/>
     </div>
 </div>

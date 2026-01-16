@@ -2,14 +2,13 @@
 
 use App\Models\Team\Team;
 use App\Models\Team\Membership;
-use App\Models\Team\Role;
 use App\Models\User;
-use Illuminate\Support\Facades\Validator;
 use Livewire\Component;
 use Livewire\Attributes\Computed;
 use Illuminate\Support\Collection;
 use App\Models\Team\Invitation;
 use App\Notifications\TeamInvitationNotification;
+use Illuminate\Support\Facades\Auth;
 
 new class extends Component {
     public ?Team $team = null;
@@ -108,7 +107,7 @@ new class extends Component {
             ->where('id', $invitationId)
             ->first();
 
-        if ($invitation && $invitation->hasReachedMaxInvitationsPerDay(auth()->user()->email)) {
+        if ($invitation && $invitation->hasReachedMaxInvitationsPerDay(Auth::user()->email)) {
             $this->dispatch('alert', message: __('You have reached the maximum number of invitations per day.'), type: 'error');
             return;
         }

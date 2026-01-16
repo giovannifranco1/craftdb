@@ -5,13 +5,16 @@ namespace Tests;
 use App\Models\Team\Team;
 use App\Models\User;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+use Livewire\Component;
 use Livewire\Features\SupportTesting\Testable;
 
 abstract class TestCase extends BaseTestCase
 {
     protected User $user;
     protected Team $team;
-    public Testable $component;
+
+    /** @var Testable<Component> */
+    public $component;
 
     public function autenticated(){
         $this->user = User::factory()->withoutTwoFactor()->create();

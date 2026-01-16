@@ -25,7 +25,7 @@
         <div class="flex-1 overflow-y-auto">
             <div class="h-full grid lg:grid-cols-2 xl:grid-cols-3 gap-4">
                 @forelse($this->getDiagrams as $diagram)
-                    <x-diagram.card wire:key="diagram-card-{{ $diagram->id }}" :diagram="$diagram" />
+                    <x-diagram.ui.card wire:key="diagram-card-{{ $diagram->id }}" :diagram="$diagram" />
                 @empty
                     <div class= "col-span-1 lg:col-span-3 w-full h-full flex flex-col items-center justify-center gap-6 px-4">
                         <div class="flex flex-col items-center gap-4">

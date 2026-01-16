@@ -1,30 +1,26 @@
 <?php
 
-namespace App\View\Components\Table;
+namespace App\View\Components\Diagram\UI;
 
-use App\Models\Table;
+use App\Models\Diagram;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class CssTable extends Component
+class Card extends Component
 {
-    public string $color;
-
     /**
      * Create a new component instance.
      */
     public function __construct(
-        public readonly ?Table $table
-    ){
-        $this->color = $table->color ?? Table::COLOR_DEFAULT;
-    }
+        public ?Diagram $diagram
+    ){}
 
     /**
      * Get the view / contents that represent the component.
      */
     public function render(): View|Closure|string
     {
-        return view('components.diagram.table.css-table');
+        return view('components.diagram.ui.card.index');
     }
 }

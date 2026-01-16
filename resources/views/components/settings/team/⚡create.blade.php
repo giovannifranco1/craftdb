@@ -35,10 +35,12 @@ new class extends Component {
             'user_id' => $user->id,
         ]);
 
+        session(['current_team' => $team]);
+
         $this->dispatch('team-created', name: $team->name);
         $this->dispatch('alert', message: __('Team created successfully.'));
 
-        $this->redirect(route('team.edit'), navigate: true);
+        $this->redirect(route('dashboard'), navigate: true);
     }
 }; ?>
 

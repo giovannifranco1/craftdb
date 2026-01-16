@@ -3,7 +3,6 @@
 namespace App\Providers;
 
 use Carbon\CarbonImmutable;
-use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -17,7 +16,6 @@ use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Sleep;
 use Illuminate\Validation\Rules\Password;
-use Symfony\Component\Routing\Generator\UrlGenerator;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -35,6 +33,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         View::addNamespace('layouts', resource_path('views/components/layouts'));
+        View::addNamespace('placeholders', resource_path('views/components/ui/placeholders'));
 
         /** @var \Illuminate\Foundation\Application $app */
         $app = $this->app;
@@ -53,7 +52,7 @@ class AppServiceProvider extends ServiceProvider
         $this->configureJsonResource();
         $this->configureModels();
         $this->configureVitePrefetching();
-        // $this->configureDefaultRulesForPassword(); // TODO: Uncomment this when we have a password reset feature
+        $this->configureDefaultRulesForPassword();
         $this->configureUnitTests();
     }
 
@@ -128,8 +127,6 @@ class AppServiceProvider extends ServiceProvider
         Password::defaults(fn (): Password => Password::min(8)
             ->max(32)
             ->letters()
-            ->numbers()
-            ->symbols()
             ->mixedCase()
         );
     }

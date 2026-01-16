@@ -46,8 +46,8 @@
     <flux:button.group>
 
         <flux:button x-data="{ open: false, loadingColor: false }" @mousedown.stop="open = !open" variant="primary" icon:trailing="chevron-down">
-            <x-ui.color-circle :color="$table->color"/>
-            <x-diagram.table.dropdown-menu-color :table="$table" />
+            <x-diagram.ui.color-circle :color="$table->color"/>
+            <x-diagram.table.ui.dropdown-menu-color :table="$table" />
         </flux:button>
 
         <flux:button @mousedown.stop="$wire.addColumn()" variant="primary" class="font-[Poppins] text-xs">

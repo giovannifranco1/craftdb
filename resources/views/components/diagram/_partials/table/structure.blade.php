@@ -13,7 +13,7 @@
 
         <tbody  class="divide-y divide-gray-100 dark:divide-zinc-700">
 
-            @foreach($this->getColumns() as $column)
+            @foreach($this->getColumns as $column)
                 <tr x-data="{ isEventRenameColumn: false, loadingRenameColumn: false, renameActionTriggered: false }" id="column-{{$table->id }}-{{ $column->id }}" class="hover:bg-blue-300/20 dark:hover:bg-blue-500/20 transition-colors" :style="`height: ${getGridSize()}px;`">
                     <td @dblclick="isEventRenameColumn = true" class="py-[2px] px-3">
                         <div class="flex items-center gap-2">
@@ -36,7 +36,7 @@
                                 style="background: transparent !important; box-shadow: none !important;"
                                 @mousedown.stop
                                 @keydown.stop
-                                @keydown.enter="renameActionTriggered = true; loadingRenameColumn = true; $wire.renameColumn({{ $column->id }}, $refs.inputColumn?.value || null)"
+                                @keydown.enter="renameActionTriggered = true; loadingRenameColumn = true; $wire.renameColumn({{ $column->id }}, $refs.inputColumn?.value || '')"
                                 @keydown.escape.stop="isEventRenameColumn = false;"
                                 @table::column-renamed.window="isEventRenameColumn = false; loadingRenameColumn = false;"
                                 @blur="if (renameActionTriggered) { return; } renameActionTriggered = false; loadingRenameColumn = true; $wire.renameColumn({{ $column->id }}, $refs.inputColumn?.value || null);"

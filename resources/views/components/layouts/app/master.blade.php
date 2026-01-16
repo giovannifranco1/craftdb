@@ -73,7 +73,6 @@
                                 </flux:menu.radio.group>
 
                                 <flux:menu.separator />
-
                                 <flux:menu.item as="button" icon="user-plus" type="button" :href="route('team.create')">{{__('Create New Team')}}</flux:menu.item>
 
                                 <flux:menu.separator/>
