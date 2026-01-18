@@ -7,7 +7,7 @@
     @keydown.escape.window="searchFocused = false; $wire.resetSearch()"
 >
     <div class="flex items-center mb-5">
-        <h2 class="font-sans me-auto text-2xl">{{ __('My Diagrams') }}</h2>
+        <flux:heading class="font-normal text-zinc-900 dark:text-zinc-50 me-auto text-2xl">{{ __('My Diagrams') }}</flux:heading>
 
         <div class="mr-3">
             <flux:select wire:model.live="orderByDesc" size="sm">
@@ -67,6 +67,22 @@
             </div>
         @endif
     </div>
+
+    <flux:modal :closable="false" name="confirm-delete-diagram" class="min-w-[25rem]">
+        <div class="space-y-6">
+            <div>
+                <flux:heading size="lg">{{ __('Are you sure you want to delete this diagram?') }}</flux:heading>
+                <flux:text class="mt-2">{{ __('This action will delete the diagram and all its data.') }}</flux:text>
+            </div>
+        </div>
+
+        <div class="flex gap-2 mt-4">
+            <flux:spacer />
+
+            <flux:button x-on:click="$flux.modal('confirm-delete-diagram').close()" type="button" class="cursor-pointer" variant="ghost" icon="x-mark">{{ __('Cancel') }}</flux:button>
+            <flux:button wire:click="deleteDiagram" class="cursor-pointer" variant="danger" icon="trash" type="button">{{ __('Delete') }}</flux:button>
+        </div>
+    </flux:modal>
 
     <!-- Modal para editar diagrama -->
     @foreach($this->getDiagrams as $diagram)

@@ -37,7 +37,16 @@
     </div>
 
     <div>
-        <flux:label badge="Optional" class="pb-3">{{ __('Import Files') }}</flux:label>
+        <div class="flex items-center gap-2 pb-3">
+            <flux:label badge="Optional">{{ __('Import Files') }}</flux:label>
+
+            @error('importForm.file')
+                <div class="flex items-center gap-2">
+                    <flux:icon.exclamation-circle color="red" class="size-4" />
+                    <flux:text class="text-red-500 text-xs">{{ $message }}</flux:text>
+                </div>
+            @enderror
+        </div>
         <div class="bg-[#fafbfc] dark:bg-zinc-900/50 min-h-[15rem] rounded-lg flex flex-col justify-center items-center gap-3 p-4 border border-zinc-200 dark:border-zinc-700">
             <p class="text-sm text-zinc-600 dark:text-zinc-400 text-center max-w-md">
                 {{ __('Import files or framework migrations to automatically create your diagram structure.') }}

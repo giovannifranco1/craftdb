@@ -3,6 +3,7 @@
 namespace App\Actions\Parse;
 
 use App\Actions\Diagram\AddRelationshipWithExistingForeignKey;
+use App\Exceptions\TableLimitExceededException;
 use App\Models\Column;
 use App\Models\Diagram;
 use App\Models\Table;
@@ -30,6 +31,12 @@ class ParseLaravelMigration extends BaseSQLParse
 
         $this->diagram = $diagram;
         $this->tableIndex = 0; // Reset for this import
+
+        // Count all tables before processing to validate limit
+        $totalTables = $this->countTablesFromFiles($files);
+        if ($totalTables > 30) {
+            throw new TableLimitExceededException($totalTables);
+        }
 
         // Process ALL files in a SINGLE transaction so foreign keys can reference tables from other files
         DB::transaction(function () use ($files): void {
@@ -548,6 +555,30 @@ class ParseLaravelMigration extends BaseSQLParse
             'childTableId' => $childTable->id,
             'foreignKeyColumnId' => $foreignKeyColumn->id,
         ]);
+    }
+
+    /**
+     * Count total number of unique tables from all files
+     *
+     * @param array<UploadedFile> $files
+     * @return int
+     */
+    private function countTablesFromFiles(array $files): int
+    {
+        /** @var array<string, bool> */
+        $uniqueTables = [];
+
+        foreach ($files as $file) {
+            $content = $this->getFileContent($file);
+            $createPatterns = $this->extractSchemaCreateBlocks($content);
+
+            foreach ($createPatterns as $schemaBlock) {
+                $tableName = $schemaBlock['table'];
+                $uniqueTables[$tableName] = true;
+            }
+        }
+
+        return count($uniqueTables);
     }
 }
 

@@ -325,5 +325,8 @@
   "This invitation will allow you to collaborate with the team and access shared diagrams.": "Este convite permitirá que você colabore com o time e acesse diagramas compartilhados.",
   "If you did not expect this invitation, you can safely ignore this email.": "Se você não esperou este convite, você pode ignorar este e-mail com segurança.",
   "Invitation to join :team": "Convite para entrar no time :team",
-  "Watch demo": "Ver demonstração"
+  "Watch demo": "Ver demonstração",
+  "Table limit exceeded with :totalTables tables": "Limite de tabelas atingido com :totalTables tabelas",
+  "Are you sure you want to delete this diagram?": "Tem certeza que deseja deletar este diagrama?",
+  "This action will delete the diagram and all its data.": "Esta ação deletará o diagrama e todos os seus dados."
 }

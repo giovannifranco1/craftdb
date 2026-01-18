@@ -49,7 +49,9 @@
                 <flux:button icon="ellipsis-vertical" variant="ghost" size="xs" />
                 <flux:menu>
                     <flux:menu.item icon="pencil" wire:click="editDiagram({{ $diagram->id }})">{{ __('Edit') }}</flux:menu.item>
-                    <flux:menu.item icon="trash" wire:click="deleteDiagram({{ $diagram->id }})" variant="danger">{{ __('Delete') }}</flux:menu.item>
+                    <flux:modal.trigger name="confirm-delete-diagram" wire:click="confirmDelete({{ $diagram->id }})">
+                        <flux:menu.item icon="trash" variant="danger">{{ __('Delete') }}</flux:menu.item>
+                    </flux:modal.trigger>
                     <flux:menu.item icon="document-duplicate" disabled>{{ __('Clone (Coming Soon)') }}</flux:menu.item>
                 </flux:menu>
             </flux:dropdown>
@@ -70,7 +72,7 @@
                             size="sm"
                             variant="soft"
                             color="{{ $databaseColors[$diagram->database] ?? 'blue' }}"
-                            class="shrink-0"
+                            class="shrink-0 font-[Pixelify_Sans]"
                         >
                             <flux:icon name="database.{{ $diagram->database }}" class="size-3 me-1" />
                             {{ $databaseLabels[$diagram->database] ?? ucfirst($diagram->database) }}
@@ -79,7 +81,7 @@
                             size="sm"
                             variant="soft"
                             color="{{ $styleColors[$style] ?? 'zinc' }}"
-                            class="shrink-0"
+                            class="shrink-0 font-[Pixelify_Sans]"
                         >
                             <flux:icon.swatch class="size-3 me-1" />
                             {{ $styleLabels[$style] ?? ucfirst($style) }}

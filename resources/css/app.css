@@ -28,10 +28,11 @@
     --color-zinc-800: var(--color-slate-800);
     --color-zinc-900: var(--color-slate-900);
     --color-zinc-950: var(--color-slate-950);
+    --font-pixelify: "Pixelify Sans", sans-serif;
 }
 
 @theme {
-    --font-sans: "Inter", sans-serif;
+    --font-sans: "Hanken Grotesk", sans-serif;
     --color-accent: var(--color-slate-800);
     --color-accent-content: var(--color-slate-800);
     --color-accent-foreground: var(--color-white);

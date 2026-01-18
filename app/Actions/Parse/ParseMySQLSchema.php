@@ -3,6 +3,7 @@
 namespace App\Actions\Parse;
 
 use App\Actions\Diagram\AddRelationshipWithExistingForeignKey;
+use App\Exceptions\TableLimitExceededException;
 use App\Models\Column;
 use App\Models\Diagram;
 use App\Models\Table;
@@ -25,6 +26,12 @@ class ParseMySQLSchema extends BaseSQLParse
     public function exec(array $files, Diagram $diagram): void
     {
         $this->diagram = $diagram;
+
+        // Count all tables before processing to validate limit
+        $totalTables = $this->countTablesFromFiles($files);
+        if ($totalTables > 30) {
+            throw new TableLimitExceededException($totalTables);
+        }
 
         foreach ($files as $file) {
             $content = $this->getFileContent($file);
@@ -298,5 +305,37 @@ class ParseMySQLSchema extends BaseSQLParse
             'childTableId' => $childTable->id,
             'foreignKeyColumnId' => $foreignKeyColumn->id,
         ]);
+    }
+
+    /**
+     * Count total number of unique tables from all files
+     *
+     * @param array<UploadedFile> $files
+     * @return int
+     */
+    private function countTablesFromFiles(array $files): int
+    {
+        /** @var array<string, bool> */
+        $uniqueTables = [];
+
+        foreach ($files as $file) {
+            $content = $this->getFileContent($file);
+            $parser = new Parser($content);
+
+            foreach ($parser->statements as $statement) {
+                if (!$statement instanceof CreateStatement) {
+                    continue;
+                }
+
+                if (!$statement->name || !$statement->name->table) {
+                    continue;
+                }
+
+                $tableName = $this->cleanIdentifier($statement->name->table);
+                $uniqueTables[$tableName] = true;
+            }
+        }
+
+        return count($uniqueTables);
     }
 }

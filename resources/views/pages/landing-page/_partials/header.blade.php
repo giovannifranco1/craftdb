@@ -2,15 +2,16 @@
     <div class="container mx-auto px-6">
         <div class="flex items-center justify-between h-16">
             <!-- Logo -->
-            <a href="{{ route('home') }}" class="flex me-5 ms-2 items-center space-x-3 rtl:space-x-reverse">
-                <div class="flex aspect-square size-9 items-center bg-accent-content justify-center rounded-md text-accent-foreground">
+            <a href="{{ route('home') }}" class="flex me-5 ms-5 items-center rtl:space-x-reverse">
+                <div class="flex items-center size-15 justify-center rounded-md text-accent-foreground">
                     <div>
-                        <img src="{{ Vite::asset('resources/images/craftdb_logo_transparent_light.png') }}" alt="CraftDB Logo" {{ $attributes }} class="w-10 h-10">
+                        <img src="{{ Vite::asset('resources/images/final_flat_logo.svg') }}" alt="CraftDB Logo" {{ $attributes }} class="size-15">
                     </div>
                 </div>
-                <div class="flex items-center gap-2">
-                    <span class="text-xl font-[Inter] font-bold text-gray-900">CraftDB</span>
-                    <span class="text-xs font-medium font-[Inter] text-blue-600 border-1 border-blue-500/20 bg-blue-700/10 rounded-full px-2 py-0.5">Beta</span>
+
+                <div class="flex flex-col leading-none">
+                    <span class="text-3xl uppercase font-[Black_Ops_One] lh-normal text-transparent bg-gradient-to-r from-blue-700 via-blue-500 to-zinc-900 bg-clip-text z-10">CraftDB</span>
+                    <span class="text-[0.800rem] ms-auto -mt-1 font-[Black_Ops_One]">Beta</span>
                 </div>
 
             </a>

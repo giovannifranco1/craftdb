@@ -1,7 +1,8 @@
-<div class="flex aspect-square size-9 items-center bg-accent-content justify-center rounded-md text-accent-foreground">
-    <x-app-logo-icon class="size-9 fill-current text-white dark:text-black" />
+<div class="flex aspect-square w-full items-center">
+    <x-app-logo-icon class="size-15 fill-current text-white dark:text-black" />
 </div>
-<div class="flex items-center gap-2">
-    <span class="text-xl font-[Inter] font-bold text-gray-900">CraftDB</span>
-    <span class="text-xs font-medium font-[Inter] text-blue-600 border-1 border-blue-500/20 bg-blue-700/10 rounded-full px-2 py-0.5">Beta</span>
+
+<div class="flex flex-col leading-none">
+    <span class="text-lg uppercase font-extrabold font-[Black_Ops_One] leading-none mb-1 text-transparent bg-gradient-to-r from-blue-700 via-blue-500 to-zinc-900 bg-clip-text z-10 :text-white dark:text-blue-500">Craft<span class="text-sm font-[Pixelify_Sans]">DB</span></span>
+    <span class="text-[0.800rem] ms-auto font-semibold -mt-1 font-[Black_Ops_One]">Beta</span>
 </div>

@@ -25,6 +25,8 @@ new class extends Component
     #[Url]
     public int $orderByDesc = 0;
 
+    public ?int $diagramToDelete = null;
+
     public Team $team;
 
     public function mount(): void
@@ -77,16 +79,32 @@ new class extends Component
         $this->dispatch('open-diagram-edit-modal', diagramId: $diagram->id);
     }
 
-    public function deleteDiagram(Diagram $diagram, DeleteDiagramAction $action): void
+    public function confirmDelete(int $diagramId): void
     {
+        $this->diagramToDelete = $diagramId;
+    }
+
+    public function deleteDiagram(DeleteDiagramAction $action): void
+    {
+        if (!$this->diagramToDelete) {
+            return;
+        }
+
+        $diagram = Diagram::find($this->diagramToDelete);
+
+        if (!$diagram) {
+            return;
+        }
+
         if (!$this->authorizeDiagramWithAlert('delete', $diagram)) {
+            $this->diagramToDelete = null;
             return;
         }
 
-        if (!$action->exec($diagram)) {
-            return;
-        }
+        $action->exec($diagram);
 
+        $this->reset('diagramToDelete');
+        $this->modal('confirm-delete-diagram')->close();
         $this->dispatch('alert', message: __('Diagram :name was deleted', ['name' => $diagram->name]));
     }
 

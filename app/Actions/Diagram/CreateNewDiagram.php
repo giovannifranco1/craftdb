@@ -7,6 +7,8 @@ use App\Models\Diagram;
 use App\Models\Team\Team;
 use Illuminate\Http\UploadedFile;
 use App\Actions\Parse\ParseLaravelMigration;
+use App\Exceptions\TableLimitExceededException;
+use Illuminate\Validation\ValidationException;
 
 /**
  * @phpstan-type DTODiagram array{
@@ -54,11 +56,16 @@ class CreateNewDiagram
             $diagram->imported_at = now();
             $diagram->save();
 
-            match (data_get($data, 'type')) {
-                'sql' => $this->_parseSqlFile(data_get($data, 'file'), $diagram),
-                'migration' => $this->_parseMigrationFile(data_get($data, 'file'), $diagram),
-                default => throw new \Exception('Invalid file type'),
-            };
+            try {
+                match (data_get($data, 'type')) {
+                    'sql' => $this->_parseSqlFile(data_get($data, 'file'), $diagram),
+                    'migration' => $this->_parseMigrationFile(data_get($data, 'file'), $diagram),
+                    default => throw new \Exception('Invalid file type'),
+                };
+            } catch (TableLimitExceededException $e) {
+                $diagram->delete();
+                throw ValidationException::withMessages(['importForm.file' => __('Table limit exceeded with :totalTables tables', ['totalTables' => $e->getTotalTables()])]);
+            }
         }
 
         return $diagram;
