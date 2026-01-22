@@ -13,7 +13,7 @@ use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Validate;
 use App\Livewire\CanvasComponent;
-use App\Models\Diagram;
+use Livewire\Attributes\Renderless;
 
 new class extends CanvasComponent {
 
@@ -164,12 +164,12 @@ new class extends CanvasComponent {
 
     public function remove(DeleteTableAction $action): void
     {
-        $this->authorizeDiagram('delete');
+        $this->authorizeDiagram('update');
 
         $action->exec($this->table);
 
         $this->dispatch('alert', message: __('Table Removed'));
-        $this->dispatch('table::removed');
+        $this->dispatch('table::removed', tableId: $this->tableId);
 
         $relationships = $this->diagram->relationships()->get() ?? collect();
 

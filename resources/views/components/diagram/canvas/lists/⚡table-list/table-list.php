@@ -1,6 +1,7 @@
 <?php
 
 use App\Actions\Diagram\AddRelationship;
+use App\Enums\RelationshipType;
 use App\Livewire\CanvasComponent;
 use App\Models\Diagram;
 use App\Support\Helpers;
@@ -121,21 +122,23 @@ new #[Defer(bundle: true)] class extends CanvasComponent {
     }
 
     #[On('table::add-relationship')]
-    public function addRelationship(int $fromTableId, int $toTableId, string $type, AddRelationship $action): void
+    public function addRelationship(int $fromTableId, int $toTableId, RelationshipType $type, AddRelationship $action): void
     {
         $this->authorizeDiagram('update');
 
+        if ($type === RelationshipType::MANY_TO_MANY) $this->validateTableLimit();
+
+        /** @var array{fromTableId: int, toTableId: int, type: string} $data */
         $data = validator()->make([
             'fromTableId' => $fromTableId,
             'toTableId'   => $toTableId,
-            'type'        => $type,
+            'type'        => $type->value,
         ], [
             'fromTableId' => ['required', 'integer', 'exists:table,id'],
             'toTableId'   => ['required', 'integer', 'exists:table,id'],
             'type'        => ['required', 'string', 'in:1:n,1:1,n:n,n:1'],
         ])->validated();
 
-        /** @phpstan-ignore-next-line */
         $action->exec($data);
 
         $this->dispatch("table::relationship-added.{$fromTableId}");

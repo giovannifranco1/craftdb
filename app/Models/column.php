@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\User;
 use App\Observers\ColumnObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
@@ -10,6 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * @property int $id
@@ -96,5 +98,29 @@ class Column extends Model
     public function scopeFilterByForeignKeys(Builder $query): Builder
     {
         return $query->where('is_foreign', true);
+    }
+
+    /**
+     * Scope para filtrar apenas colunas que o usuário tem acesso
+     *
+     * @param Builder<Column> $query
+     * @param User|null $user
+     * @return Builder<Column>
+     */
+    public function scopeAccessible(Builder $query, ?User $user = null): Builder
+    {
+        if ($user === null) {
+            /** @var User|null $authenticatedUser */
+            $authenticatedUser = Auth::user();
+            $user = $authenticatedUser;
+        }
+
+        if (!$user) {
+            return $query->whereRaw('1 = 0'); // Retorna vazio se não houver usuário
+        }
+
+        return $query->whereHas('table.diagram', function (Builder $q) use ($user): void {
+            $q->whereIn('team_id', $user->teams()->pluck('id'));
+        });
     }
 }

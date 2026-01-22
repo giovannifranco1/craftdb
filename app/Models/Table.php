@@ -3,8 +3,10 @@
 namespace App\Models;
 
 use App\Models\Relationship;
+use App\Models\Scopes\TableAccessible;
 use App\Observers\TableObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -40,14 +42,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @mixin \Eloquent
  */
 #[ObservedBy(TableObserver::class)]
+#[ScopedBy(TableAccessible::class)]
 class Table extends Model
 {
     const COLOR_DEFAULT = '#2563eb';
 
     /** @use HasFactory<\Database\Factories\TableFactory> */
     use HasFactory;
-
-    const MAX_COLUMNS = 50;
 
     protected $table = 'table';
 

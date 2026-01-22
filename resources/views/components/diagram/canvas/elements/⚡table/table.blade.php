@@ -10,7 +10,7 @@
     <x-diagram.canvas.ui.table.dropdown-menu :table-data="$tableData"/>
 
     <!-- Table -->
-    <div class="rounded-xl w-full h-full flex flex-col relative">
+    <div class="rounded-xl w-full h-full flex flex-col relative" @table::removed.window="if ($root.getAttribute('table-id') == $event.detail.tableId) { $el.classList.add('opacity-50') }">
 
         <!-- Header -->
         @include('components.diagram._partials.table.header')

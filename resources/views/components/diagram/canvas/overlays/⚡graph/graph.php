@@ -10,14 +10,6 @@ use App\Livewire\BaseComponent;
 new class extends BaseComponent {
     public Diagram $diagram;
 
-    /** @var array<string, string> */
-    protected $listeners = [
-        'table::added' => '$refresh',
-        'table::removed' => '$refresh',
-        'table::color-updated' => '$refresh',
-        'table::relationship-added' => '$refresh',
-    ];
-
     public function mount(Diagram $diagram): void
     {
         $this->diagram = $diagram;
@@ -26,7 +18,7 @@ new class extends BaseComponent {
     /**
      * @return Collection<int,Relationship>
      */
-    #[Computed(cache: true)]
+    #[Computed]
     public function getRelationships(): Collection
     {
         return $this->diagram
@@ -38,7 +30,7 @@ new class extends BaseComponent {
     /**
      * @return array<int, string>
      */
-    #[Computed(cache: true)]
+    #[Computed]
     public function getTablesWithColors(): array
     {
         $tablesMap = [];
@@ -54,12 +46,10 @@ new class extends BaseComponent {
     #[On('table::removed')]
     #[On('table::color-updated')]
     #[On('table::relationship-added')]
+    #[On('relationships::fresh')]
     public function refreshGraph(): void
     {
-        // Refresh the diagram to get latest data
         $this->diagram->refresh();
-
-        // Dispatch event to JavaScript to re-render the graph
         $this->dispatch('diagram-graph::refresh');
     }
 };
