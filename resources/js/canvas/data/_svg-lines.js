@@ -54,7 +54,7 @@ export default (relationships) => ({
         });
 
         Livewire.hook('morphed',  ({ component }) => {
-            if (component?.name === 'diagram.table') {
+            if (component?.name === 'diagram.canvas.elements.table') {
                 this.debouncedCompute();
             }
         });
@@ -178,6 +178,7 @@ export default (relationships) => ({
             const toIsCollapsed = toTable.hasAttribute('is-collapsed');
 
             if (fromIsCollapsed || toIsCollapsed) {
+                console.log('❌ From or to table is collapsed');
                 return
             }
 

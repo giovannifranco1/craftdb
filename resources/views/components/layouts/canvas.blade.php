@@ -11,9 +11,9 @@
 
         <div x-ref="canvasRoot" x-data="runCanvas(25, @js($isInitialLoad))" diagram-id="{{ $diagram->id }}" diagram-slug="{{ $diagram->slug }}" team-id="{{ $diagram->team_id }}" class="container hs-dropdown [--trigger:contextmenu] pt-12 pb-8">
             <x-ui.context-menu/>
-            <x-canvas.loading/>
-            <x-canvas.controls/>
-            <x-canvas.topbar :diagram="$diagram"/>
+            <x-diagram.canvas.ui.loading/>
+            <x-diagram.canvas.ui.controls/>
+            <x-diagram.canvas.ui.topbar :diagram="$diagram"/>
 
             <canvas id="canvas" class="hs-dropdown-toggle"></canvas>
 
@@ -34,10 +34,10 @@
             </div>
         </div>
 
-        <livewire:diagram.spotlight :$diagram/>
-        <livewire:diagram.graph :$diagram/>
-        <livewire:diagram.table.side-editor :$diagram/>
-        <livewire:diagram.table.limit :$diagram/>
+        <livewire:diagram.canvas.overlays.spotlight :$diagram/>
+        <livewire:diagram.canvas.overlays.graph :$diagram/>
+        <livewire:diagram.canvas.overlays.side-editor :$diagram/>
+        <livewire:diagram.canvas.ui.limit :$diagram/>
         @fluxScripts
     </body>
 </html>

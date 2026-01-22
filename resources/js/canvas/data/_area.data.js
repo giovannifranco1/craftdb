@@ -153,12 +153,24 @@ export default (x, y, width, height, areaId) => ({
         if (!this.canDragBySpace || this.isResizing) return;
 
         this.isDragging = true;
+
         this.startX = e.clientX;
         this.startY = e.clientY;
-        this.initialX = this.x;
-        this.initialY = this.y;
-        this.$el.style.transition = 'none';
 
+        const currentTransform = this.$el.style.transform;
+        const match = currentTransform.match(/translate3d\((-?\d+(?:\.\d+)?)px,\s*(-?\d+(?:\.\d+)?)px/);
+
+        if (match) {
+            this.initialX = parseFloat(match[1]);
+            this.initialY = parseFloat(match[2]);
+            this.x = this.initialX;
+            this.y = this.initialY;
+        } else {
+            this.initialX = this.x;
+            this.initialY = this.y;
+        }
+
+        this.$el.style.transition = 'none';
         this.setHighestZIndex();
     },
 

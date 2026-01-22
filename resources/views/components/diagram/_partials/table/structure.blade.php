@@ -4,7 +4,7 @@
     <div
         x-show="expanded"
         x-transition
-        wire:intersect:enter.half.margin.1000px.once="loadColumns"
+        wire:intersect:enter.half.margin.100px.once="loadColumns"
         class="flex-auto bg-white dark:bg-zinc-800 relative">
         @include('components.diagram._partials.table.structure-placeholder')
     </div>
@@ -13,7 +13,7 @@
         x-show="expanded"
         x-transition
         class="flex-auto bg-white dark:bg-background-dark relative">
-        <table class="w-full table-fixed">
+        <table class="w-full table-fixed" wire:ignore.self>
             <colgroup>
                 <col :style="`width: ${colWidths[0]}px`">
                 <col :style="`width: ${colWidths[1]}px`">

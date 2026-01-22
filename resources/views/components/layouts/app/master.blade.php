@@ -104,7 +104,7 @@
             @include('_partials.footer')
         </x-flux::footer>
 
-        <livewire:diagram.diagram-create/>
+        <livewire:diagram.create/>
         @fluxScripts
     </body>
 </html>

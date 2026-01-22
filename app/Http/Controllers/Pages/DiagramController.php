@@ -4,10 +4,7 @@ namespace App\Http\Controllers\Pages;
 
 use App\Http\Controllers\Controller;
 use App\Models\Diagram;
-use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -24,6 +21,9 @@ class DiagramController extends Controller
         if ($user) {
             $diagram->recordView($user);
         }
+
+        cache()->forget('diagram:slug:' . $diagram->slug);
+        cache()->forget('diagram');
 
         $diagram->load([
             'tables.columns',

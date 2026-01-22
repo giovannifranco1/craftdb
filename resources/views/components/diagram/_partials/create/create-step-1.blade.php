@@ -23,9 +23,9 @@
         <div class="flex flex-col gap-4 grow pt-2 pb-3">
             <label
                 @class([
-                    'relative border rounded-xl p-6 cursor-pointer dark:hover:border-primary-400 dark:hover:bg-primary-950/50 dark:bg-primary-900/50 hover:border-primary-300 hover:bg-primary-50/60 transition flex flex-col',
-                    'border-primary-400 dark:border-primary-500 dark:hover:bg-primary-950/50 bg-primary-50 dark:bg-primary-950/60' => $style === 'colorful',
-                    'border-zinc-300 dark:border-zinc-700 dark:hover:border-zinc-600 dark:bg-zinc-900/50' => $style !== 'colorful',
+                    'relative border rounded-xl p-6 cursor-pointer dark:hover:border-primary-400 dark:hover:bg-background-dark dark:bg-background-dark hover:border-primary-300 hover:bg-primary-50/60 transition flex flex-col',
+                    'border-primary-400 dark:border-primary-500 bg-primary-50 dark:bg-background-dark' => $style === 'colorful',
+                    'border-zinc-300 dark:border-zinc-700 dark:bg-background-dark' => $style !== 'colorful',
                 ])
             >
                 <input
@@ -37,7 +37,7 @@
                     <flux:icon.swatch variant="solid" class="size-4" />
                     <span class="text-sm font-semibold">{{ __('Colorful') }}</span>
                 </div>
-                <p class="text-sm text-zinc-600 leading-relaxed min-h-[55px] max-h-[55px]">
+                <p class="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed min-h-[55px] max-h-[55px]">
                     {{ __('Displays the diagram with distinct colors for each table and relationship, making it easier to distinguish and focus on specific areas of your model.') }}
                 </p>
 
@@ -50,9 +50,9 @@
 
             <label
                 @class([
-                    'relative border rounded-xl p-6 cursor-pointer hover:border-primary-300 hover:bg-primary-50/60 dark:hover:bg-primary-950/50 transition flex flex-col',
-                    'border-primary-400 dark:border-primary-500 dark:hover:bg-primary-950/50 bg-primary-50 dark:bg-primary-950/60' => $style === 'neutral',
-                    'border-zinc-300 dark:border-zinc-700 dark:hover:border-zinc-600 dark:bg-zinc-900/50' => $style !== 'neutral',
+                    'relative border rounded-xl p-6 cursor-pointer hover:border-primary-300 hover:bg-primary-50/60 dark:hover:bg-background-dark transition flex flex-col',
+                    'border-primary-400 dark:border-primary-500 bg-primary-50 dark:bg-background-dark' => $style === 'neutral',
+                    'border-zinc-300 dark:border-zinc-700 dark:bg-background-dark' => $style !== 'neutral',
                 ])
             >
                 <input
@@ -64,7 +64,7 @@
                     <flux:icon.swatch variant="solid" class="size-4" />
                     <span class="text-sm font-semibold">{{ __('Neutral') }}</span>
                 </div>
-                <p class="text-sm text-zinc-600 leading-relaxed min-h-[55px] max-h-[55px]">
+                <p class="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed min-h-[55px] max-h-[55px]">
                     {{ __('Displays the diagram with a single neutral color for a cleaner, distraction-free look.') }}
                 </p>
 

@@ -11,9 +11,9 @@
                     wire:loading.class.delay.shorter="opacity-25"
                     wire:target="database"
                     @class([
-                        'relative cursor-pointer rounded-xl border-1 px-4 py-5 flex flex-col items-center min-h-28 transition-all duration-150 text-center group',
-                        'border-primary-300 ring-primary-200 dark:ring-primary-900 bg-primary-50/40 dark:bg-primary-950/60' => $database === $key,
-                        'border-zinc-300 hover:border-zinc-400 dark:border-zinc-600 dark:hover:border-zinc-600 bg-white/90 dark:bg-zinc-900/50' => $database !== $key,
+                        'relative cursor-pointer rounded-xl border-1 px-4 py-5 flex flex-col dark:bg-background-dark items-center min-h-28 transition-all duration-150 text-center group dark:hover:bg-background-dark',
+                        'border-primary-300 ring-primary-200 dark:ring-primary-900 bg-primary-50/40 dark:bg-background-dark' => $database === $key,
+                        'border-zinc-300 hover:border-zinc-400 dark:border-zinc-600 dark:hover:border-zinc-600 bg-white/90 dark:bg-background-dark' => $database !== $key,
                     ])
                 >
                     <input
@@ -47,7 +47,7 @@
                 </div>
             @enderror
         </div>
-        <div class="bg-[#fafbfc] dark:bg-zinc-900/50 min-h-[15rem] rounded-lg flex flex-col justify-center items-center gap-3 p-4 border border-zinc-200 dark:border-zinc-700">
+        <div class="bg-[#fafbfc] dark:bg-background-dark min-h-[15rem] rounded-lg flex flex-col justify-center items-center gap-3 p-4 border border-zinc-200 dark:border-zinc-700">
             <p class="text-sm text-zinc-600 dark:text-zinc-400 text-center max-w-md">
                 {{ __('Import files or framework migrations to automatically create your diagram structure.') }}
             </p>

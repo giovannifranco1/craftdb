@@ -86,7 +86,7 @@
 
     <!-- Modal para editar diagrama -->
     @foreach($this->diagrams as $diagram)
-        <livewire:diagram.diagram-edit :$diagram :wire:key="$diagram->id" />
+        <livewire:diagram.edit :$diagram :wire:key="$diagram->id" />
     @endforeach
 </div>
 
