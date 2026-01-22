@@ -5,9 +5,9 @@ use App\Models\Relationship;
 use Illuminate\Database\Eloquent\Collection;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
-use Livewire\Component;
+use App\Livewire\BaseComponent;
 
-new class extends Component {
+new class extends BaseComponent {
     public Diagram $diagram;
 
     /** @var array<string, string> */

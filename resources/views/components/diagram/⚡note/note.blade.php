@@ -20,7 +20,7 @@
     ></div>
 
     <!-- Note Top -->
-    <div wire:ignore.self class="note-top shadow-md bg-[#fef08a] group relative rounded-t-xl">
+    <div wire:ignore.self class="note-top shadow-md bg-[#fef08a] group relative rounded-tl-xl">
         <!-- Botão de remover (discreto) -->
         <button
             type="button"

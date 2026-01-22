@@ -105,12 +105,12 @@
                 <!-- Estatísticas -->
                 <div class="flex items-center gap-4 text-xs text-zinc-500 dark:text-zinc-400">
                     <div class="flex items-center gap-1.5">
-                        <flux:icon.table class="size-4" />
+                        <flux:icon.add-table class="size-4" />
                         <span class="font-medium">{{ $tablesCount }}</span>
                         <span>{{ $tablesCount === 1 ? 'tabela' : 'tabelas' }}</span>
                     </div>
                     <div class="flex items-center gap-1.5">
-                        <flux:icon.link class="size-4" />
+                        <flux:icon.graph class="size-4" />
                         <span class="font-medium">{{ $relationshipsCount }}</span>
                         <span>{{ $relationshipsCount === 1 ? 'relacionamento' : 'relacionamentos' }}</span>
                     </div>

@@ -78,11 +78,11 @@ export default (x, y, width, height, areaId) => ({
                 this.drag(e);
             }
         });
-        this.$refs.canvasRoot.addEventListener('mouseup', (e) => {
+        this.$refs.canvasRoot.addEventListener('mouseup', () => {
             this.endDrag();
             this.endResize();
         });
-        this.$refs.canvasRoot.addEventListener('mouseleave', (e) => {
+        this.$refs.canvasRoot.addEventListener('mouseleave', () => {
             this.endDrag();
             this.endResize();
         });

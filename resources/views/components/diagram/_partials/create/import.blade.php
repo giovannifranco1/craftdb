@@ -1,4 +1,4 @@
-<flux:modal :dismissible="false" name="diagram-import" class="md:w-150">
+<flux:modal :dismissible="false" name="diagram-import" class="md:w-150 z-50">
     <div class="space-y-6 flex flex-col">
         <!-- Header -->
         <div class="space-y-3">
@@ -100,8 +100,8 @@
                     <div class="flex flex-col items-start w-full max-h-[15rem] overflow-y-scroll">
                         @forelse($importForm->file as $key => $item)
                             <div class="gap-2 flex items-center mr-4 mt-2">
-                                <flux:icon.check-circle color="#15B8A5" class="size-4" />
-                                <span class="text-[#15B8A5] text-xs font-normal font-[Space_Mono]">{{ $item->getClientOriginalName() }}</span>
+                                <flux:icon.check-circle color="var(--color-code)" class="size-4" />
+                                <span class="text-code text-xs font-normal font-[Space_Mono]">{{ $item->getClientOriginalName() }}</span>
                             </div>
                         @endforeach
                     </div>

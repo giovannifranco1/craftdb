@@ -4,9 +4,9 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\Rule;
-use Livewire\Component;
+use App\Livewire\BaseComponent;
 
-new class extends Component {
+new class extends BaseComponent {
     public string $name = '';
     public string $email = '';
 

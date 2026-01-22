@@ -328,5 +328,14 @@
   "Watch demo": "Ver demonstração",
   "Table limit exceeded with :totalTables tables": "Limite de tabelas atingido com :totalTables tabelas",
   "Are you sure you want to delete this diagram?": "Tem certeza que deseja deletar este diagrama?",
-  "This action will delete the diagram and all its data.": "Esta ação deletará o diagrama e todos os seus dados."
+  "This action will delete the diagram and all its data.": "Esta ação deletará o diagrama e todos os seus dados.",
+  "Or continue with": "Ou continue com",
+  "Continue with Google": "Continuar com Google",
+  "Continue with GitHub": "Continuar com GitHub",
+  "Sign in": "Entrar",
+  "Sign in to continue": "Entrar para continuar",
+  "Sign up to continue": "Registrar-se para continuar",
+  "Sign up for an account": "Registrar-se para uma conta",
+  "Forgot password?": "Esqueceu a senha?",
+  "Welcome back": "Bem-vindo de volta"
 }

@@ -1,20 +1,21 @@
 <?php
 
-use App\Concerns\HandlesDiagramAuthorizationWithAlertError;
+use App\Attributes\AuthorizeDiagram;
+use App\Concerns\HandlesDiagramAuthAlert;
 use App\Models\Diagram;
 use App\Support\Helpers;
-use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\Defer;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
-use Livewire\Component;
+use App\Livewire\BaseComponent;
 
-new class extends Component {
-    use HandlesDiagramAuthorizationWithAlertError;
+new #[Defer(bundle: true)] class extends BaseComponent {
+    use HandlesDiagramAuthAlert;
 
     #[Locked]
-    public Diagram $diagram;
+    public int $diagramId;
 
     /** @var array<string, string>  */
     protected $listeners = [
@@ -25,7 +26,13 @@ new class extends Component {
 
     public function mount(Diagram $diagram): void
     {
-        $this->diagram = $diagram;
+        $this->diagramId = $diagram->id;
+    }
+
+    #[Computed]
+    public function diagram(): Diagram
+    {
+        return Diagram::query()->findOrFail($this->diagramId);
     }
 
     /**
@@ -40,9 +47,7 @@ new class extends Component {
     #[On('area::add')]
     public function addArea(int $x = 100, int $y = 100): void
     {
-        if (!$this->authorizeDiagramWithAlert('update', $this->diagram)) {
-            return;
-        }
+        $this->authorizeDiagram('update');
 
         $area = $this->diagram->areas()->create([
             'name' => 'New Area',

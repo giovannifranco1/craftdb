@@ -3,7 +3,10 @@
 namespace App\Models;
 
 use App\Models\Team\Team;
+use App\Observers\DiagramObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -23,6 +26,7 @@ use Illuminate\Support\Arr;
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Table> $tables
  * @property-read int|null $tables_count
+ * @property-read array<int, string> $colors
  * @method static \Database\Factories\DiagramFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Diagram newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Diagram newQuery()
@@ -39,6 +43,7 @@ use Illuminate\Support\Arr;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Diagram findBySlug($value)
  * @mixin \Eloquent
  */
+#[ObservedBy(DiagramObserver::class)]
 class Diagram extends Model
 {
     /** @use HasFactory<\Database\Factories\DiagramFactory> */
@@ -47,6 +52,10 @@ class Diagram extends Model
     const TABLE_LIMIT = 30;
 
     protected $table = 'diagram';
+
+    protected $appends = [
+        'colors',
+    ];
 
     /**
      * @return HasMany<\App\Models\Table, $this>
@@ -83,22 +92,26 @@ class Diagram extends Model
     }
 
     /**
-     * @return list<string>
+     * @return Attribute<list<string>, never>
      */
-    public function getColors(): array
+    public function colors(): Attribute
     {
-        $colors = match ($this->style) {
-            'colorful' => config('color.colorful'),
-            'neutral'  => config('color.neutral'),
-            default    => [],
-        };
+        return new Attribute(
+            get: function (): array {
+                $colors = match ($this->style) {
+                    'colorful' => config('color.colorful'),
+                    'neutral'  => config('color.neutral'),
+                    default    => [],
+                };
 
-        $colors = Arr::wrap($colors);
+                $colors = Arr::wrap($colors);
 
-        return array_values(array_filter(
-            $colors,
-            static fn($color): bool => is_string($color)
-        ));
+                return array_values(array_filter(
+                    $colors,
+                    static fn($color): bool => is_string($color)
+                ));
+            }
+        );
     }
 
     /**

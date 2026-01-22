@@ -1,5 +1,5 @@
 @props([
-    'table' => null
+    'tableData' => null
 ])
 
 <div
@@ -8,25 +8,25 @@
 
         addRelationshipOneToOne() {
             this.isInRelationshipEvent = true;
-            this.relationshipEvent.from_table_id = @js($table->id);
+            this.relationshipEvent.from_table_id = @js($tableData->id);
             this.relationshipEvent.type = '1:1';
         },
 
         addRelationshipOneToMany() {
             this.isInRelationshipEvent = true;
-            this.relationshipEvent.from_table_id = @js($table->id);
+            this.relationshipEvent.from_table_id = @js($tableData->id);
             this.relationshipEvent.type = '1:n';
         },
 
         addRelationshipManyToMany() {
             this.isInRelationshipEvent = true;
-            this.relationshipEvent.from_table_id = @js($table->id);
+            this.relationshipEvent.from_table_id = @js($tableData->id);
             this.relationshipEvent.type = 'n:n';
         },
 
         addRelationshipManyToOne() {
             this.isInRelationshipEvent = true;
-            this.relationshipEvent.from_table_id = @js($table->id);
+            this.relationshipEvent.from_table_id = @js($tableData->id);
             this.relationshipEvent.type = 'n:1';
         },
 
@@ -46,8 +46,8 @@
     <flux:button.group>
 
         <flux:button x-data="{ open: false, loadingColor: false }" @mousedown.stop="open = !open" variant="primary" icon:trailing="chevron-down">
-            <x-diagram.ui.color-circle :color="$table->color"/>
-            <x-diagram.table.ui.dropdown-menu-color :table="$table" />
+            <x-diagram.ui.color-circle :color="$tableData->color"/>
+            <x-diagram.table.ui.dropdown-menu-color :table-data="$tableData" />
         </flux:button>
 
         <flux:button @mousedown.stop="$wire.addColumn()" variant="primary" class="font-[Poppins] text-xs">

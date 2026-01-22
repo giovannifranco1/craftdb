@@ -58,15 +58,7 @@ export default (x, y, width, height, noteId) => ({
             const isResizeHandle = e.target.classList.contains('resize-handle') ||
                                    e.target.closest('.resize-handle') !== null;
 
-            // Ignore drag if clicking on interactive elements (textarea, input, button, etc.)
-            const isInteractiveElement = e.target.tagName === 'TEXTAREA' ||
-                                        e.target.tagName === 'INPUT' ||
-                                        e.target.tagName === 'BUTTON' ||
-                                        e.target.tagName === 'SELECT' ||
-                                        e.target.isContentEditable ||
-                                        e.target.closest('textarea, input, button, select, [contenteditable="true"]') !== null;
-
-            if (!isResizeHandle && !isInteractiveElement && !this.isResizing) {
+            if (!isResizeHandle && !this.isResizing) {
                 this.startDrag(e);
             }
         });

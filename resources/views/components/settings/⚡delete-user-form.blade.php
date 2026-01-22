@@ -2,9 +2,9 @@
 
 use App\Livewire\Actions\Logout;
 use Illuminate\Support\Facades\Auth;
-use Livewire\Component;
+use App\Livewire\BaseComponent;
 
-new class extends Component {
+new class extends BaseComponent {
     public string $password = '';
 
     /**

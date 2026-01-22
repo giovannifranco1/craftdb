@@ -36,13 +36,13 @@
 
             this.loading = true;
             this.mouseDownPos = null;
-            $dispatch('table-side-editor::open', { tableId: @js($table->id) })
+            $dispatch('table-side-editor::open', { tableId: @js($tableData->id) })
         },
 
         addRelationship() {
             $dispatch('table::add-relationship', {
                 fromTableId: this.relationshipEvent.from_table_id,
-                toTableId: @js($table->id),
+                toTableId: @js($tableData->id),
                 type: this.relationshipEvent.type,
             });
 
@@ -104,7 +104,7 @@
                 @blur="isEventRename = false; $wire.resetName()"
                 autocomplete="off"
             />
-            <span x-show="!isEventRename" class="text-white text-[10pt] font-[Comic_Relief] max-w-[14rem] truncate">{{ $table->name }}</span>
+            <span x-show="!isEventRename" class="text-white font-normal text-[10pt] font-[Comic_Relief] max-w-[14rem] truncate">{{ $tableData->name }}</span>
         </h3>
 
         <button @mousedown.stop="toggleExpanded($el.closest('[table-box]'))"

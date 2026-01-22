@@ -97,6 +97,15 @@ class Table extends Model
      * @param Builder<$this> $query
      * @return Builder<$this>
      */
+    public function scopeWithColumnsCount(Builder $query): Builder
+    {
+        return $query->withCount('columns');
+    }
+
+    /**
+     * @param Builder<$this> $query
+     * @return Builder<$this>
+     */
     public function scopeFirstPrimaryColumn(Builder $query): Builder
     {
         return $query->with(['columns' => function ($q): void {

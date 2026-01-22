@@ -1,22 +1,24 @@
 <?php
 
 use App\Actions\Diagram\AddRelationship;
-use App\Concerns\HandlesDiagramAuthorizationWithAlertError;
+use App\Concerns\HandlesDiagramAuthAlert;
+use App\Livewire\BaseComponent;
 use App\Models\Diagram;
 use App\Support\Helpers;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Contracts\Database\Query\Builder as QueryBuilder;
 use Illuminate\Database\Eloquent\Collection;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\Defer;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
-use Livewire\Component;
 
-new class extends Component {
-    use HandlesDiagramAuthorizationWithAlertError;
+new #[Defer(bundle: true)] class extends BaseComponent {
+    use HandlesDiagramAuthAlert;
 
     #[Locked]
-    public Diagram $diagram;
+    public int $diagramId;
 
     /** @var array<string, string>  */
     protected $listeners = [
@@ -30,26 +32,33 @@ new class extends Component {
 
     public function mount(Diagram $diagram): void
     {
-        $this->diagram = $diagram;
+        $this->diagramId = $diagram->id;
 
-        $offsets = Helpers::getPositionCanvasByDiagram($this->diagram);
+        $offsets = Helpers::getPositionCanvasByDiagram($diagram);
 
         $this->dispatch('table-list::inicializeted', ...$offsets);
+    }
+
+    #[Computed]
+    public function diagram(): Diagram
+    {
+        return Diagram::query()->findOrFail($this->diagramId);
     }
 
     /**
      * @return Collection<int, \App\Models\Table>
      */
-    #[Computed()]
-    public function getTables(): Collection
+    #[Computed]
+    public function tables(): Collection
     {
         $tables = $this->diagram->tables();
 
         $tables = $tables->withForeignCount();
         $tables = $tables->withPrimaryCount();
+        $tables = $tables->withColumnsCount();
 
         return $tables
-            ->withCount('columns')
+            ->withExists('columns')
             ->with(['diagram'])
             ->with(['columns' => fn(QueryBuilder $query): QueryBuilder => $query->orderBy('order')])
             ->with(['foreignKeys' => fn(QueryBuilder $query): QueryBuilder => $query->orderByDesc('order')])
@@ -59,9 +68,7 @@ new class extends Component {
     #[On('table::add')]
     public function addTable(int $x = 100, int $y = 100): void
     {
-        if (!$this->authorizeDiagramWithAlert('update', $this->diagram)) {
-            return;
-        }
+        $this->authorizeDiagram('update');
 
         if ($this->diagram->tables()->count() >= Diagram::TABLE_LIMIT) {
             $this->dispatch('alert', message: __('You have reached the maximum number of tables for this diagram.'), type: 'error');
@@ -88,13 +95,7 @@ new class extends Component {
     #[On('save-tables-positions')]
     public function saveTablesPositions(int $diagramId, array $tables): void
     {
-        if (!$this->authorizeDiagramWithAlert('update', $this->diagram)) {
-            return;
-        }
-
-        if ($this->diagram->id != $diagramId) {
-            return;
-        }
+        $this->authorizeDiagram('update');
 
         //validate tables
         $validator = validator()->make($tables, [
@@ -136,9 +137,7 @@ new class extends Component {
     #[On('table::add-relationship')]
     public function addRelationship(int $fromTableId, int $toTableId, string $type, AddRelationship $action): void
     {
-        if (!$this->authorizeDiagramWithAlert('update', $this->diagram)) {
-            return;
-        }
+        $this->authorizeDiagram('update');
 
         $data = validator()->make([
             'fromTableId' => $fromTableId,
@@ -153,7 +152,8 @@ new class extends Component {
         /** @phpstan-ignore-next-line */
         $action->exec($data);
 
-        $this->dispatch('table::relationship-added');
+        $this->dispatch("table::relationship-added.{$fromTableId}");
+        $this->dispatch("table::relationship-added.{$toTableId}");
         $this->dispatch('alert', message: "Relationship added");
         $this->dispatch('relationships::fresh', relationships: $this->diagram->relationships()->get());
     }

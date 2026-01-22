@@ -1,6 +1,6 @@
 <?php
 
-use App\Concerns\HandlesDiagramAuthorizationWithAlertError;
+use App\Concerns\HandlesDiagramAuthAlert;
 use App\Actions\Diagram\DeleteDiagram as DeleteDiagramAction;
 use App\Models\Diagram;
 use App\Models\Team\Team;
@@ -8,13 +8,14 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Cache;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
-use Livewire\Component;
+use App\Livewire\BaseComponent;
 use Livewire\WithPagination;
 
-new class extends Component
+new #[Title('Dashboard')] class extends BaseComponent
 {
-    use WithPagination, HandlesDiagramAuthorizationWithAlertError;
+    use WithPagination, HandlesDiagramAuthAlert;
 
     #[Url]
     public string $search = '';
@@ -43,7 +44,7 @@ new class extends Component
     }
 
     #[Computed]
-    public function getDiagrams(): LengthAwarePaginator
+    public function diagrams(): LengthAwarePaginator
     {
         return Diagram::query()
             ->when($this->favorites, fn ($q) => $q->where('is_favorite', true))

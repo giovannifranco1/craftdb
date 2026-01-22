@@ -32,9 +32,10 @@ class ParseLaravelMigration extends BaseSQLParse
         $this->diagram = $diagram;
         $this->tableIndex = 0; // Reset for this import
 
-        // Count all tables before processing to validate limit
+    // Count all tables before processing to validate limit
         $totalTables = $this->countTablesFromFiles($files);
-        if ($totalTables > 30) {
+
+        if ($totalTables > config('diagram.table_limit')) {
             throw new TableLimitExceededException($totalTables);
         }
 
@@ -47,7 +48,7 @@ class ParseLaravelMigration extends BaseSQLParse
             $allForeignKeys = [];
 
             // Get available colors from diagram style
-            $colors = $this->diagram->getColors();
+            $colors = $this->diagram->colors;
             if (empty($colors)) {
                 $colors = [Table::COLOR_DEFAULT];
             }

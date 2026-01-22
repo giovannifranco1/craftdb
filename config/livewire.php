@@ -129,7 +129,7 @@ return [
 
     'navigate' => [
         'show_progress_bar' => true,
-        'progress_bar_color' => '#2299dd',
+        'progress_bar_color' => '#000000',
     ],
 
     /*
@@ -171,4 +171,10 @@ return [
     ],
 
     'pagination_theme' => 'tailwind',
+
+    'payload' => [
+        'max_components' => 100,
+    ],
+
+    'legacy_model_binding' => false,
 ];

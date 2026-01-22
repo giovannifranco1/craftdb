@@ -50,8 +50,8 @@ class AddRelationship
             'toColumnId'   => ['nullable', 'integer'],
         ])->validate();
 
-        $fromTable = Table::query()->with('diagram')->find(data_get($data, 'fromTableId'));
-        $toTable = Table::query()->with('diagram')->find(data_get($data, 'toTableId'));
+        $fromTable = Table::query()->find(data_get($data, 'fromTableId'));
+        $toTable = Table::query()->find(data_get($data, 'toTableId'));
 
         if (!$fromTable || !$toTable) {
             throw new Exception("One or both tables not found.");

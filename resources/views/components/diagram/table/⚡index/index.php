@@ -1,71 +1,99 @@
 <?php
 
-use App\Concerns\HandlesDiagramAuthorizationWithAlertError;
+use App\Actions\Diagram\AddColumnToTable as AddColumnToTableAction;
+use App\Actions\Diagram\DeleteTable as DeleteTableAction;
+use App\Concerns\HandlesDiagramAuthAlert;
+use App\Livewire\Data\TableData;
 use App\Models\Column;
 use App\Models\Diagram;
 use App\Models\Table as TableModel;
 use App\Support\Helpers;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Validator;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Validate;
-use Livewire\Component;
+use App\Livewire\BaseComponent;
 
-new class extends Component {
-    use HandlesDiagramAuthorizationWithAlertError;
+new class extends BaseComponent {
+    use HandlesDiagramAuthAlert;
 
     /** @var array<string, string>  */
     protected $listeners = [
-        'table::column-saved' => 'refreshTableWithCounts',
-        'table-side-editor::column-added'   => 'refreshTableWithCounts',
-        'table-side-editor::column-saved'   => 'refreshTableWithCounts',
-        'table-side-editor::column-deleted' => 'refreshTableWithCounts',
-        'table-side-editor::column-updated' => 'refreshTableWithCounts',
+        'table::column-saved' => 'updateTableData',
+        'table-side-editor::column-added'   => 'updateTableData',
+        'table-side-editor::column-saved'   => 'updateTableData',
+        'table-side-editor::column-deleted' => 'updateTableData',
+        'table-side-editor::column-updated' => 'updateTableData',
     ];
 
     #[Locked]
-    public TableModel $table;
+    public int $tableId;
 
     #[Locked]
     public int $diagramId;
 
+    /** @var Collection<int,Column> */
+    public $columns = [];
+    public bool $loadTable;
+    public bool $hasColumnsInDatabase;
     public int $maxColumns;
 
     #[Validate('required|string|max:255|min:1')]
     public ?string $name = null;
 
-    /** @var array<string, string>  */
-    public $relationship = [
-        'from_column_id' => '',
-        'to_column_id'   => '',
-        'type'           => '',
-    ];
+    #[Locked]
+    public TableData $tableData;
 
     public function mount(TableModel $table): void
     {
-        $this->table = $table;
-        $this->diagramId = $table->diagram_id;
-        $this->name = $table->name;
-        $this->maxColumns = TableModel::MAX_COLUMNS;
+        $this->initialize($table);
     }
 
-    /**
-     * @return Collection<int,Column>
-     */
-    #[Computed()]
-    public function getColumns(): Collection
+    protected function initialize(TableModel $table): void
+    {
+        $this->tableId = $table->id;
+        $this->diagramId = $table->diagram_id;
+        $this->name = $table->name;
+        $this->hasColumnsInDatabase = $table->columns_exists;
+        $this->maxColumns = config('diagram.table_columns_limit');
+        $this->tableData = TableData::fromModel($table);
+    }
+
+    #[Computed(cache: true)]
+    public function diagram(): Diagram
+    {
+        return Diagram::query()->findOrFail($this->diagramId);
+    }
+
+    #[Computed]
+    public function columns(): Collection
     {
         return $this->table->columns;
     }
 
+    public function loadColumns(): void
+    {
+        $this->loadTable = true;
+        $this->hasColumnsInDatabase = true;
+    }
+
+    public function unloadColumns(): void
+    {
+        $this->columns = [];
+        $this->loadTable = false;
+    }
+
+    #[Computed]
+    public function table(): TableModel
+    {
+        return TableModel::findOrFail($this->tableId);
+    }
+
     public function renameTable(): void
     {
-        if (!$this->authorizeDiagramWithAlert('update', $this->table->diagram)) {
-            return;
-        }
+        $this->authorizeDiagram('update');
 
         $this->validateOnly('name');
 
@@ -73,132 +101,105 @@ new class extends Component {
         $this->table->save();
 
         $this->dispatch('table::renamed');
-        $this->refreshTableWithCounts();
     }
 
     public function resetName(): void
     {
-        if (!$this->authorizeDiagramWithAlert('update', $this->table->diagram)) {
-            return;
-        }
+        $this->authorizeDiagram('update');
 
         $this->name = $this->table->name;
-        $this->refreshTableWithCounts();
     }
 
     public function setColor(string $color): void
     {
-        if (!$this->authorizeDiagramWithAlert('update', $this->table->diagram)) {
-            $this->dispatch('table::color-updated-error');
-            return;
-        }
+        $this->authorizeDiagram('update', ['table::color-updated-error']);
 
         if (!Helpers::isColorValid($color)) return;
 
         $this->table->color = $color;
         $this->table->save();
 
-        $this->refreshTableWithCounts();
         $this->dispatch('table::color-updated');
     }
 
-    public function renameColumn(Column $column, string $newName): void
+    public function renameColumn(Column $column, ?string $newName): void
     {
-        if (!$this->authorizeDiagramWithAlert('update', $this->table->diagram)) {
-            return;
-        }
+        $this->authorizeDiagram('update');
 
-        $validated = Validator::make(['newName' => $newName], ['newName' => 'required|string|max:255|min:1']);
+        $validate = Validator::make(['newName' => $newName], ['newName' => 'required|string|max:255|min:1']);
 
-        if ($validated->fails()) {
+        if ($validate->fails()) {
             $this->dispatch('alert', message: __('Invalid name'), type: 'error');
             $this->dispatch('table::column-renamed');
             return;
         }
 
-        $column->name = $validated['newName'];
+        $column->name = $newName;
         $column->save();
 
-        $this->refreshTableWithCounts();
         $this->dispatch('table::column-renamed');
     }
 
-    public function addColumn(): void
+    public function addColumn(AddColumnToTableAction $action): void
     {
-        if (!$this->authorizeDiagramWithAlert('update', $this->table->diagram)) {
-            return;
-        }
+        $this->authorizeDiagram('update');
 
         if ($this->table->columns()->count() >= $this->maxColumns) {
             $this->dispatch('alert', message: __('You have reached the maximum number of columns for this table.'), type: 'error');
             return;
         }
 
-        $maxOrder = $this->table->columns()->max('order');
-        $newOrder = Helpers::calculateNextOrder($maxOrder);
+        $action->exec($this->table);
 
-        $baseColumn = [
-            'name'  => 'new_column',
-            'type'  => 'varchar',
-            'order' => $newOrder,
-            'is_notnull' => true,
-        ];
-
-        $this->table->columns()->create($baseColumn);
-        $this->refreshTableWithCounts();
+        $this->updateTableData();
         $this->dispatch('table::column-added');
     }
 
-    #[On('table::relationship-added')]
-    public function refreshTableWithCounts(): void
+    #[On('table::relationship-added.{tableId}')]
+    public function updateTableData(): void
     {
         $table = $this->table->fresh([
-            'diagram',
             'columns' => fn ($query) => $query->orderBy('order'),
         ]);
 
         if ($table === null) {
-            throw new LogicException('Table não existe mais');
+            throw new \LogicException('Table não existe mais');
         }
 
-        $this->table = $table->loadCount([
+        $table = $table->loadCount([
             'columns',
             'columns as primary_count' => fn ($q) => $q->where('is_primary', true),
             'columns as foreign_count' => fn ($q) => $q->where('is_foreign', true),
         ]);
+
+        $table = $table->loadExists('columns');
+
+        $this->tableData = TableData::fromModel($table);
     }
 
-    public function remove(): void
+    public function remove(DeleteTableAction $action): void
     {
-        if (!$this->authorizeDiagramWithAlert('update', $this->table->diagram)) {
-            return;
-        }
+        $this->authorizeDiagram('delete');
 
-        DB::transaction(function () {
-            $this->table->relationships()->delete();
-            $this->table->columns()->delete();
-            $this->table->delete();
-        });
+        $action->exec($this->table);
 
         $this->dispatch('alert', message: __('Table Removed'));
         $this->dispatch('table::removed');
+
         $diagram = Diagram::find($this->diagramId);
         $relationships = $diagram ? $diagram->relationships()->get() : collect();
+
         $this->dispatch('relationships::fresh', relationships: $relationships);
     }
 
-    #[On('table::move.{table.id}')]
+    #[On('table::move.{tableId}')]
     public function updatePosition(int $x, int $y): void
     {
-        if(Gate::denies('update', $this->table->diagram)) {
-            return;
-        }
+        $this->authorizeDiagram('update');
 
        $this->table->update([
             'x' => $x,
             'y' => $y,
-        ]);
-
-        $this->refreshTableWithCounts();
+       ]);
     }
 };

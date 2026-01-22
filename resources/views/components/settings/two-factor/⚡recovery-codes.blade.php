@@ -2,9 +2,9 @@
 
 use Laravel\Fortify\Actions\GenerateNewRecoveryCodes;
 use Livewire\Attributes\Locked;
-use Livewire\Component;
+use App\Livewire\BaseComponent;
 
-new class extends Component {
+new class extends BaseComponent {
     #[Locked]
     public array $recoveryCodes = [];
 

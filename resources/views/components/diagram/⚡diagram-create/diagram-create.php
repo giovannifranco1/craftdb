@@ -4,11 +4,12 @@ use App\Actions\Diagram\CreateNewDiagram;
 use App\Livewire\Forms\Diagram\ImportForm;
 use App\Models\Team\Team;
 use App\Rules\Diagram\ImportValidFileType;
+use Livewire\Attributes\Transition;
 use Livewire\Attributes\Validate;
-use Livewire\Component;
+use App\Livewire\BaseComponent;
 use Livewire\WithFileUploads;
 
-new class extends Component {
+new class extends BaseComponent {
     use WithFileUploads;
 
     /** UI StateForm Import */
@@ -36,6 +37,7 @@ new class extends Component {
         $this->resetUIState();
     }
 
+    #[Transition(skip: true)]
     public function resetUIState(): void
     {
         $this->step = 1;
@@ -49,6 +51,7 @@ new class extends Component {
         $this->importForm->file = [];
     }
 
+    #[Transition(type: 'forward')]
     public function nextStep(): void
     {
         $this->validate([
@@ -60,6 +63,7 @@ new class extends Component {
         $this->step = 2;
     }
 
+    #[Transition(type: 'backward')]
     public function prevStep(): void
     {
         $this->step = max(1, $this->step - 1);

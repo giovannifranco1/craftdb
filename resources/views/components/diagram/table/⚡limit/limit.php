@@ -4,9 +4,9 @@ use App\Models\Diagram;
 use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
-use Livewire\Component;
+use App\Livewire\BaseComponent;
 
-new class extends Component {
+new class extends BaseComponent {
     /** @var array<string, string> */
     protected $listeners = [
         'table::added' => '$refresh',

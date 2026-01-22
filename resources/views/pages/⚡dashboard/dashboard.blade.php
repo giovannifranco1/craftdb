@@ -24,7 +24,7 @@
     <div class="flex flex-col h-[40.2rem]">
         <div class="flex-1 overflow-y-auto">
             <div class="h-full grid lg:grid-cols-2 xl:grid-cols-3 gap-4">
-                @forelse($this->getDiagrams as $diagram)
+                @forelse($this->diagrams as $diagram)
                     <x-diagram.ui.card wire:key="diagram-card-{{ $diagram->id }}" :diagram="$diagram" />
                 @empty
                     <div class= "col-span-1 lg:col-span-3 w-full h-full flex flex-col items-center justify-center gap-6 px-4">
@@ -61,9 +61,9 @@
                 @endforelse
             </div>
         </div>
-        @if($this->getDiagrams->hasPages())
+        @if($this->diagrams->hasPages())
             <div class="mt-5 flex-shrink-0 mr-7">
-                {{ $this->getDiagrams->links() }}
+                {{ $this->diagrams->links() }}
             </div>
         @endif
     </div>
@@ -85,7 +85,7 @@
     </flux:modal>
 
     <!-- Modal para editar diagrama -->
-    @foreach($this->getDiagrams as $diagram)
+    @foreach($this->diagrams as $diagram)
         <livewire:diagram.diagram-edit :$diagram :wire:key="$diagram->id" />
     @endforeach
 </div>

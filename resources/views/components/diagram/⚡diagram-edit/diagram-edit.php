@@ -3,9 +3,9 @@
 use App\Actions\Diagram\UpdateDiagram;
 use App\Models\Diagram;
 use Livewire\Attributes\Validate;
-use Livewire\Component;
+use App\Livewire\BaseComponent;
 
-new class extends Component {
+new class extends BaseComponent {
     public Diagram $diagram;
 
     #[Validate('required|string|max:255')]

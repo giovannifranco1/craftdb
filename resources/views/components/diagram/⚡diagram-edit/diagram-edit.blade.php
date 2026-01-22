@@ -16,24 +16,26 @@
                 </flux:text>
             </div>
 
-            @php
-                $steps = "components.diagram._partials.edit";
+            <div wire:transition>
+                @php
+                    $steps = "components.diagram._partials.edit";
 
-                $STEP_1 = 1;
-                $STEP_2 = 2;
-                $STEP_FINAL = 2;
-            @endphp
+                    $STEP_1 = 1;
+                    $STEP_2 = 2;
+                    $STEP_FINAL = 2;
+                @endphp
 
-            <!-- Steps content -->
-            <div class="flex-1">
-                @switch($step)
-                    @case($STEP_1)
-                        @include("$steps.edit-step-1")
-                        @break
-                    @case($STEP_2)
-                        @include("$steps.edit-step-2")
-                        @break
-                @endswitch
+                <!-- Steps content -->
+                <div class="flex-1">
+                    @switch($step)
+                        @case($STEP_1)
+                            @include("$steps.edit-step-1")
+                            @break
+                        @case($STEP_2)
+                            @include("$steps.edit-step-2")
+                            @break
+                    @endswitch
+                </div>
             </div>
 
             <!-- Footer actions -->

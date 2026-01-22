@@ -3,9 +3,9 @@
 use App\Actions\Team\CreateNewTeam;
 use App\Models\Team\Team;
 use Illuminate\Support\Facades\Auth;
-use Livewire\Component;
+use App\Livewire\BaseComponent;
 
-new class extends Component {
+new class extends BaseComponent {
     public string $name = '';
 
     /**

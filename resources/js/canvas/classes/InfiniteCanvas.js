@@ -259,7 +259,6 @@ export class InfiniteCanvas {
         this.#setupMousePan(canvas); // refatorado para método separado
     }
 
-    // --- [Refatoração: pan do mouse] ---
     #setupMousePan(canvas) {
         // Helper para verificar se pode fazer pan (space OU grab mode)
         const canPan = () => this.#isSpacePressed || this.#grabModeEnabled;
@@ -318,7 +317,6 @@ export class InfiniteCanvas {
             }
         });
     }
-    // --- [fim refatoração] ---
 
     #zoomWheel(event) {
         const zoomStep = 1.025;

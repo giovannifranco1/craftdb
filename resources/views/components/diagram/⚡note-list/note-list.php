@@ -1,20 +1,21 @@
 <?php
 
-use App\Concerns\HandlesDiagramAuthorizationWithAlertError;
+use App\Attributes\AuthorizeDiagram;
+use App\Concerns\HandlesDiagramAuthAlert;
 use App\Models\Diagram;
 use App\Models\Note;
-use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\Defer;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
-use Livewire\Component;
+use App\Livewire\BaseComponent;
 
-new class extends Component {
-    use HandlesDiagramAuthorizationWithAlertError;
+new #[Defer(bundle: true)] class extends BaseComponent {
+    use HandlesDiagramAuthAlert;
 
     #[Locked]
-    public Diagram $diagram;
+    public int $diagramId;
 
     /** @var array<string, string>  */
     protected $listeners = [
@@ -25,14 +26,20 @@ new class extends Component {
 
     public function mount(Diagram $diagram): void
     {
-        $this->diagram = $diagram;
+        $this->diagramId = $diagram->id;
+    }
+
+    #[Computed]
+    public function diagram(): Diagram
+    {
+        return Diagram::query()->findOrFail($this->diagramId);
     }
 
     /**
      * @return Collection<int, \App\Models\Note>
      */
     #[Computed]
-    public function getNotes(): Collection
+    public function notes(): Collection
     {
         return $this->diagram->notes()->get();
     }
@@ -40,9 +47,7 @@ new class extends Component {
     #[On('note::add')]
     public function addNote(int $x = 100, int $y = 100): void
     {
-        if (!$this->authorizeDiagramWithAlert('update', $this->diagram)) {
-            return;
-        }
+        $this->authorizeDiagram('update');
 
         $note = $this->diagram->notes()->create([
             'name' => 'New Note',

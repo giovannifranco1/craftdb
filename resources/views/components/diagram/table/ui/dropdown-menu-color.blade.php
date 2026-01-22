@@ -1,5 +1,5 @@
 @props([
-    'table' => null
+    'tableData' => null
 ])
 
-<x-diagram.ui.color-picker :model="$table" type="table" />
+<x-diagram.ui.color-picker :item="$tableData" type="table" />

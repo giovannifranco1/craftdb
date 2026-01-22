@@ -2,11 +2,14 @@
 
 namespace App\Providers;
 
+use App\Models\Diagram;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\Route;
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
@@ -54,6 +57,7 @@ class AppServiceProvider extends ServiceProvider
         $this->configureVitePrefetching();
         $this->configureDefaultRulesForPassword();
         $this->configureUnitTests();
+        $this->configureDiagramCaching();
     }
 
     /**
@@ -140,5 +144,29 @@ class AppServiceProvider extends ServiceProvider
             Http::preventStrayRequests();
             Sleep::fake();
         }
+    }
+
+    /**
+     * Configure caching for Diagram route model binding.
+     *
+     * This caches the diagram lookups by slug to avoid repeated database queries
+     * when Livewire components make multiple requests to the same diagram.
+     */
+    private function configureDiagramCaching(): void
+    {
+        Route::bind('diagram', function (string $value) {
+            $cacheKey = "diagram:slug:{$value}";
+
+            // Cache for 5 minutes (300 seconds)
+            // Use 'array' driver in development for per-request caching
+            // In production, this will use your configured cache driver (redis, memcached, etc)
+            $cacheStore = $this->app->environment('local') ? 'array' : config('cache.default');
+            $cacheDuration = $this->app->environment('local') ? 60 : 300;
+
+            return Cache::store($cacheStore)->remember($cacheKey, $cacheDuration, function () use ($value) {
+                return Diagram::where('slug', $value)->firstOrFail();
+            });
+        });
+        
     }
 }

@@ -1,15 +1,18 @@
 <?php
 
-use App\Concerns\HandlesDiagramAuthorizationWithAlertError;
+use App\Attributes\AuthorizeDiagram;
+use App\Concerns\HandlesDiagramAuthAlert;
 use App\Models\Area as AreaModel;
+use App\Models\Diagram;
 use App\Support\Helpers;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Validate;
-use Livewire\Component;
+use App\Livewire\BaseComponent;
 
-new class extends Component {
-    use HandlesDiagramAuthorizationWithAlertError;
+new class extends BaseComponent {
+    use HandlesDiagramAuthAlert;
 
     /** @var array<string, string>  */
     protected $listeners = [
@@ -33,76 +36,57 @@ new class extends Component {
         $this->name = $area->name;
     }
 
+    #[Computed(cache: true, key: 'diagram')]
+    public function diagram(): Diagram
+    {
+        return Diagram::query()->findOrFail($this->diagramId);
+    }
+
     #[On('area::move.{area.id}')]
     public function updatePosition(int $x, int $y): void
     {
-        if (!$this->authorizeDiagramWithAlert('update', $this->area->diagram)) {
-            return;
-        }
-
-        $this->area->x = $x;
-        $this->area->y = $y;
-        $this->area->save();
+        $this->area->update([
+            'x' => $x,
+            'y' => $y,
+        ]);
     }
 
     #[On('area::resize.{area.id}')]
     public function updateSize(int $x, int $y, int $width, int $height): void
     {
-        if (!$this->authorizeDiagramWithAlert('update', $this->area->diagram)) {
-            return;
-        }
-
-        $this->area->width = $width;
-        $this->area->height = $height;
-        $this->area->x = $x;
-        $this->area->y = $y;
-        $this->area->save();
+        $this->area->update([
+            'width' => $width,
+            'height' => $height,
+            'x' => $x,
+            'y' => $y,
+        ]);
     }
 
     public function renameArea(): void
     {
-        if (!$this->authorizeDiagramWithAlert('update', $this->area->diagram)) {
-            return;
-        }
-
         $this->validateOnly('name');
 
-        $this->area->name = $this->name;
-        $this->area->save();
+        $this->area->update(['name' => $this->name]);
 
         $this->dispatch('area::renamed');
     }
 
     public function resetName(): void
     {
-        if (!$this->authorizeDiagramWithAlert('update', $this->area->diagram)) {
-            return;
-        }
-
         $this->name = $this->area->name;
     }
 
     public function setColor(string $color): void
     {
-        if (!$this->authorizeDiagramWithAlert('update', $this->area->diagram)) {
-            $this->dispatch('area::color-updated-error');
-            return;
-        }
-
         if (!Helpers::isColorValid($color)) return;
 
-        $this->area->color = $color;
-        $this->area->save();
+        $this->area->update(['color' => $color]);
 
         $this->dispatch('area::color-updated');
     }
 
     public function remove(): void
     {
-        if (!$this->authorizeDiagramWithAlert('update', $this->area->diagram)) {
-            return;
-        }
-
         $this->area->delete();
 
         $this->dispatch('alert', message: "Area Removed");

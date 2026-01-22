@@ -3,10 +3,10 @@
 use App\Models\Team\Team;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
-use Livewire\Component;
+use App\Livewire\BaseComponent;
 use Livewire\Attributes\Computed;
 
-new class extends Component {
+new class extends BaseComponent {
 
     public function switchTeam(int $teamId): void
     {

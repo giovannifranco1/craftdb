@@ -3,9 +3,9 @@
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
-use Livewire\Component;
+use App\Livewire\BaseComponent;
 
-new class extends Component {
+new class extends BaseComponent {
     public string $current_password = '';
     public string $password = '';
     public string $password_confirmation = '';

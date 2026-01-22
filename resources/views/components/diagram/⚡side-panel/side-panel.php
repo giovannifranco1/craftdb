@@ -1,8 +1,8 @@
 <?php
 
-use Livewire\Component;
+use App\Livewire\BaseComponent;
 
-new class extends Component {
+new class extends BaseComponent {
     public bool $open = false;
     public ?string $title = null;
     public ?string $component = null;

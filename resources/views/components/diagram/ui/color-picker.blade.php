@@ -1,5 +1,5 @@
 @props([
-    'model' => null, // Table or Area model
+    'item' => null, // Table or Area model
     'type' => 'table', // 'table' or 'area'
     'position' => null, // Custom position classes, defaults based on type
 ])
@@ -11,8 +11,8 @@
         'note' => 'note::color-updated',
         default => 'table::color-updated',
     };
-    $currentColor = $model->color ?? null;
-    $colors = $model->diagram->getColors();
+    $currentColor = $item->color ?? null;
+    $colors = $this->diagram->colors;
 
     // Default positioning based on type
     if ($position === null) {
@@ -23,7 +23,6 @@
         };
     }
 @endphp
-
 <div
     x-cloak
     x-show="open"

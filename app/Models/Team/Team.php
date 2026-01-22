@@ -53,7 +53,7 @@ class Team extends Model
      *
      * @var array
      */
-    protected $with = ['roles.permissions', 'groups.permissions'];
+    // protected $with = ['roles.permissions', 'groups.permissions'];
 
     /**
      * Creates a new instance of the model.

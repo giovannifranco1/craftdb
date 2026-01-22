@@ -26,11 +26,11 @@
             </div>
 
             <div class="areas z-5">
-                {{ $areas }}
+                @isset($areas) {{ $areas }} @endisset
             </div>
 
             <div class="notes z-15">
-                {{ $notes }}
+                @isset($notes) {{ $notes }} @endisset
             </div>
         </div>
 

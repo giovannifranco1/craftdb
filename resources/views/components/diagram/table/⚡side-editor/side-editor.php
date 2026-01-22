@@ -1,6 +1,6 @@
 <?php
 
-use App\Concerns\HandlesDiagramAuthorizationWithAlertError;
+use App\Concerns\HandlesDiagramAuthAlert;
 use App\Concerns\HasSidePanel;
 use App\Enums\ColumnTypes;
 use App\Livewire\Forms\Diagram\ColumnForm;
@@ -12,11 +12,12 @@ use Illuminate\Database\Eloquent\Model;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
-use Livewire\Component;
+use App\Livewire\BaseComponent;
+use App\Models\Diagram;
 use App\Models\Relationship;
 
-new class extends Component {
-    use HandlesDiagramAuthorizationWithAlertError;
+new class extends BaseComponent {
+    use HandlesDiagramAuthAlert;
     use HasSidePanel;
 
     #[Locked]
@@ -31,12 +32,25 @@ new class extends Component {
     public bool $isEventUpdateColumn = false;
     public ColumnForm $columnForm;
 
+    public int $diagramId;
+
+    public function mount(Diagram $diagram): void
+    {
+        $this->diagramId = $diagram->id;
+    }
+
     #[Computed()]
     public function getTable(): ?Table
     {
         return cache()->remember('table_'.$this->tableId, 60, function () {
             return Table::query()->find($this->tableId);
         });
+    }
+
+    #[Computed]
+    public function diagram(): Diagram
+    {
+        return Diagram::query()->findOrFail($this->diagramId);
     }
 
     #[On('table-side-editor::open')]
@@ -152,10 +166,7 @@ new class extends Component {
 
     public function addColumn(): void
     {
-        $table = $this->getTable;
-        if (!$table || !$this->authorizeDiagramWithAlert('update', $table->diagram)) {
-            return;
-        }
+        $this->authorizeDiagram('update');
 
         $table = $this->getTable;
 
@@ -178,10 +189,9 @@ new class extends Component {
 
     public function updateColumnName(int $columnId): void
     {
+        $this->authorizeDiagram('update');
+
         $table = $this->getTable;
-        if (!$table || !$this->authorizeDiagramWithAlert('update', $table->diagram)) {
-            return;
-        }
 
         $this->validate([
             'editingColumnName' => 'required|string|max:255',
@@ -248,10 +258,7 @@ new class extends Component {
 
     public function deleteColumn(): void
     {
-        $table = $this->getTable;
-        if (!$table || !$this->authorizeDiagramWithAlert('update', $table->diagram)) {
-            return;
-        }
+        $this->authorizeDiagram('update');
 
         $column = $this->getSelectedColumn();
 
@@ -268,10 +275,7 @@ new class extends Component {
 
     public function deleteColumnById(int $columnId): void
     {
-        $table = $this->getTable;
-        if (!$table || !$this->authorizeDiagramWithAlert('update', $table->diagram)) {
-            return;
-        }
+        $this->authorizeDiagram('update');
 
         $table = $this->getTable;
         if (!$table) {

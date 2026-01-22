@@ -55,6 +55,11 @@ class User extends Authenticatable
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, TwoFactorAuthenticatable, HasTeams;
 
+    const PROVIDERS = [
+        'github' => 'github',
+        'google' => 'google',
+    ];
+
     /**
      * The attributes that are mass assignable.
      *
@@ -64,6 +69,12 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'github_id',
+        'github_token',
+        'github_refresh_token',
+        'google_id',
+        'google_token',
+        'google_refresh_token',
     ];
 
     /**
@@ -76,6 +87,10 @@ class User extends Authenticatable
         'two_factor_secret',
         'two_factor_recovery_codes',
         'remember_token',
+        'github_token',
+        'github_refresh_token',
+        'google_token',
+        'google_refresh_token',
     ];
 
     /**
@@ -101,5 +116,10 @@ class User extends Authenticatable
             ->take(2)
             ->map(fn ($word) => Str::substr($word, 0, 1))
             ->implode('');
+    }
+
+    public static function isProvider(string $provider): bool
+    {
+        return in_array($provider, array_values(self::PROVIDERS));
     }
 }

@@ -9,10 +9,20 @@ export default (relationships) => ({
     highlightedTableId: null,
     highlightedColumnIds: [],
     colorLines: '#73ABEF',
+    // Performance optimizations
+    svgElementCache: new Map(), // Cache de elementos SVG por connection ID
+    domElementCache: new Map(), // Cache de elementos DOM das colunas/tabelas
+    boundingRectCache: new Map(), // Cache de BoundingClientRect (CRÍTICO)
+    anchorCache: new Map(), // Cache de elementos .anchor-left/.anchor-right
+    transformCache: null, // Cache de gCTM.inverse() para reutilizar
+    linesLayerCache: null, // Cache do #lines-layer
+    rafId: null, // RequestAnimationFrame ID
+    isDragging: false, // Flag para saber se está em drag
 
     init() {
         this.gridSize = Alpine.raw(this.canvas).cellSize;
-        this.linesLayer = this.$el.querySelector('#lines-layer'),
+        this.linesLayer = this.$el.querySelector('#lines-layer');
+        this.linesLayerCache = this.linesLayer; // Cache permanente
         this.linesLayer.setAttribute('transform', Alpine.raw(this.canvas).getTransformString());
 
         window.addEventListener('canvas-zoom', () => {
@@ -20,9 +30,14 @@ export default (relationships) => ({
             // Não recomputa aqui para evitar "pulos"; as paths acompanham via transform
             const transform = Alpine.raw(this.canvas).getTransformString();
             this.linesLayer.setAttribute('transform', transform);
+            this.invalidateBoundingRectCache(); // Zoom altera posições
         });
 
-        window.addEventListener('canvas::transform', (e) => this.linesLayer.setAttribute('transform', e.detail.transform));
+        window.addEventListener('canvas::transform', (e) => {
+            this.linesLayer.setAttribute('transform', e.detail.transform);
+            this.invalidateBoundingRectCache(); // Transform altera posições
+        });
+
         window.addEventListener('table::move', () => this.debouncedCompute());
         window.addEventListener('table::expanded', () => this.compute());
         window.addEventListener('table-side-editor::open', e => this.highlightTableConnections(e.detail?.tableId));
@@ -43,6 +58,20 @@ export default (relationships) => ({
                 this.debouncedCompute();
             }
         });
+
+        // Limpa caches quando tabelas são adicionadas/removidas
+        window.addEventListener('table::added', () => {
+            this.clearDOMCache();
+            this.invalidateBoundingRectCache();
+        });
+        window.addEventListener('table::removed', () => {
+            this.clearDOMCache();
+            this.invalidateBoundingRectCache();
+        });
+        window.addEventListener('table::relationship-added', () => {
+            this.clearDOMCache();
+            this.invalidateBoundingRectCache();
+        });
     },
     snapToGrid(coord) {
         return Math.round(coord / this.gridSize) * this.gridSize;
@@ -54,46 +83,117 @@ export default (relationships) => ({
         }
 
         this.computeTimeout = setTimeout(() => {
-            this.compute();
+            this.computeWithRAF();
         }, 10);
+    },
+    computeWithRAF() {
+        // Usa requestAnimationFrame para agrupar atualizações visuais
+        if (this.rafId) {
+            cancelAnimationFrame(this.rafId);
+        }
+
+        this.rafId = requestAnimationFrame(() => {
+            this.compute();
+            this.rafId = null;
+        });
     },
     compute() {
         this.connections = [];
 
         if (!this.$el) return;
 
-        const group = this.$el.querySelector('#lines-layer');
+        // Usa cache do lines-layer ao invés de querySelector
+        const group = this.linesLayerCache || this.$el.querySelector('#lines-layer');
+
+        // Invalida caches no início do compute para pegar novas posições
+        this.transformCache = null;
+        this.boundingRectCache.clear(); // CRÍTICO: Limpa cache de posições para pegar novas coordenadas
 
         this.relationships.forEach(item => {
-            const fromEl = document.getElementById(`column-${item.from_table_id}-${item.from_column_id}`);
-            const toEl = document.getElementById(`column-${item.to_table_id}-${item.to_column_id}`);
-            const fromTableEl = document.getElementById(`table-${item.from_table_id}`);
-            const toTableEl = document.getElementById(`table-${item.to_table_id}`);
+            // Cache de elementos DOM para reduzir queries
+            const fromId = `column-${item.from_table_id}-${item.from_column_id}`;
+            const toId = `column-${item.to_table_id}-${item.to_column_id}`;
+            const fromTableId = `table-${item.from_table_id}`;
+            const toTableId = `table-${item.to_table_id}`;
+
+            // Usa cache com validação de elementos no DOM
+            let fromEl = this.domElementCache.get(fromId);
+            if (!fromEl || !document.body.contains(fromEl)) {
+                fromEl = document.getElementById(fromId);
+                if (fromEl) {
+                    this.domElementCache.set(fromId, fromEl);
+                } else {
+                    this.domElementCache.delete(fromId);
+                }
+            }
+
+            let toEl = this.domElementCache.get(toId);
+            if (!toEl || !document.body.contains(toEl)) {
+                toEl = document.getElementById(toId);
+                if (toEl) {
+                    this.domElementCache.set(toId, toEl);
+                } else {
+                    this.domElementCache.delete(toId);
+                }
+            }
+
+            let fromTableEl = this.domElementCache.get(fromTableId);
+            if (!fromTableEl || !document.body.contains(fromTableEl)) {
+                fromTableEl = document.getElementById(fromTableId);
+                if (fromTableEl) {
+                    this.domElementCache.set(fromTableId, fromTableEl);
+                } else {
+                    this.domElementCache.delete(fromTableId);
+                }
+            }
+
+            let toTableEl = this.domElementCache.get(toTableId);
+            if (!toTableEl || !document.body.contains(toTableEl)) {
+                toTableEl = document.getElementById(toTableId);
+                if (toTableEl) {
+                    this.domElementCache.set(toTableId, toTableEl);
+                } else {
+                    this.domElementCache.delete(toTableId);
+                }
+            }
 
             if (!fromEl || !toEl) {
                 return;
             }
 
-            const fromIsCollapsed =  fromEl.closest('table').hasAttribute('is-collapsed');
-            const toIsCollapsed = toEl.closest('table').hasAttribute('is-collapsed');
+            // Verifica se elementos ainda estão no DOM
+            const fromTable = fromEl.closest('table');
+            const toTable = toEl.closest('table');
+
+            if (!fromTable || !toTable) {
+                // Elementos não estão mais no DOM, limpa cache e pula
+                this.domElementCache.delete(fromId);
+                this.domElementCache.delete(toId);
+                this.domElementCache.delete(fromTableId);
+                this.domElementCache.delete(toTableId);
+                return;
+            }
+
+            const fromIsCollapsed = fromTable.hasAttribute('is-collapsed');
+            const toIsCollapsed = toTable.hasAttribute('is-collapsed');
 
             if (fromIsCollapsed || toIsCollapsed) {
                 return
             }
 
-            const { aSide, bSide } = this.updateConnectionAnchorVisibility(fromEl, toEl);
+            const { aSide, bSide } = this.updateConnectionAnchorVisibility(fromEl, toEl, fromId, toId);
 
-            let p1 = this.getPointForSide(fromEl, aSide, group);
-            let p2 = this.getPointForSide(toEl, bSide, group);
+            let p1 = this.getPointForSide(fromEl, aSide, group, fromId);
+            let p2 = this.getPointForSide(toEl, bSide, group, toId);
 
             // Calcula o path curvo que contorna os boxes
             const connection = {
                 id: `${item.id}`,
                 type: item.type,
-                path: this.createCurvedPath(p1, p2, fromTableEl, toTableEl),
+                path: this.createCurvedPath(p1, p2, fromTableEl, toTableEl, fromTableId, toTableId),
                 p1, p2, aSide, bSide,
-                fromId: `column-${item.from_table_id}-${item.from_column_id}`,
-                toId: `column-${item.to_table_id}-${item.to_column_id}`
+                fromId: fromId,
+                toId: toId
             };
             this.connections.push(connection);
         });
@@ -102,20 +202,49 @@ export default (relationships) => ({
 
         this.renderSvg();
     },
-    getPointForSide(boxEl, side, group) {
+    clearDOMCache() {
+        // Limpa o cache de elementos DOM (chamar quando tabelas são adicionadas/removidas)
+        this.domElementCache.clear();
+        this.anchorCache.clear();
+    },
+    invalidateBoundingRectCache() {
+        // Invalida cache de BoundingRects (posições mudaram)
+        this.boundingRectCache.clear();
+        this.transformCache = null;
+    },
+    getCachedBoundingRect(element, cacheKey) {
+        // Retorna BoundingRect do cache ou calcula e cacheia
+        if (!cacheKey) cacheKey = element.id || `el-${Math.random()}`;
+
+        let cached = this.boundingRectCache.get(cacheKey);
+        if (!cached) {
+            cached = element.getBoundingClientRect();
+            this.boundingRectCache.set(cacheKey, cached);
+        }
+        return cached;
+    },
+    getCachedTransform(group) {
+        // Calcula e cacheia a matriz de transformação inversa (reutilizado 400x por frame)
+        if (!this.transformCache && group) {
+            const gCTM = group.getScreenCTM();
+            this.transformCache = gCTM ? gCTM.inverse() : null;
+        }
+        return this.transformCache;
+    },
+    getPointForSide(boxEl, side, group, cacheKey) {
         const gridSize = this.gridSize;
 
-        // Pega o ponto base em coordenadas de tela
-        const rect = boxEl.getBoundingClientRect();
+        // USA CACHE: Pega o rect do cache (economiza ~400 getBoundingClientRect por frame)
+        const rect = this.getCachedBoundingRect(boxEl, cacheKey);
         const pt = this.$el.createSVGPoint();
 
         // Define o ponto no lado correto da box
         pt.x = side === 'right' ? rect.right : rect.left;
         pt.y = rect.top + rect.height / 2;
 
-        // Converte para o sistema de coordenadas do <g> transformado (espaço de tela -> g)
-        const gCTM = group.getScreenCTM();
-        const svgP = pt.matrixTransform(gCTM.inverse());
+        // USA CACHE: Reutiliza a matriz de transformação inversa (economiza ~400 cálculos)
+        const inverseMatrix = this.getCachedTransform(group);
+        const svgP = inverseMatrix ? pt.matrixTransform(inverseMatrix) : pt;
 
         // Alinha ao grid
         const p = {
@@ -125,9 +254,10 @@ export default (relationships) => ({
 
         return p;
     },
-    updateConnectionAnchorVisibility(fromEl, toEl) {
-        const fromRect = fromEl.getBoundingClientRect();
-        const toRect = toEl.getBoundingClientRect();
+    updateConnectionAnchorVisibility(fromEl, toEl, fromId, toId) {
+        // USA CACHE: Economiza 400 getBoundingClientRect por frame
+        const fromRect = this.getCachedBoundingRect(fromEl, fromId);
+        const toRect = this.getCachedBoundingRect(toEl, toId);
 
         const aCenterX = fromRect.left + fromRect.width / 2;
         const bCenterX = toRect.left + toRect.width / 2;
@@ -138,42 +268,60 @@ export default (relationships) => ({
         const aSide = aCenterX <= bCenterX ? 'right' : 'left';
         const bSide = aCenterX <= bCenterX ? 'left' : 'right';
 
-        // Alterna visibilidade dos pontinhos de referência
-        const aAnchorLeft = fromEl.querySelector('.anchor-left');
-        const aAnchorRight = fromEl.querySelector('.anchor-right');
-        const bAnchorLeft = toEl.querySelector('.anchor-left');
-        const bAnchorRight = toEl.querySelector('.anchor-right');
-
-        if (aAnchorLeft && aAnchorRight) {
-            aAnchorLeft.style.opacity = aSide === 'left' ? '1' : '0';
-            aAnchorRight.style.opacity = aSide === 'right' ? '1' : '0';
+        // USA CACHE: Economiza 800 querySelector por frame
+        const anchorKeyFrom = `${fromId}-anchors`;
+        let fromAnchors = this.anchorCache.get(anchorKeyFrom);
+        if (!fromAnchors) {
+            fromAnchors = {
+                left: fromEl.querySelector('.anchor-left'),
+                right: fromEl.querySelector('.anchor-right')
+            };
+            this.anchorCache.set(anchorKeyFrom, fromAnchors);
         }
-        if (bAnchorLeft && bAnchorRight) {
-            bAnchorLeft.style.opacity = bSide === 'left' ? '1' : '0';
-            bAnchorRight.style.opacity = bSide === 'right' ? '1' : '0';
+
+        const anchorKeyTo = `${toId}-anchors`;
+        let toAnchors = this.anchorCache.get(anchorKeyTo);
+        if (!toAnchors) {
+            toAnchors = {
+                left: toEl.querySelector('.anchor-left'),
+                right: toEl.querySelector('.anchor-right')
+            };
+            this.anchorCache.set(anchorKeyTo, toAnchors);
+        }
+
+        if (fromAnchors.left && fromAnchors.right) {
+            fromAnchors.left.style.opacity = aSide === 'left' ? '1' : '0';
+            fromAnchors.right.style.opacity = aSide === 'right' ? '1' : '0';
+        }
+        if (toAnchors.left && toAnchors.right) {
+            toAnchors.left.style.opacity = bSide === 'left' ? '1' : '0';
+            toAnchors.right.style.opacity = bSide === 'right' ? '1' : '0';
         }
 
         return { aSide, bSide };
     },
-    getTableBoundsInSVG(tableEl, group) {
+    getTableBoundsInSVG(tableEl, group, cacheKey) {
         if (!tableEl || !group) return null;
 
-        // Obtém o bounding box da tabela em coordenadas de tela
-        const rect = tableEl.getBoundingClientRect();
+        // USA CACHE: Economiza 400 getBoundingClientRect por frame
+        const rect = this.getCachedBoundingRect(tableEl, cacheKey);
 
         // Converte os cantos do retângulo para coordenadas SVG
         const pt = this.$el.createSVGPoint();
-        const gCTM = group.getScreenCTM();
+
+        // USA CACHE: Reutiliza matriz de transformação inversa
+        const inverseMatrix = this.getCachedTransform(group);
+        if (!inverseMatrix) return null;
 
         // Canto superior esquerdo
         pt.x = rect.left;
         pt.y = rect.top;
-        const topLeft = pt.matrixTransform(gCTM.inverse());
+        const topLeft = pt.matrixTransform(inverseMatrix);
 
         // Canto inferior direito
         pt.x = rect.right;
         pt.y = rect.bottom;
-        const bottomRight = pt.matrixTransform(gCTM.inverse());
+        const bottomRight = pt.matrixTransform(inverseMatrix);
 
         return {
             xMin: topLeft.x,
@@ -182,19 +330,20 @@ export default (relationships) => ({
             yMax: bottomRight.y
         };
     },
-    createCurvedPath(p1, p2, fromTableEl, toTableEl) {
-        const group = this.$el.querySelector('#lines-layer');
+    createCurvedPath(p1, p2, fromTableEl, toTableEl, fromTableId, toTableId) {
+        // USA CACHE: Evita 200 querySelector por frame
+        const group = this.linesLayerCache;
 
         // Obtém os bounds das tabelas uma vez para reutilizar
         let fromTableBounds = null;
         let toTableBounds = null;
 
         if (fromTableEl && group) {
-            fromTableBounds = this.getTableBoundsInSVG(fromTableEl, group);
+            fromTableBounds = this.getTableBoundsInSVG(fromTableEl, group, fromTableId);
         }
 
         if (toTableEl && group) {
-            toTableBounds = this.getTableBoundsInSVG(toTableEl, group);
+            toTableBounds = this.getTableBoundsInSVG(toTableEl, group, toTableId);
         }
 
         let useVerticalConnection = false;
@@ -408,129 +557,232 @@ export default (relationships) => ({
     },
     renderSvg() {
         const svg = this.$el;
-        const group = svg.querySelector('#lines-layer'); // o <g> interno
+        const group = svg.querySelector('#lines-layer');
 
         if (!group) return;
 
-        // Limpa paths anteriores
-        group.innerHTML = '';
+        // Track quais conexões existem agora
+        const currentConnectionIds = new Set(this.connections.map(c => c.id));
 
-        // Desenha os novos
+        // Remove conexões que não existem mais
+        const existingGroups = group.querySelectorAll('g[data-connection-id]');
+        existingGroups.forEach(g => {
+            const id = g.dataset.connectionId;
+            if (!currentConnectionIds.has(id)) {
+                g.remove();
+                this.svgElementCache.delete(id);
+            }
+        });
+
+        // Atualiza ou cria conexões
         this.connections.forEach(conn => {
-            // Cria um grupo por conexão
-            const connGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-            connGroup.dataset.fromId = conn.fromId;
-            connGroup.dataset.toId = conn.toId;
-            group.appendChild(connGroup);
+            let connGroup = this.svgElementCache.get(conn.id);
 
-            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-            path.setAttribute('d', conn.path);
-            path.setAttribute('stroke', this.colorLines); //default #888
-            path.setAttribute('fill', 'none');
-            path.setAttribute('stroke-width', '2.2');
-            path.setAttribute('pointer-events', 'stroke');
+            // Se não existe no cache ou não está mais no DOM, cria novo
+            if (!connGroup || !group.contains(connGroup)) {
+                connGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                connGroup.dataset.connectionId = conn.id;
+                connGroup.dataset.fromId = conn.fromId;
+                connGroup.dataset.toId = conn.toId;
+                group.appendChild(connGroup);
+                this.svgElementCache.set(conn.id, connGroup);
 
-            connGroup.appendChild(path);
+                // Cria o path principal
+                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                path.classList.add('main-path');
+                path.setAttribute('stroke', this.colorLines);
+                path.setAttribute('fill', 'none');
+                path.setAttribute('stroke-width', '2.2');
+                path.setAttribute('pointer-events', 'stroke');
+                connGroup.appendChild(path);
 
-            // Desenha a barrinha vertical SEMPRE nas duas pontas
-            this.drawBar(connGroup, conn.p1, conn.aSide);
-            this.drawBar(connGroup, conn.p2, conn.bSide);
-
-            // Crow's foot (pé de galinha) só no lado 'n' para 1:n, e em ambos no n:n
-            const isOneToMany = conn.type === '1:n';
-            const isManyToOne = conn.type === 'n:1';
-            const isManyToMany = conn.type === 'n:n';
-
-            if (isManyToOne) {
-                this.drawCrowsFoot(connGroup, conn.p1, conn.aSide);
-                this.drawBar(connGroup, conn.p2, conn.bSide, 12);
+                // Adiciona event listeners apenas uma vez
+                this.attachConnectionListeners(connGroup, conn);
+            } else {
+                // Atualiza atributos do grupo existente
+                connGroup.dataset.fromId = conn.fromId;
+                connGroup.dataset.toId = conn.toId;
             }
 
-            if (isOneToMany) {
-                this.drawCrowsFoot(connGroup, conn.p2, conn.bSide);
-                this.drawBar(connGroup, conn.p1, conn.aSide, 12);
+            // Atualiza apenas o path (não recria o elemento)
+            const path = connGroup.querySelector('.main-path');
+            if (path) {
+                path.setAttribute('d', conn.path);
             }
 
-            if (isManyToMany) {
-                this.drawCrowsFoot(connGroup, conn.p1, conn.aSide);
-                this.drawCrowsFoot(connGroup, conn.p2, conn.bSide);
+            // OTIMIZAÇÃO CRÍTICA: Atualiza decoradores sem remover/recriar
+            // Verifica se já existem decoradores e só recria se tipo mudou
+            const currentType = connGroup.dataset.connType;
+            if (currentType !== conn.type) {
+                // Tipo mudou, precisa recriar decoradores
+                const existingDecorators = connGroup.querySelectorAll('path:not(.main-path)');
+                existingDecorators.forEach(el => el.remove());
+
+                connGroup.dataset.connType = conn.type;
+                this.createDecorators(connGroup, conn);
+            } else {
+                // Tipo não mudou, apenas atualiza posições dos decoradores existentes
+                this.updateDecorators(connGroup, conn);
             }
-
-            if (!isManyToMany && !isOneToMany && !isManyToOne) {
-                this.drawBar(connGroup, conn.p2, conn.bSide, 12);
-                this.drawBar(connGroup, conn.p1, conn.aSide, 12);
-            }
-
-            // Hover highlight
-            const highlightOn = () => {
-                connGroup.querySelectorAll('path').forEach(el => {
-                    el.setAttribute('stroke', '#eab308');
-                    el.setAttribute('stroke-width', '2.25');
-                    el.setAttribute('stroke-linecap', 'round');
-                    el.setAttribute('stroke-linejoin', 'round');
-                });
-
-                // Ensure highlighted connection renders on top (SVG uses DOM order)
-                const parentGroup = connGroup.parentNode;
-                if (parentGroup && parentGroup.appendChild) {
-                    parentGroup.appendChild(connGroup);
-                }
-
-                const fe = document.getElementById(conn.fromId);
-                const te = document.getElementById(conn.toId);
-                [fe, te].forEach(node => {
-                    if (!node) return;
-                    node.style.backgroundColor = 'rgba(250, 204, 21, 0.25)';
-                    node.style.outline = '1px solid #facc15';
-                    node.style.borderRadius = '4px';
-                });
-            };
-
-            const highlightOff = () => {
-                // Verifica se esta conexão está destacada pela tabela
-                const isTableHighlighted = this.isConnectionHighlightedByTable(conn);
-
-                // Se não estiver destacada pela tabela, remove o highlight
-                if (!isTableHighlighted) {
-                    connGroup.querySelectorAll('path').forEach(el => {
-                        el.setAttribute('stroke', this.colorLines);
-                        el.setAttribute('stroke-width', '2');
-                        el.setAttribute('stroke-linecap', 'round');
-                        el.setAttribute('stroke-linejoin', 'round');
-                    });
-
-                    const fe = document.getElementById(conn.fromId);
-                    const te = document.getElementById(conn.toId);
-
-                    // Remove highlight apenas das colunas que não estão destacadas pela tabela
-                    if (fe && !this.highlightedColumnIds.includes(conn.fromId)) {
-                        fe.style.backgroundColor = '';
-                        fe.style.outline = '';
-                        fe.style.borderRadius = '';
-                    }
-
-                    if (te && !this.highlightedColumnIds.includes(conn.toId)) {
-                        te.style.backgroundColor = '';
-                        te.style.outline = '';
-                        te.style.borderRadius = '';
-                    }
-                } else {
-                    // Se estiver destacada pela tabela, reaplica o highlight da tabela
-                    this.applyHighlightToConnection(conn, connGroup);
-                }
-            };
-
-            connGroup.addEventListener('mouseenter', highlightOn);
-            connGroup.addEventListener('mouseleave', highlightOff);
         });
 
         // Aplica highlight se houver uma tabela destacada
         if (this.highlightedTableId) {
             this.applyHighlightToTable(this.highlightedTableId);
         }
-
     },
-    drawBar(group, endPoint, side, offset = 8) {
+    attachConnectionListeners(connGroup, conn) {
+        // Adiciona event listeners apenas uma vez quando a conexão é criada
+        const highlightOn = () => {
+            connGroup.querySelectorAll('path').forEach(el => {
+                el.setAttribute('stroke', '#eab308');
+                el.setAttribute('stroke-width', '2.25');
+                el.setAttribute('stroke-linecap', 'round');
+                el.setAttribute('stroke-linejoin', 'round');
+            });
+
+            // Ensure highlighted connection renders on top (SVG uses DOM order)
+            const parentGroup = connGroup.parentNode;
+            if (parentGroup && parentGroup.appendChild) {
+                parentGroup.appendChild(connGroup);
+            }
+
+            const fe = document.getElementById(conn.fromId);
+            const te = document.getElementById(conn.toId);
+            [fe, te].forEach(node => {
+                if (!node) return;
+                node.style.backgroundColor = 'rgba(250, 204, 21, 0.25)';
+                node.style.outline = '1px solid #facc15';
+                node.style.borderRadius = '4px';
+            });
+        };
+
+        const highlightOff = () => {
+            // Verifica se esta conexão está destacada pela tabela
+            const isTableHighlighted = this.isConnectionHighlightedByTable(conn);
+
+            // Se não estiver destacada pela tabela, remove o highlight
+            if (!isTableHighlighted) {
+                connGroup.querySelectorAll('path').forEach(el => {
+                    el.setAttribute('stroke', this.colorLines);
+                    el.setAttribute('stroke-width', '2');
+                    el.setAttribute('stroke-linecap', 'round');
+                    el.setAttribute('stroke-linejoin', 'round');
+                });
+
+                const fe = document.getElementById(conn.fromId);
+                const te = document.getElementById(conn.toId);
+
+                // Remove highlight apenas das colunas que não estão destacadas pela tabela
+                if (fe && !this.highlightedColumnIds.includes(conn.fromId)) {
+                    fe.style.backgroundColor = '';
+                    fe.style.outline = '';
+                    fe.style.borderRadius = '';
+                }
+
+                if (te && !this.highlightedColumnIds.includes(conn.toId)) {
+                    te.style.backgroundColor = '';
+                    te.style.outline = '';
+                    te.style.borderRadius = '';
+                }
+            } else {
+                // Se estiver destacada pela tabela, reaplica o highlight da tabela
+                this.applyHighlightToConnection(conn, connGroup);
+            }
+        };
+
+        connGroup.addEventListener('mouseenter', highlightOn);
+        connGroup.addEventListener('mouseleave', highlightOff);
+    },
+    createDecorators(connGroup, conn) {
+        // Cria decoradores pela primeira vez
+        const isOneToMany = conn.type === '1:n';
+        const isManyToOne = conn.type === 'n:1';
+        const isManyToMany = conn.type === 'n:n';
+
+        // Sempre cria barras nas duas pontas
+        this.drawBar(connGroup, conn.p1, conn.aSide, 8, 'bar-p1');
+        this.drawBar(connGroup, conn.p2, conn.bSide, 8, 'bar-p2');
+
+        if (isManyToOne) {
+            this.drawCrowsFoot(connGroup, conn.p1, conn.aSide, 'crow-p1');
+            this.drawBar(connGroup, conn.p2, conn.bSide, 12, 'bar-p2-extra');
+        } else if (isOneToMany) {
+            this.drawCrowsFoot(connGroup, conn.p2, conn.bSide, 'crow-p2');
+            this.drawBar(connGroup, conn.p1, conn.aSide, 12, 'bar-p1-extra');
+        } else if (isManyToMany) {
+            this.drawCrowsFoot(connGroup, conn.p1, conn.aSide, 'crow-p1');
+            this.drawCrowsFoot(connGroup, conn.p2, conn.bSide, 'crow-p2');
+        } else {
+            this.drawBar(connGroup, conn.p2, conn.bSide, 12, 'bar-p2-extra');
+            this.drawBar(connGroup, conn.p1, conn.aSide, 12, 'bar-p1-extra');
+        }
+    },
+    updateDecorators(connGroup, conn) {
+        // Atualiza posições dos decoradores existentes sem recriar
+        const isOneToMany = conn.type === '1:n';
+        const isManyToOne = conn.type === 'n:1';
+        const isManyToMany = conn.type === 'n:n';
+
+        // Atualiza barras principais
+        this.updateBar(connGroup, 'bar-p1', conn.p1, conn.aSide, 8);
+        this.updateBar(connGroup, 'bar-p2', conn.p2, conn.bSide, 8);
+
+        if (isManyToOne) {
+            this.updateCrowsFoot(connGroup, 'crow-p1', conn.p1, conn.aSide);
+            this.updateBar(connGroup, 'bar-p2-extra', conn.p2, conn.bSide, 12);
+        } else if (isOneToMany) {
+            this.updateCrowsFoot(connGroup, 'crow-p2', conn.p2, conn.bSide);
+            this.updateBar(connGroup, 'bar-p1-extra', conn.p1, conn.aSide, 12);
+        } else if (isManyToMany) {
+            this.updateCrowsFoot(connGroup, 'crow-p1', conn.p1, conn.aSide);
+            this.updateCrowsFoot(connGroup, 'crow-p2', conn.p2, conn.bSide);
+        } else {
+            this.updateBar(connGroup, 'bar-p2-extra', conn.p2, conn.bSide, 12);
+            this.updateBar(connGroup, 'bar-p1-extra', conn.p1, conn.aSide, 12);
+        }
+    },
+    updateBar(group, className, endPoint, side, offset = 8) {
+        // Atualiza uma barra existente
+        const bar = group.querySelector(`.${className}`);
+        if (!bar) return;
+
+        const barLen = 7;
+        const dir = side === 'left' ? -1 : 1;
+        const ox = endPoint.x + dir * offset;
+        const oy = endPoint.y;
+        const half = barLen / 2;
+
+        bar.setAttribute('d', `M ${ox} ${oy - half} L ${ox} ${oy + half}`);
+    },
+    updateCrowsFoot(group, className, endPoint, side) {
+        // Atualiza crow's foot existente
+        const paths = group.querySelectorAll(`.${className}`);
+        if (paths.length !== 3) return;
+
+        const dir = side === 'left' ? -1 : 1;
+        const hookOffset = 8;
+        const length = 14;
+        const spreadDeg = 35;
+
+        const ox = endPoint.x + dir * hookOffset;
+        const oy = endPoint.y;
+
+        const baseAngle = side === 'right' ? 0 : Math.PI;
+        const angles = [
+            baseAngle - (Math.PI / 180) * spreadDeg,
+            baseAngle,
+            baseAngle + (Math.PI / 180) * spreadDeg,
+        ];
+
+        paths.forEach((seg, i) => {
+            const a = angles[i];
+            const x2 = ox - Math.cos(a) * length;
+            const y2 = oy - Math.sin(a) * length;
+            seg.setAttribute('d', `M ${ox} ${oy} L ${x2} ${y2}`);
+        });
+    },
+    drawBar(group, endPoint, side, offset = 8, className = '') {
         // Pequena barrinha vertical para indicar "1"
         // side: 'left' | 'right'
         const barLen = 7;
@@ -548,9 +800,13 @@ export default (relationships) => ({
         bar.setAttribute('stroke-linejoin', 'round');
         bar.setAttribute('pointer-events', 'stroke');
 
+        if (className) {
+            bar.classList.add(className);
+        }
+
         group.appendChild(bar);
     },
-    drawCrowsFoot(group, endPoint, side) {
+    drawCrowsFoot(group, endPoint, side, className = '') {
         // Crow's foot clássico: três linhas que partem do mesmo ponto e abrem em leque
         // side: 'left' | 'right'
 
@@ -584,6 +840,10 @@ export default (relationships) => ({
             seg.setAttribute('pointer-events', 'stroke');
             seg.setAttribute('stroke-linecap', 'round');
             seg.setAttribute('stroke-linejoin', 'round');
+
+            if (className) {
+                seg.classList.add(className);
+            }
 
             group.appendChild(seg);
         });

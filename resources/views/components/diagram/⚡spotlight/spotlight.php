@@ -5,9 +5,9 @@ use App\Models\Table;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
-use Livewire\Component;
+use App\Livewire\BaseComponent;
 
-new class extends Component {
+new class extends BaseComponent {
     #[Locked]
     public Diagram $diagram;
 

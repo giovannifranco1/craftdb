@@ -3,14 +3,14 @@
 use App\Models\Team\Team;
 use App\Models\Team\Membership;
 use App\Models\User;
-use Livewire\Component;
+use App\Livewire\BaseComponent;
 use Livewire\Attributes\Computed;
 use Illuminate\Support\Collection;
 use App\Models\Team\Invitation;
 use App\Notifications\TeamInvitationNotification;
 use Illuminate\Support\Facades\Auth;
 
-new class extends Component {
+new class extends BaseComponent {
     public ?Team $team = null;
     public string $email = '';
     public int $role_id = 0;

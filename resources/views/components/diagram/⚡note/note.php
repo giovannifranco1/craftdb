@@ -1,16 +1,18 @@
 <?php
 
-use App\Concerns\HandlesDiagramAuthorizationWithAlertError;
+use App\Attributes\AuthorizeDiagram;
+use App\Concerns\HandlesDiagramAuthAlert;
 use App\Models\Note as NoteModel;
 use App\Models\Team\Team;
-use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
-use Livewire\Component;
+use App\Livewire\BaseComponent;
+use App\Models\Diagram;
+use Livewire\Attributes\Computed;
 
-new class extends Component {
-    use HandlesDiagramAuthorizationWithAlertError;
+new class extends BaseComponent {
+
+    use HandlesDiagramAuthAlert;
 
     /** @var array<string, string>  */
     protected $listeners = [
@@ -35,12 +37,16 @@ new class extends Component {
         $this->content = $note->content;
     }
 
+    #[Computed()]
+    public function diagram(): Diagram
+    {
+        return Diagram::query()->findOrFail($this->diagramId);
+    }
+
     #[On('note::move.{note.id}')]
     public function updatePosition(int $x, int $y): void
     {
-        if (!$this->authorizeDiagramWithAlert('update', $this->note->diagram)) {
-            return;
-        }
+        $this->authorizeDiagram('update');
 
         $this->note->x = $x;
         $this->note->y = $y;
@@ -50,9 +56,7 @@ new class extends Component {
     #[On('note::resize.{note.id}')]
     public function updateSize(int $x, int $y, int $width, int $height): void
     {
-        if (!$this->authorizeDiagramWithAlert('update', $this->note->diagram)) {
-            return;
-        }
+        $this->authorizeDiagram('update');
 
         $this->note->width = $width;
         $this->note->height = $height;
@@ -63,9 +67,7 @@ new class extends Component {
 
     public function renameNote(): void
     {
-        if (!$this->authorizeDiagramWithAlert('update', $this->note->diagram)) {
-            return;
-        }
+        $this->authorizeDiagram('update');
 
         $this->note->name = $this->name;
         $this->note->save();
@@ -75,19 +77,16 @@ new class extends Component {
 
     public function resetName(): void
     {
-        if (!$this->authorizeDiagramWithAlert('update', $this->note->diagram)) {
-            return;
-        }
+        $this->authorizeDiagram('update');
 
         $this->name = $this->note->name;
     }
 
     public function updateContent(): void
     {
+        $this->authorizeDiagram('update');
+
         $diagram = $this->note->diagram;
-        if (!$diagram || !$this->authorizeDiagramWithAlert('update', $diagram)) {
-            return;
-        }
 
         $currentTeam = Team::currentTeam();
         if (!$currentTeam || $diagram->team_id !== $currentTeam->getKey()) {
@@ -102,18 +101,12 @@ new class extends Component {
 
     public function updatedContent(): void
     {
-        if (!$this->authorizeDiagramWithAlert('update', $this->note->diagram)) {
-            return;
-        }
-
         $this->updateContent();
     }
 
     public function remove(): void
     {
-        if (!$this->authorizeDiagramWithAlert('update', $this->note->diagram)) {
-            return;
-        }
+        $this->authorizeDiagram('update');
 
         $this->note->delete();
 

@@ -1,13 +1,13 @@
 <div
-    x-data="runTable(@js($table->x), @js($table->y), @js($table->id))"
-    x-show="@js($table->id)"
-    id="table-{{ $table->id }}"
-    table-id="{{ $table->id }}"
+    x-data="runTable(@js($tableData->x), @js($tableData->y), @js($tableId))"
+    x-show="@js($tableId)"
+    id="table-{{ $tableId }}"
+    table-id="{{ $tableId }}"
     table-box
     :style="`transform: translate3d(${x}px, ${y}px, 0); width: ${getSnappedWidth()}px; max-width: ${getSnappedWidth()}px; ${zIndex ? `z-index: ${zIndex};` : ''}`"
     class="absolute h-full select-none rounded-xl shadow-lg dark:shadow-zinc-900/50">
 
-    <x-diagram.table.ui.dropdown-menu :table="$table"/>
+    <x-diagram.table.ui.dropdown-menu :table-data="$tableData"/>
 
     <!-- Table -->
     <div class="rounded-xl w-full h-full flex flex-col relative">

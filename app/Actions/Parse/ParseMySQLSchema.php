@@ -29,7 +29,7 @@ class ParseMySQLSchema extends BaseSQLParse
 
         // Count all tables before processing to validate limit
         $totalTables = $this->countTablesFromFiles($files);
-        if ($totalTables > 30) {
+        if ($totalTables > config('diagram.table_limit')) {
             throw new TableLimitExceededException($totalTables);
         }
 

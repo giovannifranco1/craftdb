@@ -11,9 +11,9 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-    --color-background: #18181b;
+    --color-background-dark: #18181b;
+    --color-text-code: #15B8A5;
 }
-:root
 
 /* Re-assign Flux's gray of choice... */
 @theme {
@@ -47,6 +47,8 @@
     --color-primary-800: var(--color-slate-800);
     --color-primary-900: var(--color-slate-900);
     --color-primary-950: var(--color-slate-950);
+    --color-background-dark: var(--color-background-dark);
+    --color-code: var(--color-text-code);
 }
 
 @layer theme {
@@ -73,7 +75,7 @@ select:focus[data-flux-control] {
 
 [data-flux-modal] > dialog
 {
-    @apply dark:bg-[var(--color-background)];
+    @apply dark:bg-[var(--color-background-dark)];
 }
 
 /* \[:where(&)\]:size-4 {

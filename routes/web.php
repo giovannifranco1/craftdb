@@ -4,8 +4,12 @@ use App\Http\Controllers\InviteController;
 use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\Pages\DiagramController;
 use App\Livewire\MyFavorites;
+use App\Models\Team\Team;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
+use Laravel\Socialite\Facades\Socialite;
 
 /** Landing Page */
 Route::get('/', [LandingPageController::class, 'index'])->name('landing.index');
@@ -53,7 +57,10 @@ Route::middleware(['auth'])->group(function () {
 });
 
 /** Diagram */
-Route::middleware(['auth', 'role:viewer|editor', 'role:team_id', 'throttle:60,1'])->group(function () {
+Route::middleware(['auth', 'role:viewer|editor{team_id}', 'throttle:60,1'])->group(function () {
     Route::get('{team_id}/diagram/{diagram:slug}', [DiagramController::class, 'show'])->name('diagram.show');
     Route::post('{team_id}/diagram/{diagram:slug}/toggle-favorite', [DiagramController::class, 'toggleFavorite'])->name('diagram.toggle-favorite');
 });
+
+/** Authentication Routes */
+require_once __DIR__ . '/auth.php';

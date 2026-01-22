@@ -27,8 +27,8 @@ class CreateNewTeam
 
         /** @var Team $team */
         $team = Team::create([
-            'name' => $data['name'],
-            'user_id' => $data['user_id'],
+            'name' => explode(' ', data_get($data, 'name', ''), 2)[0]."'s Team",
+            'user_id' => data_get($data, 'user_id'),
         ]);
 
         return $team;
