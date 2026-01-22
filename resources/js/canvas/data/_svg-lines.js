@@ -38,7 +38,7 @@ export default (relationships) => ({
             this.invalidateBoundingRectCache(); // Transform altera posições
         });
 
-        window.addEventListener('table::move', () => this.debouncedCompute());
+        window.addEventListener('table::move', (e) => {this.debouncedCompute(); this.highlightTableConnections(e.detail?.tableId)});
         window.addEventListener('table::expanded', () => this.compute());
         window.addEventListener('table-side-editor::open', e => this.highlightTableConnections(e.detail?.tableId));
         window.addEventListener('table-side-editor::closed', () => this.clearHighlight());

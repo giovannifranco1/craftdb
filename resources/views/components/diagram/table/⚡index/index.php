@@ -79,12 +79,6 @@ new class extends BaseComponent {
         $this->hasColumnsInDatabase = true;
     }
 
-    public function unloadColumns(): void
-    {
-        $this->columns = [];
-        $this->loadTable = false;
-    }
-
     #[Computed]
     public function table(): TableModel
     {

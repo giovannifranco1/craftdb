@@ -119,7 +119,7 @@ export default (x, y, tableId) => ({
         this.$el.style.left = '0px';
         this.$el.style.top = '0px';
         this.$el.style.transform = `translate3d(${this.x}px, ${this.y}px, 0)`;
-        this.$dispatch('table::move');
+        this.$dispatch('table::move', { tableId: this.tableId });
     },
     endDrag() {
         if (!this.isDragging) return;

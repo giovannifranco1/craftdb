@@ -321,7 +321,7 @@ export class InfiniteCanvas {
     #zoomWheel(event) {
         const zoomStep = 1.025;
         const minScale = 0.2;
-        const maxScale = 3.0;
+        const maxScale = 2.0;
 
         let zoomAmount;
 
@@ -536,11 +536,24 @@ export class InfiniteCanvas {
 
             const width = this.canvas.clientWidth;
             const height = this.canvas.clientHeight;
-            const step = this.cellSize * this.#scale;
+
+            // Calcula o cellSize adaptativo baseado no zoom
+            // Quando o zoom diminui, aumentamos o cellSize para evitar grade muito densa
+            let adaptiveCellSize = this.cellSize;
+            let multiplier = 1;
+
+            // Encontra o multiplicador apropriado para manter células visíveis
+            // Quando scale < 0.5, dobramos o cellSize, e assim por diante
+            while (adaptiveCellSize * this.#scale * multiplier < 20) {
+                multiplier *= 2;
+            }
+            adaptiveCellSize = this.cellSize * multiplier;
+
+            const step = adaptiveCellSize * this.#scale;
 
             // Cálculo do ponto de partida leva em conta o offset escalado
-            const startX = (-this.#offsetX % this.cellSize) * this.#scale;
-            const startY = (-this.#offsetY % this.cellSize) * this.#scale;
+            const startX = (-this.#offsetX % adaptiveCellSize) * this.#scale;
+            const startY = (-this.#offsetY % adaptiveCellSize) * this.#scale;
 
             // Desenha rótulos dos eixos nas posições das linhas de grade
             if (this.#isMarkedForDrag) {

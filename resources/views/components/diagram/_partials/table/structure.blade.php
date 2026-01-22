@@ -4,8 +4,7 @@
     <div
         x-show="expanded"
         x-transition
-        wire:intersect:enter.half.margin.3000px="loadColumns"
-        wire:intersect:leave.margin.3000px="unloadColumns"
+        wire:intersect:enter.half.margin.1000px.once="loadColumns"
         class="flex-auto bg-white dark:bg-zinc-800 relative">
         @include('components.diagram._partials.table.structure-placeholder')
     </div>

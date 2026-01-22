@@ -4,12 +4,8 @@ use App\Http\Controllers\InviteController;
 use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\Pages\DiagramController;
 use App\Livewire\MyFavorites;
-use App\Models\Team\Team;
-use App\Models\User;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
-use Laravel\Socialite\Facades\Socialite;
 
 /** Landing Page */
 Route::get('/', [LandingPageController::class, 'index'])->name('landing.index');
