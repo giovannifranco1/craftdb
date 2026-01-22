@@ -94,7 +94,7 @@
                 x-trap="isEventRename"
                 x-model="name"
                 type="text"
-                class="max-w-[14rem] bg-transparent border-none outline-none shadow-none text-white font-normal text-[12pt] font-[Kalam] p-0 m-0 w-[14rem]"
+                class="max-w-[14rem] bg-transparent border-none outline-none shadow-none text-white font-normal font-[Comic_Relief] text-[12pt] p-0 m-0 w-[14rem]"
                 style="background: transparent !important; box-shadow: none !important;"
                 @mousedown.stop
                 @keydown.stop
@@ -104,7 +104,7 @@
                 @blur="isEventRename = false; $wire.resetName()"
                 autocomplete="off"
             />
-            <span x-show="!isEventRename" class="text-white font-normal text-[10pt] font-[Comic_Relief] max-w-[14rem] truncate">{{ $tableData->name }}</span>
+            <span x-show="!isEventRename" class="text-white font-normal text-[11pt] font-[Comic_Relief] max-w-[14rem] truncate">{{ $tableData->name }}</span>
         </h3>
 
         <button @mousedown.stop="toggleExpanded($el.closest('[table-box]'))"

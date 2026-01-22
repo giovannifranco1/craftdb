@@ -80,8 +80,8 @@ new class extends CanvasComponent {
 
         $this->validateOnly('name');
 
-        $this->table->name = $this->name ?? '';
-        $this->table->save();
+        $this->table->update(['name' => $this->name]);
+        $this->tableData->name = $this->name;
 
         $this->dispatch('table::renamed');
     }
@@ -119,6 +119,8 @@ new class extends CanvasComponent {
 
         $column->name = $newName;
         $column->save();
+
+        $this->updateTableData();
 
         $this->dispatch('table::column-renamed');
     }
