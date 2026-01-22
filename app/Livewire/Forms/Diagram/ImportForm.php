@@ -62,6 +62,7 @@ class ImportForm extends Form
     public function cancel(): void
     {
         $this->cancelFile();
+        $this->reset();
         $this->hasImport = false;
         Flux::modal('diagram-import')->close();
     }

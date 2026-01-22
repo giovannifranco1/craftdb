@@ -51,7 +51,6 @@ new class extends BaseComponent {
         $this->importForm->file = [];
     }
 
-    #[Transition(type: 'forward')]
     public function nextStep(): void
     {
         $this->validate([
@@ -63,7 +62,6 @@ new class extends BaseComponent {
         $this->step = 2;
     }
 
-    #[Transition(type: 'backward')]
     public function prevStep(): void
     {
         $this->step = max(1, $this->step - 1);
@@ -96,6 +94,7 @@ new class extends BaseComponent {
     public function cancelImport(): void
     {
         $this->importForm->cancel();
+        $this->dispatch('diagram-import::hide');
     }
 
     public function cancelCreate(): void
@@ -107,6 +106,7 @@ new class extends BaseComponent {
     public function confirmImport(): void
     {
         $this->importForm->confirm();
+        $this->dispatch('diagram-import::hide');
     }
 
     public function create(CreateNewDiagram $action): void

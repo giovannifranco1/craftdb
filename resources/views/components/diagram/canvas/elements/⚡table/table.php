@@ -33,7 +33,6 @@ new class extends CanvasComponent {
     public $columns = [];
     public bool $loadTable;
     public bool $hasColumnsInDatabase;
-    public int $maxColumns;
 
     #[Validate('required|string|max:255|min:1')]
     public ?string $name = null;
@@ -52,7 +51,6 @@ new class extends CanvasComponent {
         $this->diagramId = $table->diagram_id;
         $this->name = $table->name;
         $this->hasColumnsInDatabase = $table->columns_exists;
-        $this->maxColumns = config('diagram.table_columns_limit');
         $this->tableData = TableData::fromModel($table);
     }
 
@@ -102,6 +100,8 @@ new class extends CanvasComponent {
         $this->table->color = $color;
         $this->table->save();
 
+        $this->updateTableData();
+
         $this->dispatch('table::color-updated');
     }
 
@@ -129,7 +129,7 @@ new class extends CanvasComponent {
     {
         $this->authorizeDiagram('update');
 
-        if ($this->table->columns()->count() >= $this->maxColumns) {
+        if ($this->table->columns()->count() >= config('diagram.table_columns_limit')) {
             $this->dispatch('alert', message: __('You have reached the maximum number of columns for this table.'), type: 'error');
             return;
         }

@@ -57,7 +57,7 @@
     @table-side-editor::opened.window="loading = false;"
     @canvas::space.window="if ($event.detail.isSpacePressed) $el.style.cursor = 'grab'; else $el.style.cursor = ''"
     :style="`height: ${getGridSize()/2 + getGridSize()}px; cursor: ${loading ? 'wait' : ''};`"
-    class="bg-blue-500 dark:bg-blue-600 flex-none border-b border-gray-200 dark:border-zinc-700 px-3 py-1 rounded-t-xl table-header-beauty"
+    class="bg-blue-500 dark:bg-blue-600 flex-none border-b border-gray-200 dark:border-zinc-700 px-3 py-1 rounded-t-xl table-header-beauty transition-colors"
 >
     <div class="flex items-center justify-between">
         <h3 class="text-sm font-semibold text-gray-900 flex items-center gap-2">

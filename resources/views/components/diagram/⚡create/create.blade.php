@@ -16,7 +16,7 @@
                 </flux:text>
             </div>
 
-            <div wire:transition>
+            <div wire:ignore.self @diagram-import::show.window="$el.removeAttribute('style')" @diagram-import::hide.window="$el.setAttribute('style', 'view-transition-name: match-element;')" wire:transition>
                 @php
                     $steps = "components.diagram._partials.create";
 

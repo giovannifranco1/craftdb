@@ -52,7 +52,7 @@
                 {{ __('Import files or framework migrations to automatically create your diagram structure.') }}
             </p>
             <flux:button
-                @click="$flux.modal('diagram-import').show()"
+                @click="$flux.modal('diagram-import').show(); $dispatch('diagram-import::show')"
                 variant="primary"
                 icon="arrow-up-tray"
                 :disabled="!$database"
