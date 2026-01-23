@@ -247,9 +247,9 @@ export default function diagramGraph(relationships, tablesColors) {
             // Label do nó (menor também)
             node.append("text")
                 .attr("dy", 20)
-                .attr("text-anchor", "middle")
+                .attr("text-anchor", "inter")
                 .attr("fill", textColor)
-                .attr("font-size", "9px")
+                .attr("font-size", "10px")
                 .attr("font-weight", "500")
                 .text(d => d.name);
 
@@ -292,14 +292,33 @@ export default function diagramGraph(relationships, tablesColors) {
             const links = [];
 
             this.relationships.forEach(rel => {
-                const source = nodeMap.get(rel.from_table_id);
-                const target = nodeMap.get(rel.to_table_id);
+                // Filtrar apenas dependências reais
+                const type = rel.type || '1:n';
+                const toColumn = rel.to_column;
+
+                // Regras de dependência:
+                // - 1:n e n:1: sempre mostrar (dependência de cardinalidade)
+                // - 1:1: só mostrar se FK é NOT NULL (dependência técnica)
+                // - n:n: sempre mostrar
+
+                const shouldShowDependency = (type === '1:n' || type === 'n:1' || type === 'n:n')
+                    || (type === '1:1' && toColumn?.is_notnull === 1);
+
+                if (!shouldShowDependency) {
+                    return; // Ignora no grafo de dependências
+                }
+
+                // A seta deve apontar da tabela dependente (com FK) para a tabela referenciada
+                // from_table é o owner/pai, to_table é a child/filha (tem a FK)
+                // Logo: to_table precisa de from_table, então seta vai to_table -> from_table
+                const source = nodeMap.get(rel.to_table_id);   // Child com FK (dependente)
+                const target = nodeMap.get(rel.from_table_id); // Owner referenciada (necessária)
 
                 if (source && target) {
                     links.push({
                         source: source,
                         target: target,
-                        type: rel.type || '1:n'
+                        type: type
                     });
                 }
             });

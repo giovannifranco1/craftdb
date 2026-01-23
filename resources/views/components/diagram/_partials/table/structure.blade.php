@@ -47,8 +47,18 @@
                                     @keydown.stop
                                     @keydown.enter="renameActionTriggered = true; loadingRenameColumn = true; $wire.renameColumn({{ $column->id }}, $refs.inputColumn?.value || '')"
                                     @keydown.escape.stop="isEventRenameColumn = false;"
-                                    @table::column-renamed.window="isEventRenameColumn = false; loadingRenameColumn = false;"
-                                    @blur="if (renameActionTriggered) { return; } renameActionTriggered = false; loadingRenameColumn = true; $wire.renameColumn({{ $column->id }}, $refs.inputColumn?.value || null);"
+                                    @table::column-added.window="isEventRenameColumn = $event.detail.columnId === {{ $column->id }}"
+                                    @table::column-renamed.window="() => {
+                                        if (renameActionTriggered) isEventRenameColumn = false;
+                                        loadingRenameColumn = false;
+                                    }"
+                                    @blur="() => {
+                                        if (renameActionTriggered) return;
+                                        if ($refs.inputColumn?.value === '') return;
+                                        renameActionTriggered = false;
+                                        loadingRenameColumn = true;
+                                        $wire.renameColumn({{ $column->id }}, $refs.inputColumn?.value);
+                                    }"
                                 />
                                 <span
                                     x-show="!isEventRenameColumn"

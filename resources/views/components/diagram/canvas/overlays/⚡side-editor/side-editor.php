@@ -8,16 +8,14 @@ use App\Models\Column;
 use App\Models\Table;
 use App\Support\Helpers;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
-use App\Livewire\BaseComponent;
+use App\Livewire\CanvasComponent;
 use App\Models\Diagram;
 use App\Models\Relationship;
 
-new class extends BaseComponent {
-    use HandlesDiagramAuthAlert;
+new class extends CanvasComponent {
     use HasSidePanel;
 
     #[Locked]
@@ -218,9 +216,8 @@ new class extends BaseComponent {
     public function updateColumn(int $columnId): void
     {
         $table = $this->getTable;
-        if (!$table || !$this->authorizeDiagramWithAlert('update', $table->diagram)) {
-            return;
-        }
+
+        $this->authorizeDiagram('update');
 
         $this->isEventUpdateColumn = true;
 
@@ -299,9 +296,8 @@ new class extends BaseComponent {
     public function toggleNullable(int $columnId): void
     {
         $table = $this->getTable;
-        if (!$table || !$this->authorizeDiagramWithAlert('update', $table->diagram)) {
-            return;
-        }
+
+        $this->authorizeDiagram('update');
 
         $table = $this->getTable;
         if (!$table) {
@@ -323,9 +319,8 @@ new class extends BaseComponent {
     public function togglePrimaryKey(int $columnId): void
     {
         $table = $this->getTable;
-        if (!$table || !$this->authorizeDiagramWithAlert('update', $table->diagram)) {
-            return;
-        }
+
+        $this->authorizeDiagram('update');
 
         $table = $this->getTable;
 
@@ -348,9 +343,8 @@ new class extends BaseComponent {
     public function toggleForeignKey(int $columnId): void
     {
         $table = $this->getTable;
-        if (!$table || !$this->authorizeDiagramWithAlert('update', $table->diagram)) {
-            return;
-        }
+
+        $this->authorizeDiagram('update');
 
         $table = $this->getTable();
         if (!$table) {
@@ -394,9 +388,8 @@ new class extends BaseComponent {
     public function moveColumnUp(int $columnId): void
     {
         $table = $this->getTable;
-        if (!$table || !$this->authorizeDiagramWithAlert('update', $table->diagram)) {
-            return;
-        }
+
+        $this->authorizeDiagram('update');
 
         $table = $this->getTable;
         if (!$table) {
@@ -425,15 +418,14 @@ new class extends BaseComponent {
         $column->update(['order' => $previousColumn->order]);
         $previousColumn->update(['order' => $tempOrder]);
 
-        $this->dispatch('table-side-editor::column-reordered');
+        $this->dispatch("table-side-editor::column-reordered.{$table->id}");
     }
 
     public function moveColumnDown(int $columnId): void
     {
         $table = $this->getTable;
-        if (!$table || !$this->authorizeDiagramWithAlert('update', $table->diagram)) {
-            return;
-        }
+
+        $this->authorizeDiagram('update');
 
         $table = $this->getTable;
         if (!$table) {
@@ -463,7 +455,7 @@ new class extends BaseComponent {
         $column->update(['order' => $nextColumn->order]);
         $nextColumn->update(['order' => $tempOrder]);
 
-        $this->dispatch('table-side-editor::column-reordered');
+        $this->dispatch("table-side-editor::column-reordered.{$table->id}");
     }
 
     public function selectColumn(?int $columnId): void
@@ -486,9 +478,8 @@ new class extends BaseComponent {
     public function loadColumnData(int $columnId): void
     {
         $table = $this->getTable;
-        if (!$table || !$this->authorizeDiagramWithAlert('update', $table->diagram)) {
-            return;
-        }
+
+        $this->authorizeDiagram('update');
 
         $table = $this->getTable;
         if (!$table) {

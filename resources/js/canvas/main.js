@@ -15,6 +15,5 @@ document.addEventListener(
         Alpine.data('runCanvas', _canvas);
         Alpine.data('runSvgLines', _svgLines);
         Alpine.data('foreignKeysGraph', _foreignKeysGraph);
-        Alpine.data('diagramGraph', _diagramGraph);
     }
 );

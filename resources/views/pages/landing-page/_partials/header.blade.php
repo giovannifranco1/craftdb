@@ -5,13 +5,13 @@
             <a href="{{ route('home') }}" class="flex me-5 ms-5 items-center rtl:space-x-reverse">
                 <div class="flex items-center size-15 justify-center rounded-md text-accent-foreground">
                     <div>
-                        <img src="{{ Vite::asset('resources/images/final_flat_logo.svg') }}" alt="CraftDB Logo" {{ $attributes }} class="size-15">
+                        <img src="{{ Vite::asset('resources/images/logo_blop_v2.png') }}" alt="CraftDB Logo" {{ $attributes }} class="size-15">
                     </div>
                 </div>
 
                 <div class="flex flex-col leading-none">
-                    <span class="text-3xl uppercase font-[Black_Ops_One] lh-normal text-transparent bg-gradient-to-r from-blue-700 via-blue-500 to-zinc-900 bg-clip-text z-10">CraftDB</span>
-                    <span class="text-[0.800rem] ms-auto -mt-1 font-[Black_Ops_One]">Beta</span>
+                    <span class="text-3xl text-primary-700 font-[Inter] lh-normal font-semibold z-10">CraftDB</span>
+                    <span class="text-[0.800rem] ms-auto -mt-1 font-[Inter]">Beta</span>
                 </div>
 
             </a>

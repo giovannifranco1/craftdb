@@ -176,7 +176,7 @@ export default (x, y, width, height, areaId) => ({
 
     drag(e) {
         if (!this.isDragging) return;
-        e.preventDefault();
+        // e.preventDefault();
 
         const scale = this.getScale();
         const dx = (e.clientX - this.startX) / scale;

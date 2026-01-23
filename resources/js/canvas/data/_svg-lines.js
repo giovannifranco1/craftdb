@@ -40,6 +40,7 @@ export default (relationships) => ({
 
         window.addEventListener('table::move', (e) => {this.debouncedCompute(); this.highlightTableConnections(e.detail?.tableId)});
         window.addEventListener('table::expanded', () => this.compute());
+        window.addEventListener('clear-highlight', () => this.clearHighlight());
         window.addEventListener('table-side-editor::open', e => this.highlightTableConnections(e.detail?.tableId));
         window.addEventListener('table-side-editor::closed', () => this.clearHighlight());
         window.addEventListener('relationships::fresh', (event) => this.relationships = event.detail.relationships || []);
@@ -597,32 +598,25 @@ export default (relationships) => ({
                 path.setAttribute('pointer-events', 'stroke');
                 connGroup.appendChild(path);
 
-                // Adiciona event listeners apenas uma vez
                 this.attachConnectionListeners(connGroup, conn);
             } else {
-                // Atualiza atributos do grupo existente
                 connGroup.dataset.fromId = conn.fromId;
                 connGroup.dataset.toId = conn.toId;
             }
 
-            // Atualiza apenas o path (não recria o elemento)
             const path = connGroup.querySelector('.main-path');
             if (path) {
                 path.setAttribute('d', conn.path);
             }
 
-            // OTIMIZAÇÃO CRÍTICA: Atualiza decoradores sem remover/recriar
-            // Verifica se já existem decoradores e só recria se tipo mudou
             const currentType = connGroup.dataset.connType;
             if (currentType !== conn.type) {
-                // Tipo mudou, precisa recriar decoradores
                 const existingDecorators = connGroup.querySelectorAll('path:not(.main-path)');
                 existingDecorators.forEach(el => el.remove());
 
                 connGroup.dataset.connType = conn.type;
                 this.createDecorators(connGroup, conn);
             } else {
-                // Tipo não mudou, apenas atualiza posições dos decoradores existentes
                 this.updateDecorators(connGroup, conn);
             }
         });
@@ -641,12 +635,6 @@ export default (relationships) => ({
                 el.setAttribute('stroke-linecap', 'round');
                 el.setAttribute('stroke-linejoin', 'round');
             });
-
-            // Ensure highlighted connection renders on top (SVG uses DOM order)
-            const parentGroup = connGroup.parentNode;
-            if (parentGroup && parentGroup.appendChild) {
-                parentGroup.appendChild(connGroup);
-            }
 
             const fe = document.getElementById(conn.fromId);
             const te = document.getElementById(conn.toId);

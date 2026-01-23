@@ -110,6 +110,17 @@ export default (cellSize = 25, isInitialLoad = false, [offsetX, offsetY] = []) =
                 const virtualPos = Alpine.raw(this.canvas).clientToVirtual(e.clientX, e.clientY);
                 this.contextMenuPosition = virtualPos;
             });
+
+            window.addEventListener('click', (e) => {
+                const clickedTable = e.target.closest('[table-box]');
+                const clickedNote = e.target.closest('[note-box]');
+                const clickedConnection = e.target.closest('g[data-connection-id]') || e.target.closest('path');
+                const isSideEditorOpen = document.getElementById('side-editor').hasAttribute('side-editor-open');
+
+                if (!clickedTable && !clickedNote && !clickedConnection && !isSideEditorOpen) {
+                    this.$dispatch('clear-highlight');
+                }
+            });
         }
 
         this.$watch('isInRelationshipEvent', (value) => {

@@ -11,20 +11,20 @@
         'sqlite' => 'emerald',
     ];
 
-    // Style do diagrama
     $style = $diagram->style ?? 'neutral';
     $styleLabels = [
         'colorful' => 'Colorful',
         'neutral' => 'Neutral',
     ];
+
     $styleColors = [
         'colorful' => 'red',
         'neutral' => 'zinc',
     ];
 
-    // Estatísticas do diagrama
-    $tablesCount = $diagram->tables_count ?? $diagram->tables()->count();
-    $relationshipsCount = $diagram->relationships()->count();
+    $tablesCount = $diagram->tables_count;
+    $areaCount = $diagram->areas_count;
+    $noteCount = $diagram->notes_count;
 @endphp
 <div class="block group" {{ $attributes }}>
     <div class="w-80 h-64 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-[#1A1A1A] shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden relative">
@@ -49,10 +49,10 @@
                 <flux:button icon="ellipsis-vertical" variant="ghost" size="xs" />
                 <flux:menu>
                     <flux:menu.item icon="pencil" wire:click="editDiagram({{ $diagram->id }})">{{ __('Edit') }}</flux:menu.item>
-                    <flux:modal.trigger name="confirm-delete-diagram" wire:click="confirmDelete({{ $diagram->id }})">
-                        <flux:menu.item icon="trash" variant="danger">{{ __('Delete') }}</flux:menu.item>
-                    </flux:modal.trigger>
+                    <flux:modal.trigger name="confirm-delete-diagram" wire:click="confirmDelete({{ $diagram->id }})"><flux:menu.item icon="trash" variant="danger">{{ __('Delete') }}</flux:menu.item></flux:modal.trigger>
+                    <flux:menu.item icon="graph" wire:click="$dispatch('diagram-graph::load', {'diagram': {{ $diagram->id }}})">{{ __('Graph') }}<flux:badge class="ms-2" color="lime" size="sm">{{ __('New!') }}</flux:badge></flux:menu.item>
                     <flux:menu.item icon="document-duplicate" disabled>{{ __('Clone (Coming Soon)') }}</flux:menu.item>
+                    <flux:menu.item icon="arrow-down-tray" disabled>{{ __('Export (Coming Soon)') }}</flux:menu.item>
                 </flux:menu>
             </flux:dropdown>
         </div>
@@ -60,8 +60,13 @@
         <div class="p-6 h-full flex flex-col">
             <!-- Header com ícone, título e badges -->
             <div class="flex items-start gap-4 mb-4">
-                <div class="flex aspect-square size-15 items-center bg-accent-content justify-center rounded-md text-accent-foreground">
-                    <x-app-logo-icon class="size-15 fill-current text-white dark:text-black" />
+                <div class="flex aspect-square size-15 items-center bg-zinc-100 dark:bg-white justify-center rounded-md text-accent-foreground">
+                    <template x-if="$flux.dark">
+                        <img src="{{ Vite::asset('resources/images/craftdb_logo_transparent_dark.png') }}" alt="CraftDB Logo" class="size-11" />
+                    </template>
+                    <template x-if="!$flux.dark">
+                        <img src="{{ Vite::asset('resources/images/craftdb_logo_transparent_dark.png') }}" alt="CraftDB Logo" class="size-11" />
+                    </template>
                 </div>
                 <div class="flex-1 min-w-0">
                     <h3 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100 dark:group-hover:text-zinc-300 transition-colors duration-300 truncate mb-2">
@@ -72,7 +77,7 @@
                             size="sm"
                             variant="soft"
                             color="{{ $databaseColors[$diagram->database] ?? 'blue' }}"
-                            class="shrink-0 font-[Pixelify_Sans]"
+                            class="shrink-0"
                         >
                             <flux:icon name="database.{{ $diagram->database }}" class="size-3 me-1" />
                             {{ $databaseLabels[$diagram->database] ?? ucfirst($diagram->database) }}
@@ -81,7 +86,7 @@
                             size="sm"
                             variant="soft"
                             color="{{ $styleColors[$style] ?? 'zinc' }}"
-                            class="shrink-0 font-[Pixelify_Sans]"
+                            class="shrink-0"
                         >
                             <flux:icon.swatch class="size-3 me-1" />
                             {{ $styleLabels[$style] ?? ucfirst($style) }}
@@ -107,12 +112,17 @@
                     <div class="flex items-center gap-1.5">
                         <flux:icon.add-table class="size-4" />
                         <span class="font-medium">{{ $tablesCount }}</span>
-                        <span>{{ $tablesCount === 1 ? 'tabela' : 'tabelas' }}</span>
+                        <span>{{ $tablesCount === 1 ? __('Table') : __('Tables') }}</span>
                     </div>
                     <div class="flex items-center gap-1.5">
-                        <flux:icon.graph class="size-4" />
-                        <span class="font-medium">{{ $relationshipsCount }}</span>
-                        <span>{{ $relationshipsCount === 1 ? 'relacionamento' : 'relacionamentos' }}</span>
+                        <flux:icon.add-area class="size-4" />
+                        <span class="font-medium">{{ $areaCount }}</span>
+                        <span>{{ $areaCount === 1 ? __('Area') : __('Areas') }}</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <flux:icon.add-note class="size-4" />
+                        <span class="font-medium">{{ $noteCount }}</span>
+                        <span>{{ $noteCount === 1 ? __('Note') : __('Notes') }}</span>
                     </div>
                 </div>
             </div>

@@ -7,7 +7,7 @@
     @keydown.escape.window="searchFocused = false; $wire.resetSearch()"
 >
     <div class="flex items-center mb-5">
-        <flux:heading class="font-normal text-zinc-900 dark:text-zinc-50 me-auto text-2xl">{{ __('My Diagrams') }}</flux:heading>
+        <flux:heading size="xl" class="font-normal text-zinc-900 dark:text-zinc-50 me-auto">{{ __('My Diagrams') }}</flux:heading>
 
         <div class="mr-3">
             <flux:select wire:model.live="orderByDesc" size="sm">
@@ -25,7 +25,7 @@
         <div class="flex-1 overflow-y-auto">
             <div class="h-full grid lg:grid-cols-2 xl:grid-cols-3 gap-4">
                 @forelse($this->diagrams as $diagram)
-                    <x-diagram.ui.card wire:key="diagram-card-{{ $diagram->id }}" :diagram="$diagram" />
+                    <x-diagram.ui.card wire:key="diagram-card-{{ $diagram->id }}" :diagram="$diagram"/>
                 @empty
                     <div class= "col-span-1 lg:col-span-3 w-full h-full flex flex-col items-center justify-center gap-6 px-4">
                         <div class="flex flex-col items-center gap-4">
@@ -86,7 +86,9 @@
 
     <!-- Modal para editar diagrama -->
     @foreach($this->diagrams as $diagram)
-        <livewire:diagram.edit :$diagram :wire:key="$diagram->id" />
+        <livewire:diagram.edit :$diagram :wire:key="$diagram->id"/>
     @endforeach
+
+    <livewire:diagram.ui.graph/>
 </div>
 

@@ -68,17 +68,12 @@
                                 $remainingViewers = max(0, $totalViewers - 4);
                             @endphp
                             @foreach ($viewers as $viewer)
-                                <span
-                                    class="relative flex h-9 w-9 -ml-2.5 first:ml-0 shrink-0 overflow-hidden rounded-full transition-transform hover:scale-110 hover:z-10"
-                                    title="{{ $viewer->name }} • {{ __('Visto') }} {{ \Carbon\Carbon::parse($viewer->pivot->last_viewed_at)->diffForHumans() }}"
-                                >
+                                <flux:tooltip position="bottom" class="relative flex h-9 w-9 -ml-2.5 first:ml-0 shrink-0 overflow-hidden rounded-full transition-transform hover:scale-110 hover:z-10" :content="$viewer->name . ' • ' . __('Visto') . ' ' . \Carbon\Carbon::parse($viewer->pivot->last_viewed_at)->diffForHumans()">
                                     <span
                                         style="background-color: {{ $colors[$viewer->id % count($colors)] }};"
                                         class="flex h-full w-full items-center justify-center border-2 border-white dark:border-zinc-900 rounded-full text-white text-xs font-medium"
-                                    >
-                                        {{ $viewer->initials() }}
-                                    </span>
-                                </span>
+                                    >{{ $viewer->initials() }}</span>
+                                </flux:tooltip>
                             @endforeach
 
                             @if ($remainingViewers > 0)
@@ -138,7 +133,7 @@
                         </flux:dropdown>
                     </div>
 
-                    <flux:tooltip :content="$diagram->isFavorite() ? __('Unmark as favorite') : __('Mark as favorite')">
+                    <flux:tooltip position="bottom" :content="$diagram->isFavorite() ? __('Unmark as favorite') : __('Mark as favorite')">
                         <button
                             type="button"
                             x-data

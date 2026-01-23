@@ -87,8 +87,8 @@ class Diagram extends Model
     public function relationships()
     {
         return Relationship::query()
-            ->whereHas('fromTable', fn($q) => $q->where('diagram_id', $this->id))
-            ->orWhereHas('toTable', fn($q) => $q->where('diagram_id', $this->id));
+            ->whereHas('fromTable', fn($q) => $q->withoutGlobalScope(\App\Models\Scopes\TableAccessible::class)->where('diagram_id', $this->id))
+            ->orWhereHas('toTable', fn($q) => $q->withoutGlobalScope(\App\Models\Scopes\TableAccessible::class)->where('diagram_id', $this->id));
     }
 
     /**

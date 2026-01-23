@@ -47,7 +47,7 @@ new #[Defer(bundle: true)] class extends CanvasComponent {
 
         $count = $this->diagram->notes()->count();
 
-        $this->dispatch('alert', message: "Note $count added successfully.");
+        $this->alert(__('Note :count added successfully.', ['count' => $count]));
         $this->dispatch('note::added', noteId: $note->id);
     }
 };

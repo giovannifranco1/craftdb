@@ -3,7 +3,7 @@ import anchor from "@alpinejs/anchor";
 import '@preline/tabs';
 import '@preline/dropdown';
 import '@floating-ui/dom';
-
+import _diagramGraph from './canvas/data/_diagram-graph.js';
 import.meta.glob(["../images/**"]);
 
 document.addEventListener(
@@ -17,6 +17,8 @@ document.addEventListener(
 
         Alpine.plugin(collapse);
         Alpine.plugin(anchor);
+
+        Alpine.data('diagramGraph', _diagramGraph);
     },
     { once: true },
 );

@@ -48,7 +48,7 @@ new #[Defer(bundle: true)] class extends CanvasComponent {
 
         $count = $this->diagram->areas()->count();
 
-        $this->dispatch('alert', message: "Area $count added successfully.");
+        $this->alert(__('Area :count added successfully.', ['count' => $count]));
         $this->dispatch('area::added', areaId: $area->id);
     }
 };

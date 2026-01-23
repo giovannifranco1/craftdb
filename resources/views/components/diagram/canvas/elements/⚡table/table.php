@@ -13,7 +13,6 @@ use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Validate;
 use App\Livewire\CanvasComponent;
-use Livewire\Attributes\Renderless;
 
 new class extends CanvasComponent {
 
@@ -93,7 +92,7 @@ new class extends CanvasComponent {
 
     public function setColor(string $color): void
     {
-        $this->authorizeDiagram('update', ['table::color-updated-error']);
+        $this->authorizeDiagram('update', dispatches: ['table::color-updated-error']);
 
         if (!Helpers::isColorValid($color)) return;
 
@@ -134,13 +133,14 @@ new class extends CanvasComponent {
             return;
         }
 
-        $action->exec($this->table);
+        $column = $action->exec($this->table);
 
         $this->updateTableData();
-        $this->dispatch('table::column-added');
+        $this->dispatch('table::column-added', columnId: $column->id);
     }
 
     #[On('table::relationship-added.{tableId}')]
+    #[On('table-side-editor::column-reordered.{tableId}')]
     public function updateTableData(): void
     {
         $table = $this->table->fresh([

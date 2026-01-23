@@ -1,8 +1,11 @@
 <section
+    id="side-editor"
     x-data="{ open: @entangle('open') }"
     x-show="open"
     x-cloak
     x-ref="dialog"
+    @table-side-editor::opened.window="$el.setAttribute('side-editor-open')"
+    @table-side-editor::closed.window="$el.removeAttribute('side-editor-open')"
     class="relative z-30"
     aria-labelledby="slide-over-title"
     aria-modal="true"

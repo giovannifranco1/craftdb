@@ -49,6 +49,13 @@ new #[Title('Dashboard')] class extends BaseComponent
         return Diagram::query()
             ->when($this->favorites, fn ($q) => $q->where('is_favorite', true))
             ->when($this->search, fn ($q) => $q->where('name', 'like', "%{$this->search}%"))
+            ->withCount([
+                'tables' => function ($query) {
+                    $query->withoutGlobalScope(\App\Models\Scopes\TableAccessible::class);
+                },
+                'areas',
+                'notes'
+            ])
             ->where('team_id', Team::currentTeam()->getKey())
             ->orderBy('created_at', $this->orderByDesc ? 'asc' : 'desc')
             ->paginate(10);
@@ -73,9 +80,7 @@ new #[Title('Dashboard')] class extends BaseComponent
 
     public function editDiagram(Diagram $diagram): void
     {
-        if (!$this->authorizeDiagramWithAlert('update', $diagram)) {
-            return;
-        }
+        $this->authorizeDiagram('update', $diagram);
 
         $this->dispatch('open-diagram-edit-modal', diagramId: $diagram->id);
     }

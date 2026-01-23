@@ -18,7 +18,7 @@ export default (x, y, tableId) => ({
     minHeight: null,
     resizeStartX: 0,
     initialWidth: 0,
-    colWidths: [70, 50], // Column resize state
+    colWidths: [70, 30], // Column resize state
     expanded: true,
 
 
