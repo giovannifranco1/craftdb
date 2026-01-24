@@ -13,12 +13,10 @@ new class extends BaseComponent {
         /** @var User */
         $user = Auth::user();
 
-        // Get all teams the user has access to (owned + member)
         $ownedTeams = $user->ownedTeams()->pluck('team.id');
         $memberTeams = $user->teams()->pluck('team.id');
         $allTeamIds = $ownedTeams->merge($memberTeams)->unique();
 
-        // Check if user has access to this team
         if (!$allTeamIds->contains($teamId)) {
             $this->dispatch('alert', message: __('You do not have access to this team.'), type: 'error');
             return;
@@ -42,7 +40,6 @@ new class extends BaseComponent {
         /** @var User */
         $user = Auth::user();
 
-        // Get all teams (owned + member)
         $ownedTeams = $user->ownedTeams()->get();
         $memberTeams = $user->teams()->get();
         $allTeams = $ownedTeams->merge($memberTeams)->unique('id')->sortBy('name');

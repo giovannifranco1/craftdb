@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum ColumnTypes: string
+enum ColumnType: string
 {
     case VARCHAR = 'VARCHAR';
     case CHAR = 'CHAR';

@@ -18,7 +18,6 @@ return new class extends Migration
             $table->timestamp('last_viewed_at')->useCurrent();
             $table->timestamps();
 
-            // Evita duplicatas - um usuário só pode ter um registro de visualização por diagrama
             $table->unique(['diagram_id', 'user_id']);
 
             /** indexes */

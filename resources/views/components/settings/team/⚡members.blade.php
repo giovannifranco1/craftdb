@@ -1,104 +1,84 @@
 <?php
 
+use App\Enums\Role;
 use App\Models\Team\Team;
-use App\Models\Team\Membership;
 use App\Models\User;
 use App\Livewire\BaseComponent;
 use Livewire\Attributes\Computed;
 use Illuminate\Support\Collection;
 use App\Models\Team\Invitation;
-use App\Notifications\TeamInvitationNotification;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\Locked;
+use Livewire\Attributes\Validate;
 
 new class extends BaseComponent {
-    public ?Team $team = null;
+    #[Locked]
+    public Team $team;
+
+    #[Validate('required|email')]
     public string $email = '';
-    public int $role_id = 0;
+
+    #[Validate('required|exists:role,code')]
+    public Role $roleChoosen;
+
+    public Role $editorRole = Role::EDITOR;
+    public Role $viewerRole = Role::VIEWER;
+
+    /** @var array<Role> */
+    public array $Role = [
+        Role::EDITOR,
+        Role::VIEWER
+    ];
 
     public function mount(): void
     {
-        $this->authorize('addTeamMember', Team::currentTeam());
-
         $this->team = Team::currentTeam();
-        $roles = $this->team->roles;
-        $this->role_id = $roles->first()?->id ?? 0;
+        $this->authorize('addTeamMember', $this->team);
     }
 
     public function inviteMember(): void
     {
-        $this->authorize('addTeamMember', Team::currentTeam());
+        $this->authorize('addTeamMember', $this->team);
 
-        $validated = $this->validate([
-            'email' => ['required', 'email', 'exists:users,email'],
-            'role_id' => ['required', 'exists:role,id'],
-        ], [
-            'email.exists' => __('No user found with this email address.'),
-        ]);
+        $this->validate();
 
-        $user = User::where('email', $validated['email'])->first();
+        throw_if($this->email == Auth::user()->email, RuntimeException::class, __('You cannot invite yourself.'));
 
-        // Check if user is already a member
-        if ($this->team->users()->where('users.id', $user->id)->exists()) {
-            $this->addError('email', __('This user is already a member of the team.'));
-            return;
-        }
+        $this->team->inviteUser($this->email, $this->roleChoosen);
 
-        // Does not allow adding the team owner as a member again
-        if ($user->id === $this->team->user_id) {
-            $this->addError('email', __('You cannot add the team owner as a member.'));
-            return;
-        }
-
-
-
-        $invitation = Invitation::create([
-            'team_id' => $this->team->id,
-            'email' => $validated['email'],
-            'role_id' => $validated['role_id'],
-        ]);
-
-        // Load relationships before sending notification
-        $invitation->load(['team', 'role']);
-
-        $user->notify(new TeamInvitationNotification($invitation));
-
-        $this->reset('email', 'role_id');
-        $this->dispatch('alert', message: __('Invitation sent successfully.'));
-        $this->dispatch('invitation-sent');
+        $this->reset('email', 'roleChoosen');
+        $this->alert(__('Invitation sent successfully.'));
+        $this->dispatch('members::invitation-sent');
     }
 
-    public function removeMember(int $userId): void
+    public function removeMember(User $user): void
     {
         $this->authorize('removeTeamMember', Team::currentTeam());
 
-        if ($this->team->user_id === $userId) {
-            $this->dispatch('alert', message: __('You cannot remove the team owner.'), type: 'error');
-            return;
-        }
+       $this->team->deleteUser($user);
 
-        $this->team->users()->detach($userId);
-        $this->dispatch('alert', message: __('Team member removed successfully.'));
-        $this->dispatch('member-removed');
+        $this->alert(__('Team member removed successfully.'));
+        $this->dispatch('members::member-removed');
     }
 
-    public function updateRole(int $userId, int $roleId): void
+    public function updateRole(User $user, Role $role): void
     {
         $this->authorize('updateTeamMember', Team::currentTeam());
 
-        $membership = Membership::where('team_id', $this->team->id)
-            ->where('user_id', $userId)
-            ->first();
+        $this->team->updateUser($user, $role);
 
-        if ($membership) {
-            $membership->update(['role_id' => $roleId]);
-            $this->dispatch('alert', message: __('Member role updated successfully.'));
-        }
+        $this->alert(__('Member role updated successfully.'));
+        $this->dispatch('members::role-updated');
     }
 
     #[Computed]
     public function invitations(): Collection
     {
-        return Invitation::where('team_id', $this->team->id)->get();
+        return Invitation::query()
+            ->where('team_id', $this->team->id)
+            ->whereNull('cancelled_at')
+            ->whereNull('accepted_at')
+            ->get();
     }
 
     public function resendInvitation(int $invitationId): void
@@ -107,18 +87,12 @@ new class extends BaseComponent {
             ->where('id', $invitationId)
             ->first();
 
-        if ($invitation && $invitation->hasReachedMaxInvitationsPerDay(Auth::user()->email)) {
-            $this->dispatch('alert', message: __('You have reached the maximum number of invitations per day.'), type: 'error');
-            return;
-        }
+        throw_if(is_null($invitation), RuntimeException::class, __('Invitation not found.'));
 
-        $user = User::where('email', $invitation->email)->first();
+        $invitation->resend();
 
-        if ($invitation && $user) {
-            $user->notify(new TeamInvitationNotification($invitation));
-            $this->dispatch('alert', message: __('Invitation resent successfully.'));
-            $this->dispatch('invitation-resent');
-        }
+        $this->alert(__('Invitation sent successfully.'));
+        $this->dispatch('members::invitation-sent');
     }
 
     public function cancelInvitation(int $invitationId): void
@@ -127,19 +101,31 @@ new class extends BaseComponent {
             ->where('id', $invitationId)
             ->first();
 
-        if ($invitation) {
-            $invitation->delete();
-            $this->dispatch('alert', message: __('Invitation cancelled successfully.'));
-            $this->dispatch('invitation-cancelled');
+        throw_if(is_null($invitation), RuntimeException::class, __('Invitation not found.'));
+
+        $invitation->cancel();
+
+        $this->alert(__('Invitation cancelled successfully.'));
+        $this->dispatch('members::invitation-cancelled');
+
+    }
+
+    public function exception(Throwable $e, $stopPropagation): void
+    {
+        if ($e instanceof RuntimeException) {
+            $stopPropagation();
+            $this->alert(message: $e->getMessage(), type: 'error');
         }
     }
+
 }; ?>
 
 <section class="w-full">
     @include('_partials.settings-heading')
 
     <x-settings.layout :heading="__('Team Members')" :subheading="__('All of the people that are part of this team.')">
-        <!-- Add Member Form -->
+
+        <!-- Add Member -->
         <div class="my-6">
             <form wire:submit="inviteMember" class="space-y-4">
                 <flux:input
@@ -152,57 +138,49 @@ new class extends BaseComponent {
 
                 <div>
                     <flux:label>{{ __('Role') }}</flux:label>
-                    @php
-                        $editorRole = $team->roles->firstWhere('code', 'editor');
-                        $viewerRole = $team->roles->firstWhere('code', 'viewer');
-                    @endphp
                     <div class="mt-2 space-y-2">
-                        @if($editorRole)
-                            <label
-                                    @class([
-                                        'flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-colors',
-                                        'border-blue-500 bg-blue-50 dark:bg-blue-950/20' => $role_id == $editorRole->id,
-                                        'bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-700' => $role_id != $editorRole->id,
-                                    ])
-                                >
-                                <input
-                                    type="radio"
-                                    wire:model.live="role_id"
-                                    value="{{ $editorRole->id }}"
-                                    class="mt-1"
-                                    required
-                                />
-                                <div class="flex-1">
-                                    <div class="font-medium text-sm">{{ __('Editor') }}</div>
-                                    <div class="text-xs text-zinc-600 dark:text-zinc-400">
-                                        {{ __('Can create, edit and view diagrams') }}
-                                    </div>
+                        <label
+                                @class([
+                                    'flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-colors',
+                                    'border-blue-500 bg-blue-50 dark:bg-blue-950/20' => $roleChoosen == $editorRole,
+                                    'bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-700' => $roleChoosen != $editorRole,
+                                ])
+                            >
+                            <input
+                                type="radio"
+                                wire:model.live="roleChoosen"
+                                value="{{ $editorRole }}"
+                                class="mt-1"
+                                required
+                            />
+                            <div class="flex-1">
+                                <div class="font-medium text-sm">{{ $editorRole->name() }}</div>
+                                <div class="text-xs text-zinc-600 dark:text-zinc-400">
+                                    {{ $editorRole->description() }}
                                 </div>
-                            </label>
-                        @endif
+                            </div>
+                        </label>
 
-                        @if($viewerRole)
-                            <label
-                                    @class([
-                                        'flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-colors',
-                                        'border-blue-500 bg-blue-50 dark:bg-blue-950/20' => $role_id == $viewerRole->id,
-                                        'bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-700' => $role_id != $viewerRole->id,
-                                    ])
-                                >
-                                <input
-                                    type="radio"
-                                    wire:model.live="role_id"
-                                    value="{{ $viewerRole->id }}"
-                                    class="mt-1"
-                                />
-                                <div class="flex-1">
-                                    <div class="font-medium text-sm">{{ __('Viewer') }}</div>
-                                    <div class="text-xs text-zinc-600 dark:text-zinc-400">
-                                        {{ __('Can only view diagrams') }}
-                                    </div>
+                        <label
+                                @class([
+                                    'flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-colors',
+                                    'border-blue-500 bg-blue-50 dark:bg-blue-950/20' => $roleChoosen == $viewerRole,
+                                    'bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-700' => $roleChoosen != $viewerRole,
+                                ])
+                            >
+                            <input
+                                type="radio"
+                                wire:model.live="roleChoosen"
+                                value="{{ $viewerRole }}"
+                                class="mt-1"
+                            />
+                            <div class="flex-1">
+                                <div class="font-medium text-sm">{{ $viewerRole->name() }}</div>
+                                <div class="text-xs text-zinc-600 dark:text-zinc-400">
+                                    {{ $viewerRole->description() }}
                                 </div>
-                            </label>
-                        @endif
+                            </div>
+                        </label>
                     </div>
                 </div>
 
@@ -214,7 +192,7 @@ new class extends BaseComponent {
 
         <flux:separator class="my-6" />
 
-        <!-- Members List -->
+        <!-- Members -->
         <div class="space-y-4">
             <flux:heading size="lg">{{ __('Current Members') }}</flux:heading>
 
@@ -238,47 +216,45 @@ new class extends BaseComponent {
                     </div>
                 </div>
 
-                @foreach($team->users()->get() as $user)
+                @foreach($team->members()->get() as $member)
 
-                    @php
-                        $currentRoleId = $user->membership->role_id;
-                    @endphp
+                    @php($currentRole = $member->membership->role)
 
                     <div class="flex items-center justify-between p-4 rounded-lg border border-zinc-200 dark:border-zinc-700">
                         <div class="flex items-center gap-3">
                             <flux:avatar
                                 size="sm"
-                                :initials="$user->initials()"
+                                :initials="$member->initials()"
                             />
                             <div>
                                 <div class="font-medium text-sm">
-                                    {{ $user->name }}
-                                    @if($user->id === $team->user_id)
+                                    {{ $member->name }}
+                                    @if($member->id === $team->user_id)
                                         <flux:badge color="blue" size="sm" class="ml-2">{{ __('Owner') }}</flux:badge>
                                     @endif
                                 </div>
-                                <div class="text-xs text-zinc-500 dark:text-zinc-400">{{ $user->email }}</div>
+                                <div class="text-xs text-zinc-500 dark:text-zinc-400">{{ $member->email }}</div>
                             </div>
                         </div>
 
                         <div class="flex items-center gap-2">
                             <flux:select
-                                wire:change="updateRole({{ $user->id }}, $event.target.value)"
+                                wire:change="updateRole({{ $member->id }}, $event.target.value)"
                                 size="sm"
                                 class="w-34"
                             >
-                                @foreach($team->roles as $role)
+                                @foreach($Role as $role)
                                     <option
-                                        value="{{ $role->id }}"
-                                        @if($currentRoleId === $role->id) selected @endif
+                                        value="{{ $role }}"
+                                        @selected($currentRole === $role)
                                     >
-                                        {{ __($role->name ?? $role->code) }}
+                                        {{ $role->name() }}
                                     </option>
                                 @endforeach
                             </flux:select>
 
                             <flux:button
-                                wire:click="removeMember({{ $user->id }})"
+                                wire:click="removeMember({{ $member->id }})"
                                 wire:confirm="{{ __('Are you sure you want to remove this member?') }}"
                                 variant="danger"
                                 size="sm"
@@ -302,7 +278,7 @@ new class extends BaseComponent {
                                     <div>
                                         <div class="font-medium text-sm">{{ $invitation->email }}</div>
                                         <div class="text-xs text-zinc-500 dark:text-zinc-400">
-                                            {{ __('Role') }}: {{ $invitation->role->name ?? $invitation->role->code }}
+                                            {{ __('Role') }}: {{ $invitation->role->name() ?? $invitation->role->code() }}
                                             <span class="mx-1">•</span>
                                             {{ __('Sent') }} {{ $invitation->created_at->diffForHumans() }}
                                         </div>

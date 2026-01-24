@@ -2,8 +2,9 @@
     <div class="container mx-auto px-6">
         <!-- Section Header -->
         <div class="max-w-3xl mx-auto text-center mb-16">
-            <h2 class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-900 mb-6">
-                Amado por <span class="bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 bg-clip-text text-transparent">desenvolvedores</span>
+            <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
+                Amado por{" "}
+                <span class="gradient-text">desenvolvedores</span>
             </h2>
             <p class="text-lg text-gray-600">
                 Veja o que profissionais de tecnologia estão dizendo sobre o CraftDB.
@@ -75,7 +76,7 @@
                     </p>
 
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-600 via-cyan-500 to-blue-600 flex items-center justify-center text-white font-medium text-sm ring-2 ring-blue-600/20 ring-offset-2 ring-offset-white">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-gray-900 via-gray-700 to-gray-900 flex items-center justify-center text-white font-medium text-sm ring-2 ring-gray-900/20 ring-offset-2 ring-offset-white">
                             {{ $testimonial['avatar'] }}
                         </div>
                         <div>

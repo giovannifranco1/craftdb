@@ -1,8 +1,7 @@
 <?php
 
-use App\Concerns\HandlesDiagramAuthAlert;
 use App\Concerns\HasSidePanel;
-use App\Enums\ColumnTypes;
+use App\Enums\ColumnType;
 use App\Livewire\Forms\Diagram\ColumnForm;
 use App\Models\Column;
 use App\Models\Table;
@@ -534,10 +533,10 @@ new class extends CanvasComponent {
     }
 
     /**
-     * @return array<int, \App\Enums\ColumnTypes>
+     * @return array<int, \App\Enums\ColumnType>
      */
     public function getColumnTypes(): array
     {
-        return ColumnTypes::cases();
+        return ColumnType::cases();
     }
 };

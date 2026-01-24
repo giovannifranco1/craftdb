@@ -10,7 +10,7 @@ return new class () extends Migration {
      */
     public function up(): void
     {
-        Schema::create(config()->get('teams.tables.teams', 'teams'), static function (Blueprint $table) {
+        Schema::create('team', static function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->index();
             $table->string('name');
@@ -23,6 +23,6 @@ return new class () extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists(config()->get('teams.tables.teams', 'teams'));
+        Schema::dropIfExists('team');
     }
 };

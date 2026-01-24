@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\InviteController;
 use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\Pages\DiagramController;
 use App\Livewire\MyFavorites;
@@ -19,11 +18,6 @@ Route::get('/', fn () => view('pages::landing-page.index'))->name('home');
 /** Dashboard */
 Route::livewire('/dashboard', 'pages::dashboard')->lazy()->middleware(['auth', 'verified'])->name('dashboard');
 Route::livewire('/my-favorites', MyFavorites::class)->middleware(['auth', 'verified'])->name('dashboard.my-favorites');
-
-/** Invitations */
-Route::middleware(['auth'])->group(function () {
-    Route::get('/invite/{invitation}/accept', [InviteController::class, 'inviteAccept'])->name('invite.accept');
-});
 
 /** Settings */
 Route::middleware(['auth'])->group(function () {
@@ -53,7 +47,7 @@ Route::middleware(['auth'])->group(function () {
 });
 
 /** Diagram */
-Route::middleware(['auth', 'role:viewer|editor{team_id}', 'throttle:60,1'])->group(function () {
+Route::middleware(['auth', 'role:viewer|editor|owner', 'throttle:60,1'])->group(function () {
     Route::get('{team_id}/diagram/{diagram:slug}', [DiagramController::class, 'show'])->name('diagram.show');
     Route::post('{team_id}/diagram/{diagram:slug}/toggle-favorite', [DiagramController::class, 'toggleFavorite'])->name('diagram.toggle-favorite');
 });

@@ -42,7 +42,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @mixin \Eloquent
  */
 #[ObservedBy(TableObserver::class)]
-#[ScopedBy(TableAccessible::class)]
+// #[ScopedBy(TableAccessible::class)]
 class Table extends Model
 {
     const COLOR_DEFAULT = '#2563eb';

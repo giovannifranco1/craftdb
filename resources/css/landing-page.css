@@ -7,45 +7,45 @@
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 222 47% 11%;
+    --foreground: 0 0% 9%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card-foreground: 0 0% 9%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover-foreground: 0 0% 9%;
 
-    --primary: 217 91% 50%;
+    --primary: 0 0% 15%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 220 14% 96%;
-    --secondary-foreground: 222 47% 11%;
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 0 0% 9%;
 
-    --muted: 220 14% 96%;
-    --muted-foreground: 220 9% 46%;
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 45%;
 
-    --accent: 217 91% 50%;
+    --accent: 210 40% 50%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 217 91% 50%;
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    --ring: 210 40% 50%;
 
     --radius: 0.75rem;
 
     /* Custom colors */
-    --gradient-start: 220 14% 98%;
-    --gradient-mid: 220 14% 96%;
-    --gradient-end: 217 91% 97%;
+    --gradient-start: 0 0% 98%;
+    --gradient-mid: 0 0% 96%;
+    --gradient-end: 0 0% 94%;
 
-    --glow: 217 91% 50%;
-    --glow-secondary: 199 89% 48%;
+    --glow: 210 40% 50%;
+    --glow-secondary: 210 35% 60%;
 
-    --glass: 220 14% 96%;
-    --glass-border: 220 13% 88%;
+    --glass: 0 0% 96%;
+    --glass-border: 0 0% 88%;
 
     --success: 142 76% 36%;
     --warning: 38 92% 50%;
@@ -55,16 +55,16 @@
 @layer base {
   html {
     scroll-behavior: smooth;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Outfit', sans-serif;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-[Inter];
+    @apply font-[Outfit];
   }
 
   body {
     @apply bg-white antialiased;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Outfit', sans-serif;
   }
 }
 
@@ -74,21 +74,21 @@
   }
 
   .gradient-text {
-    @apply bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-gray-900 via-gray-700 to-gray-900 bg-clip-text text-transparent;
   }
 
   .gradient-border {
-    @apply relative before:absolute before:inset-0 before:rounded-2xl before:p-[1px] before:bg-gradient-to-r before:from-blue-500/50 before:via-cyan-500/30 before:to-blue-500/50 before:-z-10;
+    @apply relative before:absolute before:inset-0 before:rounded-2xl before:p-[1px] before:bg-gradient-to-r before:from-gray-900/50 before:via-gray-700/30 before:to-gray-900/50 before:-z-10;
   }
 
   .hero-gradient {
-    background: radial-gradient(ellipse 80% 50% at 50% -20%, hsl(217 91% 50% / 0.08), transparent),
-                radial-gradient(ellipse 60% 40% at 80% 50%, hsl(199 89% 48% / 0.06), transparent),
+    background: radial-gradient(ellipse 80% 50% at 50% -20%, hsl(0 0% 20% / 0.06), transparent),
+                radial-gradient(ellipse 60% 40% at 80% 50%, hsl(0 0% 35% / 0.04), transparent),
                 linear-gradient(180deg, hsl(var(--background)), hsl(var(--gradient-mid)) 50%, hsl(var(--gradient-end)));
   }
 
   .section-gradient {
-    background: linear-gradient(180deg, transparent, hsl(220 14% 96% / 0.5) 50%, transparent);
+    background: linear-gradient(180deg, transparent, hsl(0 0% 96% / 0.5) 50%, transparent);
   }
 
   .glow-effect {
@@ -97,7 +97,7 @@
 
   .glow-effect::before {
     content: '';
-    @apply absolute -inset-1 bg-gradient-to-r from-blue-500/20 via-cyan-500/20 to-blue-500/20 rounded-2xl blur-xl opacity-0 transition-opacity duration-500;
+    @apply absolute -inset-1 bg-gradient-to-r from-gray-900/20 via-gray-700/20 to-gray-900/20 rounded-2xl blur-xl opacity-0 transition-opacity duration-500;
   }
 
   .glow-effect:hover::before {
@@ -105,7 +105,7 @@
   }
 
   .feature-icon {
-    @apply w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500/20 to-cyan-500/20 flex items-center justify-center text-blue-600;
+    @apply w-10 h-10 rounded-xl bg-gradient-to-br from-gray-900/20 to-gray-700/20 flex items-center justify-center text-gray-900;
   }
 
   .code-block {
@@ -118,28 +118,28 @@
 
   /* Variáveis CSS para cores primárias */
   .landing-primary-color {
-    color: #2563eb;
+    color: #262626;
   }
 
   .landing-primary-bg {
-    background-color: #2563eb;
+    background-color: #262626;
   }
 
   .landing-primary-bg:hover {
-    background-color: #1d4ed8;
+    background-color: #171717;
   }
 
   .landing-primary-border {
-    border-color: #2563eb;
+    border-color: #262626;
   }
 
   .landing-btn-primary {
-    background-color: #2563eb;
+    background-color: #262626;
     color: white;
   }
 
   .landing-btn-primary:hover {
-    background-color: #1d4ed8;
+    background-color: #171717;
   }
 
   .landing-btn-outline {
@@ -147,8 +147,8 @@
   }
 
   .landing-btn-outline:hover {
-    border-color: #2563eb;
-    color: #2563eb;
+    border-color: #262626;
+    color: #262626;
   }
 
   .landing-link-hover {
@@ -156,7 +156,19 @@
   }
 
   .landing-link-hover:hover {
-    color: #2563eb;
+    color: #262626;
+  }
+
+  .btn-primary {
+    @apply bg-gray-900 text-white hover:bg-gray-800 px-6 py-3 rounded-xl font-medium transition-all duration-200 hover:shadow-lg hover:shadow-gray-900/25 inline-flex items-center;
+  }
+
+  .btn-secondary {
+    @apply bg-white border border-gray-200 text-gray-900 hover:bg-gray-100 px-6 py-3 rounded-xl font-medium transition-all duration-200 shadow-sm inline-flex items-center;
+  }
+
+  .btn-ghost {
+    @apply text-gray-900 hover:bg-gray-100/50 px-4 py-2 rounded-lg font-medium transition-all duration-200;
   }
 }
 

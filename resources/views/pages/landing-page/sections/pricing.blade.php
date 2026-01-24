@@ -2,8 +2,9 @@
     <div class="container mx-auto px-6">
         <!-- Section Header -->
         <div class="max-w-3xl mx-auto text-center mb-16">
-            <h2 class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-900 mb-6">
-                Preços simples, <span class="bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 bg-clip-text text-transparent">sem surpresas</span>
+            <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
+                Preços simples,{" "}
+                <span class="gradient-text">sem surpresas</span>
             </h2>
             <p class="text-lg text-gray-600">
                 Comece grátis e escale conforme sua necessidade.
@@ -70,10 +71,10 @@
             @endphp
 
             @foreach($plans as $plan)
-                <div class="bg-white p-8 rounded-xl border-2 {{ $plan['popular'] ? 'landing-primary-border relative shadow-lg' : 'border-gray-200' }} landing-card-hover">
+                <div class="glass-card p-8 relative {{ $plan['popular'] ? 'border-gray-900/50 glow-effect' : '' }}">
                     @if($plan['popular'])
                         <div class="absolute -top-3 left-1/2 -translate-x-1/2">
-                            <span class="landing-primary-bg text-white px-3 py-1 rounded-full text-xs font-semibold">
+                            <span class="px-3 py-1 rounded-full bg-gray-900 text-white text-xs font-medium">
                                 Mais popular
                             </span>
                         </div>
@@ -98,21 +99,19 @@
 
                     <ul class="space-y-3 mb-8">
                         @foreach($plan['features'] as $feature)
-                            <li class="flex items-start gap-3">
-                                <svg class="w-5 h-5 landing-primary-color flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                </svg>
-                                <span class="text-sm text-gray-700">{{ $feature }}</span>
+                            <li class="flex items-center gap-3">
+                                <x-lucide-check class="w-5 h-5 text-gray-900 flex-shrink-0" />
+                                <span class="text-sm text-gray-600">{{ $feature }}</span>
                             </li>
                         @endforeach
                     </ul>
 
                     @auth
-                        <a href="{{ route('dashboard') }}" class="block w-full text-center px-5 py-2.5 {{ $plan['popular'] ? 'landing-btn-primary' : 'landing-btn-outline border-2' }} rounded-lg text-sm font-medium transition">
+                        <a href="{{ route('dashboard') }}" class="w-full block text-center {{ $plan['popular'] ? 'btn-primary' : 'btn-secondary' }}">
                             {{ $plan['cta'] }}
                         </a>
                     @else
-                        <a href="{{ route('register') }}" class="block w-full text-center px-5 py-2.5 {{ $plan['popular'] ? 'landing-btn-primary' : 'landing-btn-outline border-2' }} rounded-lg text-sm font-medium transition">
+                        <a href="{{ route('register') }}" class="w-full block text-center {{ $plan['popular'] ? 'btn-primary' : 'btn-secondary' }}">
                             {{ $plan['cta'] }}
                         </a>
                     @endauth

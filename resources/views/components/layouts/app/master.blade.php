@@ -8,14 +8,14 @@
     @php
         $team = Team::currentTeam();
     @endphp
-    <body class="min-h-screen bg-white dark:bg-[#0F0F0F]">
+    <body class="min-h-screen bg-zinc-50 dark:bg-background-dark">
 
         @persist('toast')
         <x-ui.toast/>
         @endpersist
 
         <!-- Horizontal Navigation Header -->
-        <flux:header sticky class="border-b border-zinc-200 bg-zinc-50 dark:border-zinc-600 dark:bg-[#0F0F0F] z-40">
+        <flux:header sticky class="border-b border-zinc-200 bg-zinc-50 dark:border-zinc-600 z-40">
             <div class="flex w-full">
                 <!-- Top bar -->
                 <div class="flex items-center w-full my-1">
@@ -39,7 +39,7 @@
                     </flux:navbar>
 
                     <div class="flex items-center space-x-4 ml-auto">
-                        <flux:button @click="$flux.modal('diagram-create').show()" icon="plus" variant="primary" size="sm">
+                        <flux:button @click="$flux.modal('diagram-create').show()" icon="plus" variant="primary" color="sky" size="sm">
                             {{ __('New Diagram') }}
                         </flux:button>
 

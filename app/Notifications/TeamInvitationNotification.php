@@ -33,7 +33,7 @@ class TeamInvitationNotification extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
-        $url = route('invite.accept', ['invitation' => $this->invitation->id]);
+        $url = route('invitation.accept', ['invitation' => $this->invitation->getRouteKey()]);
         $teamName = $this->invitation->team->name;
         $roleName = $this->invitation->role->name ?? $this->invitation->role->code;
 

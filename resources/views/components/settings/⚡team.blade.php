@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\Team\Team;
-use Illuminate\Validation\Rule;
 use App\Livewire\BaseComponent;
 
 new class extends BaseComponent {

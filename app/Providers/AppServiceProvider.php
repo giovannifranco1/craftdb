@@ -131,7 +131,6 @@ class AppServiceProvider extends ServiceProvider
         Password::defaults(fn (): Password => Password::min(8)
             ->max(32)
             ->letters()
-            ->mixedCase()
         );
     }
 
@@ -167,6 +166,6 @@ class AppServiceProvider extends ServiceProvider
                 return Diagram::where('slug', $value)->firstOrFail();
             });
         });
-        
+
     }
 }

@@ -252,7 +252,18 @@ class ParseLaravelMigration extends BaseSQLParse
 
         $laravelType = $matches[1];
         $columnName = $matches[2];
-        $length = isset($matches[3]) ? (int) $matches[3] : null;
+
+        // Handle third parameter: can be length (number) or array (for enum/set)
+        $length = null;
+        if (isset($matches[3]) && !empty($matches[3])) {
+            $param = trim($matches[3]);
+            // If it's a numeric value, use it as length
+            if (is_numeric($param)) {
+                $length = (int) $param;
+            }
+            // For enum/set with arrays, we'll just store null for length
+            // The actual values are in the database schema, not in our diagram
+        }
 
         // Map Laravel column types to database types
         $type = $this->mapLaravelTypeToDatabase($laravelType);
@@ -360,6 +371,14 @@ class ParseLaravelMigration extends BaseSQLParse
      */
     private function shouldSkipLine(string $line): bool
     {
+        // Check if line is a column definition (has column type methods)
+        // If so, don't skip it even if it has index/unique/etc
+        $columnTypePattern = '/\$\w+->(id|bigInteger|integer|string|text|foreignId|foreignIdFor|foreignUuid|foreignUlid|boolean|timestamp|date|datetime|enum|decimal|float|double|json|uuid|ulid)\s*\(/i';
+        if (preg_match($columnTypePattern, $line)) {
+            // This is a column definition, don't skip it
+            return false;
+        }
+
         $skipPatterns = config('migration-parser.skip_patterns', []);
 
         foreach ($skipPatterns as $pattern) {
@@ -372,6 +391,48 @@ class ParseLaravelMigration extends BaseSQLParse
     }
 
     /**
+     * Normalize blueprint by joining lines that are part of chained method calls
+     * This allows patterns to match method chains that span multiple lines
+     */
+    private function normalizeBlueprint(string $blueprint): string
+    {
+        $lines = explode("\n", $blueprint);
+        $normalized = [];
+        $currentStatement = '';
+
+        foreach ($lines as $line) {
+            $trimmed = trim($line);
+
+            // Skip empty lines and comments
+            if (empty($trimmed) || str_starts_with($trimmed, '//') || str_starts_with($trimmed, '/*')) {
+                if (!empty($currentStatement)) {
+                    $normalized[] = $currentStatement;
+                    $currentStatement = '';
+                }
+                continue;
+            }
+
+            // If line starts with '->', it's a continuation of the previous line
+            if (str_starts_with($trimmed, '->')) {
+                $currentStatement .= ' ' . $trimmed;
+            } else {
+                // New statement
+                if (!empty($currentStatement)) {
+                    $normalized[] = $currentStatement;
+                }
+                $currentStatement = $trimmed;
+            }
+        }
+
+        // Don't forget the last statement
+        if (!empty($currentStatement)) {
+            $normalized[] = $currentStatement;
+        }
+
+        return implode("\n", $normalized);
+    }
+
+    /**
      * Extract foreign keys from blueprint
      *
      * @param string $blueprint
@@ -380,6 +441,10 @@ class ParseLaravelMigration extends BaseSQLParse
      */
     private function extractForeignKeysFromBlueprint(string $blueprint, string $tableName, array &$foreignKeys): void
     {
+        // Normalize blueprint: join lines that are part of chained method calls
+        // This handles cases where foreignId()->constrained() spans multiple lines
+        $blueprint = $this->normalizeBlueprint($blueprint);
+
         $patterns = config('migration-parser.foreign_key_patterns', []);
 
         foreach ($patterns as $patternName => $patternConfig) {

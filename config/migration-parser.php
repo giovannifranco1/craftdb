@@ -132,7 +132,7 @@ return [
         // Pattern 1: Old-style explicit foreign key
         // Example: $table->foreign('user_id')->references('id')->on('users')
         'explicit' => [
-            'regex' => '/\$\w+\s*->\s*foreign\s*\(\s*[\'"]([^\'"]+)[\'"]\s*\).*?->\s*references\s*\(\s*[\'"]([^\'"]+)[\'"]\s*\).*?->\s*on\s*\(\s*[\'"]([^\'"]+)[\'"]\s*\)/is',
+            'regex' => '/\$\w+\s*->\s*foreign\s*\(\s*[\'"]([^\'"]+)[\'"]\s*\).*?->\s*references\s*\(\s*[\'"]([^\'"]+)[\'"]\s*\).*?->\s*on\s*\(\s*[\'"]([^\'"]+)[\'"]\s*\)/i',
             'description' => 'Explicit foreign key with foreign(), references(), and on() methods',
             'groups' => [
                 1 => 'column_name',
@@ -144,9 +144,10 @@ return [
         // Pattern 2: foreignId with explicit table name
         // Example: $table->foreignId('user_id')->constrained('users')
         // Example: $table->foreignId('diagram_id')->constrained('diagram', indexName: 'diagram_id_foreign')
+        // Example: $table->foreignId('from_table_id')->index('...')->constrained('table', indexName: '...')
         'foreign_id_explicit' => [
-            'regex' => '/\$\w+\s*->\s*foreignId\s*\(\s*[\'"]([^\'"]+)[\'"]\s*\).*?->\s*constrained\s*\(\s*[\'"]([^\'"]+)[\'"](?:\s*,\s*[^)]+)?\s*\)/is',
-            'description' => 'ForeignId with explicit table name in constrained() (with optional parameters like indexName)',
+            'regex' => '/\$\w+\s*->\s*foreignId\s*\(\s*[\'"]([^\'"]+)[\'"]\s*\).*?->\s*constrained\s*\(\s*[\'"]([^\'"]+)[\'"](?:\s*,\s*[^)]+)?\s*\)/i',
+            'description' => 'ForeignId with explicit table name in constrained() (with optional parameters like indexName and intermediate method calls)',
             'groups' => [
                 1 => 'column_name',
                 2 => 'referenced_table',
@@ -157,7 +158,7 @@ return [
         // Pattern 3: foreignId with inferred table name
         // Example: $table->foreignId('user_id')->constrained()
         'foreign_id_inferred' => [
-            'regex' => '/\$\w+\s*->\s*foreignId\s*\(\s*[\'"]([^\'"]+)[\'"]\s*\).*?->\s*constrained\s*\(\s*\)/is',
+            'regex' => '/\$\w+\s*->\s*foreignId\s*\(\s*[\'"]([^\'"]+)[\'"]\s*\).*?->\s*constrained\s*\(\s*\)/i',
             'description' => 'ForeignId with inferred table name from column name',
             'groups' => [
                 1 => 'column_name',
@@ -170,7 +171,7 @@ return [
         // Example: $table->foreignIdFor(User::class)
         // Example: $table->foreignIdFor(User::class, 'author_id')
         'foreign_id_for' => [
-            'regex' => '/\$\w+\s*->\s*foreignIdFor\s*\(\s*([A-Za-z_\\\\]+)::class(?:\s*,\s*[\'"]([^\'"]+)[\'"]\s*)?\)/is',
+            'regex' => '/\$\w+\s*->\s*foreignIdFor\s*\(\s*([A-Za-z_\\\\]+)::class(?:\s*,\s*[\'"]([^\'"]+)[\'"]\s*)?\)/i',
             'description' => 'ForeignIdFor with Model class reference',
             'groups' => [
                 1 => 'model_class',
@@ -184,7 +185,7 @@ return [
         // Example: $table->foreignUuid('user_uuid')->constrained()
         // Example: $table->foreignUlid('user_ulid')->constrained('users')
         'foreign_uuid_ulid' => [
-            'regex' => '/\$\w+\s*->\s*(?:foreignUuid|foreignUlid)\s*\(\s*[\'"]([^\'"]+)[\'"]\s*\).*?->\s*constrained\s*\(\s*(?:[\'"]([^\'"]+)[\'"]\s*)?\)/is',
+            'regex' => '/\$\w+\s*->\s*(?:foreignUuid|foreignUlid)\s*\(\s*[\'"]([^\'"]+)[\'"]\s*\).*?->\s*constrained\s*\(\s*(?:[\'"]([^\'"]+)[\'"]\s*)?\)/i',
             'description' => 'ForeignUuid or ForeignUlid with optional table name',
             'groups' => [
                 1 => 'column_name',
@@ -214,9 +215,10 @@ return [
     |--------------------------------------------------------------------------
     |
     | Pattern to extract column definitions from blueprint code.
+    | Captures: column type, column name, and optional parameters (length or array)
     |
     */
-    'column_pattern' => '/\$\w+->(\w+)\s*\(\s*[\'"]([^\'"]+)[\'"](?:\s*,\s*(\d+))?\s*\)/i',
+    'column_pattern' => '/\$\w+->(\w+)\s*\(\s*[\'"]([^\'"]+)[\'"](?:\s*,\s*(.+?))?\s*\)/i',
 
     /*
     |--------------------------------------------------------------------------

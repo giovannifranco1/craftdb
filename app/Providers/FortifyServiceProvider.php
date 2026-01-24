@@ -10,9 +10,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
+use Laravel\Fortify\Contracts\LoginResponse;
 use Laravel\Fortify\Contracts\LogoutResponse;
 use Laravel\Fortify\Fortify;
-use Livewire\Features\SupportRedirects\Redirector;
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -25,6 +25,14 @@ class FortifyServiceProvider extends ServiceProvider
             public function toResponse($request): RedirectResponse
             {
                 return redirect()->route('dashboard');
+            }
+        });
+
+        $this->app->instance(LoginResponse::class, new class implements LoginResponse {
+            /** @disregard */
+            public function toResponse($request): RedirectResponse
+            {
+                return redirect()->intended(route('dashboard'));
             }
         });
     }

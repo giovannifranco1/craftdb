@@ -5,7 +5,7 @@
 
 /**
  * A helper file for Laravel, to provide autocomplete information to your IDE
- * Generated for Laravel 12.47.0.
+ * Generated for Laravel 12.48.1.
  *
  * This file should not be included in your code, only analyzed by your IDE!
  *
@@ -18023,6 +18023,7 @@ namespace Illuminate\Support\Facades {
          * @see \Livewire\Features\SupportRouting\SupportRouting::provide()
          * @param mixed $uri
          * @param mixed $component
+         * @return \Illuminate\Routing\Route
          * @static
          */
         public static function livewire($uri, $component)
@@ -23830,42 +23831,6 @@ namespace Barryvdh\Debugbar\Facades {
             }
     }
 
-namespace Jurager\Teams\Support\Facades {
-    /**
-     * @see TeamsService
-     */
-    class Teams {
-        /**
-         * Returns object instance based on name.
-         *
-         * @param string $model
-         * @return object
-         * @throws Exception
-         * @static
-         */
-        public static function instance($model)
-        {
-            /** @var \Jurager\Teams\Support\Services\TeamsService $instance */
-            return $instance->instance($model);
-        }
-
-        /**
-         * Returns the model class based on name.
-         *
-         * @param string $model
-         * @return string
-         * @throws Exception
-         * @static
-         */
-        public static function model($model)
-        {
-            /** @var \Jurager\Teams\Support\Services\TeamsService $instance */
-            return $instance->model($model);
-        }
-
-            }
-    }
-
 namespace Laravel\Socialite\Facades {
     /**
      */
@@ -24780,6 +24745,7 @@ namespace Illuminate\Routing {
          * @see \Livewire\Features\SupportRouting\SupportRouting::provide()
          * @param mixed $uri
          * @param mixed $component
+         * @return \Illuminate\Routing\Route
          * @static
          */
         public static function livewire($uri, $component)
@@ -26969,6 +26935,20 @@ namespace  {
         {
             /** @var \Illuminate\Database\Query\Builder $instance */
             return $instance->selectSub($query, $as);
+        }
+
+        /**
+         * Add a select expression to the query.
+         *
+         * @param \Illuminate\Contracts\Database\Query\Expression $expression
+         * @param string $as
+         * @return \Illuminate\Database\Eloquent\Builder<static>
+         * @static
+         */
+        public static function selectExpression($expression, $as)
+        {
+            /** @var \Illuminate\Database\Query\Builder $instance */
+            return $instance->selectExpression($expression, $as);
         }
 
         /**
@@ -29925,7 +29905,6 @@ namespace  {
     class View extends \Illuminate\Support\Facades\View {}
     class Vite extends \Illuminate\Support\Facades\Vite {}
     class Debugbar extends \Barryvdh\Debugbar\Facades\Debugbar {}
-    class Teams extends \Jurager\Teams\Support\Facades\Teams {}
     class Socialite extends \Laravel\Socialite\Facades\Socialite {}
     class Flux extends \Flux\Flux {}
     class Livewire extends \Livewire\Livewire {}

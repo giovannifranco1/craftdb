@@ -346,5 +346,20 @@
   "Areas": "Áreas",
   "Note": "Nota",
   "Notes": "Notas",
-  "New!": "Novo!"
+  "New!": "Novo!",
+  "You have reached the maximum number of invitations per day.": "Você atingiu o número máximo de convites por dia.",
+  "Invitation not found.": "Convite não encontrado.",
+  "Invitation already accepted.": "Convite já aceito.",
+  "Invitation expired.": "Convite expirado.",
+  "Invitation cancelled.": "Convite cancelado.",
+  "Owner already belongs to the team.": "O proprietário já pertence ao time.",
+  "User already belongs to the team.": "Usuário já pertence ao time.",
+  "You may not change the team owner.": "Você não pode alterar o proprietário do time.",
+  "User not belongs to the team.": "Usuário não pertence ao time.",
+  "You may not remove the team owner.": "Você não pode remover o proprietário do time.",
+  "Unauthenticated.": "Não autenticado.",
+  "Team ID is required.": "ID do time é obrigatório.",
+  "Team not found.": "Time não encontrado.",
+  "You do not have access to this team.": "Você não tem acesso a este time.",
+  "You do not have permission to access this resource.": "Você não tem permissão para acessar este recurso."
 }

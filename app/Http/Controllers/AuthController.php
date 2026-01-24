@@ -17,7 +17,7 @@ class AuthController extends Controller
 
         Auth::login($user);
 
-        return redirect()->route('dashboard');
+        return redirect()->intended(route('dashboard'));
     }
 
     public function githubCallback(CreateUserFromOAuth $action): RedirectResponse
@@ -27,6 +27,6 @@ class AuthController extends Controller
 
         Auth::login($user);
 
-        return redirect()->route('dashboard');
+        return redirect()->intended(route('dashboard'));
     }
 }

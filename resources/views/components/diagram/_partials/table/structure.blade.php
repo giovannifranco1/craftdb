@@ -4,7 +4,7 @@
     <div
         x-show="expanded"
         x-transition
-        wire:intersect:enter.half.margin.100px.once="loadColumns"
+        wire:intersect:enter.half.margin.1500px.once="loadColumns"
         class="flex-auto bg-white dark:bg-zinc-800 relative">
         @include('components.diagram._partials.table.structure-placeholder')
     </div>
@@ -62,7 +62,7 @@
                                 />
                                 <span
                                     x-show="!isEventRenameColumn"
-                                    class="text-xs font-medium text-gray-900 dark:text-zinc-200 font-[Comic_Relief] max-w-[120px] truncate block"
+                                    class="text-[14px] font-medium text-gray-900 dark:text-zinc-200 font-[Comic_Relief] max-w-[120px] truncate block"
                                     title="{{ $column->name }}"
                                 >
                                     {{ $column->name }}
@@ -71,13 +71,13 @@
                         </td>
 
                         <td>
-                            <span class="inline-flex items-center px-2 rounded text-[11px] uppercase font-medium bg-gray-100 dark:bg-zinc-700 text-gray-800 dark:text-zinc-200">
+                            <span class="inline-flex items-center px-2 rounded text-[11px] uppercase font-medium bg-gray-100 dark:bg-zinc-700 text-zinc-800 dark:text-zinc-200">
                                 @if(($column->length ?? 0) > 0)
                                     @php
                                         $lengthStr = (string)$column->length;
                                         $displayLength = strlen($lengthStr) > 3 ? substr($lengthStr, 0, 3) : $lengthStr;
                                     @endphp
-                                    {{ $column->type }} ({{ $displayLength }})
+                                    {{ $column->type }}
                                 @else
                                     {{ $column->type }}
                                 @endif

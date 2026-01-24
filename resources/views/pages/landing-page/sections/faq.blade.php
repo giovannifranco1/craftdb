@@ -2,8 +2,9 @@
     <div class="container mx-auto px-6">
         <!-- Section Header -->
         <div class="max-w-3xl mx-auto text-center mb-16">
-            <h2 class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-900 mb-6">
-                Perguntas <span class="bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 bg-clip-text text-transparent">frequentes</span>
+            <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
+                Perguntas{" "}
+                <span class="gradient-text">frequentes</span>
             </h2>
             <p class="text-lg text-gray-600">
                 Tire suas dúvidas sobre o CraftDB.
@@ -56,15 +57,10 @@
                         class="w-full px-6 py-4 flex items-center justify-between text-left"
                     >
                         <span class="font-medium text-gray-900">{{ $faq['question'] }}</span>
-                        <svg
+                        {{-- <x-lucide-chevron-down
                             class="w-5 h-5 text-gray-600 transition-transform duration-300"
                             :class="{ 'rotate-180': openIndex === {{ $index }} }"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                        >
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                        </svg>
+                        /> --}}
                     </button>
                     <div
                         x-show="openIndex === {{ $index }}"

@@ -2,9 +2,8 @@
 
 namespace App\Policies;
 
+use App\Enums\Role as EnumsRole;
 use App\Models\Diagram;
-use App\Models\Team\Membership;
-use App\Models\Team\Role;
 use App\Models\Team\Team;
 use App\Models\User;
 
@@ -29,24 +28,7 @@ class DiagramPolicy
             return false;
         }
 
-        // Owner can always view
-        if ($user->ownsTeam($team)) {
-            return true;
-        }
-
-        return true;
-        // Check if user is a member with viewer or editor role
-        // if ($user->belongsToTeam($team)) {
-        //     $membership = Membership::forTeam($team->id, $user->id)->first();
-
-        //     if (!$membership) {
-        //         return false;
-        //     }
-
-        //     return in_array($membership->role->code, [Role::CODE_VIEWER, Role::CODE_EDITOR]);
-        // }
-
-        return false;
+        return $user->belongsToTeam($team);
     }
 
     /**
@@ -62,24 +44,12 @@ class DiagramPolicy
 
         $team = Team::find($currentTeam->id);
 
-        if (!$team) {
-            return false;
-        }
-
-        // Owner can always create
-        if ($user->ownsTeam($team)) {
+        if ($team && $user->ownsTeam($team)) {
             return true;
         }
 
-        // Check if user is a member with editor role
-        if ($user->belongsToTeam($team)) {
-            $membership = Membership::forTeam($team->id, $user->id)->first();
-
-            if (!$membership) {
-                return false;
-            }
-
-            return in_array($membership->role->code, [Role::CODE_EDITOR, Role::CODE_VIEWER]);
+        if ($team && $user->belongsToTeam($team)) {
+            return $team->userHasRole($user, [EnumsRole::EDITOR, EnumsRole::VIEWER]);
         }
 
         return false;
@@ -92,24 +62,12 @@ class DiagramPolicy
     {
         $team = Team::find($diagram->getTeamId());
 
-        if (!$team) {
-            return false;
-        }
-
-        // Owner can always update
-        if ($user->ownsTeam($team)) {
+        if ($team && $user->ownsTeam($team)) {
             return true;
         }
 
-        // Check if user is a member with editor role
-        if ($user->belongsToTeam($team)) {
-            $membership = Membership::forTeam($team->id, $user->id)->first();
-
-            if (!$membership) {
-                return false;
-            }
-
-            return $membership->role->code === Role::CODE_EDITOR;
+        if ($team && $user->belongsToTeam($team)) {
+            return $team->userHasRole($user, EnumsRole::EDITOR);
         }
 
         return false;
@@ -122,30 +80,10 @@ class DiagramPolicy
     {
         $team = Team::find($diagram->getTeamId());
 
-        if (!$team) {
-            return false;
-        }
-
-        if ($user->ownsTeam($team)) {
+        if ($team && $user->ownsTeam($team)) {
             return true;
         }
 
-        return false;
-    }
-
-    /**
-     * Determine whether the user can restore the model.
-     */
-    public function restore(User $user, Diagram $diagram): bool
-    {
-        return false;
-    }
-
-    /**
-     * Determine whether the user can permanently delete the model.
-     */
-    public function forceDelete(User $user, Diagram $diagram): bool
-    {
         return false;
     }
 }

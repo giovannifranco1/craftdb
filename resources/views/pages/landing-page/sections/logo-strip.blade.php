@@ -1,29 +1,33 @@
-<section class="py-16 border-y border-gray-200/50">
+<section class="py-20 bg-gray-100/30">
     <div class="container mx-auto px-6">
-        <p class="text-center text-sm text-gray-600 mb-8">
-            Usado por times de engenharia em empresas como
+        <h2 class="text-center text-2xl md:text-3xl font-bold text-gray-900 mb-3">
+            Suporte a diversos{" "}
+            <span class="text-gray-900">bancos de dados</span>
+        </h2>
+        <p class="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
+            Compatível com os principais bancos relacionais e NoSQL do mercado
         </p>
-        <div class="flex flex-wrap items-center justify-center gap-8 md:gap-12">
+        <div class="flex flex-wrap items-center justify-center gap-6 md:gap-10">
             @php
-                $logos = [
-                    ['name' => 'TechFlow', 'initials' => 'TF'],
-                    ['name' => 'DataSync', 'initials' => 'DS'],
-                    ['name' => 'CloudBase', 'initials' => 'CB'],
-                    ['name' => 'DevStack', 'initials' => 'DV'],
-                    ['name' => 'AppForge', 'initials' => 'AF'],
-                    ['name' => 'CodeLab', 'initials' => 'CL'],
+                $databases = [
+                    ['name' => 'MySQL', 'icon' => '🐬'],
+                    ['name' => 'PostgreSQL', 'icon' => '🐘'],
+                    ['name' => 'SQL Server', 'icon' => '⚡'],
+                    ['name' => 'SQLite', 'icon' => '📦'],
+                    ['name' => 'Redis', 'icon' => '🔴'],
+                    ['name' => 'MariaDB', 'icon' => '🦭'],
+                    ['name' => 'MongoDB', 'icon' => '🍃'],
+                    ['name' => 'Oracle', 'icon' => '⭕'],
+                    ['name' => 'Cassandra', 'icon' => '👁️'],
+                    ['name' => 'ClickHouse', 'icon' => '🏠'],
                 ];
             @endphp
 
-            @foreach($logos as $logo)
-                <div class="flex items-center gap-2 opacity-40 hover:opacity-70 transition-opacity duration-300 grayscale">
-                    <div class="w-8 h-8 rounded-lg bg-gray-600/20 flex items-center justify-center">
-                        <span class="text-xs font-bold text-gray-600">
-                            {{ $logo['initials'] }}
-                        </span>
-                    </div>
-                    <span class="text-lg font-semibold text-gray-600">
-                        {{ $logo['name'] }}
+            @foreach($databases as $db)
+                <div class="flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-white border border-gray-200/50 shadow-sm hover:shadow-md hover:border-gray-200 transition-all duration-300">
+                    <span class="text-xl">{{ $db['icon'] }}</span>
+                    <span class="text-sm font-semibold text-gray-900">
+                        {{ $db['name'] }}
                     </span>
                 </div>
             @endforeach

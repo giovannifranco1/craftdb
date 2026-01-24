@@ -4,30 +4,8 @@ namespace App\Models\Team;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
-use Illuminate\Support\Facades\Config;
-use Jurager\Teams\Support\Facades\Teams as TeamsFacade;
 use Exception;
-use Illuminate\Database\Eloquent\Builder;
 
-/**
- * @property int $id
- * @property int $team_id
- * @property int $user_id
- * @property int $role_id
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\Team\Role $role
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Membership newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Membership newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Membership query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Membership whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Membership whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Membership whereRoleId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Membership whereTeamId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Membership whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Membership whereUserId($value)
- * @mixin \Eloquent
- */
 class Membership extends Pivot
 {
     /**
@@ -35,7 +13,7 @@ class Membership extends Pivot
      *
      * @var string
      */
-    protected $table = 'membership';
+    protected $table = 'team_user';
 
     /**
      * Indicates if the IDs are auto-incrementing.
@@ -45,15 +23,6 @@ class Membership extends Pivot
     public $incrementing = true;
 
     /**
-     * The relationships that should always be loaded.
-     *
-     * @var array
-     */
-    protected $with = [
-        'role',
-    ];
-
-    /**
      * Creates a new instance of the model.
      *
      * @param array $attributes
@@ -61,7 +30,6 @@ class Membership extends Pivot
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
-        $this->table = Config::get('teams.tables.team_user', 'team_user');
     }
 
     /**
@@ -72,10 +40,18 @@ class Membership extends Pivot
      */
     public function role(): BelongsTo
     {
-        return $this->belongsTo(TeamsFacade::model('role'), 'role_id', 'id');
+        return $this->belongsTo(Role::class, 'role_id', 'id');
     }
 
-    public function scopeForTeam(Builder $query, int $teamId, int $userId): Builder
+    /**
+     * Scope a query to filter memberships by team and user.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param int $teamId
+     * @param int $userId
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeForTeam($query, int $teamId, int $userId)
     {
         return $query->where('team_id', $teamId)
             ->where('user_id', $userId)
