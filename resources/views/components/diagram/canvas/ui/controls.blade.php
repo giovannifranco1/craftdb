@@ -88,7 +88,7 @@
             type="button"
             title="Adicionar Tabela (A)"
             @click="$dispatch('table::adding')">
-            <flux:icon.add-table class="size-5 text-blue-600"/>
+            <flux:icon.add-table class="size-5"/>
             <span class="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-lg">
                 Adicionar Tabela
             </span>

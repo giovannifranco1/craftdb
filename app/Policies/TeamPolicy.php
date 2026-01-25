@@ -33,7 +33,7 @@ class TeamPolicy
     /**
      * Determine whether the user can create models.
      */
-    public function create(object $user): bool
+    public function create(): bool
     {
         return true;
     }
@@ -96,5 +96,25 @@ class TeamPolicy
     public function delete(User $user, object $team): bool
     {
         return $user->ownsTeam($team);
+    }
+
+    /**
+     * Determine whether the user can leave the team.
+     *
+     * @param User $user
+     * @param object $team
+     * @return bool
+     */
+    public function leaveTeam(User $user, object $team): bool
+    {
+       if ($user->ownsTeam($team)) {
+            return false;
+       }
+
+       if ($user->belongsToTeam($team)) {
+            return true;
+       }
+
+       return false;
     }
 }

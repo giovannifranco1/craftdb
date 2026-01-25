@@ -124,4 +124,35 @@ class User extends Authenticatable
     {
         return in_array($provider, array_values(self::PROVIDERS));
     }
+
+
+    /**
+     * Check if the user is authenticated with Google or Github.
+     *
+     * @return bool
+     */
+    public function isAuthenticatedWithGoogleOrGithub(): bool
+    {
+        return $this->isAuthenticatedWithGithub() || $this->isAuthenticatedWithGoogle();
+    }
+
+    /**
+     * Check if the user is authenticated with Github.
+     *
+     * @return bool
+     */
+    public function isAuthenticatedWithGithub(): bool
+    {
+        return $this->github_id !== null;
+    }
+
+    /**
+     * Check if the user is authenticated with Google.
+     *
+     * @return bool
+     */
+    public function isAuthenticatedWithGoogle(): bool
+    {
+        return $this->google_id !== null;
+    }
 }

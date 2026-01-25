@@ -89,7 +89,7 @@
                     {{-- Share Button with Dropdown --}}
                     <div>
                         <flux:dropdown>
-                            <flux:button class="font-light" size="sm" variant="primary" icon="share">
+                            <flux:button class="font-light" size="sm" color="sky" variant="primary" icon="share">
                                 {{ __('Compartilhar') }}
                             </flux:button>
 

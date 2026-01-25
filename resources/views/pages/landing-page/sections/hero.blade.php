@@ -52,7 +52,8 @@
                 <div class="relative">
                     <!-- Laptop mockup image -->
                     <img src="{{ Vite::asset('resources/images/landing-page/macbook.png') }}" alt="MacBook" class="w-full h-auto relative z-10"/>
-                    <img src="{{ Vite::asset('resources/images/landing-page/image_macbook.png') }}" alt="MacBook" class="w-[410px] h-auto absolute top-13.5 left-[5.5rem] z-5"/>
+                    <!-- Screenshot inside MacBook - using percentages for responsive positioning -->
+                    <img src="{{ Vite::asset('resources/images/landing-page/image_macbook.png') }}" alt="MacBook Screen" class="absolute w-[70%] h-auto top-[14%] left-[15%] z-5"/>
                 </div>
 
                 <!-- Shadow effect -->

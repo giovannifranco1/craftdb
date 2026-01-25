@@ -360,6 +360,9 @@
   "Unauthenticated.": "Não autenticado.",
   "Team ID is required.": "ID do time é obrigatório.",
   "Team not found.": "Time não encontrado.",
-  "You do not have access to this team.": "Você não tem acesso a este time.",
-  "You do not have permission to access this resource.": "Você não tem permissão para acessar este recurso."
+  "You do not have permission to access this resource.": "Você não tem permissão para acessar este recurso.",
+  "Leave team": "Sair do time",
+  "Leave the team and all of its resources": "Sair do time e todos os seus recursos",
+  "Are you sure you want to leave the team?": "Tem certeza que deseja sair do time?",
+  "Once you leave the team, all of its resources and data will be permanently deleted. Please enter your password to confirm you would like to permanently leave the team.": "Uma vez que você sair do time, todos os seus recursos e dados serão permanentemente deletados. Por favor, digite sua senha para confirmar que deseja sair permanentemente do time."
 }
