@@ -1,35 +1,30 @@
-@php($top = request()->is('dashboard', 'settings/*') ? 'top-20' : 'top-30')
+@php($top = request()->is('dashboard', 'settings/*') ? 'top-20' : 'top-34')
 
 <div class="fixed z-50 max-w-sm w-full {{ $top }} end-9">
     <div
         x-data="{
             messageToast: null,
             descriptionToast: null,
-            typeToast: 'success',
+            typeToast: 'default',
             progress: 100,
             progressInterval: null,
             timeoutId: null,
             resetTimer() {
-                // Limpa timeout anterior se existir
                 if (this.timeoutId) {
                     clearTimeout(this.timeoutId);
                 }
-                // Limpa intervalo anterior se existir
                 if (this.progressInterval) {
                     clearInterval(this.progressInterval);
                 }
             },
             startProgress() {
-                // Reseta timers anteriores
                 this.resetTimer();
 
-                // Reseta o progresso
                 this.progress = 100;
                 const duration = 3000;
                 const interval = 50;
                 const decrement = (100 / (duration / interval));
 
-                // Inicia o intervalo de progresso
                 this.progressInterval = setInterval(() => {
                     this.progress -= decrement;
                     if (this.progress <= 0) {
@@ -39,11 +34,9 @@
                     }
                 }, interval);
 
-                // Define o timeout para esconder o toast
                 this.timeoutId = setTimeout(() => {
                     this.messageToast = null;
                     this.timeoutId = null;
-                    // Reseta o tipo após a transição terminar (200ms)
                     setTimeout(() => {
                         this.typeToast = 'success';
                     }, 200);
@@ -110,5 +103,25 @@
                 ></div>
             </div>
         </div>
+
+        <!-- Toast de Default -->
+        <div x-show="typeToast === 'default'">
+            <flux:callout class="dark:bg-[#0F0F0F]" inline>
+                <x-slot name="icon">
+                    <flux:icon.check-circle variant="solid" class="size-5" color="green"/>
+                </x-slot>
+
+                <flux:callout.heading x-text="messageToast"></flux:callout.heading>
+            </flux:callout>
+
+            <!-- Barra de Progresso -->
+            <div class="absolute bottom-0 left-0 right-0 h-1 bg-gray-200 dark:bg-zinc-800 rounded-b-lg overflow-hidden">
+                <div
+                    class="h-full transition-all ease-linear bg-green-500"
+                    :style="`width: ${progress}%`"
+                ></div>
+            </div>
+        </div>
+
     </div>
 </div>

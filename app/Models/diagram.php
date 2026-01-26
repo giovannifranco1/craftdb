@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
 /**
  * @property int $id
@@ -161,5 +162,45 @@ class Diagram extends Model
         $this->viewers()->syncWithoutDetaching([
             $user->id => ['last_viewed_at' => now()]
         ]);
+    }
+
+    /**
+     * Verifica se o diagrama está público
+     */
+    public function isPublic(): bool
+    {
+        return !is_null($this->public_token);
+    }
+
+    /**
+     * Torna o diagrama público e retorna a URL
+     */
+    public function makePublic(): string
+    {
+        if (!$this->public_token) {
+            $this->public_token = Str::uuid();
+            $this->save();
+        }
+
+        return route('diagram.public', ['token' => $this->public_token]);
+    }
+
+    /**
+     * Torna o diagrama privado (remove acesso público)
+     */
+    public function makePrivate(): void
+    {
+        $this->public_token = null;
+        $this->save();
+    }
+
+    /**
+     * Retorna a URL pública do diagrama (se existir)
+     */
+    public function getPublicUrl(): ?string
+    {
+        return $this->public_token
+            ? route('diagram.public', ['token' => $this->public_token])
+            : null;
     }
 }

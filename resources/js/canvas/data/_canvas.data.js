@@ -115,7 +115,7 @@ export default (cellSize = 25, isInitialLoad = false, [offsetX, offsetY] = []) =
                 const clickedTable = e.target.closest('[table-box]');
                 const clickedNote = e.target.closest('[note-box]');
                 const clickedConnection = e.target.closest('g[data-connection-id]') || e.target.closest('path');
-                const isSideEditorOpen = document.getElementById('side-editor').hasAttribute('side-editor-open');
+                const isSideEditorOpen = document.getElementById('side-editor')?.hasAttribute('side-editor-open');
 
                 if (!clickedTable && !clickedNote && !clickedConnection && !isSideEditorOpen) {
                     this.$dispatch('clear-highlight');

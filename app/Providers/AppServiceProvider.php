@@ -3,10 +3,12 @@
 namespace App\Providers;
 
 use App\Models\Diagram;
+use App\View\Components\Layouts\CanvasPublic;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Route;
@@ -19,6 +21,7 @@ use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Sleep;
 use Illuminate\Validation\Rules\Password;
+use Illuminate\View\Component;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -58,6 +61,7 @@ class AppServiceProvider extends ServiceProvider
         $this->configureDefaultRulesForPassword();
         $this->configureUnitTests();
         $this->configureDiagramCaching();
+        $this->AliasComponents();
     }
 
     /**
@@ -166,6 +170,10 @@ class AppServiceProvider extends ServiceProvider
                 return Diagram::where('slug', $value)->firstOrFail();
             });
         });
+    }
 
+    private function AliasComponents(): void
+    {
+        Blade::component(CanvasPublic::class, 'layouts.canvas.public');
     }
 }

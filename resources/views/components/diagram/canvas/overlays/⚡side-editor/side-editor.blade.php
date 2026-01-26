@@ -107,8 +107,8 @@
                                             </button>
                                         </nav>
                                         <div x-show="activeTab === 'columns'" x-cloak>
-                                            <flux:button icon="plus-circle" size="sm" wire:click="addColumn()" variant="primary">
-                                                Adicionar Coluna
+                                            <flux:button icon="plus-circle" size="sm" color="sky" wire:click="addColumn()" variant="primary">
+                                                {{ __('Add Column') }}
                                             </flux:button>
                                         </div>
                                     </div>

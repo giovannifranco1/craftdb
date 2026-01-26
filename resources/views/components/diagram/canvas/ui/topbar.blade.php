@@ -16,7 +16,7 @@
     <flux:header
         style="padding-right: 1rem; padding-left: 0.5rem;"
         sticky
-        class="md:block pointer-events-auto w-full rounded-lg border-b border-zinc-200/70 bg-white/85 pb-1.5 pt-3 text-sm shadow-sm shadow-zinc-900/5 backdrop-blur-md dark:border-zinc-800/70 dark:bg-[#0F0F0F] transition-all duration-300"
+        class="md:block pointer-events-auto w-full rounded-lg border border-zinc-200/70 bg-white/85 pb-1.5 pt-3 text-sm shadow-sm shadow-zinc-900/5 backdrop-blur-md dark:border-zinc-700 dark:bg-[#0F0F0F] transition-all duration-300"
         x-bind:class="visible ? 'opacity-100' : 'opacity-0'"
     >
         <div class="flex flex-col gap-2">
@@ -24,11 +24,11 @@
             <div class="flex flex-col gap-2">
                 <div class="flex items-center gap-3">
                     <!-- Logo -->
-                    <a href="{{ route('dashboard') }}" class="flex ms-2 items-center space-x-3 rtl:space-x-reverse">
+                    <a href="{{ route('dashboard') }}" class="flex ms-0 items-center rtl:space-x-reverse">
                         <x-app-logo />
                     </a>
 
-                    <flux:separator vertical variant="subtle" class="h-7 mt-1 mx-2"/>
+                    <flux:separator vertical variant="subtle" class="h-11 mt-1 mx-2"/>
 
                     {{-- Breadcrumbs --}}
                     <div class="flex flex-col gap-1.5">
@@ -93,27 +93,23 @@
                                 {{ __('Compartilhar') }}
                             </flux:button>
 
-                            <flux:menu class="min-w-64">
-                                <flux:menu.item icon="link">
-                                    {{ __('Copiar link') }}
-                                </flux:menu.item>
-                                <flux:menu.item icon="qr-code">
-                                    {{ __('Gerar QR Code') }}
-                                </flux:menu.item>
+                            <flux:menu keep-open class="min-w-80">
+                                <livewire:diagram.canvas.share :diagram="$diagram" />
 
                                 <flux:menu.separator />
 
-                                <flux:menu.item icon="envelope">
-                                    {{ __('Compartilhar por email') }}
-                                </flux:menu.item>
-                                <flux:menu.item icon="users">
+                                <flux:menu.item icon="users" href="{{ route('team.members.edit') }}" wire:navigate>
                                     {{ __('Convidar para o time') }}
                                 </flux:menu.item>
 
                                 <flux:menu.separator />
 
-                                <flux:menu.item icon="globe-alt">
-                                    {{ __('Tornar público') }}
+                                <flux:menu.item disabled icon="link">
+                                    {{ __('Copiar link interno') }}
+                                </flux:menu.item>
+``
+                                <flux:menu.item disabled icon="envelope">
+                                    {{ __('Compartilhar por email') }}
                                 </flux:menu.item>
 
                                 <flux:menu.separator />

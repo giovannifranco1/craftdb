@@ -50,7 +50,12 @@ Route::middleware(['auth'])->group(function () {
 Route::middleware(['auth', 'role:viewer|editor|owner', 'throttle:60,1'])->group(function () {
     Route::get('{team_id}/diagram/{diagram:slug}', [DiagramController::class, 'show'])->name('diagram.show');
     Route::post('{team_id}/diagram/{diagram:slug}/toggle-favorite', [DiagramController::class, 'toggleFavorite'])->name('diagram.toggle-favorite');
+    Route::post('{team_id}/diagram/{diagram:slug}/make-public', [DiagramController::class, 'makePublic'])->name('diagram.make-public');
+    Route::delete('{team_id}/diagram/{diagram:slug}/revoke-public', [DiagramController::class, 'revokePublic'])->name('diagram.revoke-public');
 });
+
+/** Public Diagram (no auth required) */
+Route::get('/diagram/public/{token}', [DiagramController::class, 'showPublic'])->name('diagram.public');
 
 /** Authentication Routes */
 require_once __DIR__ . '/auth.php';

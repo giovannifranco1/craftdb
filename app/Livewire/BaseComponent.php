@@ -16,7 +16,7 @@ abstract class BaseComponent extends Component
         }
     }
 
-    public function alert(string $message, string $type = 'success'): void
+    public function alert(string $message, string $type = 'default'): void
     {
         $this->dispatch('alert', message: $message, type: $type);
     }

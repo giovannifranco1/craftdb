@@ -55,7 +55,7 @@
     .dark {
         --color-accent: var(--color-white);
         --color-accent-content: var(--color-white);
-        --color-accent-foreground: var(--color-slate-800);
+        --color-accent-foreground: var(--color-background-dark);
     }
 }
 
@@ -73,7 +73,13 @@ select:focus[data-flux-control] {
     @apply outline-hidden ring-2 ring-accent ring-offset-2 ring-offset-accent-foreground;
 }
 
+
 [data-flux-modal] > dialog
+{
+    @apply dark:bg-[var(--color-background-dark)];
+}
+
+[data-flux-menu]
 {
     @apply dark:bg-[var(--color-background-dark)];
 }

@@ -6,7 +6,7 @@
         x-transition
         wire:intersect:enter.half.margin.1500px.once="loadColumns"
         class="flex-auto bg-white dark:bg-zinc-800 relative">
-        @include('components.diagram._partials.table.structure-placeholder')
+        @include('components.diagram.public.canvas._partials.table.structure-placeholder')
     </div>
 @else
     <div
@@ -24,47 +24,11 @@
 
                 @foreach($tableData->columns as $column)
                     <tr x-data="{ isEventRenameColumn: false, loadingRenameColumn: false, renameActionTriggered: false }" id="column-{{ $tableId }}-{{ $column->id }}" class="hover:bg-blue-300/20 dark:hover:bg-blue-500/20 transition-colors" :style="`height: ${getGridSize()}px;`">
-                        <td @dblclick="isEventRenameColumn = true" class="py-[2px] px-3">
+                        <td class="py-[2px] px-3">
                             <div class="flex items-center gap-2">
                                 {!! Helpers::getIconDiamondByTypeColumn($column) !!}
 
-                                <div x-show="loadingRenameColumn" class="flex items-center">
-                                    <div
-                                        class="animate-spin mx-2 size-2.5 border-2 border-current border-t-transparent rounded-full dark:text-dark-500" role="status" aria-label="loading">
-                                        <span class="sr-only">Loading...</span>
-                                    </div>
-                                </div>
-
-                                <input
-                                    name="name"
-                                    x-show="isEventRenameColumn"
-                                    x-ref="inputColumn"
-                                    x-trap="isEventRenameColumn"
-                                    type="text"
-                                    class="bg-transparent border-none outline-none shadow-none font-normal text-xs font-[Comic_Relief] p-0 m-0 w-auto"
-                                    style="background: transparent !important; box-shadow: none !important;"
-                                    @mousedown.stop
-                                    @keydown.stop
-                                    @keydown.enter="renameActionTriggered = true; loadingRenameColumn = true; $wire.renameColumn({{ $column->id }}, $refs.inputColumn?.value || '')"
-                                    @keydown.escape.stop="isEventRenameColumn = false;"
-                                    @table::column-added.window="isEventRenameColumn = $event.detail.columnId === {{ $column->id }}"
-                                    @table::column-renamed.window="() => {
-                                        if (renameActionTriggered) isEventRenameColumn = false;
-                                        loadingRenameColumn = false;
-                                    }"
-                                    @blur="() => {
-                                        if (renameActionTriggered) return;
-                                        if ($refs.inputColumn?.value === '') return;
-                                        renameActionTriggered = false;
-                                        loadingRenameColumn = true;
-                                        $wire.renameColumn({{ $column->id }}, $refs.inputColumn?.value);
-                                    }"
-                                />
-                                <span
-                                    x-show="!isEventRenameColumn"
-                                    class="text-[14px] font-medium text-gray-900 dark:text-zinc-200 font-[Comic_Relief] max-w-[120px] truncate block"
-                                    title="{{ $column->name }}"
-                                >
+                                <span class="text-[14px] font-medium text-gray-900 dark:text-zinc-200 font-[Comic_Relief] max-w-[120px] truncate block" title="{{ $column->name }}">
                                     {{ $column->name }}
                                 </span>
                             </div>
@@ -85,7 +49,7 @@
                         </td>
 
                         <td>
-                            <flux:tooltip toggleable position="right">
+                            <flux:tooltip toggleable gap="28" position="right">
                                 <button>
                                     <flux:icon.information-circle class="size-3 text-primary-700 dark:text-primary-300" />
                                 </button>

@@ -41,6 +41,6 @@ class Canvas extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.layouts.canvas');
+        return view('components.layouts.canvas.index');
     }
 }

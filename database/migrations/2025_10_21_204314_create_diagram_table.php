@@ -22,9 +22,15 @@ return new class extends Migration
             $table->boolean('is_favorite')->default(false);
             $table->string('database')->nullable();
 
+            /** public columns */
+            $table->uuid('public_token')->nullable();
+
             /** timestamps  */
             $table->timestamp('imported_at')->nullable()->comment('when the diagram was imported');
             $table->timestamps();
+
+            /** unique constraints */
+            $table->unique('public_token');
         });
     }
 

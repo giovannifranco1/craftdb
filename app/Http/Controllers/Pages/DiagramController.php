@@ -33,6 +33,21 @@ class DiagramController extends Controller
         return view('pages.diagram.show', compact('diagram'));
     }
 
+     /** Show Public Diagram (no authentication required) */
+     public function showPublic(string $token): View
+     {
+         $diagram = Diagram::where('public_token', $token)->firstOrFail();
+
+         $diagram->load([
+             'tables.columns',
+             'tables.foreignKeys',
+             'areas',
+             'notes',
+         ]);
+
+         return view('pages.diagram.public', compact('diagram'));
+     }
+
     public function toggleFavorite(int $teamId, Diagram $diagram): JsonResponse
     {
         if (Gate::denies('update', $diagram) || $diagram->getTeamId() !== $teamId) {

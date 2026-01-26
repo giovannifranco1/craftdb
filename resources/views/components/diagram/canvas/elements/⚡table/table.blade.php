@@ -13,13 +13,13 @@
     <div class="rounded-xl w-full h-full flex flex-col relative" @table::removed.window="if ($root.getAttribute('table-id') == $event.detail.tableId) { $el.classList.add('opacity-50') }">
 
         <!-- Header -->
-        @include('components.diagram._partials.table.header')
+        @include('components.diagram.canvas._partials.table.header')
 
         <!-- Table Structure -->
-        @include('components.diagram._partials.table.structure')
+        @include('components.diagram.canvas._partials.table.structure')
 
         <!-- Footer -->
-        @include('components.diagram._partials.table.footer')
+        @include('components.diagram.canvas._partials.table.footer')
 
     </div>
 </div>

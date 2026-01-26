@@ -86,4 +86,22 @@ class DiagramPolicy
 
         return false;
     }
+
+    /**
+     * Determine whether the user can manage public sharing.
+     */
+    public function share(User $user, Diagram $diagram): bool
+    {
+        $team = Team::find($diagram->getTeamId());
+
+        if ($team && $user->ownsTeam($team)) {
+            return true;
+        }
+
+        if ($team && $user->belongsToTeam($team)) {
+            return $team->userHasRole($user, EnumsRole::EDITOR);
+        }
+
+        return false;
+    }
 }

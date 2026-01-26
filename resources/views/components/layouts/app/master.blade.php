@@ -15,13 +15,13 @@
         @endpersist
 
         <!-- Horizontal Navigation Header -->
-        <flux:header sticky class="border-b border-zinc-200 bg-zinc-50 dark:border-zinc-600 z-40">
+        <flux:header sticky class="border-b border-zinc-200 bg-white dark:border-zinc-700 dark:bg-background-dark z-40">
             <div class="flex w-full">
                 <!-- Top bar -->
                 <div class="flex items-center w-full my-1">
                     <div class="flex items-center">
                         <!-- Logo -->
-                        <a href="{{ route('dashboard') }}" class="flex me-5 ms-2 items-center space-x-3 rtl:space-x-reverse" wire:navigate>
+                        <a href="{{ route('dashboard') }}" class="flex me-5 items-center rtl:space-x-reverse" wire:navigate>
                             <x-app-logo />
                         </a>
 

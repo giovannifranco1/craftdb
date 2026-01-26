@@ -9,7 +9,7 @@
         $bgColor = \App\Support\Helpers::hexToRgba($areaColor, 0.1);
     @endphp
     :style="`transform: translate3d(${x}px, ${y}px, 0); width: ${width}px; height: ${height}px; max-width: ${width}px; max-height: ${height}px; ${zIndex ? `z-index: ${zIndex};` : ''} border-color: {{ $areaColor }}; background-color: {{ $bgColor }};`"
-    class="absolute select-none rounded-xl shadow-lg dark:shadow-zinc-900/50 border-2 border-dashed">
+    class="absolute select-none rounded-xl border-2 border-dashed">
 
     <!-- Area Content -->
     <div class="rounded-xl w-full h-full flex flex-col relative">
@@ -79,11 +79,13 @@
                             autocomplete="off"
                             placeholder="Area name..."
                         />
-                        <span
-                            x-show="!isEventRename"
-                            @dblclick.stop="isEventRename = true"
-                            class="text-[10px] font-[Space Mono] font-semibold text-gray-700 dark:text-zinc-300 uppercase tracking-wide truncate"
-                        >{{ $area->name ?? 'Area name...' }}</span>
+                        <flux:tooltip class="text-[10px] tracking-wide" :content="__('Double click to rename, click circle to change color')">
+                            <span
+                                x-show="!isEventRename"
+                                @dblclick.stop="isEventRename = true"
+                                class="text-[10px] font-[Space Mono] font-semibold text-gray-700 dark:text-zinc-300 uppercase tracking-wide truncate"
+                            >{{ $area->name ?? 'Area name...' }}</span>
+                        </flux:tooltip>
                     </div>
 
                     <button
