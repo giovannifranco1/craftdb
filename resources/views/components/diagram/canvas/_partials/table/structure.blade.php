@@ -12,7 +12,7 @@
     <div
         x-show="expanded"
         x-transition
-        class="flex-auto bg-white dark:bg-background-dark relative">
+        class="flex-auto bg-white dark:bg-background-dark relative overflow-hidden">
         <table class="w-full table-fixed" wire:ignore.self>
             <colgroup>
                 <col :style="`width: ${colWidths[0]}px`">
@@ -22,52 +22,64 @@
 
             <tbody class="divide-y divide-gray-100 dark:divide-zinc-700">
 
-                @foreach($tableData->columns as $column)
-                    <tr x-data="{ isEventRenameColumn: false, loadingRenameColumn: false, renameActionTriggered: false }" id="column-{{ $tableId }}-{{ $column->id }}" class="hover:bg-blue-300/20 dark:hover:bg-blue-500/20 transition-colors" :style="`height: ${getGridSize()}px;`">
-                        <td @dblclick="isEventRenameColumn = true" class="py-[2px] px-3">
-                            <div class="flex items-center gap-2">
-                                {!! Helpers::getIconDiamondByTypeColumn($column) !!}
+                @foreach($tableData->columns as $index => $column)
+                    <tr
+                        x-init="if ($wire.tableData.resize_column_position < {{ $index + 1 }}) { $el.setAttribute('is-hidden', true); }"
+                        x-data="{ isEventRenameColumn: false, loadingRenameColumn: false, renameActionTriggered: false }"
+                        id="column-{{ $tableId }}-{{ $column->id }}"
+                        has-relationship-from="{{ $column->relationships_from_exists ? 'true' : 'false' }}"
+                        has-relationship-to="{{ $column->relationships_to_exists ? 'true' : 'false' }}"
+                        class="hover:bg-blue-300/20 dark:hover:bg-blue-500/20 transition-colors"
+                        :style="`height: ${getGridSize()}px;`"
+                        x-show="expanded && (hiddenColumnsCount === 0 || {{ $index }} < visibleColumnsCount)"
+                        x-bind:is-hidden="!expanded || (hiddenColumnsCount > 0 && {{ $index }} >= visibleColumnsCount)"
+                    >
+                        <td @dblclick="isEventRenameColumn = true" class="px-3">
+                            <flux:tooltip gap="28" position="left" :content="__('Double click to rename')">
+                                <div class="flex items-center gap-2">
+                                    {!! Helpers::getIconDiamondByTypeColumn($column) !!}
 
-                                <div x-show="loadingRenameColumn" class="flex items-center">
-                                    <div
-                                        class="animate-spin mx-2 size-2.5 border-2 border-current border-t-transparent rounded-full dark:text-dark-500" role="status" aria-label="loading">
-                                        <span class="sr-only">Loading...</span>
+                                    <div x-show="loadingRenameColumn" class="flex items-center">
+                                        <div
+                                            class="animate-spin mx-2 size-2.5 border-2 border-current border-t-transparent rounded-full dark:text-dark-500" role="status" aria-label="loading">
+                                            <span class="sr-only">Loading...</span>
+                                        </div>
                                     </div>
-                                </div>
 
-                                <input
-                                    name="name"
-                                    x-show="isEventRenameColumn"
-                                    x-ref="inputColumn"
-                                    x-trap="isEventRenameColumn"
-                                    type="text"
-                                    class="bg-transparent border-none outline-none shadow-none font-normal text-[14px] font-[Comic_Relief] p-0 m-0 w-auto"
-                                    style="background: transparent !important; box-shadow: none !important;"
-                                    @mousedown.stop
-                                    @keydown.stop
-                                    @keydown.enter="renameActionTriggered = true; loadingRenameColumn = true; $wire.renameColumn({{ $column->id }}, $refs.inputColumn?.value || '')"
-                                    @keydown.escape.stop="isEventRenameColumn = false;"
-                                    @table::column-added.window="isEventRenameColumn = $event.detail.columnId === {{ $column->id }}"
-                                    @table::column-renamed.window="() => {
-                                        if (renameActionTriggered) isEventRenameColumn = false;
-                                        loadingRenameColumn = false;
-                                    }"
-                                    @blur="() => {
-                                        if (renameActionTriggered) return;
-                                        if ($refs.inputColumn?.value === '') return;
-                                        renameActionTriggered = false;
-                                        loadingRenameColumn = true;
-                                        $wire.renameColumn({{ $column->id }}, $refs.inputColumn?.value);
-                                    }"
-                                />
-                                <span
-                                    x-show="!isEventRenameColumn"
-                                    class="text-[14px] font-medium text-gray-900 dark:text-zinc-200 font-[Comic_Relief] max-w-[120px] truncate block"
-                                    title="{{ $column->name }}"
-                                >
-                                    {{ $column->name }}
-                                </span>
-                            </div>
+                                    <input
+                                        name="name"
+                                        x-show="isEventRenameColumn"
+                                        x-ref="inputColumn"
+                                        x-trap="isEventRenameColumn"
+                                        type="text"
+                                        class="bg-transparent border-none outline-none shadow-none font-normal text-[14px] font-[Comic_Relief] p-0 m-0 w-auto"
+                                        style="background: transparent !important; box-shadow: none !important;"
+                                        @mousedown.stop
+                                        @keydown.stop
+                                        @keydown.enter="renameActionTriggered = true; loadingRenameColumn = true; $wire.renameColumn({{ $column->id }}, $refs.inputColumn?.value || '')"
+                                        @keydown.escape.stop="isEventRenameColumn = false;"
+                                        @table::column-added.window="isEventRenameColumn = $event.detail.columnId === {{ $column->id }}"
+                                        @table::column-renamed.window="() => {
+                                            if (renameActionTriggered) isEventRenameColumn = false;
+                                            loadingRenameColumn = false;
+                                        }"
+                                        @blur="() => {
+                                            if (renameActionTriggered) return;
+                                            if ($refs.inputColumn?.value === '') return;
+                                            renameActionTriggered = false;
+                                            loadingRenameColumn = true;
+                                            $wire.renameColumn({{ $column->id }}, $refs.inputColumn?.value);
+                                        }"
+                                    />
+                                    <span
+                                        x-show="!isEventRenameColumn"
+                                        class="text-[14px] font-medium text-gray-900 dark:text-zinc-200 font-[Comic_Relief] max-w-[120px] truncate block"
+                                        title="{{ $column->name }}"
+                                    >
+                                        {{ $column->name }}
+                                    </span>
+                                </div>
+                            </flux:tooltip>
                         </td>
 
                         <td>
@@ -157,6 +169,20 @@
                         </td>
                     </tr>
                 @endforeach
+
+                <!-- More columns indicator -->
+                <tr
+                    x-show="hiddenColumnsCount > 0"
+                    x-transition
+                    class="bg-gray-50 my-0 py-0 dark:bg-zinc-800/50 border-t-2 border-dashed border-gray-300 dark:border-zinc-600"
+                    :style="`height: ${getGridSize() + 1.32}px`"
+                >
+                    <td colspan="3" class="px-3 text-center">
+                        <span class="text-xs font-medium text-gray-600 dark:text-zinc-400 italic">
+                            <span x-text="hiddenColumnsCount"></span> more ...
+                        </span>
+                    </td>
+                </tr>
 
             </tbody>
         </table>

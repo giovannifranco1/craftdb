@@ -18,7 +18,7 @@ class TableData implements Wireable
         public bool $columns_exists,
         public int $primary_count,
         public int $foreign_count,
-
+        public int $resize_column_position,
         /** @var array<ColumnData> */
         public array $columns = [],
     ) {}
@@ -70,6 +70,7 @@ class TableData implements Wireable
             'columns_exists' => $this->columns_exists,
             'primary_count' => $this->primary_count,
             'foreign_count' => $this->foreign_count,
+            'resize_column_position' => $this->resize_column_position,
             'columns' => $this->columns,
         ];
     }
@@ -89,6 +90,7 @@ class TableData implements Wireable
             columns_exists: $value['columns_exists'],
             primary_count: $value['primary_count'],
             foreign_count: $value['foreign_count'],
+            resize_column_position: $value['resize_column_position'],
             columns: $value['columns'] ?? [],
         );
     }
@@ -108,6 +110,7 @@ class TableData implements Wireable
             columns_exists: $table->columns_exists ?? false,
             primary_count: $table->primary_count ?? 0,
             foreign_count: $table->foreign_count ?? 0,
+            resize_column_position: $table->resize_column_position ?? 10,
 
             /** @var array<ColumnData> */
             columns: $table->columns?->map(fn(Column $col): ColumnData => ColumnData::fromModel($col))->all() ?? [],

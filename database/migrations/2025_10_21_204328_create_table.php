@@ -20,6 +20,7 @@ return new class extends Migration
             $table->boolean('is_pivot')->default(false);
             $table->integer('x')->comment('position x in diagram');
             $table->integer('y')->comment('position y in diagram');
+            $table->integer('resize_column_position')->default(10);
             $table->string('color')->nullable();
 
             /** timestamps */

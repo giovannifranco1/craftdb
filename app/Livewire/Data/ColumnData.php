@@ -16,6 +16,8 @@ class ColumnData implements Wireable
         public bool $is_notnull,
         public int $order = 0,
         public ?int $length = null,
+        public ?bool $relationships_from_exists = null,
+        public ?bool $relationships_to_exists = null,
         public ?string $default_value = null,
         public ?string $comment = null,
     ) {}
@@ -59,6 +61,8 @@ class ColumnData implements Wireable
             'order' => $this->order,
             'length' => $this->length,
             'default_value' => $this->default_value,
+            'relationships_from_exists' => $this->relationships_from_exists,
+            'relationships_to_exists' => $this->relationships_to_exists,
             'comment' => $this->comment,
         ];
     }
@@ -77,8 +81,10 @@ class ColumnData implements Wireable
             is_notnull: $value['is_notnull'],
             order: $value['order'] ?? 0,
             length: $value['length'] ?? null,
-            default_value: $value['default_value'] ?? null,
-            comment: $value['comment'] ?? null,
+            relationships_from_exists: data_get($value, 'relationships_from_exists', null),
+            relationships_to_exists: data_get($value, 'relationships_to_exists', null),
+            default_value: data_get($value, 'default_value', null),
+            comment: data_get($value, 'comment', null),
         );
     }
 
@@ -96,6 +102,8 @@ class ColumnData implements Wireable
             is_notnull: $column->is_notnull,
             order: $column->order ?? 0,
             length: $column->length ?? null,
+            relationships_from_exists: $column?->relationships_from_exists ?? null,
+            relationships_to_exists: $column?->relationships_to_exists ?? null,
             default_value: $column->default_value ?? null,
             comment: $column->comment ?? null,
         );

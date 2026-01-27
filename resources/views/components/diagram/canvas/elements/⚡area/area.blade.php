@@ -41,7 +41,6 @@
                 <div
                     class="inline-flex items-center gap-1.5 bg-white dark:bg-zinc-900 border-2 rounded-md px-2 py-0.5 shadow-md cursor-pointer hover:shadow-lg transition-shadow min-w-[80px]"
                     :style="`border-color: {{ $areaColor }};`"
-                    title="Double click to rename, click circle to change color"
                 >
                     <div
                         @mousedown.stop="open = !open"

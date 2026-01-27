@@ -32,13 +32,14 @@ class AddColumnToTable
 
             $maxOrder = $table->columns()->max('order');
             $newOrder = Helpers::calculateNextOrder($maxOrder);
+            $newResizeColumnPosition = $table->resize_column_position + 1;
 
-            return $table->columns()->create([
+            return tap($table->columns()->create([
                 'name'  => 'new_column',
-                'type'  => 'varchar',
-                'order' => $newOrder,
-                'is_notnull' => true,
-            ]);
+                    'type'  => 'varchar',
+                    'order' => $newOrder,
+                    'is_notnull' => true,
+                ]), fn (): bool => $table->update(['resize_column_position' => $newResizeColumnPosition]));
         });
     }
 }

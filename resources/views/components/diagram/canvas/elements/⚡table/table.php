@@ -136,7 +136,7 @@ new class extends CanvasComponent {
         $column = $action->exec($this->table);
 
         $this->updateTableData();
-        $this->dispatch('table::column-added', columnId: $column->id);
+        $this->dispatch("table::column-added.{$this->tableId}", columnId: $column->id);
     }
 
     #[On('table::relationship-added.{tableId}')]
@@ -144,7 +144,8 @@ new class extends CanvasComponent {
     public function updateTableData(): void
     {
         $table = $this->table->fresh([
-            'columns' => fn ($query) => $query->orderBy('order'),
+            'columns' => fn ($query) =>
+             $query->orderBy('order')->withExists(['relationshipsFrom', 'relationshipsTo']),
         ]);
 
         if ($table === null) {
@@ -185,5 +186,13 @@ new class extends CanvasComponent {
             'x' => $x,
             'y' => $y,
        ]);
+    }
+
+    #[On('table::resize.{tableId}')]
+    public function updateResizeColumn(int $visibleColumnsCount): void
+    {
+        $this->authorizeDiagram('update');
+
+        $this->table->update(['resize_column_position' => $visibleColumnsCount]);
     }
 };

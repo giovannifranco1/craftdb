@@ -15,8 +15,6 @@ use Livewire\Attributes\On;
 new #[Defer(bundle: true)] class extends CanvasComponent {
     /** @var array<string, string>  */
     protected $listeners = [
-        'table::color-updated'                => '$refresh',
-        'table::column-added'                 => '$refresh',
         'table::removed'                      => '$refresh',
         'table-side-editor::column-saved'     => '$refresh',
         'table-side-editor::column-deleted'   => '$refresh',
@@ -47,7 +45,10 @@ new #[Defer(bundle: true)] class extends CanvasComponent {
         return $tables
             ->withExists('columns')
             ->with(['diagram'])
-            ->with(['columns' => fn(QueryBuilder $query): QueryBuilder => $query->orderBy('order')])
+            ->with(['columns' => fn(QueryBuilder $query): QueryBuilder
+                => $query->orderBy('order')
+                    ->withExists(['relationshipsFrom', 'relationshipsTo'])
+            ])
             ->with(['foreignKeys' => fn(QueryBuilder $query): QueryBuilder => $query->orderByDesc('order')])
             ->get();
     }

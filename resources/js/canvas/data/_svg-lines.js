@@ -40,6 +40,7 @@ export default (relationships) => ({
 
         window.addEventListener('table::move', (e) => {this.debouncedCompute(); this.highlightTableConnections(e.detail?.tableId)});
         window.addEventListener('table::expanded', () => this.compute());
+        window.addEventListener('relationships::refresh', () => this.compute());
         window.addEventListener('clear-highlight', () => this.clearHighlight());
         window.addEventListener('table-side-editor::open', e => this.highlightTableConnections(e.detail?.tableId));
         window.addEventListener('table-side-editor::closed', () => this.clearHighlight());
@@ -182,6 +183,16 @@ export default (relationships) => ({
             if (fromIsCollapsed || toIsCollapsed) {
                 console.log('❌ From or to table is collapsed');
                 return
+            }
+
+            // Verifica se as colunas estão hidden
+            // O atributo is-hidden é definido pelo Alpine.js quando a coluna não está visível
+            const fromColumnIsHidden = fromEl.hasAttribute('is-hidden') && fromEl.getAttribute('is-hidden') !== 'false';
+            const toColumnIsHidden = toEl.hasAttribute('is-hidden') && toEl.getAttribute('is-hidden') !== 'false';
+
+            if (fromColumnIsHidden || toColumnIsHidden) {
+                console.log('❌ From or to column is hidden');
+                return;
             }
 
             const { aSide, bSide } = this.updateConnectionAnchorVisibility(fromEl, toEl, fromId, toId);
