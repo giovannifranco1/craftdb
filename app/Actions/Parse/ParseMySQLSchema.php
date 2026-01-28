@@ -54,10 +54,13 @@ class ParseMySQLSchema extends BaseSQLParse
             $foreignKeys = [];
 
             // Get available colors from diagram style
-            $colors = $this->diagram->getColors();
+            $colors = $this->diagram->colors;
             if (empty($colors)) {
                 $colors = [Table::COLOR_DEFAULT];
             }
+
+            // Convert to indexed array to work with array_rand
+            $colors = array_values($colors);
 
             $tableIndex = 0;
 

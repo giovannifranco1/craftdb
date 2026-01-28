@@ -7,6 +7,7 @@
     :style="`
         transform: translate3d(${x}px, ${y}px, 0);
         width: ${getSnappedWidth()}px;
+        transition: transform 0.03s ease-in-out;
         height: ${height}px;
         ${zIndex ? `z-index: ${zIndex};` : ''}
     `"

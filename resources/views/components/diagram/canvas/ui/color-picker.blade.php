@@ -18,7 +18,7 @@
     if ($position === null) {
         $position = match($type) {
             'table' => 'absolute -top-15 -left-15 mt-2 min-w-30 w-43',
-            'area', 'note' => 'absolute left-0 top-full mt-2',
+            'area', 'note' => 'absolute -top-15 -left-15 mt-2 min-w-30 w-43',
             default => 'absolute left-0 top-full mt-2',
         };
     }

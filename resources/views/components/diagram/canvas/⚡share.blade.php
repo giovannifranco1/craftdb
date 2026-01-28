@@ -42,7 +42,7 @@ new class extends BaseComponent {
 
     public function copyToClipboard(): void
     {
-        $this->alert(message: __('Link copied to clipboard!'), type: 'success');
+        $this->alert(message: __('Link copied to clipboard!'), topCenter: true);
     }
 }; ?>
 
@@ -72,7 +72,7 @@ new class extends BaseComponent {
                             readonly
                             x-model="publicUrl"
                             @click="$el.select()"
-                            class="flex-1 text-[11px] px-2.5 py-1.5 bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200/50 dark:border-zinc-700/50 rounded-md text-zinc-700 dark:text-zinc-300 font-mono select-all"
+                            class="flex-1 text-[9px] font-[Space_Mono] px-2.5 py-1.5 bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200/50 dark:border-zinc-700/50 rounded-md text-zinc-700 dark:text-zinc-300 select-all"
                         >
                         <flux:button
                             size="sm"

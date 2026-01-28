@@ -16,6 +16,7 @@ new #[Defer(bundle: true)] class extends CanvasComponent {
     /** @var array<string, string>  */
     protected $listeners = [
         'table::removed'                      => '$refresh',
+        'table::color-updated'                => '$refresh',
         'table-side-editor::column-saved'     => '$refresh',
         'table-side-editor::column-deleted'   => '$refresh',
         'table-side-editor::column-updated'   => '$refresh',

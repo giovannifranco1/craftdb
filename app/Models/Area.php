@@ -21,6 +21,7 @@ class Area extends Model
         'width',
         'height',
         'color',
+        'is_solid',
     ];
 
     protected $casts = [
@@ -28,6 +29,7 @@ class Area extends Model
         'y' => 'integer',
         'width' => 'integer',
         'height' => 'integer',
+        'is_solid' => 'boolean',
     ];
 
     /**

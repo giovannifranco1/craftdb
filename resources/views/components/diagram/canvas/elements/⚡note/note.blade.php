@@ -5,7 +5,7 @@
     note-id="{{ $note->id }}"
     note-box
     @php
-        $noteColor ='#fef08a';
+        $noteColor ='#fcf7ac';
     @endphp
     :style="`transform: translate3d(${x}px, ${y}px, 0);`"
     class="absolute select-none dark:shadow-zinc-900/50"
@@ -20,7 +20,7 @@
     ></div>
 
     <!-- Note Top -->
-    <div wire:ignore.self class="note-top shadow-md bg-[#fef08a] group relative rounded-tl-xl">
+    <div wire:ignore.self class="note-top border border-b-0 border-bg-background-dark bg-[#fcf7ac] group relative rounded-tl-xl">
         <!-- Botão de remover (discreto) -->
         <button
             type="button"
@@ -34,7 +34,7 @@
     </div>
 
     <!-- Note Content -->
-    <div wire:ignore.self class="relative px-3 py-1 top-[24px] sha  dow-sm bg-[#fef08a] flex flex-col rounded-b-xl" :style="`width: ${width}px; height: ${height}px; min-height: 75px;`">
+    <div wire:ignore.self class="relative px-3 py-1 top-[24px] border border-t-0 border-bg-background-dark bg-[#fcf7ac] flex flex-col rounded-b-xl" :style="`width: ${width}px; height: ${height}px; min-height: 75px;`">
         <textarea
             class="flex-1 w-full font-[Kalam] font-light text-[15px] text-black bg-transparent border-none outline-none shadow-none resize-none placeholder-gray-400 dark:placeholder-zinc-500 leading-relaxed box-border"
             wire:model.live.debounce.350ms="content"

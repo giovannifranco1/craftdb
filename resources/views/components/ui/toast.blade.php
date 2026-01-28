@@ -6,6 +6,7 @@
             messageToast: null,
             descriptionToast: null,
             typeToast: 'default',
+            topCenter: false,
             progress: 100,
             progressInterval: null,
             timeoutId: null,
@@ -54,17 +55,24 @@
             messageToast = $event.detail.message;
             descriptionToast = $event.detail.description;
             typeToast = $event.detail.type || 'success';
+
+            if ($event.detail.topCenter) {
+                $el.parentElement.classList.add('-translate-x-1/2', 'left-1/2');
+            }
+
+            topCenter = $event.detail.topCenter || false;
             startProgress();
         }"
         x-init="() => {
             @if(session('message'))
                 messageToast = @js(session('message'));
                 typeToast = @js(session('type', 'success'));
+                topCenter = @js(session('topCenter', false));
                 startProgress();
             @endif
         }"
         style="display: none"
-        class="relative"
+        class="relative z-50"
     >
         <!-- Toast de Success -->
         <div x-show="typeToast === 'success'">

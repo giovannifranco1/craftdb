@@ -53,6 +53,9 @@ class ParseLaravelMigration extends BaseSQLParse
                 $colors = [Table::COLOR_DEFAULT];
             }
 
+            // Convert to indexed array to work with array_rand
+            $colors = array_values($colors);
+
             // First pass: Create all tables and columns from all files
             foreach ($files as $file) {
                 $content = $this->getFileContent($file);

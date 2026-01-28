@@ -22,6 +22,7 @@ return new class extends Migration
             $table->integer('width')->default(400)->comment('width of the area');
             $table->integer('height')->default(300)->comment('height of the area');
             $table->string('color')->nullable();
+            $table->boolean('is_solid')->default(false);
             $table->timestamps();
         });
     }

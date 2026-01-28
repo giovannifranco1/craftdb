@@ -8,7 +8,7 @@ export default (relationships) => ({
     initialTransform: null,
     highlightedTableId: null,
     highlightedColumnIds: [],
-    colorLines: '#73ABEF',
+    colorLines: '#495064', // dark: #73ABEF
     // Performance optimizations
     svgElementCache: new Map(), // Cache de elementos SVG por connection ID
     domElementCache: new Map(), // Cache de elementos DOM das colunas/tabelas
@@ -24,6 +24,12 @@ export default (relationships) => ({
         this.linesLayer = this.$el.querySelector('#lines-layer');
         this.linesLayerCache = this.linesLayer; // Cache permanente
         this.linesLayer.setAttribute('transform', Alpine.raw(this.canvas).getTransformString());
+
+        if (this.$flux.dark) {
+            this.colorLines = '#73ABEF';
+        } else {
+            this.colorLines = '#495064';
+        }
 
         window.addEventListener('canvas-zoom', () => {
             // Aplica o mesmo transform do canvas ao <g>

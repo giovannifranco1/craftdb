@@ -71,6 +71,14 @@ new class extends CanvasComponent {
         $this->dispatch('area::color-updated');
     }
 
+    public function toggleSolid(): void
+    {
+        $this->area->update(['is_solid' => !$this->area->is_solid]);
+        $this->area->refresh();
+
+        $this->dispatch('area::color-updated');
+    }
+
     public function remove(): void
     {
         $this->area->delete();

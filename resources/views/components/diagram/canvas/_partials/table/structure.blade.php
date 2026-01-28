@@ -15,9 +15,8 @@
         class="flex-auto bg-white dark:bg-background-dark relative overflow-hidden">
         <table class="w-full table-fixed" wire:ignore.self>
             <colgroup>
-                <col :style="`width: ${colWidths[0]}px`">
-                <col :style="`width: ${colWidths[1]}px`">
-                <col style="width: 10%">
+                <col :style="`width: ${colWidths[0]}%`">
+                <col :style="`width: ${colWidths[1]}%`">
             </colgroup>
 
             <tbody class="divide-y divide-gray-100 dark:divide-zinc-700">
@@ -35,7 +34,7 @@
                         x-bind:is-hidden="!expanded || (hiddenColumnsCount > 0 && {{ $index }} >= visibleColumnsCount)"
                     >
                         <td @dblclick="isEventRenameColumn = true" class="px-3">
-                            <flux:tooltip gap="28" position="left" :content="__('Double click to rename')">
+                            <flux:tooltip gap="100" position="right">
                                 <div class="flex items-center gap-2">
                                     {!! Helpers::getIconDiamondByTypeColumn($column) !!}
 
@@ -79,28 +78,7 @@
                                         {{ $column->name }}
                                     </span>
                                 </div>
-                            </flux:tooltip>
-                        </td>
 
-                        <td>
-                            <span class="inline-flex items-center px-2 rounded text-[11px] uppercase font-medium bg-gray-100 dark:bg-zinc-700 text-zinc-800 dark:text-zinc-200">
-                                @if(($column->length ?? 0) > 0)
-                                    @php
-                                        $lengthStr = (string)$column->length;
-                                        $displayLength = strlen($lengthStr) > 3 ? substr($lengthStr, 0, 3) : $lengthStr;
-                                    @endphp
-                                    {{ $column->type }}
-                                @else
-                                    {{ $column->type }}
-                                @endif
-                            </span>
-                        </td>
-
-                        <td>
-                            <flux:tooltip toggleable gap="28" position="right">
-                                <button>
-                                    <flux:icon.information-circle class="size-3 text-primary-700 dark:text-primary-300" />
-                                </button>
                                 <flux:tooltip.content>
                                     <div class="space-y-2 min-w-[200px]">
                                         <!-- Nome da Coluna -->
@@ -165,7 +143,22 @@
                                         @endif
                                     </div>
                                 </flux:tooltip.content>
+
                             </flux:tooltip>
+                        </td>
+
+                        <td>
+                            <span class="inline-flex items-center px-2 rounded text-[11px] uppercase font-medium bg-gray-100 dark:bg-zinc-700 text-zinc-800 dark:text-zinc-200">
+                                @if(($column->length ?? 0) > 0)
+                                    @php
+                                        $lengthStr = (string)$column->length;
+                                        $displayLength = strlen($lengthStr) > 3 ? substr($lengthStr, 0, 3) : $lengthStr;
+                                    @endphp
+                                    {{ $column->type }}
+                                @else
+                                    {{ $column->type }}
+                                @endif
+                            </span>
                         </td>
                     </tr>
                 @endforeach

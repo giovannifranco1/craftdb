@@ -6,7 +6,29 @@
     area-box
     @php
         $areaColor = $area->color ?? '#94a3b8';
-        $bgColor = \App\Support\Helpers::hexToRgba($areaColor, 0.1);
+
+        // Se for solid, busca a versão solid da cor atual
+        if ($area->is_solid ?? false) {
+            $colorful = config('color.colorful', []);
+            $colorfulSolid = config('color.colorful-solid', []);
+
+            // Encontra a key da cor atual na paleta colorful
+            $colorKey = null;
+            foreach ($colorful as $key => $hex) {
+                if (strtolower($hex) === strtolower($areaColor)) {
+                    $colorKey = $key;
+                    break;
+                }
+            }
+
+            // Se encontrou a key, usa a versão solid dela
+            if ($colorKey && isset($colorfulSolid[$colorKey])) {
+                $areaColor = $colorfulSolid[$colorKey];
+            }
+        }
+
+        $opacity = $area->is_solid ?? false ? 0.8 : 0.3;
+        $bgColor = \App\Support\Helpers::hexToRgba($areaColor, $opacity);
     @endphp
     :style="`transform: translate3d(${x}px, ${y}px, 0); width: ${width}px; height: ${height}px; max-width: ${width}px; max-height: ${height}px; ${zIndex ? `z-index: ${zIndex};` : ''} border-color: {{ $areaColor }}; background-color: {{ $bgColor }};`"
     class="absolute select-none rounded-xl border-2 border-dashed">
@@ -28,7 +50,6 @@
             <div
                 class="absolute -top-2.5 left-3 z-20"
                 x-data="{
-                    open: false,
                     loadingColor: false,
                     isEventRename: false,
                     name: $wire.entangle('name'),
@@ -39,16 +60,26 @@
             >
 
                 <div
-                    class="inline-flex items-center gap-1.5 bg-white dark:bg-zinc-900 border-2 rounded-md px-2 py-0.5 shadow-md cursor-pointer hover:shadow-lg transition-shadow min-w-[80px]"
+                    class="inline-flex items-center gap-1.5 bg-gray-100 dark:bg-zinc-900 border-2 rounded-md px-2 py-0.5 shadow-md cursor-pointer hover:shadow-lg transition-shadow min-w-[80px]"
                     :style="`border-color: {{ $areaColor }};`"
                 >
-                    <div
-                        @mousedown.stop="open = !open"
-                        @keydown.escape.stop="open = false"
-                        class="size-2 rounded-full flex-shrink-0"
-                        :style="`background-color: {{ $areaColor }};`"
+                    <button
+                        x-data
+                        type="button"
+                        class="inline-flex items-center h-3 w-1.5 justify-center"
+                        x-on:mousedown.stop="
+                            const areaBox = $el.closest('[area-box]');
+                            $dispatch('dropdown-menu::toggle', { areaBox: areaBox || $el });
+                            $dispatch('dropdown-menu::opened', { el: areaBox || $el });
+                        "
+                        x-on:keydown.escape="
+                            const areaBox = $el.closest('[area-box]');
+                            $dispatch('dropdown-menu::toggle', { areaBox: areaBox || $el });
+                        "
                         title="Change area color"
-                    ></div>
+                    >
+                        <flux:icon.ellipsis-vertical class="size-3"/>
+                    </button>
 
                     <div class="flex items-center gap-1 min-w-0 flex-1">
                         <div
@@ -87,69 +118,13 @@
                         </flux:tooltip>
                     </div>
 
-                    <button
-                        @mousedown.stop="$wire.remove()"
-                        wire:loading.attr="disabled"
-                        class="flex-shrink-0 size-3.5 flex items-center justify-center rounded hover:bg-red-100 dark:hover:bg-red-900/20 transition-colors group"
-                        title="Delete area"
-                    >
-                        <flux:icon.trash class="size-2.5 text-red-500"/>
-                    </button>
                 </div>
 
-                <!-- Color Picker Menu -->
-                <x-diagram.canvas.ui.color-picker :item="$area" type="area" position="absolute -left-16 -top-12" />
+                <!-- Dropdown Menu -->
+                <x-diagram.canvas.ui.area.dropdown-menu :area="$area" />
             </div>
         </div>
 
-        <!-- Top -->
-        <div
-            class="absolute top-0 left-0 right-0 h-2 cursor-ns-resize z-10 resize-handle"
-            data-resize="top"
-            @mousedown.stop="startResize('top', $event)"
-        ></div>
-        <!-- Right -->
-        <div
-            class="absolute top-0 right-0 bottom-0 w-2 cursor-ew-resize z-10 resize-handle"
-            data-resize="right"
-            @mousedown.stop="startResize('right', $event)"
-        ></div>
-        <!-- Bottom -->
-        <div
-            class="absolute bottom-0 left-0 right-0 h-2 cursor-ns-resize z-10 resize-handle"
-            data-resize="bottom"
-            @mousedown.stop="startResize('bottom', $event)"
-        ></div>
-        <!-- Left -->
-        <div
-            class="absolute top-0 left-0 bottom-0 w-2 cursor-ew-resize z-10 resize-handle"
-            data-resize="left"
-            @mousedown.stop="startResize('left', $event)"
-        ></div>
-        <!-- Corner Handles -->
-        <!-- Top-Left -->
-        <div
-            class="absolute top-0 left-0 w-3 h-3 cursor-nwse-resize z-10 resize-handle"
-            data-resize="top-left"
-            @mousedown.stop="startResize('top-left', $event)"
-        ></div>
-        <!-- Top-Right -->
-        <div
-            class="absolute top-0 right-0 w-3 h-3 cursor-nesw-resize z-10 resize-handle"
-            data-resize="top-right"
-            @mousedown.stop="startResize('top-right', $event)"
-        ></div>
-        <!-- Bottom-Right -->
-        <div
-            class="absolute bottom-0 right-0 w-3 h-3 cursor-nwse-resize z-10 resize-handle"
-            data-resize="bottom-right"
-            @mousedown.stop="startResize('bottom-right', $event)"
-        ></div>
-        <!-- Bottom-Left -->
-        <div
-            class="absolute bottom-0 left-0 w-3 h-3 cursor-nesw-resize z-10 resize-handle"
-            data-resize="bottom-left"
-            @mousedown.stop="startResize('bottom-left', $event)"
-        ></div>
+        @include('components.diagram.canvas._partials.area.resize-handle')
     </div>
 </div>

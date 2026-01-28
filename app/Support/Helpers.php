@@ -68,12 +68,18 @@ class Helpers
             default => [],
         };
 
+        // Convert to indexed array to work with array_rand
+        $colors = array_values($colors);
+        
         return $colors[array_rand($colors)];
     }
 
     public static function isColorValid(string $color): bool
     {
-        return in_array($color, array_merge(config('color.colorful'), config('color.neutral')));
+        $colorful = array_values(config('color.colorful', []));
+        $neutral = array_values(config('color.neutral', []));
+        
+        return in_array($color, array_merge($colorful, $neutral));
     }
 
     /**

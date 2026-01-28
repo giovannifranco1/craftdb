@@ -62,7 +62,7 @@
                     <div class="ms-auto">
                         <div class="flex items-center ml-2">
                             @php
-                                $colors = config('color.colorful');
+                                $colors = array_values(config('color.colorful'));
                                 $viewers = $diagram->viewers()->limit(4)->get();
                                 $totalViewers = $diagram->viewers()->count();
                                 $remainingViewers = max(0, $totalViewers - 4);
@@ -99,17 +99,18 @@
                                 <flux:menu.separator />
 
                                 <flux:menu.item icon="users" href="{{ route('team.members.edit') }}" wire:navigate>
-                                    {{ __('Convidar para o time') }}
+                                    {{ __('Invite to team') }}
                                 </flux:menu.item>
 
                                 <flux:menu.separator />
 
-                                <flux:menu.item disabled icon="link">
-                                    {{ __('Copiar link interno') }}
-                                </flux:menu.item>
-``
-                                <flux:menu.item disabled icon="envelope">
-                                    {{ __('Compartilhar por email') }}
+                                <flux:menu.item icon="link" x-data="{
+                                    copyInternalLink() {
+                                        navigator.clipboard.writeText('{{ route('diagram.show', [$diagram->team_id, $diagram->slug]) }}');
+                                        Livewire.dispatch('alert', {message: '{{ __('Link copied to clipboard!') }}', type: 'default', topCenter: true});
+                                    }
+                                }" x-on:click="copyInternalLink()" wire:ignore.self>
+                                    {{ __('Copy internal link') }}
                                 </flux:menu.item>
 
                                 <flux:menu.separator />
@@ -122,7 +123,7 @@
                                         </code>
                                     </div>
                                     <p class="text-[10px] text-zinc-500 dark:text-zinc-400 mt-1.5 text-center">
-                                        {{ __('ID único do diagrama') }}
+                                        {{ __('Unique diagram ID') }}
                                     </p>
                                 </div>
                             </flux:menu>
