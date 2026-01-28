@@ -1,4 +1,5 @@
 <x-layouts.auth>
+
     <div class="flex flex-col gap-6" x-init="() => $flux.dark = false">
         <!-- Header Minimalista -->
         <div class="flex flex-col gap-1 text-center">

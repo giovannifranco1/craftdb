@@ -193,7 +193,7 @@
                     {{-- Arquivo Menu --}}
                     <flux:dropdown>
                         <flux:button icon="document-text" variant="ghost" size="xs">
-                            {{ __('Arquivo') }}
+                            {{ __('File') }}
                         </flux:button>
 
                         <flux:menu class="min-w-52">
@@ -228,35 +228,35 @@
                     {{-- Exibir Menu --}}
                     <flux:dropdown>
                         <flux:button icon="eye" variant="ghost" size="xs">
-                            {{ __('Exibir') }}
+                            {{ __('Show') }}
                         </flux:button>
                         <flux:menu class="min-w-52">
                             <flux:menu.item x-data x-on:click="Alpine.raw(canvas).zoom(1.155)" icon="plus">
-                                {{ __('Aumentar zoom') }}
+                                {{ __('Increase zoom') }}
                             </flux:menu.item>
 
                             <flux:menu.item x-data x-on:click="Alpine.raw(canvas).zoom(0.85)" icon="minus">
-                                {{ __('Diminuir zoom') }}
+                                {{ __('Decrease zoom') }}
                             </flux:menu.item>
 
                             <flux:menu.item x-data x-on:click="Alpine.raw(canvas).zoom(1 / Alpine.raw(canvas).getScale())" icon="magnifying-glass">
-                                {{ __('Resetar zoom') }}
+                                {{ __('Reset zoom') }}
                             </flux:menu.item>
 
                             <flux:menu.separator />
 
                             <flux:menu.item x-data x-on:click="Alpine.raw(canvas).setIsMarkedForDrag(true)" icon="bars-3-bottom-left">
-                                {{ __('Mostrar régua') }}
+                                {{ __('Show ruler') }}
                             </flux:menu.item>
 
                             <flux:menu.item x-data x-on:click="Alpine.raw(canvas).setIsMarkedForDrag(false)" icon="x-mark">
-                                {{ __('Remover régua') }}
+                                {{ __('Remove ruler') }}
                             </flux:menu.item>
 
                             <flux:menu.separator />
 
-                            <flux:menu.item x-data x-on:click="$flux.dark = ! $flux.dark" icon="moon">
-                                {{ __('Tema escuro') }}
+                            <flux:menu.item x-data x-on:click="$flux.dark = ! $flux.dark; window.location.reload()" icon="moon">
+                                <span x-text="$flux.dark ? '{{ __('Light theme') }}' : '{{ __('Dark theme') }}'"></span>
                             </flux:menu.item>
                         </flux:menu>
                     </flux:dropdown>
@@ -298,7 +298,7 @@
         x-show="visible"
         x-transition
         class="pointer-events-auto absolute -bottom-8 left-1/2 -translate-x-1/2 rounded-b-lg border border-t-0 border-zinc-200/70 bg-white/95 px-3 py-1 text-zinc-600 shadow-sm backdrop-blur-sm transition-all duration-300 hover:bg-white hover:text-zinc-900 dark:border-zinc-800/70 dark:bg-[#0F0F0F]/95 dark:text-zinc-400 dark:hover:bg-[#0F0F0F] dark:hover:text-zinc-100"
-        title="{{ __('Esconder barra superior') }}"
+        title="{{ __('Hide topbar') }}"
     >
         <flux:icon.chevron-up class="size-4" />
     </button>
@@ -316,7 +316,7 @@
     <button
         @click="visible = !visible; localStorage.setItem('canvas-topbar-visible', visible); $dispatch('topbar-toggled', { visible: visible })"
         class="pointer-events-auto rounded-b-lg border border-t-0 border-zinc-200/70 bg-white/95 px-3 py-1.5 text-zinc-600 shadow-md backdrop-blur-sm transition-all duration-300 hover:bg-white hover:text-zinc-900 hover:shadow-lg dark:border-zinc-800/70 dark:bg-[#0F0F0F]/95 dark:text-zinc-400 dark:hover:bg-[#0F0F0F] dark:hover:text-zinc-100"
-        title="{{ __('Mostrar barra superior') }}"
+        title="{{ __('Show topbar') }}"
     >
         <flux:icon.chevron-down class="size-4" />
     </button>

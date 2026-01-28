@@ -86,33 +86,33 @@
         <button
             class="p-2 rounded-md transition-all cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-900/30 hover:text-blue-600 dark:hover:text-blue-400 active:scale-95 group relative text-zinc-700 dark:text-zinc-300"
             type="button"
-            title="Adicionar Tabela (A)"
+            :title="__('Adicionar Tabela') . ' (A)'"
             @click="$dispatch('table::adding')">
             <flux:icon.add-table class="size-5"/>
             <span class="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-lg">
-                Adicionar Tabela
+                {{ __('Adicionar Tabela') }}
             </span>
         </button>
 
         <button
             class="p-2 rounded-md transition-all cursor-pointer hover:bg-orange-50 dark:hover:bg-orange-900/30 hover:text-orange-600 dark:hover:text-orange-400 active:scale-95 group relative text-zinc-700 dark:text-zinc-300"
             type="button"
-            title="Adicionar Área"
+            :title="__('Adicionar Área')"
             @click="$dispatch('area::adding')">
             <flux:icon.add-area class="size-5"/>
             <span class="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-lg">
-                Adicionar Área
+                {{ __('Adicionar Área') }}
             </span>
         </button>
 
         <button
             class="p-2 rounded-md transition-all cursor-pointer hover:bg-yellow-50 dark:hover:bg-yellow-900/30 hover:text-yellow-600 dark:hover:text-yellow-400 active:scale-95 group relative text-zinc-700 dark:text-zinc-300"
             type="button"
-            title="Adicionar Nota"
+            :title="__('Adicionar Nota')"
             @click="$dispatch('note::adding')">
             <flux:icon.add-note class="size-5"/>
             <span class="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-lg">
-                Adicionar Nota
+                {{ __('Adicionar Nota') }}
             </span>
         </button>
     </div>
@@ -123,40 +123,40 @@
             class="p-2 rounded-md transition-all cursor-pointer hover:bg-gray-100 dark:hover:bg-zinc-800 active:scale-95 group relative text-zinc-700 dark:text-zinc-300"
             type="button"
             id="zoom-in"
-            title="Zoom In (Cmd/Ctrl + Scroll)"
+            :title="__('Zoom In') . ' (Cmd/Ctrl + Scroll)'"
             @click="Alpine.raw(canvas).zoom(1.155)">
             <flux:icon.magnifying-glass-plus class="size-5"/>
             <span class="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-lg">
-                Zoom In
+                {{ __('Zoom In') }}
             </span>
         </button>
 
         <div class="py-1 bg-gray-50 dark:bg-zinc-800 rounded text-xs font-medium text-gray-700 dark:text-zinc-300 min-w-[2.5rem] text-center"
              x-text="`${zoomPercent}%`"
-             title="Nível de Zoom">
+             :title="__('Nível de Zoom')">
         </div>
 
         <button
             class="p-2 rounded-md transition-all cursor-pointer hover:bg-gray-100 dark:hover:bg-zinc-800 active:scale-95 group relative text-zinc-700 dark:text-zinc-300"
             type="button"
             id="zoom-out"
-            title="Zoom Out (Cmd/Ctrl + Scroll)"
+            :title="__('Zoom Out') . ' (Cmd/Ctrl + Scroll)'"
             @click="Alpine.raw(canvas).zoom(0.85)">
             <flux:icon.magnifying-glass-minus class="size-5"/>
             <span class="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-lg">
-                Zoom Out
+                {{ __('Zoom Out') }}
             </span>
         </button>
 
         <button
             class="p-2 rounded-md transition-all cursor-pointer hover:bg-gray-100 dark:hover:bg-zinc-800 active:scale-95 group relative text-zinc-700 dark:text-zinc-300"
             type="button"
-            :title="isFullscreen ? 'Sair do Fullscreen (F11)' : 'Entrar em Fullscreen (F11)'"
+            :title="isFullscreen ? '{{ __('Sair do Fullscreen') }} (F11)' : '{{ __('Entrar em Fullscreen') }} (F11)'"
             @click="toggleFullscreen()">
             <flux:icon.arrows-pointing-out x-show="!isFullscreen" class="size-5"/>
             <flux:icon.arrows-pointing-in x-show="isFullscreen" class="size-5"/>
             <span class="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-lg"
-                  x-text="isFullscreen ? 'Sair do Fullscreen' : 'Entrar em Fullscreen'">
+                  x-text="isFullscreen ? '{{ __('Sair do Fullscreen') }}' : '{{ __('Entrar em Fullscreen') }}'">
             </span>
         </button>
     </div>
@@ -167,11 +167,11 @@
             class="p-2 rounded-md transition-all cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-900/30 hover:text-blue-600 dark:hover:text-blue-400 active:scale-95 group relative text-zinc-700 dark:text-zinc-300"
             :class="(grabModeEnabled || isSpacePressed) ? 'bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400' : 'hover:bg-gray-100 dark:hover:bg-zinc-800'"
             type="button"
-            title="Modo Grab (Pan sem Space)"
+            :title="__('Modo Grab') . ' (Pan sem Space)'"
             @click="toggleGrabMode()">
             <flux:icon.hand-raised class="size-5"/>
             <span class="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-lg">
-                Modo Grab
+                {{ __('Modo Grab') }}
             </span>
         </button>
 
@@ -179,11 +179,11 @@
             class="p-2 rounded-md transition-all cursor-pointer hover:bg-gray-100 dark:hover:bg-zinc-800 active:scale-95 group relative text-zinc-700 dark:text-zinc-300"
             :class="!grabModeEnabled && !isSpacePressed ? 'bg-gray-100 dark:bg-zinc-800' : ''"
             type="button"
-            title="Cursor Padrão"
+            :title="__('Cursor Padrão')"
             @click="setCursorMode()">
             <x-lucide-mouse-pointer-2 class="size-5"/>
             <span class="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-lg">
-                Cursor Padrão
+                {{ __('Cursor Padrão') }}
             </span>
         </button>
     </div>
@@ -194,10 +194,10 @@
             <button
                 class="p-2 rounded-md transition-all cursor-pointer hover:bg-green-50 dark:hover:bg-green-900/30 hover:text-green-600 dark:hover:text-green-400 active:scale-95 group relative text-zinc-700 dark:text-zinc-300"
                 type="button"
-                title="Grafo de Dependências">
+                :title="__('Grafo de Dependências')">
                 <flux:icon.graph class="size-5"/>
                 <span class="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-lg">
-                    Grafo de Dependências
+                    {{ __('Grafo de Dependências') }}
                 </span>
             </button>
         </flux:modal.trigger>
@@ -206,10 +206,10 @@
             <button
                 class="p-2 rounded-md transition-all cursor-pointer hover:bg-purple-50 dark:hover:bg-purple-900/30 hover:text-purple-600 dark:hover:text-purple-400 active:scale-95 group relative text-zinc-700 dark:text-zinc-300"
                 type="button"
-                title="Buscar (Cmd/Ctrl + K)">
+                :title="__('Buscar (⌘K)')">
                 <flux:icon.magnifying-glass class="size-5"/>
                 <span class="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-lg">
-                    Buscar (⌘K)
+                    {{ __('Buscar (⌘K)') }}
                 </span>
             </button>
         </flux:modal.trigger>

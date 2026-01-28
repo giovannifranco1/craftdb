@@ -54,7 +54,7 @@
         @alert.window="($event) => {
             messageToast = $event.detail.message;
             descriptionToast = $event.detail.description;
-            typeToast = $event.detail.type || 'success';
+            typeToast = $event.detail.type || 'default';
 
             if ($event.detail.topCenter) {
                 $el.parentElement.classList.add('-translate-x-1/2', 'left-1/2');
@@ -66,8 +66,13 @@
         x-init="() => {
             @if(session('message'))
                 messageToast = @js(session('message'));
-                typeToast = @js(session('type', 'success'));
+                typeToast = @js(session('type', 'default'));
                 topCenter = @js(session('topCenter', false));
+
+                if (topCenter) {
+                    $el.parentElement.classList.add('-translate-x-1/2', 'left-1/2');
+                }
+
                 startProgress();
             @endif
         }"

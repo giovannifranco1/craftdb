@@ -160,9 +160,6 @@ class AppServiceProvider extends ServiceProvider
         Route::bind('diagram', function (string $value) {
             $cacheKey = "diagram:slug:{$value}";
 
-            // Cache for 5 minutes (300 seconds)
-            // Use 'array' driver in development for per-request caching
-            // In production, this will use your configured cache driver (redis, memcached, etc)
             $cacheStore = $this->app->environment('local') ? 'array' : config('cache.default');
             $cacheDuration = $this->app->environment('local') ? 60 : 300;
 

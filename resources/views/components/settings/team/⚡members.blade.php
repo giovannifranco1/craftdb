@@ -143,7 +143,7 @@ new class extends BaseComponent {
                                 @class([
                                     'flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-colors',
                                     'border-blue-500 bg-blue-50 dark:bg-blue-950/20' => $roleChoosen == $editorRole,
-                                    'bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-700' => $roleChoosen != $editorRole,
+                                    'bg-white dark:bg-background-dark border-zinc-200 dark:border-zinc-700' => $roleChoosen != $editorRole,
                                 ])
                             >
                             <input
@@ -165,7 +165,7 @@ new class extends BaseComponent {
                                 @class([
                                     'flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-colors',
                                     'border-blue-500 bg-blue-50 dark:bg-blue-950/20' => $roleChoosen == $viewerRole,
-                                    'bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-700' => $roleChoosen != $viewerRole,
+                                    'bg-white dark:bg-background-dark border-zinc-200 dark:border-zinc-700' => $roleChoosen != $viewerRole,
                                 ])
                             >
                             <input

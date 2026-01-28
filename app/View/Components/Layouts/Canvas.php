@@ -27,6 +27,9 @@ class Canvas extends Component
         $this->isInitialLoad = (bool) $diagram->is_initial_load;
 
         if ($this->isInitialLoad) {
+            session()->flash('message', __("New diagram created. :emoji Let's build something great!", ['emoji' => '🥳']));
+            session()->flash('topCenter', true);
+
             $diagram->is_initial_load = 0;
             $diagram->save();
         }

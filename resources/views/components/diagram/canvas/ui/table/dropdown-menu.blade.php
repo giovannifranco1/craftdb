@@ -52,12 +52,12 @@
 
         <flux:button @mousedown.stop="$wire.addColumn()" variant="primary" class="font-[Poppins] text-xs">
             <flux:icon.plus-circle variant="solid" class="size-3.5"/>
-            Add Column
+            {{ __('Add Column') }}
         </flux:button>
 
         <flux:button @mousedown.stop="renameTable()" variant="primary" class="font-[Poppins] text-xs">
             <flux:icon.pencil variant="solid" class="size-3"/>
-            Renomear
+            {{ __('Rename')}}
         </flux:button>
 
         <flux:button @mousedown.stop="addRelationshipOneToOne()"

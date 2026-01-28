@@ -24,6 +24,9 @@ class SetCurrentTeamOnLogin
         $user = $event->user;
         $team = $user->ownedTeams()->first();
 
+        session()->put('locale', $user->locale);
+        app()->setLocale($user->locale);
+
         if ($team) {
             session(['current_team' => $team]);
         }
