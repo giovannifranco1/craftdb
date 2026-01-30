@@ -14,7 +14,12 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
-    @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/css/landing-page.css'])
+    @if(app()->environment('production'))
+        <meta name="adopt-website-id" content="6ca2b00d-8462-4d57-8772-4c4e4821c98c" />
+        <script src="//tag.goadopt.io/injector.js?website_code=6ca2b00d-8462-4d57-8772-4c4e4821c98c"
+        class="adopt-injector"></script>
+    @endif
+
     @fluxAppearance
 </head>
 <body class="min-h-screen bg-[#f7fcff] font-['Outfit',sans-serif] antialiased" x-data="{ mobileMenuOpen: false }">
