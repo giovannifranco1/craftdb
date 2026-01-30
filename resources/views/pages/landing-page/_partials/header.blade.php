@@ -7,11 +7,16 @@
     <div class="container mx-auto px-6">
         <div class="flex items-center justify-between h-16">
             <!-- Logo -->
-            <a href="{{ route('home') }}" class="flex items-center gap-2.5">
-                <div class="w-20 h-20 flex items-center justify-center">
-                    <x-app-logo-icon class="size-20 fill-current" />
+            <a href="{{ route('home') }}" class="flex items-center gap-1">
+                <div class="-left-[1.25rem] flex size-20 shrink-0 items-center justify-start relative">
+                    <x-app-logo-icon class="size-full object-contain" />
                 </div>
-                <span class="text-3xl font-semibold font-[Outfit] text-gray-900">CraftDB</span>
+
+                <div class="-ml-6 flex flex-col leading-none">
+                    <span class="text-3xl font-semibold font-[Outfit] text-gray-900 mb-1">CraftDB</span>
+                    <span class="text-sm font-medium -mt-2.5 ml-0.5 font-[Outfit] text-left self-start">Beta</span>
+                </div>
+
             </a>
 
             <!-- Desktop Navigation + CTA -->
