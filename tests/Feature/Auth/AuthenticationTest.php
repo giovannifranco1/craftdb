@@ -19,6 +19,7 @@ test('users can authenticate using the login screen', function () {
     $response = $this->post(route('login.store'), [
         'email' => $user->email,
         'password' => 'password',
+        'accept_terms' => '1',
     ]);
 
     $response
@@ -26,6 +27,20 @@ test('users can authenticate using the login screen', function () {
         ->assertRedirect(route('dashboard', absolute: false));
 
     $this->assertAuthenticated();
+});
+
+test('users can not login without accepting terms and privacy policy', function () {
+    /** @var TestCase $this */
+
+    $user = User::factory()->withoutTwoFactor()->create();
+
+    $response = $this->post(route('login.store'), [
+        'email' => $user->email,
+        'password' => 'password',
+    ]);
+
+    $response->assertSessionHasErrors('accept_terms');
+    $this->assertGuest();
 });
 
 test('users can not authenticate with invalid password', function () {
@@ -36,6 +51,7 @@ test('users can not authenticate with invalid password', function () {
     $response = $this->post(route('login.store'), [
         'email' => $user->email,
         'password' => 'wrong-password',
+        'accept_terms' => '1',
     ]);
 
     $response->assertSessionHasErrorsIn('email');
@@ -60,6 +76,7 @@ test('users with two factor enabled are redirected to two factor challenge', fun
     $response = $this->post(route('login.store'), [
         'email' => $user->email,
         'password' => 'password',
+        'accept_terms' => '1',
     ]);
 
     $response->assertRedirect(route('two-factor.login'));

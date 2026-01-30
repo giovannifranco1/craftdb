@@ -61,8 +61,8 @@
             <div>
                 <h4 class="text-sm font-semibold text-gray-900 mb-4">Legal</h4>
                 <ul class="space-y-2">
-                    <li><a href="#" class="text-sm text-gray-600 hover:text-gray-900 transition-colors">Privacidade</a></li>
-                    <li><a href="#" class="text-sm text-gray-600 hover:text-gray-900 transition-colors">Termos</a></li>
+                    <li><a href="{{ route('landing.policy') }}" class="text-sm text-gray-600 hover:text-gray-900 transition-colors">Privacidade</a></li>
+                    <li><a href="{{ route('landing.terms') }}" class="text-sm text-gray-600 hover:text-gray-900 transition-colors">Termos</a></li>
                     <li><a href="#" class="text-sm text-gray-600 hover:text-gray-900 transition-colors">Cookies</a></li>
                     <li><a href="#" class="text-sm text-gray-600 hover:text-gray-900 transition-colors">Licenças</a></li>
                 </ul>

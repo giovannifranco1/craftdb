@@ -18,7 +18,6 @@ new #[Defer(bundle: true)] class extends CanvasComponent {
         'table::removed'                      => '$refresh',
         'table::color-updated'                => '$refresh',
         'table::column-added'                 => '$refresh',
-        
         'table-side-editor::column-saved'     => '$refresh',
         'table-side-editor::column-deleted'   => '$refresh',
         'table-side-editor::column-updated'   => '$refresh',

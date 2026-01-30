@@ -11,6 +11,8 @@ Route::get('/', [LandingPageController::class, 'index'])->name('landing.index');
 Route::get('/features', [LandingPageController::class, 'features'])->name('landing.features');
 Route::get('/pricing', [LandingPageController::class, 'pricing'])->name('landing.pricing');
 Route::get('/about', [LandingPageController::class, 'about'])->name('landing.about');
+Route::get('/terms', fn () => view('pages.landing-page.terms'))->name('landing.terms');
+Route::get('/policy', fn () => view('pages.landing-page.policy'))->name('landing.policy');
 
 /** Landing Page */
 Route::get('/', fn () => view('pages::landing-page.index'))->name('home');

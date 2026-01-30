@@ -45,6 +45,29 @@
                 @endif
             </div>
 
+            <!-- Accept Terms and Policy -->
+            <div class="flex flex-col gap-2">
+                @error('accept_terms')
+                    <p class="text-sm text-red-600 dark:text-red-400" role="alert">{{ $message }}</p>
+                @enderror
+                <flux:checkbox
+                    name="accept_terms"
+                    value="1"
+                    :label="__('auth.accept_terms_label', ['terms' => __('auth.terms_of_service'), 'policy' => __('auth.privacy_policy')])"
+                    :checked="(bool) old('accept_terms')"
+                />
+                <p class="text-xs text-zinc-500 dark:text-zinc-400">
+                    {{ __('auth.read_our') }}
+                    <flux:link :href="route('landing.terms')" target="_blank" rel="noopener" class="font-medium underline">
+                        {{ __('auth.terms_of_service') }}
+                    </flux:link>
+                    {{ __('auth.and') }}
+                    <flux:link :href="route('landing.policy')" target="_blank" rel="noopener" class="font-medium underline">
+                        {{ __('auth.privacy_policy') }}
+                    </flux:link>.
+                </p>
+            </div>
+
             <!-- Remember Me -->
             <flux:checkbox name="remember" :label="__('Remember me')" :checked="old('remember')" />
 
