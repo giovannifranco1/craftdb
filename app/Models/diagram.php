@@ -2,11 +2,18 @@
 
 namespace App\Models;
 
+use App\Models\Team\Team;
+use App\Observers\DiagramObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
 /**
  * @property int $id
@@ -20,6 +27,7 @@ use Illuminate\Support\Arr;
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Table> $tables
  * @property-read int|null $tables_count
+ * @property-read array<int, string> $colors
  * @method static \Database\Factories\DiagramFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Diagram newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Diagram newQuery()
@@ -36,12 +44,19 @@ use Illuminate\Support\Arr;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Diagram findBySlug($value)
  * @mixin \Eloquent
  */
+#[ObservedBy(DiagramObserver::class)]
 class Diagram extends Model
 {
     /** @use HasFactory<\Database\Factories\DiagramFactory> */
     use HasFactory;
 
+    const TABLE_LIMIT = 30;
+
     protected $table = 'diagram';
+
+    protected $appends = [
+        'colors',
+    ];
 
     /**
      * @return HasMany<\App\Models\Table, $this>
@@ -52,32 +67,52 @@ class Diagram extends Model
     }
 
     /**
+     * @return HasMany<\App\Models\Area, $this>
+     */
+    public function areas(): HasMany
+    {
+        return $this->hasMany(Area::class, 'diagram_id');
+    }
+
+    /**
+     * @return HasMany<\App\Models\Note, $this>
+     */
+    public function notes(): HasMany
+    {
+        return $this->hasMany(Note::class, 'diagram_id');
+    }
+
+    /**
      * @return Builder<Relationship>
      */
     public function relationships()
     {
         return Relationship::query()
-            ->whereHas('fromTable', fn($q) => $q->where('diagram_id', $this->id))
-            ->orWhereHas('toTable', fn($q) => $q->where('diagram_id', $this->id));
+            ->whereHas('fromTable', fn($q) => $q->withoutGlobalScope(\App\Models\Scopes\TableAccessible::class)->where('diagram_id', $this->id))
+            ->orWhereHas('toTable', fn($q) => $q->withoutGlobalScope(\App\Models\Scopes\TableAccessible::class)->where('diagram_id', $this->id));
     }
 
     /**
-     * @return list<string>
+     * @return Attribute<list<string>, never>
      */
-    public function getColors(): array
+    public function colors(): Attribute
     {
-        $colors = match ($this->style) {
-            'colorful' => config('color.colorful'),
-            'neutral'  => config('color.neutral'),
-            default    => [],
-        };
+        return new Attribute(
+            get: function (): array {
+                $colors = match ($this->style) {
+                    'colorful' => config('color.colorful'),
+                    'neutral'  => config('color.neutral'),
+                    default    => [],
+                };
 
-        $colors = Arr::wrap($colors);
+                $colors = Arr::wrap($colors);
 
-        return array_values(array_filter(
-            $colors,
-            static fn($color): bool => is_string($color)
-        ));
+                return array_values(array_filter(
+                    $colors,
+                    static fn($color): bool => is_string($color)
+                ));
+            }
+        );
     }
 
     /**
@@ -88,5 +123,84 @@ class Diagram extends Model
     public function scopefindBySlug(Builder $query, string $slug): Builder
     {
         return $query->where('slug', $slug);
+    }
+
+    public function isFavorite(): bool
+    {
+        return $this->is_favorite;
+    }
+
+    public function getTeamId(): int
+    {
+        return $this->team_id;
+    }
+
+    /**
+     * @return BelongsTo<Team, $this>
+     */
+    public function team(): BelongsTo
+    {
+        return $this->belongsTo(Team::class, 'team_id', 'id');
+    }
+
+    /**
+     * @return BelongsToMany<User, $this, \Illuminate\Database\Eloquent\Relations\Pivot>
+     */
+    public function viewers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'diagram_views', 'diagram_id', 'user_id')
+            ->withPivot('last_viewed_at')
+            ->withTimestamps()
+            ->orderByPivot('last_viewed_at', 'desc');
+    }
+
+    /**
+     * Registra que o usuário visualizou o diagrama
+     */
+    public function recordView(User $user): void
+    {
+        $this->viewers()->syncWithoutDetaching([
+            $user->id => ['last_viewed_at' => now()]
+        ]);
+    }
+
+    /**
+     * Verifica se o diagrama está público
+     */
+    public function isPublic(): bool
+    {
+        return !is_null($this->public_token);
+    }
+
+    /**
+     * Torna o diagrama público e retorna a URL
+     */
+    public function makePublic(): string
+    {
+        if (!$this->public_token) {
+            $this->public_token = Str::uuid();
+            $this->save();
+        }
+
+        return route('diagram.public', ['token' => $this->public_token]);
+    }
+
+    /**
+     * Torna o diagrama privado (remove acesso público)
+     */
+    public function makePrivate(): void
+    {
+        $this->public_token = null;
+        $this->save();
+    }
+
+    /**
+     * Retorna a URL pública do diagrama (se existir)
+     */
+    public function getPublicUrl(): ?string
+    {
+        return $this->public_token
+            ? route('diagram.public', ['token' => $this->public_token])
+            : null;
     }
 }

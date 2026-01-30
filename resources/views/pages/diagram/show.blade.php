@@ -1,5 +1,13 @@
-<x-layouts.canvas :diagram="$diagram" :title="__('Diagram')">
+<x-layouts.canvas :diagram="$diagram">
 
-    <livewire:diagram.table-list :$diagram lazy="on-load"/>
+    <x-slot:areas>
+        <livewire:diagram.canvas.lists.area-list :$diagram/>
+    </x-slot:areas>
+
+    <x-slot:notes>
+        <livewire:diagram.canvas.lists.note-list :$diagram/>
+    </x-slot:notes>
+
+    <livewire:diagram.canvas.lists.table-list :$diagram/>
 
 </x-layouts.canvas>

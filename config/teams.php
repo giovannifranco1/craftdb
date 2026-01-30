@@ -41,10 +41,6 @@ return [
     'models' => [
         'user' => App\Models\User::class,
         'team' => App\Models\Team\Team::class,
-        'ability' => App\Models\Team\Ability::class,
-        'permission' => App\Models\Team\Permission::class,
-        'group' => App\Models\Team\Group::class,
-        'invitation' => App\Models\Team\Invitation::class,
         'membership' => App\Models\Team\Membership::class,
         'role' => App\Models\Team\Role::class,
     ],

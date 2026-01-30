@@ -26,7 +26,7 @@ class ColumnFactory extends Factory
             'type' => $type,
             'is_primary' => fake()->boolean(10), // 10% chance of being primary
             'is_foreign' => fake()->boolean(20), // 20% chance of being foreign
-            'is_nullable' => fake()->boolean(70), // 70% chance of being nullable
+            'is_notnull' => fake()->boolean(30), // 30% chance of being not null (70% nullable inverted)
             'order' => fake()->numberBetween(1, 20),
             'length' => $this->getLengthForType($type),
             'default_value' => fake()->optional(0.3)->randomElement(['NULL', '0', '1', 'CURRENT_TIMESTAMP']),
@@ -56,7 +56,7 @@ class ColumnFactory extends Factory
         return $this->state(fn () => [
             'is_primary' => true,
             'is_foreign' => false,
-            'is_nullable' => false,
+            'is_notnull' => true,
         ]);
     }
 
@@ -77,7 +77,7 @@ class ColumnFactory extends Factory
     public function notNullable(): static
     {
         return $this->state(fn () => [
-            'is_nullable' => false,
+            'is_notnull' => true,
         ]);
     }
 
@@ -87,7 +87,7 @@ class ColumnFactory extends Factory
     public function nullable(): static
     {
         return $this->state(fn () => [
-            'is_nullable' => true,
+            'is_notnull' => false,
         ]);
     }
 

@@ -8,7 +8,7 @@ use Livewire\Form;
 
 class ImportForm extends Form
 {
-    /** @var 'file'|'laravel'|null */
+    /** @var 'file'|'migration'|null */
     public ?string $type = null;
 
     /**
@@ -24,6 +24,9 @@ class ImportForm extends Form
     public bool $hasImport = false;
 
 
+    /**
+     * @return array<string, mixed>
+     */
     protected function rules(): array
     {
         $rules = [
@@ -32,13 +35,13 @@ class ImportForm extends Form
                 'file',
                 new ImportValidFileType
             ],
-            'type' => 'nullable|in:sql,laravel'
+            'type' => 'nullable|in:sql,migration'
         ];
 
         if ($this->hasImport) {
             $rules = array_merge($rules, [
                 'file' => 'required|array',
-                'type' => 'required|in:sql,laravel'
+                'type' => 'required|in:sql,migration'
             ]);
         }
 
@@ -59,6 +62,7 @@ class ImportForm extends Form
     public function cancel(): void
     {
         $this->cancelFile();
+        $this->reset();
         $this->hasImport = false;
         Flux::modal('diagram-import')->close();
     }
@@ -83,9 +87,10 @@ class ImportForm extends Form
      */
     public function removeFile(?int $index = null): void
     {
-        if ($index !== null && is_array($this->file)) {
-            unset($this->file[$index]);
-            $this->file = array_values($this->file); // Reindex array
+        if ($index !== null) {
+            $files = $this->file;
+            unset($files[$index]);
+            $this->file = array_values($files); // Reindex array
         } else {
             $this->file = [];
         }

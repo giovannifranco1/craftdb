@@ -1,32 +1,31 @@
-<div class="absolute z-50 max-w-sm w-full top-12 end-12">
+@php($top = request()->is('dashboard', 'settings/*') ? 'top-20' : 'top-34')
+
+<div class="fixed z-50 max-w-sm w-full {{ $top }} end-9">
     <div
         x-data="{
             messageToast: null,
             descriptionToast: null,
+            typeToast: 'default',
+            topCenter: false,
             progress: 100,
             progressInterval: null,
             timeoutId: null,
             resetTimer() {
-                // Limpa timeout anterior se existir
                 if (this.timeoutId) {
                     clearTimeout(this.timeoutId);
                 }
-                // Limpa intervalo anterior se existir
                 if (this.progressInterval) {
                     clearInterval(this.progressInterval);
                 }
             },
             startProgress() {
-                // Reseta timers anteriores
                 this.resetTimer();
 
-                // Reseta o progresso
                 this.progress = 100;
-                const duration = 3000; // 5 segundos
-                const interval = 50; // atualiza a cada 50ms
+                const duration = 3000;
+                const interval = 50;
                 const decrement = (100 / (duration / interval));
 
-                // Inicia o intervalo de progresso
                 this.progressInterval = setInterval(() => {
                     this.progress -= decrement;
                     if (this.progress <= 0) {
@@ -36,10 +35,12 @@
                     }
                 }, interval);
 
-                // Define o timeout para esconder o toast
                 this.timeoutId = setTimeout(() => {
                     this.messageToast = null;
                     this.timeoutId = null;
+                    setTimeout(() => {
+                        this.typeToast = 'success';
+                    }, 200);
                 }, 3000);
             }
         }"
@@ -50,35 +51,90 @@
         x-transition:leave="transition ease-in duration-200"
         x-transition:leave-start="opacity-100 transform translate-y-0"
         x-transition:leave-end="opacity-0 transform translate-y-2"
+        @alert.window="($event) => {
+            messageToast = $event.detail.message;
+            descriptionToast = $event.detail.description;
+            typeToast = $event.detail.type || 'default';
+
+            if ($event.detail.topCenter) {
+                $el.parentElement.classList.add('-translate-x-1/2', 'left-1/2');
+            }
+
+            topCenter = $event.detail.topCenter || false;
+            startProgress();
+        }"
         x-init="() => {
             @if(session('message'))
                 messageToast = @js(session('message'));
+                typeToast = @js(session('type', 'default'));
+                topCenter = @js(session('topCenter', false));
+
+                if (topCenter) {
+                    $el.parentElement.classList.add('-translate-x-1/2', 'left-1/2');
+                }
+
                 startProgress();
             @endif
-
-            Livewire.on('alert', ({ message, description }) => {
-                messageToast = message;
-                descriptionToast = description;
-                startProgress();
-            })
         }"
         style="display: none"
-        class="relative"
+        class="relative z-50"
     >
-        <flux:callout inline>
-            <x-slot name="icon">
-                <flux:icon.check-circle variant="solid" class="size-5" color="green"/>
-            </x-slot>
+        <!-- Toast de Success -->
+        <div x-show="typeToast === 'success'">
+            <flux:callout class="dark:bg-[#0F0F0F]" inline variant="success">
+                <x-slot name="icon">
+                    <flux:icon.check-circle variant="solid" class="size-5" color="green"/>
+                </x-slot>
 
-            <flux:callout.heading x-text="messageToast"></flux:callout.heading>
-        </flux:callout>
+                <flux:callout.heading x-text="messageToast"></flux:callout.heading>
+            </flux:callout>
 
-        <!-- Barra de Progresso -->
-        <div class="absolute bottom-0 left-0 right-0 h-1 bg-gray-200 rounded-b-lg overflow-hidden">
-            <div
-                class="h-full bg-green-500 transition-all ease-linear"
-                :style="`width: ${progress}%`"
-            ></div>
+            <!-- Barra de Progresso -->
+            <div class="absolute bottom-0 left-0 right-0 h-1 bg-gray-200 dark:bg-zinc-800 rounded-b-lg overflow-hidden">
+                <div
+                    class="h-full transition-all ease-linear bg-green-500"
+                    :style="`width: ${progress}%`"
+                ></div>
+            </div>
         </div>
+
+        <!-- Toast de Error -->
+        <div x-show="typeToast === 'error'">
+            <flux:callout inline variant="danger">
+                <x-slot name="icon">
+                    <flux:icon.x-circle variant="solid" class="size-5" color="red"/>
+                </x-slot>
+
+                <flux:callout.heading x-text="messageToast"></flux:callout.heading>
+            </flux:callout>
+
+            <!-- Barra de Progresso -->
+            <div class="absolute bottom-0 left-0 right-0 h-1 bg-gray-200 dark:bg-zinc-800 rounded-b-lg overflow-hidden">
+                <div
+                    class="h-full transition-all ease-linear bg-red-500"
+                    :style="`width: ${progress}%`"
+                ></div>
+            </div>
+        </div>
+
+        <!-- Toast de Default -->
+        <div x-show="typeToast === 'default'">
+            <flux:callout class="dark:bg-[#0F0F0F]" inline>
+                <x-slot name="icon">
+                    <flux:icon.check-circle variant="solid" class="size-5" color="green"/>
+                </x-slot>
+
+                <flux:callout.heading x-text="messageToast"></flux:callout.heading>
+            </flux:callout>
+
+            <!-- Barra de Progresso -->
+            <div class="absolute bottom-0 left-0 right-0 h-1 bg-gray-200 dark:bg-zinc-800 rounded-b-lg overflow-hidden">
+                <div
+                    class="h-full transition-all ease-linear bg-green-500"
+                    :style="`width: ${progress}%`"
+                ></div>
+            </div>
+        </div>
+
     </div>
 </div>

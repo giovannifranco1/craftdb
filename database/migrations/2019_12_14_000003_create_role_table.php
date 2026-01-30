@@ -12,13 +12,15 @@ return new class () extends Migration {
     {
         Schema::create('role', static function (Blueprint $table) {
             $table->id();
-            $table->foreignId(config()->get('teams.foreign_keys.team_id', 'team_id'))->constrained()->cascadeOnDelete();
             $table->string('code');
             $table->string('name')->nullable();
             $table->string('description')->nullable();
-
-            $table->unique([config()->get('teams.foreign_keys.team_id', 'team_id'), 'code']);
         });
+
+        DB::table('role')->insert([
+            ['id' => 1, 'code' => 'editor', 'name' => 'Editor', 'description' => 'Can create, edit and view diagrams'],
+            ['id' => 2, 'code' => 'viewer', 'name' => 'Viewer', 'description' => 'Can only view diagrams'],
+        ]);
     }
 
     /**

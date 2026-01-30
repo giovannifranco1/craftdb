@@ -3,6 +3,10 @@
 namespace App\Models;
 
 use App\Models\Relationship;
+use App\Models\Scopes\TableAccessible;
+use App\Observers\TableObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -20,7 +24,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Column> $columns
  * @property-read int|null $columns_count
- * @property-read \App\Models\Diagram $diagram
+ * @property-read \App\Models\Diagram|null $diagram
  * @method static \Database\Factories\TableFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Table newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Table newQuery()
@@ -37,6 +41,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Table withPrimaryCount()
  * @mixin \Eloquent
  */
+#[ObservedBy(TableObserver::class)]
+// #[ScopedBy(TableAccessible::class)]
 class Table extends Model
 {
     const COLOR_DEFAULT = '#2563eb';
@@ -69,7 +75,7 @@ class Table extends Model
     public function scopeWithPrimaryCount(Builder $query): Builder
     {
         return $query->withCount([
-            'columns as primary_count' => function ($q) {
+            'columns as primary_count' => function (Builder $q): void {
                 $q->where('is_primary', true);
             },
         ]);
@@ -82,7 +88,7 @@ class Table extends Model
     public function scopeWithForeignCount(Builder $query): Builder
     {
         return $query->withCount([
-            'columns as foreign_count' => function ($q) {
+            'columns as foreign_count' => function (Builder $q): void {
                 $q->where('is_foreign', true);
             },
         ]);
@@ -92,9 +98,18 @@ class Table extends Model
      * @param Builder<$this> $query
      * @return Builder<$this>
      */
+    public function scopeWithColumnsCount(Builder $query): Builder
+    {
+        return $query->withCount('columns');
+    }
+
+    /**
+     * @param Builder<$this> $query
+     * @return Builder<$this>
+     */
     public function scopeFirstPrimaryColumn(Builder $query): Builder
     {
-        return $query->with(['columns' => function ($q) {
+        return $query->with(['columns' => function ($q): void {
             $q->where('is_primary', true)->orderBy('order')->limit(1);
         }]);
     }
@@ -102,16 +117,19 @@ class Table extends Model
     /**
      * @return Builder<\App\Models\Relationship>
      */
-    public function relationships()
+    public function relationships(): Builder
     {
-        return Relationship::query()->where(function ($query) {
+        return Relationship::query()->where(function (Builder $query): void {
             $query->where('from_table_id', $this->id)
                 ->orWhere('to_table_id', $this->id);
         })
             ->with(['fromTable', 'toTable', 'fromColumn', 'toColumn']);
     }
 
-    public function foreignKeys()
+    /**
+     * @return HasMany<Column, $this>
+     */
+    public function foreignKeys(): HasMany
     {
         return $this->hasMany(Column::class, 'table_id')->where('is_foreign', true);
     }

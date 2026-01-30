@@ -2,11 +2,16 @@
 
 namespace App\Models;
 
+use App\Models\User;
+use App\Observers\ColumnObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * @property int $id
@@ -15,7 +20,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $type
  * @property int $is_primary
  * @property int $is_foreign
- * @property int $is_nullable
+ * @property int $is_notnull
  * @property int $order
  * @property int|null $length
  * @property string|null $default_value
@@ -37,7 +42,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Column whereDefaultValue($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Column whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Column whereIsForeign($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Column whereIsNullable($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Column whereIsNotnull($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Column whereIsPrimary($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Column whereLength($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Column whereName($value)
@@ -71,6 +76,14 @@ class Column extends Model
     }
 
     /**
+     * @return BelongsTo<Table, $this>
+     */
+    public function table(): BelongsTo
+    {
+        return $this->belongsTo(Table::class, 'table_id');
+    }
+
+    /**
      * @return Collection<int, Relationship>
      */
     public function getAllRelationshipsAttribute()
@@ -78,9 +91,36 @@ class Column extends Model
         return $this->relationshipsFrom->merge($this->relationshipsTo);
     }
 
-    /** Scope */
+    /**
+     * @param Builder<Column> $query
+     * @return Builder<Column>
+     */
     public function scopeFilterByForeignKeys(Builder $query): Builder
     {
         return $query->where('is_foreign', true);
+    }
+
+    /**
+     * Scope para filtrar apenas colunas que o usuário tem acesso
+     *
+     * @param Builder<Column> $query
+     * @param User|null $user
+     * @return Builder<Column>
+     */
+    public function scopeAccessible(Builder $query, ?User $user = null): Builder
+    {
+        if ($user === null) {
+            /** @var User|null $authenticatedUser */
+            $authenticatedUser = Auth::user();
+            $user = $authenticatedUser;
+        }
+
+        if (!$user) {
+            return $query->whereRaw('1 = 0'); // Retorna vazio se não houver usuário
+        }
+
+        return $query->whereHas('table.diagram', function (Builder $q) use ($user): void {
+            $q->whereIn('team_id', $user->teams()->pluck('id'));
+        });
     }
 }

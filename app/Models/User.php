@@ -3,11 +3,13 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use App\Models\Concerns\HasTeam;
+use App\Models\Concerns\HasTeams;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
-use Jurager\Teams\Traits\HasTeams;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 
 /**
@@ -55,6 +57,11 @@ class User extends Authenticatable
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, TwoFactorAuthenticatable, HasTeams;
 
+    const PROVIDERS = [
+        'github' => 'github',
+        'google' => 'google',
+    ];
+
     /**
      * The attributes that are mass assignable.
      *
@@ -64,6 +71,13 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'github_id',
+        'github_token',
+        'github_refresh_token',
+        'google_id',
+        'google_token',
+        'google_refresh_token',
+        'locale',
     ];
 
     /**
@@ -76,6 +90,10 @@ class User extends Authenticatable
         'two_factor_secret',
         'two_factor_recovery_codes',
         'remember_token',
+        'github_token',
+        'github_refresh_token',
+        'google_token',
+        'google_refresh_token',
     ];
 
     /**
@@ -101,5 +119,41 @@ class User extends Authenticatable
             ->take(2)
             ->map(fn ($word) => Str::substr($word, 0, 1))
             ->implode('');
+    }
+
+    public static function isProvider(string $provider): bool
+    {
+        return in_array($provider, array_values(self::PROVIDERS));
+    }
+
+
+    /**
+     * Check if the user is authenticated with Google or Github.
+     *
+     * @return bool
+     */
+    public function isAuthenticatedWithGoogleOrGithub(): bool
+    {
+        return $this->isAuthenticatedWithGithub() || $this->isAuthenticatedWithGoogle();
+    }
+
+    /**
+     * Check if the user is authenticated with Github.
+     *
+     * @return bool
+     */
+    public function isAuthenticatedWithGithub(): bool
+    {
+        return $this->github_id !== null;
+    }
+
+    /**
+     * Check if the user is authenticated with Google.
+     *
+     * @return bool
+     */
+    public function isAuthenticatedWithGoogle(): bool
+    {
+        return $this->google_id !== null;
     }
 }

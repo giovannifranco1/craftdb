@@ -6,20 +6,29 @@
 return [
 
     'neutral' => [
-        '#7C7C7C', // Medium Gray - neutro e vibrante
-        '#8B7D6B', // Warm Beige - acolhedor e vivo
-        '#6B8E9F', // Blue Gray - suave mas com presença
-        '#9A8B7A', // Taupe - elegante e quente
-        '#7A8B8B', // Teal Gray - refrescante e neutro
-        '#A68B7A', // Blush Gray - suave e acolhedor
+        'gray'          => '#808080', // Medium Gray - neutro e equilibrado
+        'slate-gray'    => '#5F6B7A', // Slate Gray - moderno e profissional
+        'blue-gray'     => '#6B8E9F', // Blue Gray - suave mas com presença
+        'charcoal-gray' => '#6D7278', // Charcoal Gray - elegante e neutro
+        'teal-gray'     => '#7A8B8B', // Teal Gray - refrescante e neutro
+        'steel-gray'    => '#6A7B8C', // Steel Gray - clean e contemporâneo
     ],
 
     'colorful' => [
-        '#4F46E5', // Indigo - vibrante mas suave
-        '#059669', // Emerald - fresco e alegre
-        '#DC2626', // Red - elegante e vibrante
-        '#7C3AED', // Violet - criativo e elegante
-        '#F59E0B', // Amber - quente e acolhedor
-        '#06B6D4', // Cyan - refrescante e vibrante
-    ]
+        'indigo'  =>  '#4F46E5', // Indigo - vibrante mas suave
+        'emerald' =>  '#065F46', // Emerald - um pouco mais escuro, fresco e alegre
+        'red'     =>  '#DC2626', // Red - elegante e vibrante
+        'violet'  =>  '#7C3AED', // Violet - criativo e elegante
+        'amber'   =>  '#B34A00', // Amber - um pouco mais escuro, acessível com texto branco (#ffffff)
+        'cyan'    =>  '#155E75', // Cyan - um cadinho mais escuro, refrescante e vibrante
+    ],
+
+    'colorful-solid' => [
+        'indigo'  =>  '#C7D2FE', // Indigo - muito suave e confortável
+        'emerald' =>  '#A7F3D0', // Emerald - fresco e suave
+        'red'     =>  '#FECACA', // Red - suave e confortável
+        'violet'  =>  '#DDD6FE', // Violet - elegante e muito suave
+        'amber'   =>  '#FDE68A', // Amber - quente mas suave
+        'cyan'    =>  '#A5F3FC', // Cyan - refrescante e suave
+    ],
 ];

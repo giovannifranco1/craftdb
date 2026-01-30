@@ -10,14 +10,14 @@ return new class () extends Migration {
      */
     public function up(): void
     {
-        Schema::create(config()->get('teams.tables.team_user', 'team_user'), static function (Blueprint $table) {
+        Schema::create('team_user', static function (Blueprint $table) {
             $table->id();
-            $table->foreignId(config()->get('teams.foreign_keys.team_id', 'team_id'))->constrained(config()->get('teams.tables.teams'))->cascadeOnUpdate()->restrictOnDelete();
+            $table->foreignId('team_id')->constrained('team')->cascadeOnUpdate()->restrictOnDelete();
             $table->foreignId('user_id')->constrained('users')->cascadeOnUpdate()->restrictOnDelete();
             $table->foreignId('role_id')->constrained('role')->cascadeOnUpdate()->restrictOnDelete();
             $table->timestamps();
 
-            $table->unique([config()->get('teams.foreign_keys.team_id', 'team_id'), 'user_id']);
+            $table->unique(['team_id', 'user_id']);
         });
     }
 

@@ -1,36 +1,46 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="light">
     <head>
-        @include('partials.head')
+        @include('_partials.head')
     </head>
 
     @use('App\Models\Team\Team')
     @php
         $team = Team::currentTeam();
     @endphp
-    <body class="min-h-screen bg-white dark:bg-[#0F0F0F]">
+    <body class="min-h-screen bg-zinc-50 dark:bg-background-dark">
+
+        @persist('toast')
+        <x-ui.toast/>
+        @endpersist
+
         <!-- Horizontal Navigation Header -->
-        <flux:header sticky class="border-b border-zinc-200 bg-zinc-50 dark:border-zinc-600 dark:bg-[#0F0F0F] z-50">
-            <div class="flex flex-col w-full">
+        <flux:header sticky class="border-b border-zinc-200 bg-white dark:border-zinc-700 dark:bg-background-dark z-40">
+            <div class="flex w-full">
                 <!-- Top bar -->
-                <div class="flex items-center justify-between w-full my-3">
+                <div class="flex items-center w-full my-1">
                     <div class="flex items-center">
                         <!-- Logo -->
-                        <a href="{{ route('home') }}" class="flex me-5 ms-2 items-center space-x-3 rtl:space-x-reverse" wire:navigate>
+                        <a href="{{ route('dashboard') }}" class="flex me-5 items-center rtl:space-x-reverse" wire:navigate>
                             <x-app-logo />
                         </a>
 
                         @if(request()->routeIs('diagram.show'))
                             <flux:breadcrumbs class="ms-5">
-                                <flux:breadcrumbs.item href="{{ route('home') }}">Diagrams</flux:breadcrumbs.item>
+                                <flux:breadcrumbs.item href="{{ route('dashboard') }}">Diagrams</flux:breadcrumbs.item>
                                 <flux:breadcrumbs.item href="{{ route('diagram.show', [$team->id, $diagram->slug])}}">{{ $diagram->name }}</flux:breadcrumbs.item>
                             </flux:breadcrumbs>
                         @endif
                     </div>
 
-                    <div class="flex items-center space-x-4">
-                        <flux:button @click="$flux.modal('diagram-create').show()" icon="plus" variant="primary" size="sm">
-                            Novo Diagrama
+                    <!-- Navbar -->
+                    <flux:navbar class="-mb-px max-lg:hidden">
+                        <flux:navbar.item badge="Pro" badge:color="lime" href="#" :href="route('dashboard')" :current="request()->routeIs('home')" wire:navigate>{{ __('Diagrams') }}</flux:navbar.item>
+                    </flux:navbar>
+
+                    <div class="flex items-center space-x-4 ml-auto">
+                        <flux:button @click="$flux.modal('diagram-create').show()" icon="plus" variant="primary" color="sky" size="sm">
+                            {{ __('New Diagram') }}
                         </flux:button>
 
                          <!-- User Menu -->
@@ -42,7 +52,7 @@
                                 data-test="sidebar-menu-button"
                             />
 
-                            <flux:menu class="w-[220px]">
+                            <flux:menu class="w-[250px]">
                                 <flux:menu.radio.group>
                                     <div class="p-0 text-sm font-normal">
                                         <div class="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
@@ -63,6 +73,11 @@
                                 </flux:menu.radio.group>
 
                                 <flux:menu.separator />
+                                <flux:menu.item as="button" icon="user-plus" type="button" :href="route('team.create')">{{__('Create New Team')}}</flux:menu.item>
+
+                                <flux:menu.separator/>
+
+                                <livewire:ui.team-switcher/>
 
                                 <flux:menu.radio.group>
                                     <flux:menu.item :href="route('profile.edit')" icon="cog" wire:navigate>{{ __('Settings') }}</flux:menu.item>
@@ -80,19 +95,16 @@
                         </flux:dropdown>
                     </div>
                 </div>
-
-                <!-- Navbar -->
-                <flux:navbar class="-mb-px max-lg:hidden mt-2">
-                    <flux:navbar.item badge="Pro" badge:color="lime" href="#" :href="route('home')" :current="request()->routeIs('home')" wire:navigate>{{ __('Diagrams') }}</flux:navbar.item>
-                    <flux:separator vertical variant="subtle" class="my-2"/>
-                </flux:navbar>
             </div>
         </flux:header>
 
         {{ $slot }}
 
-        @livewire('diagram.diagram-create')
-        @filepondScripts
+        <x-flux::footer style="margin: 0px; padding: 0px;">
+            @include('_partials.footer')
+        </x-flux::footer>
+
+        <livewire:diagram.create/>
         @fluxScripts
     </body>
 </html>

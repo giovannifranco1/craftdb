@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class TeamPolicy
@@ -20,11 +21,11 @@ class TeamPolicy
     /**
      * Determine whether the user can view the model.
      *
-     * @param object $user
+     * @param User $user
      * @param object $team
      * @return bool
      */
-    public function view(object $user, object $team): bool
+    public function view(User $user, object $team): bool
     {
         return $user->belongsToTeam($team);
     }
@@ -32,7 +33,7 @@ class TeamPolicy
     /**
      * Determine whether the user can create models.
      */
-    public function create(object $user): bool
+    public function create(): bool
     {
         return true;
     }
@@ -40,11 +41,11 @@ class TeamPolicy
     /**
      * Determine whether the user can update the model.
      *
-     * @param object $user
+     * @param User $user
      * @param object $team
      * @return bool
      */
-    public function update(object $user, object $team): bool
+    public function update(User $user, object $team): bool
     {
         return $user->ownsTeam($team);
     }
@@ -52,11 +53,11 @@ class TeamPolicy
     /**
      * Determine whether the user can add team members.
      *
-     * @param object $user
+     * @param User $user
      * @param object $team
      * @return bool
      */
-    public function addTeamMember(object $user, object $team): bool
+    public function addTeamMember(User $user, object $team): bool
     {
         return $user->ownsTeam($team);
     }
@@ -64,11 +65,11 @@ class TeamPolicy
     /**
      * Determine whether the user can update team member
      *
-     * @param object $user
+     * @param User $user
      * @param object $team
      * @return bool
      */
-    public function updateTeamMember(object $user, object $team): bool
+    public function updateTeamMember(User $user, object $team): bool
     {
         return $user->ownsTeam($team);
     }
@@ -76,11 +77,11 @@ class TeamPolicy
     /**
      * Determine whether the user can remove team members.
      *
-     * @param object $user
+     * @param User $user
      * @param object $team
      * @return bool
      */
-    public function removeTeamMember(object $user, object $team): bool
+    public function removeTeamMember(User $user, object $team): bool
     {
         return $user->ownsTeam($team);
     }
@@ -88,12 +89,32 @@ class TeamPolicy
     /**
      * Determine whether the user can delete the model.
      *
-     * @param object $user
+     * @param User $user
      * @param object $team
      * @return bool
      */
-    public function delete(object $user, object $team): bool
+    public function delete(User $user, object $team): bool
     {
         return $user->ownsTeam($team);
+    }
+
+    /**
+     * Determine whether the user can leave the team.
+     *
+     * @param User $user
+     * @param object $team
+     * @return bool
+     */
+    public function leaveTeam(User $user, object $team): bool
+    {
+       if ($user->ownsTeam($team)) {
+            return false;
+       }
+
+       if ($user->belongsToTeam($team)) {
+            return true;
+       }
+
+       return false;
     }
 }

@@ -38,7 +38,7 @@ return [
     |
     */
 
-    'layout' => 'components.layouts.app',
+    'component_layout' => 'layouts::app',
 
     /*
     |---------------------------------------------------------------------------
@@ -50,7 +50,7 @@ return [
     |
     */
 
-    'lazy_placeholder' => null,
+    'component_placeholder' => null,
 
     /*
     |---------------------------------------------------------------------------
@@ -129,7 +129,7 @@ return [
 
     'navigate' => [
         'show_progress_bar' => true,
-        'progress_bar_color' => '#2299dd',
+        'progress_bar_color' => '#000000',
     ],
 
     /*
@@ -156,5 +156,25 @@ return [
     |
     */
 
+    'smart_wire_keys' => true,
+
+
+    'component_namespaces' => [
+        'layouts' => resource_path('views/layouts'),
+        'pages' => resource_path('views/pages'),
+    ],
+
+    'component_locations' => [
+        resource_path('views/components'),
+        resource_path('views/pages'),
+        resource_path('views/livewire'),
+    ],
+
     'pagination_theme' => 'tailwind',
+
+    'payload' => [
+        'max_components' => 100,
+    ],
+
+    'legacy_model_binding' => false,
 ];

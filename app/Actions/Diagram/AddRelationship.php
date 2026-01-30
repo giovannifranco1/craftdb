@@ -21,7 +21,7 @@ class AddRelationship
 {
     /**
      * @param DTORelationship $data
-     * @return Collection<Relationship>|Relationship
+     * @return Collection<int,Relationship>|Relationship
      */
     public function exec(array $data): Collection | Relationship
     {
@@ -50,12 +50,15 @@ class AddRelationship
             'toColumnId'   => ['nullable', 'integer'],
         ])->validate();
 
-        $fromTable = Table::query()->with('diagram')->find(data_get($data, 'fromTableId'));
-        $toTable = Table::query()->with('diagram')->find(data_get($data, 'toTableId'));
+        $fromTable = Table::query()->find(data_get($data, 'fromTableId'));
+        $toTable = Table::query()->find(data_get($data, 'toTableId'));
 
         if (!$fromTable || !$toTable) {
             throw new Exception("One or both tables not found.");
         }
+
+         /** @var Table $fromTable */
+         /** @var Table $toTable */
 
         $this->_verifyTablesOwnership($fromTable, $toTable);
     }
@@ -63,7 +66,6 @@ class AddRelationship
      /**
      * @param Table $fromTable
      * @param Table $toTable
-     * @return void
      * @throws Exception
      */
     private function _verifyTablesOwnership(Table $fromTable, Table $toTable): void
@@ -77,7 +79,7 @@ class AddRelationship
         $fromTableDiagram = $fromTable->diagram;
         $toTableDiagram = $toTable->diagram;
 
-        if (!$fromTableDiagram || !$toTableDiagram) {
+        if (is_null($fromTableDiagram) || is_null($toTableDiagram)) {
             throw new Exception("One or both diagrams not found for the tables.");
         }
 

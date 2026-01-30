@@ -8,9 +8,12 @@
 @source '../../vendor/livewire/flux-pro/stubs/**/*.blade.php';
 @source '../../vendor/livewire/flux/stubs/**/*.blade.php';
 
-
-
 @custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+    --color-background-dark: #18181b;
+    --color-text-code: #15B8A5;
+}
 
 /* Re-assign Flux's gray of choice... */
 @theme {
@@ -25,31 +28,34 @@
     --color-zinc-800: var(--color-slate-800);
     --color-zinc-900: var(--color-slate-900);
     --color-zinc-950: var(--color-slate-950);
+    --font-pixelify: "Pixelify Sans", sans-serif;
 }
 
 @theme {
-    --font-sans: "Inter", sans-serif;
-    --color-accent: var(--color-slate-800);
+    --font-sans: "Hanken Grotesk", sans-serif;
+    --color-accent: var(--color-gray-900);
     --color-accent-content: var(--color-slate-800);
     --color-accent-foreground: var(--color-white);
-    --color-primary-50: var(--color-slate-50);
-    --color-primary-100: var(--color-slate-100);
-    --color-primary-200: var(--color-slate-200);
-    --color-primary-300: var(--color-slate-300);
-    --color-primary-400: var(--color-slate-400);
-    --color-primary-500: var(--color-slate-500);
-    --color-primary-600: var(--color-slate-600);
-    --color-primary-700: var(--color-slate-700);
-    --color-primary-800: var(--color-slate-800);
-    --color-primary-900: var(--color-slate-900);
-    --color-primary-950: var(--color-slate-950);
+    --color-primary-50: var(--color-zinc-50);
+    --color-primary-100: var(--color-zinc-100);
+    --color-primary-200: var(--color-zinc-200);
+    --color-primary-300: var(--color-zinc-300);
+    --color-primary-400: var(--color-zinc-400);
+    --color-primary-500: var(--color-zinc-500);
+    --color-primary-600: var(--color-zinc-600);
+    --color-primary-700: var(--color-zinc-700);
+    --color-primary-800: var(--color-zinc-800);
+    --color-primary-900: var(--color-zinc-900);
+    --color-primary-950: var(--color-zinc-950);
+    --color-background-dark: var(--color-background-dark);
+    --color-code: var(--color-text-code);
 }
 
 @layer theme {
     .dark {
         --color-accent: var(--color-white);
         --color-accent-content: var(--color-white);
-        --color-accent-foreground: var(--color-slate-800);
+        --color-accent-foreground: var(--color-background-dark);
     }
 }
 
@@ -67,6 +73,18 @@ select:focus[data-flux-control] {
     @apply outline-hidden ring-2 ring-accent ring-offset-2 ring-offset-accent-foreground;
 }
 
-/* \[:where(&)\]:size-4 {
-    @apply size-4;
-} */
+
+[data-flux-modal] > dialog
+{
+    @apply dark:bg-[var(--color-background-dark)];
+}
+
+[data-flux-menu]
+{
+    @apply dark:bg-[var(--color-background-dark)];
+}
+
+[data-flux-tooltip-content] {
+    @apply bg-[var(--color-background-dark)];
+}
+

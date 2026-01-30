@@ -17,10 +17,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string|null $label
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\Column $fromColumn
- * @property-read \App\Models\Table $fromTable
- * @property-read \App\Models\Column $toColumn
- * @property-read \App\Models\Table $toTable
+ * @property-read \App\Models\Column|null $fromColumn
+ * @property-read \App\Models\Table|null $fromTable
+ * @property-read \App\Models\Column|null $toColumn
+ * @property-read \App\Models\Table|null $toTable
  * @method static \Database\Factories\RelationshipFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Relationship newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Relationship newQuery()

@@ -1,6 +1,8 @@
 export class InfiniteCanvas {
     canvas = null;
     tablesContainer = null;
+    areasContainer = null;
+    notesContainer = null;
     context = null;
     cellSize;
 
@@ -13,6 +15,7 @@ export class InfiniteCanvas {
     #isDragging = false;
     #lastDragPos = { x: 0, y: 0 };
     #grabModeEnabled = false; // modo grab permanente (sem precisar space)
+    #isMarkedForDrag = false;
     // ---[/Private fields]---
 
     #touchMode = "single"; // "single" | "double"
@@ -26,6 +29,8 @@ export class InfiniteCanvas {
         if (canvas && canvas instanceof HTMLCanvasElement) {
             this.canvas = canvas;
             this.tablesContainer = document.querySelector('.tables');
+            this.areasContainer = document.querySelector('.areas');
+            this.notesContainer = document.querySelector('.notes');
             this.#setupEvents(canvas);
 
             const context = canvas.getContext("2d");
@@ -168,6 +173,23 @@ export class InfiniteCanvas {
         return `translate(${x}, ${y}) scale(${this.#scale})`;
     }
 
+    setIsMarkedForDrag(isMarked) {
+        this.#isMarkedForDrag = isMarked;
+        this.#draw();
+    }
+
+    getIsMarkedForDrag() {
+        return this.#isMarkedForDrag;
+    }
+
+    organize() {
+        // Posiciona o ponto virtual (0,0) no canto superior esquerdo da tela
+        this.#offsetX = 0;
+        this.#offsetY = 0;
+        this.#draw();
+        this.#dispatchTransformChanged();
+    }
+
     #dispatchTransformChanged() {
         const event = new CustomEvent('canvas::transform', {
             detail: {
@@ -179,12 +201,19 @@ export class InfiniteCanvas {
     }
 
     #applyContainerTransform() {
-        if (this.tablesContainer) {
-            const transformX = -this.#offsetX * this.#scale;
-            const transformY = -this.#offsetY * this.#scale;
+        const transformX = -this.#offsetX * this.#scale;
+        const transformY = -this.#offsetY * this.#scale;
+        const transformString = `translate3d(${transformX}px, ${transformY}px, 0) scale(${this.#scale})`;
 
-            // Usamos transform3d para melhor performance (aceleração de hardware)
-            this.tablesContainer.style.transform = `translate3d(${transformX}px, ${transformY}px, 0) scale(${this.#scale})`;
+        // Usamos transform3d para melhor performance (aceleração de hardware)
+        if (this.tablesContainer) {
+            this.tablesContainer.style.transform = transformString;
+        }
+        if (this.areasContainer) {
+            this.areasContainer.style.transform = transformString;
+        }
+        if (this.notesContainer) {
+            this.notesContainer.style.transform = transformString;
         }
     }
 
@@ -230,7 +259,6 @@ export class InfiniteCanvas {
         this.#setupMousePan(canvas); // refatorado para método separado
     }
 
-    // --- [Refatoração: pan do mouse] ---
     #setupMousePan(canvas) {
         // Helper para verificar se pode fazer pan (space OU grab mode)
         const canPan = () => this.#isSpacePressed || this.#grabModeEnabled;
@@ -289,12 +317,11 @@ export class InfiniteCanvas {
             }
         });
     }
-    // --- [fim refatoração] ---
 
     #zoomWheel(event) {
         const zoomStep = 1.025;
         const minScale = 0.2;
-        const maxScale = 3.0;
+        const maxScale = 2.0;
 
         let zoomAmount;
 
@@ -509,22 +536,37 @@ export class InfiniteCanvas {
 
             const width = this.canvas.clientWidth;
             const height = this.canvas.clientHeight;
-            const step = this.cellSize * this.#scale;
+
+            // Calcula o cellSize adaptativo baseado no zoom
+            // Quando o zoom diminui, aumentamos o cellSize para evitar grade muito densa
+            let adaptiveCellSize = this.cellSize;
+            let multiplier = 1;
+
+            // Encontra o multiplicador apropriado para manter células visíveis
+            // Quando scale < 0.5, dobramos o cellSize, e assim por diante
+            while (adaptiveCellSize * this.#scale * multiplier < 20) {
+                multiplier *= 2;
+            }
+            adaptiveCellSize = this.cellSize * multiplier;
+
+            const step = adaptiveCellSize * this.#scale;
 
             // Cálculo do ponto de partida leva em conta o offset escalado
-            const startX = (-this.#offsetX % this.cellSize) * this.#scale;
-            const startY = (-this.#offsetY % this.cellSize) * this.#scale;
+            const startX = (-this.#offsetX % adaptiveCellSize) * this.#scale;
+            const startY = (-this.#offsetY % adaptiveCellSize) * this.#scale;
 
             // Desenha rótulos dos eixos nas posições das linhas de grade
-            for (let x = startX; x <= width; x += step) {
-                const source = x;
-                const virtualX = this.toVirtualX(source / this.#scale);
-                this.context.fillText(`${virtualX.toFixed(0)}`, source, 10);
-            }
-            for (let y = startY; y <= height; y += step) {
-                const destination = y;
-                const virtualY = this.toVirtualY(destination / this.#scale);
-                this.context.fillText(`${virtualY.toFixed(0)}`, 0, destination);
+            if (this.#isMarkedForDrag) {
+                for (let x = startX; x <= width; x += step) {
+                    const source = x;
+                    const virtualX = this.toVirtualX(source / this.#scale);
+                    this.context.fillText(`${virtualX.toFixed(0)}`, source, 10);
+                }
+                for (let y = startY; y <= height; y += step) {
+                    const destination = y;
+                    const virtualY = this.toVirtualY(destination / this.#scale);
+                    this.context.fillText(`${virtualY.toFixed(0)}`, 0, destination);
+                }
             }
 
             // Desenha somente um traço central entre vértices (formato "+ - +")

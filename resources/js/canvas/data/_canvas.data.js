@@ -1,6 +1,7 @@
 import { InfiniteCanvas } from '../classes/InfiniteCanvas.js'
 import cursorBase from '@images/icons/cursor.svg';
 import confetti from 'canvas-confetti'; 'canvas-confetti';
+import axios from 'axios';
 
 // @Alpine.js data
 export default (cellSize = 25, isInitialLoad = false, [offsetX, offsetY] = []) => ({
@@ -10,7 +11,11 @@ export default (cellSize = 25, isInitialLoad = false, [offsetX, offsetY] = []) =
     contextMenuPosition: { x: 100, y: 100 },
     isInRelationshipEvent: false,
     isInAddTableEvent: false,
+    isInAddAreaEvent: false,
+    isInAddNoteEvent: false,
     addTableClickHandler: null,
+    addAreaClickHandler: null,
+    addNoteClickHandler: null,
     relationshipEvent: {
         from_table_id: null,
         to_table_id: null,
@@ -39,6 +44,16 @@ export default (cellSize = 25, isInitialLoad = false, [offsetX, offsetY] = []) =
         // Listener para ativar modo de adicionar tabela
         this.$el.addEventListener('table::adding', () => {
             this.isInAddTableEvent = true;
+        });
+
+        // Listener para ativar modo de adicionar área
+        this.$el.addEventListener('area::adding', () => {
+            this.isInAddAreaEvent = true;
+        });
+
+        // Listener para ativar modo de adicionar nota
+        this.$el.addEventListener('note::adding', () => {
+            this.isInAddNoteEvent = true;
         });
 
         // Listener para renomear table
@@ -95,6 +110,17 @@ export default (cellSize = 25, isInitialLoad = false, [offsetX, offsetY] = []) =
                 const virtualPos = Alpine.raw(this.canvas).clientToVirtual(e.clientX, e.clientY);
                 this.contextMenuPosition = virtualPos;
             });
+
+            window.addEventListener('click', (e) => {
+                const clickedTable = e.target.closest('[table-box]');
+                const clickedNote = e.target.closest('[note-box]');
+                const clickedConnection = e.target.closest('g[data-connection-id]') || e.target.closest('path');
+                const isSideEditorOpen = document.getElementById('side-editor')?.hasAttribute('side-editor-open');
+
+                if (!clickedTable && !clickedNote && !clickedConnection && !isSideEditorOpen) {
+                    this.$dispatch('clear-highlight');
+                }
+            });
         }
 
         this.$watch('isInRelationshipEvent', (value) => {
@@ -120,14 +146,32 @@ export default (cellSize = 25, isInitialLoad = false, [offsetX, offsetY] = []) =
                 }
             }
 
-            if (this.canvasElement) {
+            // Usar $el (canvasRoot) em vez de canvasElement para capturar cliques em áreas também
+            if (this.$el) {
                 if (this.addTableClickHandler) {
-                    this.canvasElement.removeEventListener('click', this.addTableClickHandler);
+                    this.$el.removeEventListener('click', this.addTableClickHandler, true);
                     this.addTableClickHandler = null;
                 }
 
                 if (value) {
                     this.addTableClickHandler = (e) => {
+                        // Verificar se o clique foi em uma área, tabela ou nota
+                        const clickedArea = e.target.closest('[area-box]');
+                        const clickedTable = e.target.closest('[table-box]');
+                        const clickedNote = e.target.closest('[note-box]');
+
+                        // Se clicou em um resize handle ou elemento interativo, ignorar
+                        const isResizeHandle = e.target.classList.contains('resize-handle') ||
+                                             e.target.closest('.resize-handle') !== null;
+                        const isInteractiveElement = e.target.tagName === 'TEXTAREA' ||
+                                                    e.target.tagName === 'INPUT' ||
+                                                    e.target.tagName === 'BUTTON' ||
+                                                    e.target.closest('textarea, input, button') !== null;
+
+                        if (isResizeHandle || isInteractiveElement) {
+                            return;
+                        }
+
                         e.preventDefault();
                         e.stopPropagation();
 
@@ -143,12 +187,121 @@ export default (cellSize = 25, isInitialLoad = false, [offsetX, offsetY] = []) =
                         this.isInAddTableEvent = false;
 
                         if (this.addTableClickHandler) {
-                            this.canvasElement.removeEventListener('click', this.addTableClickHandler);
+                            this.$el.removeEventListener('click', this.addTableClickHandler, true);
                             this.addTableClickHandler = null;
                         }
                     };
 
-                    this.canvasElement.addEventListener('click', this.addTableClickHandler, { once: true });
+                    // Usar captura de eventos para garantir que seja executado antes
+                    this.$el.addEventListener('click', this.addTableClickHandler, { once: true, capture: true });
+                }
+            }
+        });
+
+        this.$watch('isInAddAreaEvent', (value) => {
+            const body = document.querySelector('body');
+
+            if (body) {
+                if (value) {
+                    body.style.cursor = 'crosshair';
+                } else {
+                    body.style.cursor = `url(${cursorBase}) 3.5 3.5, auto`;
+                }
+            }
+
+            if (this.canvasElement) {
+                if (this.addAreaClickHandler) {
+                    this.canvasElement.removeEventListener('click', this.addAreaClickHandler);
+                    this.addAreaClickHandler = null;
+                }
+
+                if (value) {
+                    this.addAreaClickHandler = (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const virtualPos = Alpine.raw(this.canvas).clientToVirtual(e.clientX, e.clientY);
+
+                        if (window.Livewire) {
+                            window.Livewire.dispatch('area::add', {
+                                x: Math.round(virtualPos.x),
+                                y: Math.round(virtualPos.y)
+                            });
+                        }
+
+                        this.isInAddAreaEvent = false;
+
+                        if (this.addAreaClickHandler) {
+                            this.canvasElement.removeEventListener('click', this.addAreaClickHandler);
+                            this.addAreaClickHandler = null;
+                        }
+                    };
+
+                    this.canvasElement.addEventListener('click', this.addAreaClickHandler, { once: true });
+                }
+            }
+        });
+
+        this.$watch('isInAddNoteEvent', (value) => {
+            const body = document.querySelector('body');
+
+            if (body) {
+                if (value) {
+                    body.style.cursor = 'crosshair';
+                } else {
+                    body.style.cursor = `url(${cursorBase}) 3.5 3.5, auto`;
+                }
+            }
+
+            // Usar $el (canvasRoot) em vez de canvasElement para capturar cliques em áreas também
+            if (this.$el) {
+                if (this.addNoteClickHandler) {
+                    this.$el.removeEventListener('click', this.addNoteClickHandler, true);
+                    this.addNoteClickHandler = null;
+                }
+
+                if (value) {
+                    this.addNoteClickHandler = (e) => {
+                        // Verificar se o clique foi em uma área, tabela ou nota
+                        const clickedArea = e.target.closest('[area-box]');
+                        const clickedTable = e.target.closest('[table-box]');
+                        const clickedNote = e.target.closest('[note-box]');
+
+                        // Se clicou em um resize handle ou elemento interativo, ignorar
+                        const isResizeHandle = e.target.classList.contains('resize-handle') ||
+                                             e.target.closest('.resize-handle') !== null;
+                        const isInteractiveElement = e.target.tagName === 'TEXTAREA' ||
+                                                    e.target.tagName === 'INPUT' ||
+                                                    e.target.tagName === 'BUTTON' ||
+                                                    e.target.closest('textarea, input, button') !== null;
+
+                        if (isResizeHandle || isInteractiveElement) {
+                            return;
+                        }
+
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const virtualPos = Alpine.raw(this.canvas).clientToVirtual(e.clientX, e.clientY);
+                        const noteData = {
+                            x: Math.round(virtualPos.x),
+                            y: Math.round(virtualPos.y)
+                        };
+
+                        if (window.Livewire) {
+                            window.Livewire.dispatch('note::add', noteData);
+                        }
+
+                        this.isInAddNoteEvent = false;
+
+                        if (this.addNoteClickHandler) {
+                            this.$el.removeEventListener('click', this.addNoteClickHandler, true);
+                            this.addNoteClickHandler = null;
+                        }
+                    };
+
+                    // Usar captura de eventos para garantir que seja executado antes
+                    this.$el.addEventListener('click', this.addNoteClickHandler, { once: true, capture: true });
                 }
             }
         });
@@ -156,6 +309,8 @@ export default (cellSize = 25, isInitialLoad = false, [offsetX, offsetY] = []) =
 
     keydownListeners(e) {
         this.handleMetaS(e);
+        this.handleEscape(e);
+        this.handleSpace(e);
     },
 
     handleMetaS(e) {
@@ -165,6 +320,60 @@ export default (cellSize = 25, isInitialLoad = false, [offsetX, offsetY] = []) =
         if (isMetaS || isCtrlS) {
             e.preventDefault();
             this.saveTablesPositions();
+        }
+    },
+
+    handleEscape(e) {
+        if (e.key === 'Escape') {
+            this.cancelAddMode();
+        }
+    },
+
+    handleSpace(e) {
+        // Só cancela se estiver em modo de adicionar e não estiver em um input/textarea
+        const isInputElement = e.target.tagName === 'INPUT' ||
+                              e.target.tagName === 'TEXTAREA' ||
+                              e.target.isContentEditable;
+
+        if (e.key === ' ' && !isInputElement &&
+            (this.isInAddTableEvent || this.isInAddAreaEvent || this.isInAddNoteEvent)) {
+            e.preventDefault();
+            this.cancelAddMode();
+        }
+    },
+
+    cancelAddMode() {
+        // Cancela modo de adicionar tabela
+        if (this.isInAddTableEvent) {
+            this.isInAddTableEvent = false;
+            if (this.addTableClickHandler) {
+                this.$el.removeEventListener('click', this.addTableClickHandler, true);
+                this.addTableClickHandler = null;
+            }
+        }
+
+        // Cancela modo de adicionar área
+        if (this.isInAddAreaEvent) {
+            this.isInAddAreaEvent = false;
+            if (this.addAreaClickHandler && this.canvasElement) {
+                this.canvasElement.removeEventListener('click', this.addAreaClickHandler);
+                this.addAreaClickHandler = null;
+            }
+        }
+
+        // Cancela modo de adicionar nota
+        if (this.isInAddNoteEvent) {
+            this.isInAddNoteEvent = false;
+            if (this.addNoteClickHandler) {
+                this.$el.removeEventListener('click', this.addNoteClickHandler, true);
+                this.addNoteClickHandler = null;
+            }
+        }
+
+        // Restaura cursor padrão
+        const body = document.querySelector('body');
+        if (body) {
+            body.style.cursor = `url(${cursorBase}) 3.5 3.5, auto`;
         }
     },
 
@@ -195,4 +404,20 @@ export default (cellSize = 25, isInitialLoad = false, [offsetX, offsetY] = []) =
         }
     },
 
+    toggleFavorite(favorite) {
+        axios.post(`/${this.$refs.canvasRoot.getAttribute('team-id')}/diagram/${this.$refs.canvasRoot.getAttribute('diagram-slug')}/toggle-favorite`).then(({data}) => {
+            const icon = this.$el.querySelector('.js-icon-favorite');
+            const unicon = this.$el.querySelector('.js-icon-unfavorite');
+
+            if (favorite) {
+                icon.classList.toggle('hidden');
+                unicon.classList.toggle('hidden');
+            } else {
+                icon.classList.toggle('hidden');
+                unicon.classList.toggle('hidden');
+            }
+
+            this.$dispatch('alert', { message: data.message });
+        });
+    }
 });

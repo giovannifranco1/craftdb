@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::create('column', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('table_id')->constrained('table', indexName: 'table_id_foreign');
+            $table->foreignId('table_id')->index('column_table_id_index')->constrained('table', indexName: 'column_table_id_foreign');
             $table->string('name');
             $table->string('type');
             $table->boolean('is_primary')->default(false);
             $table->boolean('is_foreign')->default(false);
-            $table->boolean('is_nullable')->default(false);
+            $table->boolean('is_notnull')->default(false);
             $table->double('order')->default(1.0);
             $table->integer('length')->nullable();
             $table->string('default_value')->nullable();
@@ -34,6 +34,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('columns');
+        Schema::dropIfExists('column');
     }
 };

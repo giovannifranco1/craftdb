@@ -19,7 +19,8 @@ export default defineConfig({
                 'resources/js/app.js',
                 'resources/css/canvas.css',
                 'resources/js/canvas/main.js',
-                'resources/css/filepond.css'
+                'resources/css/filepond.css',
+                'resources/css/landing-page.css'
             ],
             refresh: true,
         }),

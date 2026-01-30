@@ -2,11 +2,10 @@
 
 namespace App\Models\Team;
 
+use App\Models\Concerns\HasMembers as ConcernsHasMembers;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Config;
-use Jurager\Teams\Traits\HasMembers;
 
 /**
  * @property int $id
@@ -39,7 +38,9 @@ use Jurager\Teams\Traits\HasMembers;
  */
 class Team extends Model
 {
-    use HasMembers, HasFactory;
+    use ConcernsHasMembers, HasFactory;
+
+    protected $table = 'team';
 
     /**
      * The attributes that are mass assignable.
@@ -49,13 +50,6 @@ class Team extends Model
     protected $fillable = ['user_id', 'name'];
 
     /**
-     * The relationships that should always be loaded.
-     *
-     * @var array
-     */
-    protected $with = ['roles.permissions', 'groups.permissions'];
-
-    /**
      * Creates a new instance of the model.
      *
      * @param array $attributes
@@ -63,11 +57,9 @@ class Team extends Model
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
-        $this->table = Config::get('teams.tables.teams', 'teams');
     }
 
-
-    public static function currentTeam()
+    public static function currentTeam(): ?self
     {
         $team = session('current_team');
 
@@ -75,9 +67,18 @@ class Team extends Model
             return $team;
         }
 
-        /** @var User */
-        $user = auth()->user;
+        /** @var User|null */
+        /** @disregard  */
+        $user = auth()->user();
 
-        return $user->ownedTeams()->get()->first();
+        if (!$user) {
+            return null;
+        }
+
+        $ownedTeam = $user->ownedTeams()->first();
+
+        session(['current_team' => $ownedTeam]);
+
+        return $ownedTeam;
     }
 }

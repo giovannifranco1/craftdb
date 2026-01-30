@@ -4,6 +4,7 @@ namespace App\View\Components;
 
 use Closure;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\View as ViewFacade;
 use Illuminate\View\Component;
 
 class FileUpload extends Component
@@ -21,6 +22,6 @@ class FileUpload extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.file-upload');
+        return ViewFacade::make('components.file-upload');
     }
 }

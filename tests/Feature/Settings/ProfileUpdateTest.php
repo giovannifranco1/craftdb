@@ -1,20 +1,24 @@
 <?php
 
 use App\Models\User;
-use Livewire\Volt\Volt;
+use Livewire\Livewire;
 
 test('profile page is displayed', function () {
-    $this->actingAs($user = User::factory()->create());
+    /** @var TestCase $this */
+
+    $this->actingAs(User::factory()->create());
 
     $this->get(route('profile.edit'))->assertOk();
 });
 
 test('profile information can be updated', function () {
+    /** @var TestCase $this */
+
     $user = User::factory()->create();
 
     $this->actingAs($user);
 
-    $response = Volt::test('settings.profile')
+    $response = Livewire::test('settings.profile')
         ->set('name', 'Test User')
         ->set('email', 'test@example.com')
         ->call('updateProfileInformation');
@@ -29,11 +33,13 @@ test('profile information can be updated', function () {
 });
 
 test('email verification status is unchanged when email address is unchanged', function () {
+    /** @var TestCase $this */
+
     $user = User::factory()->create();
 
     $this->actingAs($user);
 
-    $response = Volt::test('settings.profile')
+    $response = Livewire::test('settings.profile')
         ->set('name', 'Test User')
         ->set('email', $user->email)
         ->call('updateProfileInformation');
@@ -44,11 +50,13 @@ test('email verification status is unchanged when email address is unchanged', f
 });
 
 test('user can delete their account', function () {
+    /** @var TestCase $this */
+
     $user = User::factory()->create();
 
     $this->actingAs($user);
 
-    $response = Volt::test('settings.delete-user-form')
+    $response = Livewire::test('settings.delete-user-form')
         ->set('password', 'password')
         ->call('deleteUser');
 
@@ -57,15 +65,19 @@ test('user can delete their account', function () {
         ->assertRedirect('/');
 
     expect($user->fresh())->toBeNull();
+
+    /** @disregard */
     expect(auth()->check())->toBeFalse();
 });
 
 test('correct password must be provided to delete account', function () {
+    /** @var TestCase $this */
+
     $user = User::factory()->create();
 
     $this->actingAs($user);
 
-    $response = Volt::test('settings.delete-user-form')
+    $response = Livewire::test('settings.delete-user-form')
         ->set('password', 'wrong-password')
         ->call('deleteUser');
 

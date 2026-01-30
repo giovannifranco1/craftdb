@@ -5,10 +5,13 @@ namespace App\Providers;
 use App\Actions\Fortify\CreateNewUser;
 use App\Actions\Fortify\ResetUserPassword;
 use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
+use Laravel\Fortify\Contracts\LoginResponse;
+use Laravel\Fortify\Contracts\LogoutResponse;
 use Laravel\Fortify\Fortify;
 
 class FortifyServiceProvider extends ServiceProvider
@@ -18,7 +21,20 @@ class FortifyServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->instance(LogoutResponse::class, new class implements LogoutResponse {
+            public function toResponse($request): RedirectResponse
+            {
+                return redirect()->route('dashboard');
+            }
+        });
+
+        $this->app->instance(LoginResponse::class, new class implements LoginResponse {
+            /** @disregard */
+            public function toResponse($request): RedirectResponse
+            {
+                return redirect()->intended(route('dashboard'));
+            }
+        });
     }
 
     /**
@@ -45,13 +61,13 @@ class FortifyServiceProvider extends ServiceProvider
      */
     private function configureViews(): void
     {
-        Fortify::loginView(fn () => view('livewire.auth.login'));
-        Fortify::verifyEmailView(fn () => view('livewire.auth.verify-email'));
-        Fortify::twoFactorChallengeView(fn () => view('livewire.auth.two-factor-challenge'));
-        Fortify::confirmPasswordView(fn () => view('livewire.auth.confirm-password'));
-        Fortify::registerView(fn () => view('livewire.auth.register'));
-        Fortify::resetPasswordView(fn () => view('livewire.auth.reset-password'));
-        Fortify::requestPasswordResetLinkView(fn () => view('livewire.auth.forgot-password'));
+        Fortify::loginView(fn () => view('components.auth.login'));
+        Fortify::verifyEmailView(fn () => view('components.auth.verify-email'));
+        Fortify::twoFactorChallengeView(fn () => view('components.auth.two-factor-challenge'));
+        Fortify::confirmPasswordView(fn () => view('components.auth.confirm-password'));
+        Fortify::registerView(fn () => view('components.auth.register'));
+        Fortify::resetPasswordView(fn () => view('components.auth.reset-password'));
+        Fortify::requestPasswordResetLinkView(fn () => view('components.auth.forgot-password'));
     }
 
     /**
