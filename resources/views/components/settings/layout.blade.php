@@ -28,10 +28,10 @@
     <flux:separator class="md:hidden" />
 
     <div class="flex-1 self-stretch max-md:pt-6">
-        <flux:heading>{{ $heading ?? '' }}</flux:heading>
+        <flux:heading class="underline">{{ $heading ?? '' }}</flux:heading>
         <flux:subheading>{{ $subheading ?? '' }}</flux:subheading>
 
-        <div class="mt-5 w-full max-w-lg">
+        <div class="mt-5 w-full max-w-lg bg-white dark:bg-background-dark rounded-lg p-5 shadow-sm">
             {{ $slot }}
         </div>
     </div>

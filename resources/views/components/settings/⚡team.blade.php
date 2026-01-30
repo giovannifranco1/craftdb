@@ -66,7 +66,7 @@ new class extends BaseComponent {
     @include('_partials.settings-heading')
 
     <x-settings.layout :heading="__('Team Settings')" :subheading="__('The team\'s name and owner information.')">
-        <form wire:submit="updateTeamInformation" class="my-6 w-full space-y-6">
+        <form wire:submit="updateTeamInformation" class="w-full space-y-6">
             <flux:input
                 wire:model="name"
                 :label="__('Team Name')"
@@ -103,9 +103,8 @@ new class extends BaseComponent {
             @endcan
         </form>
 
-
-        <section class="mt-10 space-y-6">
-            @can('leaveTeam', $team)
+        @can('leaveTeam', $team)
+            <section class="mt-10 space-y-6">
                 <div class="relative mb-5">
                     <flux:heading>{{ __('Leave team') }}</flux:heading>
                     <flux:subheading>{{ __('Leave the team and all of its resources') }}</flux:subheading>
@@ -116,33 +115,34 @@ new class extends BaseComponent {
                         {{ __('Leave team') }}
                     </flux:button>
                 </flux:modal.trigger>
-            @endcan
 
-            <flux:modal name="confirm-leave-team" :show="$errors->isNotEmpty()" focusable class="max-w-lg">
-                <form method="POST" wire:submit="leaveTeam" class="space-y-6">
-                    <div>
-                        <flux:heading size="lg">{{ __('Are you sure you want to leave the team?') }}</flux:heading>
+                <flux:modal name="confirm-leave-team" :show="$errors->isNotEmpty()" focusable class="max-w-lg">
+                    <form method="POST" wire:submit="leaveTeam" class="space-y-6">
+                        <div>
+                            <flux:heading size="lg">{{ __('Are you sure you want to leave the team?') }}</flux:heading>
 
-                        <flux:subheading>
-                            {{ __('Once you leave the team, all of its resources and data will be permanently deleted. Please enter your password to confirm you would like to permanently leave the team.') }}
-                        </flux:subheading>
-                    </div>
+                            <flux:subheading>
+                                {{ __('Once you leave the team, all of its resources and data will be permanently deleted. Please enter your password to confirm you would like to permanently leave the team.') }}
+                            </flux:subheading>
+                        </div>
 
-                    @if (!auth()->user()->isAuthenticatedWithGoogleOrGithub() && is_null(auth()->user()->password))
-                        <flux:input wire:model="password" :label="__('Password')" type="password" />
-                    @endif
+                        @if (!auth()->user()->isAuthenticatedWithGoogleOrGithub() && is_null(auth()->user()->password))
+                            <flux:input wire:model="password" :label="__('Password')" type="password" />
+                        @endif
 
-                    <div class="flex justify-end space-x-2 rtl:space-x-reverse">
-                        <flux:modal.close>
-                            <flux:button variant="filled">{{ __('Cancel') }}</flux:button>
-                        </flux:modal.close>
+                        <div class="flex justify-end space-x-2 rtl:space-x-reverse">
+                            <flux:modal.close>
+                                <flux:button variant="filled">{{ __('Cancel') }}</flux:button>
+                            </flux:modal.close>
 
-                        <flux:button variant="danger" type="submit" data-test="confirm-leave-team-button">
-                            {{ __('Leave team') }}
-                        </flux:button>
-                    </div>
-                </form>
-            </flux:modal>
-        </section>
+                            <flux:button variant="danger" type="submit" data-test="confirm-leave-team-button">
+                                {{ __('Leave team') }}
+                            </flux:button>
+                        </div>
+                    </form>
+                </flux:modal>
+            </section>
+        @endcan
+
     </x-settings.layout>
 </section>

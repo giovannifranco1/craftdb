@@ -4,7 +4,7 @@
     <div
         x-show="expanded"
         x-transition
-        wire:intersect:enter.half.margin.1500px.once="loadColumns"
+        wire:intersect:enter.half.margin.2500px.once="loadColumns"
         class="flex-auto bg-white dark:bg-zinc-800 relative">
         @include('components.diagram.canvas._partials.table.structure-placeholder')
     </div>

@@ -126,7 +126,7 @@ new class extends BaseComponent {
     <x-settings.layout :heading="__('Team Members')" :subheading="__('All of the people that are part of this team.')">
 
         <!-- Add Member -->
-        <div class="my-6">
+        <div class="">
             <form wire:submit="inviteMember" class="space-y-4">
                 <flux:input
                     wire:model="email"

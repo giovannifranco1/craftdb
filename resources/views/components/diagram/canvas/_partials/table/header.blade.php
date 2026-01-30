@@ -59,7 +59,7 @@
     :style="`height: ${(getGridSize()/2 + getGridSize()) - 0.65}px; cursor: ${loading ? 'wait' : ''};`"
     class="bg-blue-500 dark:bg-blue-600 flex-none border-b border-gray-200 dark:border-zinc-700 px-3 py-1 rounded-t-xl table-header-beauty transition-colors"
 >
-    <div class="flex items-center justify-between">
+    <div class="flex items-center justify-between mt-0.5">
         <h3 class="text-sm font-semibold text-gray-900 flex items-center gap-2">
             <div class="relative w-5 h-5 rounded text-white text-xs flex items-center justify-center font-bold table-header-icon">
                 <button
@@ -95,7 +95,7 @@
                 x-trap="isEventRename"
                 x-model="name"
                 type="text"
-                class="max-w-[14rem] bg-transparent border-none outline-none shadow-none text-white font-normal font-[Kalam] text-[12pt] p-0 m-0 w-[14rem]"
+                class="max-w-[14rem] bg-transparent border-none outline-none shadow-none text-white font-normal font-[Kalam] text-[13pt] p-0 m-0 w-[14rem]"
                 style="background: transparent !important; box-shadow: none !important;"
                 @mousedown.stop
                 @keydown.stop
@@ -105,16 +105,16 @@
                 @blur="isEventRename = false; $wire.resetName()"
                 autocomplete="off"
             />
-            <span x-show="!isEventRename" class="text-white font-normal text-[15pt] font-[Kalam] max-w-[14rem] truncate">{{ $tableData->name }}</span>
+            <span x-show="!isEventRename" class="text-white font-normal text-[13pt] font-[Kalam] max-w-[14rem] truncate">{{ $tableData->name }}</span>
         </h3>
 
         <button
             aria-label="__('Expand table')"
             @mousedown.stop="toggleExpanded($el.closest('[table-box]'))"
-            class="w-6 h-6 flex min-w-6 min-h-6 items-center justify-center text-white hover:text-white/80 hover:bg-white/10 dark:hover:bg-white/20 rounded-md transition-colors"
+            class="w-6 h-6 flex min-w-6 min-h-5 items-center justify-center text-white hover:text-white/80 hover:bg-white/10 dark:hover:bg-white/20 rounded-md transition-colors"
         >
-            <flux:icon.play variant="solid" x-show="expanded" class="size-5 rotate-90" />
-            <flux:icon.play variant="solid" x-show="!expanded" class="size-5" />
+            <flux:icon.play variant="solid" x-show="expanded" class="size-4 rotate-90" />
+            <flux:icon.play variant="solid" x-show="!expanded" class="size-4" />
         </button>
     </div>
 </div>
