@@ -16,42 +16,42 @@
             @php
                 $testimonials = [
                     [
-                        'quote' => 'Substituí o DBDiagram e nunca mais voltei. A experiência visual é muito superior e a colaboração em tempo real mudou como nossa equipe trabalha.',
+                        'quote' => 'A experiência visual é muito boa. Organizamos os diagramas em times e o link público facilita compartilhar com o cliente.',
                         'author' => 'Carlos Silva',
                         'role' => 'Tech Lead @ Fintech Brasil',
                         'avatar' => 'CS',
                         'rating' => 5,
                     ],
                     [
-                        'quote' => 'As sticky notes são perfeitas para documentar decisões de arquitetura. Finalmente consigo explicar o "porquê" de cada decisão direto no diagrama.',
+                        'quote' => 'As sticky notes são perfeitas para documentar decisões de arquitetura. Consigo explicar o "porquê" de cada decisão direto no diagrama.',
                         'author' => 'Marina Costa',
                         'role' => 'DBA @ E-commerce Plus',
                         'avatar' => 'MC',
                         'rating' => 5,
                     ],
                     [
-                        'quote' => 'A exportação SQL economiza horas do nosso time. Projetamos visualmente e em segundos temos o script pronto para rodar.',
+                        'quote' => 'A importação de Laravel Migration economizou muito tempo. Já tinha as migrações e em poucos cliques o diagrama estava pronto.',
                         'author' => 'João Santos',
                         'role' => 'Backend Developer @ SaaS Startup',
                         'avatar' => 'JS',
                         'rating' => 5,
                     ],
                     [
-                        'quote' => 'O versionamento salvou nosso projeto várias vezes. Poder voltar a uma versão anterior com um clique é essencial.',
+                        'quote' => 'As áreas no canvas ajudam a separar domínios do modelo. Fica muito mais legível do que um monte de tabela solta.',
                         'author' => 'Ana Oliveira',
                         'role' => 'Arquiteta de Software @ Consultoria',
                         'avatar' => 'AO',
                         'rating' => 5,
                     ],
                     [
-                        'quote' => 'A interface é tão intuitiva que nossos estagiários começaram a contribuir com modelagem no primeiro dia. Incrível!',
+                        'quote' => 'A interface é intuitiva. Nossa equipe começou a usar e em pouco tempo todo mundo estava modelando sem precisar de treinamento.',
                         'author' => 'Pedro Lima',
                         'role' => 'CTO @ Agency Digital',
                         'avatar' => 'PL',
                         'rating' => 5,
                     ],
                     [
-                        'quote' => 'Múltiplos temas podem parecer bobagem, mas o dark mode bem feito faz toda diferença quando você passa horas modelando.',
+                        'quote' => 'O dark mode e os temas do diagrama fazem diferença quando você passa horas modelando. Menos cansaço visual.',
                         'author' => 'Fernanda Rocha',
                         'role' => 'Full Stack Developer @ Tech Corp',
                         'avatar' => 'FR',

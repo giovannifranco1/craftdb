@@ -20,7 +20,7 @@
                 <!-- Subheadline -->
                 <p class="text-lg md:text-xl text-gray-600 mb-10 max-w-xl fade-in-up fade-in-delay-1">
                     Crie diagramas de banco de dados intuitivos. Defina tabelas, relacionamentos
-                    e colabore em tempo real. Zero complexidade, máxima produtividade.
+                    e trabalhe em times. Zero complexidade, máxima produtividade.
                 </p>
 
                 <!-- CTAs -->
@@ -37,13 +37,13 @@
                         </a>
                     @endauth
                     <a href="#features" class="btn-secondary group">
-                        Outras plataformas
+                        Ver funcionalidades
                     </a>
                 </div>
 
                 <!-- Support text -->
                 <p class="text-sm text-gray-600 fade-in-up fade-in-delay-3">
-                    Suporta MySQL, PostgreSQL, SQLite e mais
+                    MySQL, PostgreSQL, SQLite e Laravel Migration
                 </p>
             </div>
 
@@ -52,7 +52,6 @@
                 <div class="relative">
                     <!-- Laptop mockup image -->
                     <img src="{{ Vite::asset('resources/images/landing-page/macbook.png') }}" alt="MacBook" class="w-full h-auto relative z-10"/>
-                    <!-- Screenshot inside MacBook - using percentages for responsive positioning -->
                     <img src="{{ Vite::asset('resources/images/landing-page/image_macbook.png') }}" alt="MacBook Screen" class="absolute w-[70%] h-auto top-[14%] left-[15%] z-5"/>
                 </div>
 

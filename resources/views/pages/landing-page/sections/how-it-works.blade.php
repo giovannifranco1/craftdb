@@ -1,135 +1,94 @@
-<section id="how-it-works" class="py-24 relative section-gradient scroll-animate">
-    <div class="container mx-auto px-6">
-        <!-- Section Header -->
-        <div class="max-w-3xl mx-auto text-center mb-16">
-            <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
-                Da ideia ao diagrama em{" "}
-                <span class="gradient-text">minutos</span>
+<section id="how-it-works" class="py-32 relative overflow-hidden bg-black scroll-animate">
+    {{-- Background decorations (subtle gradient only, no heavy blur) --}}
+    <div class="absolute inset-0 bg-gradient-to-b from-transparent via-gray-900/5 to-transparent pointer-events-none" aria-hidden="true"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-500/5 rounded-full blur-2xl pointer-events-none" aria-hidden="true"></div>
+
+    <div class="container mx-auto px-6 relative">
+        {{-- Section Header --}}
+        <div class="max-w-3xl mx-auto text-center mb-20">
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-sm font-medium mb-6">
+                <x-lucide-sparkles class="w-4 h-4" />
+                Simples e poderoso
+            </div>
+            <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 tracking-tight">
+                Da ideia ao diagrama
+                <br />
+                <span class="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">em minutos</span>
             </h2>
-            <p class="text-lg text-gray-600">
-                Simples assim. Crie, conecte e compartilhe seus schemas de banco de dados.
+            <p class="text-xl text-white/60 max-w-2xl mx-auto">
+                Quatro passos simples para criar, conectar e compartilhar seus schemas de banco de dados de forma profissional.
             </p>
         </div>
 
-        <div class="grid lg:grid-cols-2 gap-12 items-center">
-            <!-- Steps -->
-            <div class="space-y-8">
-                @php
-                    $steps = [
-                        [
-                            'icon' => 'folder',
-                            'title' => 'Crie seu workspace',
-                            'description' => 'Organize seus projetos em workspaces para melhor estrutura.',
-                        ],
-                        [
-                            'icon' => 'table',
-                            'title' => 'Adicione tabelas',
-                            'description' => 'Arraste e defina campos, tipos e constraints visualmente.',
-                        ],
-                        [
-                            'icon' => 'link',
-                            'title' => 'Conecte relacionamentos',
-                            'description' => 'Crie FKs arrastando conexões entre as tabelas.',
-                        ],
-                        [
-                            'icon' => 'share',
-                            'title' => 'Exporte ou compartilhe',
-                            'description' => 'Gere SQL, exporte PNG ou compartilhe com sua equipe.',
-                        ],
-                    ];
-                @endphp
+        {{-- Steps Grid (pt-8 evita corte do badge pelo overflow da section) --}}
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 pt-8">
+            @php
+                $steps = [
+                    [
+                        'icon' => 'users',
+                        'title' => 'Crie seu time',
+                        'description' => 'Monte seu time e gerencie permissões para colaboração eficiente.',
+                        'color' => 'from-blue-500 to-cyan-500',
+                    ],
+                    [
+                        'icon' => 'add-table',
+                        'title' => 'Crie o diagrama',
+                        'description' => 'Modele seu banco visualmente, criando tabelas, campos e relacionamentos em um canvas intuitivo.',
+                        'color' => 'from-violet-500 to-purple-500',
+                    ],
+                    [
+                        'icon' => 'code',
+                        'title' => 'Importe seu schema',
+                        'description' => 'Traga rapidamente sua estrutura existente com importação de SQL ou Laravel Migration.',
+                        'color' => 'from-yellow-500 to-orange-500',
+                    ],
+                    [
+                        'icon' => 'share',
+                        'title' => 'Compartilhe',
+                        'description' => 'Gere um link público e compartilhe o diagrama sem exigir login.',
+                        'color' => 'from-emerald-500 to-teal-500',
+                    ],
+                ];
+            @endphp
 
-                @foreach($steps as $index => $step)
-                    <div class="flex gap-4">
-                        <div class="flex-shrink-0">
-                            <div class="w-12 h-12 rounded-xl bg-gray-900/10 border border-gray-900/20 flex items-center justify-center">
-                                @if($step['icon'] === 'folder')
-                                    <x-lucide-folder class="w-6 h-6 text-gray-900" />
-                                @elseif($step['icon'] === 'table')
-                                    <x-lucide-table class="w-6 h-6 text-gray-900" />
-                                @elseif($step['icon'] === 'link')
-                                    <x-lucide-link-2 class="w-6 h-6 text-gray-900" />
+            @foreach($steps as $index => $step)
+                <div class="relative flex">
+                    {{-- Connection line (atrás dos cards, só desktop) --}}
+                    @if($index < count($steps) - 1)
+                        <div class="hidden lg:block absolute top-14 left-1/2 w-1/2 h-px bg-gradient-to-r from-white/20 to-transparent z-0" style="left: calc(50% + 2rem);"></div>
+                    @endif
+
+                    <div class="relative z-10 w-full bg-white/[0.07] border border-white/10 rounded-2xl p-8 flex flex-col transition-all duration-300 hover:border-blue-500/30 hover:shadow-xl hover:shadow-blue-500/5 hover:-translate-y-1">
+                        {{-- Step number --}}
+                        <div class="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-sm font-bold text-white/70">
+                            {{ $index + 1 }}
+                        </div>
+
+                        {{-- Icon --}}
+                        <div class="w-16 h-16 rounded-2xl bg-gradient-to-br {{ $step['color'] }} p-0.5 mb-6 shrink-0 overflow-hidden">
+                            <div class="w-full h-full rounded-[14px] bg-black flex items-center justify-center">
+                                @if($step['icon'] === 'users')
+                                    <x-lucide-users class="w-7 h-7 text-white shrink-0" />
+                                @elseif($step['icon'] === 'add-table')
+                                    <flux:icon.add-table class="w-7 h-7 text-white shrink-0" />
+                                @elseif($step['icon'] === 'code')
+                                    <x-lucide-file-code class="w-7 h-7 text-white shrink-0" />
                                 @elseif($step['icon'] === 'share')
-                                    <x-lucide-share-2 class="w-6 h-6 text-gray-900" />
+                                    <x-lucide-share-2 class="w-7 h-7 text-white shrink-0" />
                                 @endif
                             </div>
                         </div>
-                        <div>
-                            <div class="flex items-center gap-2 mb-1">
-                                <span class="text-xs font-medium text-gray-900">Passo {{ $index + 1 }}</span>
-                            </div>
-                            <h3 class="text-lg font-semibold text-gray-900 mb-1">
-                                {{ $step['title'] }}
-                            </h3>
-                            <p class="text-gray-600 text-sm">
-                                {{ $step['description'] }}
-                            </p>
-                        </div>
-                    </div>
-                @endforeach
-            </div>
 
-            <!-- Visual representation -->
-            <div class="glass-card p-6 glow-effect">
-                <div class="space-y-4">
-                    <!-- Workspace selector -->
-                    <div class="flex items-center gap-3 p-3 bg-white/50 rounded-lg border border-gray-200/30">
-                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"></path>
-                        </svg>
-                        <div class="flex-1">
-                            <div class="text-sm font-medium text-gray-900">Workspace</div>
-                            <div class="text-xs text-gray-600">Projeto E-commerce</div>
-                        </div>
-                        <div class="text-xs text-blue-600">3 diagramas</div>
-                    </div>
-
-                    <!-- Table being created -->
-                    <div class="p-4 bg-white/50 rounded-lg border border-gray-200/30">
-                        <div class="text-xs text-gray-600 mb-3">Nova tabela detectada</div>
-                        <div class="flex items-center gap-2 mb-3">
-                            <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
-                            </svg>
-                            <span class="text-sm font-medium text-gray-900">products</span>
-                            <span class="text-xs px-2 py-0.5 rounded-full bg-green-500/20 text-green-600">criando...</span>
-                        </div>
-                        <div class="space-y-2 text-xs">
-                            <div class="flex items-center gap-2 p-2 bg-white/50 rounded">
-                                <span class="text-blue-600">🔑</span>
-                                <span class="text-gray-900">id</span>
-                                <span class="text-gray-600 ml-auto">uuid PRIMARY KEY</span>
-                            </div>
-                            <div class="flex items-center gap-2 p-2 bg-white/50 rounded">
-                                <span class="text-gray-400">○</span>
-                                <span class="text-gray-900">name</span>
-                                <span class="text-gray-600 ml-auto">varchar(255)</span>
-                            </div>
-                            <div class="flex items-center gap-2 p-2 bg-white/50 rounded">
-                                <span class="text-gray-400">○</span>
-                                <span class="text-gray-900">price</span>
-                                <span class="text-gray-600 ml-auto">decimal(10,2)</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Action buttons -->
-                    <div class="flex gap-3">
-                        <button class="flex-1 inline-flex items-center justify-center px-4 py-2.5 landing-btn-primary text-white text-sm font-medium rounded-lg transition">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
-                            </svg>
-                            Adicionar campo
-                        </button>
-                        <button class="flex-1 inline-flex items-center justify-center px-4 py-2.5 border-2 border-gray-300 rounded-lg text-sm font-medium landing-btn-outline transition">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
-                            </svg>
-                            Criar FK
-                        </button>
+                        {{-- Content --}}
+                        <h3 class="text-xl font-semibold text-white mb-3 pr-10">
+                            {{ $step['title'] }}
+                        </h3>
+                        <p class="text-white/60 leading-relaxed text-sm">
+                            {{ $step['description'] }}
+                        </p>
                     </div>
                 </div>
-            </div>
+            @endforeach
         </div>
     </div>
 </section>

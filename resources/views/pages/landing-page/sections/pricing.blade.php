@@ -3,7 +3,7 @@
         <!-- Section Header -->
         <div class="max-w-3xl mx-auto text-center mb-16">
             <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
-                Preços simples,{" "}
+                Preços simples,
                 <span class="gradient-text">sem surpresas</span>
             </h2>
             <p class="text-lg text-gray-600">
@@ -23,9 +23,9 @@
                         'description' => 'Perfeito para projetos pessoais e aprendizado.',
                         'features' => [
                             '3 diagramas',
-                            '1 workspace',
+                            '1 time',
                             'Temas básicos',
-                            'Exportação PNG',
+                            'Link público',
                             'Suporte por email',
                         ],
                         'cta' => 'Começar grátis',
@@ -38,12 +38,12 @@
                         'description' => 'Para desenvolvedores e freelancers que precisam de mais.',
                         'features' => [
                             'Diagramas ilimitados',
-                            'Workspaces ilimitados',
+                            'Times ilimitados',
                             'Todos os temas',
-                            'Exportação SQL + PNG',
-                            'Colaboração em tempo real',
-                            'Histórico de versões',
-                            'Sticky notes',
+                            'Link público',
+                            'Times e membros (editor/viewer)',
+                            'Notas (Sticky notes)',
+                            'Importação SQL e Laravel',
                             'Suporte prioritário',
                         ],
                         'cta' => 'Assinar Pro',
@@ -55,14 +55,16 @@
                         'period' => '/mês',
                         'description' => 'Para times que precisam de colaboração avançada.',
                         'features' => [
-                            'Tudo do Pro',
+                            'Diagramas ilimitados',
+                            'Times ilimitados',
+                            'Todos os temas',
+                            'Link público',
+                            'Times e membros (editor/viewer)',
+                            'Notas (Sticky notes)',
+                            'Importação SQL e Laravel',
+                            'Suporte prioritário',
                             'Permissões granulares',
-                            'SSO (SAML/OIDC)',
-                            'Audit logs',
-                            'API access',
-                            'Integração com Git',
                             'Suporte dedicado',
-                            'SLA 99.9%',
                         ],
                         'cta' => 'Falar com vendas',
                         'popular' => false,
@@ -71,7 +73,7 @@
             @endphp
 
             @foreach($plans as $plan)
-                <div class="glass-card p-8 relative {{ $plan['popular'] ? 'border-gray-900/50 glow-effect' : '' }}">
+                <div class="glass-card p-8 relative {{ $plan['popular'] ? 'border-gray-900/50' : '' }}">
                     @if($plan['popular'])
                         <div class="absolute -top-3 left-1/2 -translate-x-1/2">
                             <span class="px-3 py-1 rounded-full bg-gray-900 text-white text-xs font-medium">

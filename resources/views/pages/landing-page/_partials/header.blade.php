@@ -8,10 +8,10 @@
         <div class="flex items-center justify-between h-16">
             <!-- Logo -->
             <a href="{{ route('home') }}" class="flex items-center gap-2.5">
-                <div class="w-15 h-15 flex items-center justify-center">
-                    <x-app-logo-icon class="size-15 fill-current" />
+                <div class="w-20 h-20 flex items-center justify-center">
+                    <x-app-logo-icon class="size-20 fill-current" />
                 </div>
-                <span class="text-xl font-bold text-gray-900">CraftDB</span>
+                <span class="text-3xl font-semibold font-[Outfit] text-gray-900">CraftDB</span>
             </a>
 
             <!-- Desktop Navigation + CTA -->
@@ -24,10 +24,10 @@
                         Preços
                     </a>
                     <a href="#how-it-works" class="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
-                        Docs
+                        Como funciona
                     </a>
                     <a href="#faq" class="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
-                        Contato
+                        FAQ
                     </a>
                 </nav>
                 @auth
@@ -70,10 +70,10 @@
                     Preços
                 </a>
                 <a href="#how-it-works" @click="mobileMenuOpen = false" class="text-sm font-medium text-gray-600 hover:text-gray-900 py-2">
-                    Docs
+                    Como funciona
                 </a>
                 <a href="#faq" @click="mobileMenuOpen = false" class="text-sm font-medium text-gray-600 hover:text-gray-900 py-2">
-                    Contato
+                    FAQ
                 </a>
 
                 <div class="pt-4 border-t border-gray-200">

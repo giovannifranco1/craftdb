@@ -63,8 +63,9 @@
   }
 
   body {
-    @apply bg-white antialiased;
+    @apply antialiased;
     font-family: 'Outfit', sans-serif;
+    background-color: #f7fcff;
   }
 }
 
@@ -105,7 +106,7 @@
   }
 
   .feature-icon {
-    @apply w-10 h-10 rounded-xl bg-gradient-to-br from-gray-900/20 to-gray-700/20 flex items-center justify-center text-gray-900;
+    @apply w-10 h-10 rounded-xl bg-gradient-to-br from-gray-900/10 to-gray-700/10 flex items-center justify-center text-gray-900;
   }
 
   .code-block {

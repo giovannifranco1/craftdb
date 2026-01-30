@@ -3,7 +3,7 @@
         <!-- Section Header -->
         <div class="max-w-3xl mx-auto text-center mb-16">
             <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
-                Perguntas{" "}
+                Perguntas
                 <span class="gradient-text">frequentes</span>
             </h2>
             <p class="text-lg text-gray-600">
@@ -17,35 +17,35 @@
                 $faqs = [
                     [
                         'question' => 'Posso exportar meus diagramas para SQL?',
-                        'answer' => 'Sim! O CraftDB suporta exportação para PostgreSQL, MySQL, SQLite e SQL Server. Você pode gerar scripts completos com CREATE TABLE, constraints, índices e foreign keys.',
+                        'answer' => 'A exportação para SQL está em desenvolvimento. Hoje você pode importar schemas a partir de arquivos SQL (MySQL) e de arquivos de Laravel Migration.',
                     ],
                     [
-                        'question' => 'Quais bancos de dados são suportados?',
-                        'answer' => 'Suportamos os principais bancos relacionais: PostgreSQL, MySQL, MariaDB, SQLite, SQL Server e Oracle. Cada exportação respeita a sintaxe específica do banco escolhido.',
+                        'question' => 'Quais bancos e tecnologias são suportados?',
+                        'answer' => 'Para importação: SQL (MySQL) e arquivos de Laravel Migration. O CraftDB suporta modelagem visual para MySQL, PostgreSQL e SQLite. Suporte a mais formatos está em expansão.',
                     ],
                     [
-                        'question' => 'Como funciona a colaboração em tempo real?',
-                        'answer' => 'Basta compartilhar o link do seu diagrama ou convidar colaboradores por email. Todos veem as alterações instantaneamente, com cursores coloridos mostrando onde cada pessoa está trabalhando.',
+                        'question' => 'Como funciona o trabalho em times?',
+                        'answer' => 'Você cria um time, convida membros por email e define o papel de cada um (editor ou viewer). Os diagramas ficam organizados por time e você pode compartilhar o link público para quem não tem conta.',
                     ],
                     [
                         'question' => 'Posso importar schemas existentes?',
-                        'answer' => 'Sim! Você pode importar schemas de arquivos SQL, conexão direta com banco de dados, ou arquivos de migração. O CraftDB detecta automaticamente tabelas, campos e relacionamentos.',
+                        'answer' => 'Sim. Você pode importar a partir de arquivos SQL (MySQL) ou de arquivos de Laravel Migration (.php). O CraftDB detecta tabelas, campos e relacionamentos automaticamente.',
                     ],
                     [
                         'question' => 'Os diagramas são salvos na nuvem?',
-                        'answer' => 'Sim, todos os diagramas são salvos automaticamente na nuvem com versionamento. Você pode acessar de qualquer dispositivo e nunca vai perder seu trabalho.',
+                        'answer' => 'Sim, todos os diagramas são salvos na nuvem. Você pode acessar de qualquer dispositivo com sua conta.',
                     ],
                     [
                         'question' => 'Existe limite de tabelas por diagrama?',
-                        'answer' => 'No plano gratuito você pode ter até 20 tabelas por diagrama. Nos planos pagos, não há limite - já temos usuários com diagramas de 200+ tabelas rodando perfeitamente.',
+                        'answer' => 'Sim. Atualmente há um limite de 30 tabelas por diagrama. Isso garante boa performance no canvas.',
                     ],
                     [
                         'question' => 'Posso usar offline?',
-                        'answer' => 'Atualmente o CraftDB funciona apenas online para garantir sincronização em tempo real. Estamos desenvolvendo um modo offline que será lançado em breve.',
+                        'answer' => 'Atualmente o CraftDB funciona apenas online. Os dados ficam na nuvem e você precisa de internet para acessar e editar.',
                     ],
                     [
-                        'question' => 'Como funciona o período de teste?',
-                        'answer' => 'Você pode usar o plano gratuito para sempre, sem necessidade de cartão de crédito. Para testar os recursos Pro, oferecemos 14 dias grátis com todos os recursos liberados.',
+                        'question' => 'Preciso de cartão de crédito para começar?',
+                        'answer' => 'Não. Você pode criar uma conta e usar o plano gratuito sem informar cartão de crédito.',
                     ],
                 ];
             @endphp
@@ -54,13 +54,12 @@
                 <div class="glass-card overflow-hidden">
                     <button
                         @click="openIndex = openIndex === {{ $index }} ? null : {{ $index }}"
-                        class="w-full px-6 py-4 flex items-center justify-between text-left"
+                        class="w-full px-6 py-4 flex items-center justify-between gap-3 text-left"
                     >
                         <span class="font-medium text-gray-900">{{ $faq['question'] }}</span>
-                        {{-- <x-lucide-chevron-down
-                            class="w-5 h-5 text-gray-600 transition-transform duration-300"
-                            :class="{ 'rotate-180': openIndex === {{ $index }} }"
-                        /> --}}
+                        <span class="inline-flex shrink-0 transition-transform duration-300" x-bind:class="{ 'rotate-180': openIndex === {{ $index }} }">
+                            <x-lucide-chevron-down class="w-5 h-5 text-gray-600" />
+                        </span>
                     </button>
                     <div
                         x-show="openIndex === {{ $index }}"
