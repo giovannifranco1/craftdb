@@ -16,19 +16,19 @@ return [
 
     'colorful' => [
         'indigo'  =>  '#4F46E5', // Indigo - vibrante mas suave
-        'emerald' =>  '#059669', // Emerald - fresco e alegre
+        'emerald' =>  '#065F46', // Emerald - um pouco mais escuro, fresco e alegre
         'red'     =>  '#DC2626', // Red - elegante e vibrante
         'violet'  =>  '#7C3AED', // Violet - criativo e elegante
-        'amber'   =>  '#F59E0B', // Amber - quente e acolhedor
-        'cyan'    =>  '#06B6D4', // Cyan - refrescante e vibrante
+        'amber'   =>  '#B34A00', // Amber - um pouco mais escuro, acessível com texto branco (#ffffff)
+        'cyan'    =>  '#155E75', // Cyan - um cadinho mais escuro, refrescante e vibrante
     ],
 
     'colorful-solid' => [
-        'indigo'  =>  '#818CF8', // Indigo - muito suave e confortável
-        'emerald' =>  '#34D399', // Emerald - fresco e suave
-        'red'     =>  '#F87171', // Red - suave e confortável
-        'violet'  =>  '#A78BFA', // Violet - elegante e muito suave
-        'amber'   =>  '#FCD34D', // Amber - quente mas suave
-        'cyan'    =>  '#67E8F9', // Cyan - refrescante e suave
+        'indigo'  =>  '#C7D2FE', // Indigo - muito suave e confortável
+        'emerald' =>  '#A7F3D0', // Emerald - fresco e suave
+        'red'     =>  '#FECACA', // Red - suave e confortável
+        'violet'  =>  '#DDD6FE', // Violet - elegante e muito suave
+        'amber'   =>  '#FDE68A', // Amber - quente mas suave
+        'cyan'    =>  '#A5F3FC', // Cyan - refrescante e suave
     ],
 ];

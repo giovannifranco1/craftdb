@@ -84,6 +84,7 @@ select:focus[data-flux-control] {
     @apply dark:bg-[var(--color-background-dark)];
 }
 
-/* \[:where(&)\]:size-4 {
-    @apply size-4;
-} */
+[data-flux-tooltip-content] {
+    @apply bg-[var(--color-background-dark)];
+}
+

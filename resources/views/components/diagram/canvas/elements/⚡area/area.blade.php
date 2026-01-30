@@ -7,13 +7,12 @@
     @php
         $areaColor = $area->color ?? '#94a3b8';
 
-        // Se for solid, busca a versão solid da cor atual
         if ($area->is_solid ?? false) {
             $colorful = config('color.colorful', []);
             $colorfulSolid = config('color.colorful-solid', []);
 
-            // Encontra a key da cor atual na paleta colorful
             $colorKey = null;
+
             foreach ($colorful as $key => $hex) {
                 if (strtolower($hex) === strtolower($areaColor)) {
                     $colorKey = $key;
@@ -21,13 +20,12 @@
                 }
             }
 
-            // Se encontrou a key, usa a versão solid dela
             if ($colorKey && isset($colorfulSolid[$colorKey])) {
                 $areaColor = $colorfulSolid[$colorKey];
             }
         }
 
-        $opacity = $area->is_solid ?? false ? 0.8 : 0.3;
+        $opacity = $area->is_solid ?? false ? 1 : 0.3;
         $bgColor = \App\Support\Helpers::hexToRgba($areaColor, $opacity);
     @endphp
     :style="`transform: translate3d(${x}px, ${y}px, 0); width: ${width}px; height: ${height}px; max-width: ${width}px; max-height: ${height}px; ${zIndex ? `z-index: ${zIndex};` : ''} border-color: {{ $areaColor }}; background-color: {{ $bgColor }};`"

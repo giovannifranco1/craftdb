@@ -34,7 +34,7 @@
                         x-bind:is-hidden="!expanded || (hiddenColumnsCount > 0 && {{ $index }} >= visibleColumnsCount)"
                     >
                         <td @dblclick="isEventRenameColumn = true" class="px-3">
-                            <flux:tooltip gap="100" position="right">
+                            <flux:tooltip position="right">
                                 <div class="flex items-center gap-2">
                                     {!! Helpers::getIconDiamondByTypeColumn($column) !!}
 
@@ -46,6 +46,22 @@
                                     </div>
 
                                     <input
+                                        x-data="{
+                                            tableId: @js($tableId),
+                                            columnId: @js($column->id),
+                                            __new: @js($column->__new),
+
+                                            init() {
+                                                if (this.__new) {
+                                                    this.isEventRenameColumn = true;
+                                                }
+
+                                                window.addEventListener(`table::column-added.${this.tableId}`, (event) => {
+                                                    this.__new = false;
+                                                    this.isEventRenameColumn = false;
+                                                });
+                                            },
+                                        }"
                                         name="name"
                                         x-show="isEventRenameColumn"
                                         x-ref="inputColumn"
@@ -57,14 +73,22 @@
                                         @keydown.stop
                                         @keydown.enter="renameActionTriggered = true; loadingRenameColumn = true; $wire.renameColumn({{ $column->id }}, $refs.inputColumn?.value || '')"
                                         @keydown.escape.stop="isEventRenameColumn = false;"
-                                        @table::column-added.window="isEventRenameColumn = $event.detail.columnId === {{ $column->id }}"
                                         @table::column-renamed.window="() => {
                                             if (renameActionTriggered) isEventRenameColumn = false;
                                             loadingRenameColumn = false;
                                         }"
                                         @blur="() => {
                                             if (renameActionTriggered) return;
-                                            if ($refs.inputColumn?.value === '') return;
+
+                                            if ($refs.inputColumn?.value === '') {
+                                                $refs.inputColumn.value = 'new_column';
+                                                isEventRenameColumn = false;
+                                                renameActionTriggered = false;
+                                                loadingRenameColumn = false;
+                                                console.log('new_column');
+                                                return;
+                                            }
+
                                             renameActionTriggered = false;
                                             loadingRenameColumn = true;
                                             $wire.renameColumn({{ $column->id }}, $refs.inputColumn?.value);

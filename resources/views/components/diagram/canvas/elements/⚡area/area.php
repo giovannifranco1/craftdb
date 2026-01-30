@@ -5,13 +5,14 @@ use App\Models\Area as AreaModel;
 use App\Support\Helpers;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
+use Livewire\Attributes\Renderless;
 use Livewire\Attributes\Validate;
 
 new class extends CanvasComponent {
 
     /** @var array<string, string>  */
     protected $listeners = [
-        'area::color-updated' => '$refresh',
+        // 'area::color-updated' => '$refresh',
         'area::renamed' => '$refresh',
     ];
 
@@ -35,6 +36,7 @@ new class extends CanvasComponent {
             'x' => $x,
             'y' => $y,
         ]);
+        $this->area->refresh();
     }
 
     #[On('area::resize.{area.id}')]
@@ -46,6 +48,7 @@ new class extends CanvasComponent {
             'x' => $x,
             'y' => $y,
         ]);
+        $this->area->refresh();
     }
 
     public function renameArea(): void
@@ -74,9 +77,8 @@ new class extends CanvasComponent {
     public function toggleSolid(): void
     {
         $this->area->update(['is_solid' => !$this->area->is_solid]);
-        $this->area->refresh();
 
-        $this->dispatch('area::color-updated');
+        $this->dispatch('area::solid-updated');
     }
 
     public function remove(): void

@@ -40,15 +40,12 @@ export default (x, y, tableId) => ({
         this.$el.style.left = '0px';
         this.$el.style.top = '0px';
 
-        const headerHeight = this.getGridSize() / 2 + this.getGridSize();
-        const footerHeight = this.getGridSize() / 2 + this.getGridSize();
-        const rowHeight = this.getGridSize();
-        const maxColumns = this.$wire.tableData.resize_column_position;
-        this.maxHeight = headerHeight + (maxColumns * rowHeight) + footerHeight;
-        this.maxResizeHeightDown = this.maxHeight + (this.$wire.tableData.columns_count * rowHeight);
-        this.maxResizeHeightUp = (this.maxHeight + rowHeight);
+        // Inicializa os limites de resize
+        this.updateResizeLimits();
 
         // Define altura inicial mínima (header + footer) enquanto calcula
+        const headerHeight = this.getGridSize() / 2 + this.getGridSize();
+        const footerHeight = this.getGridSize() / 2 + this.getGridSize();
         this.height = headerHeight + footerHeight;
 
         // Usa $nextTick para garantir que o DOM está renderizado
@@ -105,6 +102,7 @@ export default (x, y, tableId) => ({
         // Observa mudanças na altura para atualizar contagem de colunas
         this.$watch('height', () => this.updateVisibleColumnsCount());
         this.$watch('expanded', () => {
+            this.updateResizeLimits();
             setTimeout(() => {
                 this.recalculateHeightIfNeeded();
             }, 100);
@@ -112,27 +110,32 @@ export default (x, y, tableId) => ({
 
         // Observa quando as colunas são carregadas para recalcular altura
         this.$el.addEventListener('table::columns-loaded', () => {
+            this.updateResizeLimits();
             setTimeout(() => {
                 this.recalculateHeightIfNeeded();
             }, 100);
         });
 
         // Observa eventos de mudança de colunas
-        window.addEventListener(`table::column-added`, () => {
-            setTimeout(() => this.recalculateHeightIfNeeded(), 100);
-        });
+        // window.addEventListener(`table::column-added.${this.tableId}`, () => {
+        //     this.updateResizeLimits();
+        //     setTimeout(() => this.recalculateHeightIfNeeded(), 100);
+        // });
 
         window.addEventListener(`relationships::fresh`, () => {
+            this.updateResizeLimits();
             setTimeout(() => this.recalculateHeightIfNeeded(), 100);
         });
 
         window.addEventListener(`table::column-saved`, () => {
+            this.updateResizeLimits();
             setTimeout(() => this.recalculateHeightIfNeeded(), 100);
         });
 
         // Observa mudanças no DOM quando colunas são adicionadas/removidas
         const observer = new MutationObserver(() => {
             if (this.expanded) {
+                this.updateResizeLimits();
                 setTimeout(() => this.recalculateHeightIfNeeded(), 100);
             }
         });
@@ -155,6 +158,7 @@ export default (x, y, tableId) => ({
         document.addEventListener('livewire:init', () => {
             Livewire.hook('morph.updated', ({ el }) => {
                 if (el.closest && el.closest(`[table-id="${this.tableId}"]`)) {
+                    this.updateResizeLimits();
                     setTimeout(() => this.recalculateHeightIfNeeded(), 100);
                 }
             });
@@ -274,16 +278,24 @@ export default (x, y, tableId) => ({
         return calculatedHeight;
     },
 
-    recalculateHeightIfNeeded() {
-        // Recalcula apenas se a altura não foi aumentada via resize
-        this.maxResizeHeightDown = this.maxHeight + (this.$wire.tableData.columns_count * this.getGridSize());
-        this.maxResizeHeightUp = this.maxHeight + this.getGridSize();
-        this.maxColumns = this.$wire.tableData.resize_column_position;
+    updateResizeLimits() {
+        // Atualiza os limites de resize baseado no estado atual da tabela
         const headerHeight = this.getGridSize() / 2 + this.getGridSize();
         const footerHeight = this.getGridSize() / 2 + this.getGridSize();
         const rowHeight = this.getGridSize();
-        this.maxHeight = headerHeight + (this.maxColumns * rowHeight) + footerHeight;
+        const maxColumns = this.$wire.tableData.resize_column_position;
+        const columnsCount = this.$wire.tableData.columns_count;
 
+        this.maxHeight = headerHeight + (maxColumns * rowHeight) + footerHeight;
+        this.maxResizeHeightDown = this.maxHeight + (columnsCount * rowHeight);
+        this.maxResizeHeightUp = this.maxHeight + rowHeight;
+    },
+
+    recalculateHeightIfNeeded() {
+        // Atualiza os limites de resize primeiro
+        this.updateResizeLimits();
+
+        // Recalcula apenas se a altura não foi aumentada via resize
         if (this.height <= this.maxHeight) {
             const newHeight = this.calculateInitialHeight();
             this.height = newHeight;
@@ -348,6 +360,9 @@ export default (x, y, tableId) => ({
         if (!this.isResizing) return;
         e.preventDefault();
         e.stopPropagation();
+
+        // Garante que os limites de resize estão atualizados
+        this.updateResizeLimits();
 
         const scale = this.getScale();
         const dy = (e.clientY - this.startY) / scale;

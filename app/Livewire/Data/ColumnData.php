@@ -20,6 +20,7 @@ class ColumnData implements Wireable
         public ?bool $relationships_to_exists = null,
         public ?string $default_value = null,
         public ?string $comment = null,
+        public bool $__new = false,
     ) {}
 
     /**

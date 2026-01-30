@@ -45,39 +45,39 @@
 >
     <flux:button.group>
 
-        <flux:button x-data="{ open: false, loadingColor: false }" @mousedown.stop="open = !open" variant="primary" icon:trailing="chevron-down">
+        <flux:button aria-label="__('Select table color')" x-data="{ open: false, loadingColor: false }" @mousedown.stop="open = !open" variant="primary" icon:trailing="chevron-down">
             <x-diagram.canvas.ui.color-circle :color="$tableData->color"/>
             <x-diagram.canvas.ui.color-picker :item="$tableData" type="table" />
         </flux:button>
 
-        <flux:button @mousedown.stop="$wire.addColumn()" variant="primary" class="font-[Poppins] text-xs">
+        <flux:button aria-label="__('Add column')" @mousedown.stop="$wire.addColumn()" variant="primary" class="font-[Poppins] text-xs">
             <flux:icon.plus-circle variant="solid" class="size-3.5"/>
             {{ __('Add Column') }}
         </flux:button>
 
-        <flux:button @mousedown.stop="renameTable()" variant="primary" class="font-[Poppins] text-xs">
+        <flux:button aria-label="__('Rename table')" @mousedown.stop="renameTable()" variant="primary" class="font-[Poppins] text-xs">
             <flux:icon.pencil variant="solid" class="size-3"/>
             {{ __('Rename')}}
         </flux:button>
 
-        <flux:button @mousedown.stop="addRelationshipOneToOne()"
+        <flux:button aria-label="__('Add 1:1 relationship')" @mousedown.stop="addRelationshipOneToOne()"
             variant="primary"
             class="font-[Space_Mono] text-sm">
             1:1
         </flux:button>
 
-        <flux:button @mousedown.stop="addRelationshipOneToMany()" variant="primary" class="font-[Space_Mono] text-sm">
+        <flux:button aria-label="__('Add 1:n relationship')" @mousedown.stop="addRelationshipOneToMany()" variant="primary" class="font-[Space_Mono] text-sm">
             1:n
         </flux:button>
 
-        <flux:button @mousedown.stop="addRelationshipManyToOne()" variant="primary" class="font-[Space_Mono] text-sm">
+        <flux:button aria-label="__('Add n:1 relationship')" @mousedown.stop="addRelationshipManyToOne()" variant="primary" class="font-[Space_Mono] text-sm">
             n:1
         </flux:button>
 
-        <flux:button @mousedown.stop="addRelationshipManyToMany()" variant="primary" class="font-[Space_Mono] text-sm">
+        <flux:button aria-label="__('Add n:n relationship')" @mousedown.stop="addRelationshipManyToMany()" variant="primary" class="font-[Space_Mono] text-sm">
             n:n
         </flux:button>
 
-        <flux:button @mousedown.stop="$wire.remove()" variant="primary" square icon="trash" color="red" class="font-[Kalam]"/>
+        <flux:button aria-label="__('Remove table')" @mousedown.stop="$wire.remove()" variant="primary" square icon="trash" color="red" class="font-[Kalam]"/>
     </flux:button.group>
 </div>

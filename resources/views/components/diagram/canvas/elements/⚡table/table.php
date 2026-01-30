@@ -13,6 +13,7 @@ use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Validate;
 use App\Livewire\CanvasComponent;
+use App\Livewire\Data\ColumnData;
 
 new class extends CanvasComponent {
 
@@ -134,8 +135,21 @@ new class extends CanvasComponent {
         }
 
         $column = $action->exec($this->table);
+        $newColumnId = $column->id;
 
         $this->updateTableData();
+
+        $this->tableData->columns = array_map(function (ColumnData $columnData) use ($newColumnId) {
+
+            if (($columnData->id ?? null) === $newColumnId) {
+                $columnData->__new = true;
+            } else {
+                $columnData->__new = false;
+            }
+
+            return $columnData;
+        }, $this->tableData->columns);
+
         $this->dispatch("table::column-added.{$this->tableId}", columnId: $column->id);
     }
 
@@ -194,5 +208,7 @@ new class extends CanvasComponent {
         $this->authorizeDiagram('update');
 
         $this->table->update(['resize_column_position' => $visibleColumnsCount]);
+
+        $this->updateTableData();
     }
 };

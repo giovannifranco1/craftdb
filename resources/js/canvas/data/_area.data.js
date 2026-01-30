@@ -88,6 +88,12 @@ export default (x, y, width, height, areaId) => ({
         });
     },
 
+    // setupListeners() {
+    //     window.addEventListener(`area::color-updated.${this.areaId}`, () => {
+    //         this.color = this.color;
+    //     });
+    // },
+
     getCanvas() {
         // Access canvas from canvasRoot Alpine data
         if (this.$refs.canvasRoot) {
@@ -140,6 +146,32 @@ export default (x, y, width, height, areaId) => ({
         return Math.round(coord / gridSize) * gridSize;
     },
 
+    // Sync Alpine state from actual DOM (position + size) so drag works after resize/re-render
+    syncStateFromDOM() {
+        const inlineTransform = this.$el.style.transform;
+        const translateMatch = inlineTransform?.match(/translate3d\((-?\d+(?:\.\d+)?)px,\s*(-?\d+(?:\.\d+)?)px/);
+        if (translateMatch) {
+            this.x = parseFloat(translateMatch[1]);
+            this.y = parseFloat(translateMatch[2]);
+        } else {
+            const matrix = getComputedStyle(this.$el).transform;
+            if (matrix && matrix !== 'none') {
+                const m = matrix.match(/matrix\((.+),\s*(.+),\s*(.+),\s*(.+),\s*(.+),\s*(.+)\)/);
+                if (m) {
+                    this.x = parseFloat(m[5]);
+                    this.y = parseFloat(m[6]);
+                }
+            }
+        }
+        // Dimensions: use actual rendered size so state matches after resize
+        const w = this.$el.offsetWidth;
+        const h = this.$el.offsetHeight;
+        if (w > 0 && h > 0) {
+            this.width = w;
+            this.height = h;
+        }
+    },
+
     setHighestZIndex() {
         window.areaZIndexCounter += 1;
         const newZIndex = window.areaZIndexCounter;
@@ -157,18 +189,10 @@ export default (x, y, width, height, areaId) => ({
         this.startX = e.clientX;
         this.startY = e.clientY;
 
-        const currentTransform = this.$el.style.transform;
-        const match = currentTransform.match(/translate3d\((-?\d+(?:\.\d+)?)px,\s*(-?\d+(?:\.\d+)?)px/);
-
-        if (match) {
-            this.initialX = parseFloat(match[1]);
-            this.initialY = parseFloat(match[2]);
-            this.x = this.initialX;
-            this.y = this.initialY;
-        } else {
-            this.initialX = this.x;
-            this.initialY = this.y;
-        }
+        // Sync state from DOM so x, y, width, height match actual rendered values (after resize/re-render)
+        this.syncStateFromDOM();
+        this.initialX = this.x;
+        this.initialY = this.y;
 
         this.$el.style.transition = 'none';
         this.setHighestZIndex();
@@ -176,7 +200,7 @@ export default (x, y, width, height, areaId) => ({
 
     drag(e) {
         if (!this.isDragging) return;
-        // e.preventDefault();
+        e.preventDefault();
 
         const scale = this.getScale();
         const dx = (e.clientX - this.startX) / scale;
@@ -194,12 +218,16 @@ export default (x, y, width, height, areaId) => ({
         this.$el.style.left = '0px';
         this.$el.style.top = '0px';
         this.$el.style.transform = `translate3d(${this.x}px, ${this.y}px, 0)`;
+        // Preserve current width/height during drag (from last resize)
+        this.$el.style.width = `${this.width}px`;
+        this.$el.style.height = `${this.height}px`;
+        this.$el.style.maxWidth = `${this.width}px`;
+        this.$el.style.maxHeight = `${this.height}px`;
     },
 
     endDrag() {
         if (!this.isDragging) return;
         this.isDragging = false;
-        console.log(this.x, this.y);
         this.$dispatch(`area::move.${this.areaId}`, { x: this.x, y: this.y });
     },
 
@@ -305,16 +333,18 @@ export default (x, y, width, height, areaId) => ({
         this.isResizing = false;
         this.resizeDirection = null;
 
-        // Restore text selection
         document.body.style.userSelect = '';
 
-        // Ensure styles are maintained after resize
+        this.x = this.snapToGrid(this.x);
+        this.y = this.snapToGrid(this.y);
+        this.width = this.snapToGrid(savedWidth);
+        this.height = this.snapToGrid(savedHeight);
+
         this.$el.style.width = `${savedWidth}px`;
         this.$el.style.height = `${savedHeight}px`;
         this.$el.style.maxWidth = `${savedWidth}px`;
         this.$el.style.maxHeight = `${savedHeight}px`;
 
-        console.log(this.x, this.y, savedWidth, savedHeight);
         this.$dispatch(`area::resize.${this.areaId}`, {x: this.x, y: this.y, width: savedWidth, height: savedHeight });
     },
 });

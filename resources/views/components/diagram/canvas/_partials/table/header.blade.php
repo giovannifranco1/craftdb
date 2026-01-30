@@ -65,6 +65,7 @@
                 <button
                     x-data
                     type="button"
+                    aria-label="__('Open table actions menu')"
                     class="inline-flex items-center p-2 justify-center"
                     x-on:mousedown.stop="
                         const tableBox = $el.closest('[table-box]');
@@ -104,13 +105,16 @@
                 @blur="isEventRename = false; $wire.resetName()"
                 autocomplete="off"
             />
-            <span x-show="!isEventRename" class="text-white font-normal text-[12pt] font-[Kalam] max-w-[14rem] truncate">{{ $tableData->name }}</span>
+            <span x-show="!isEventRename" class="text-white font-normal text-[15pt] font-[Kalam] max-w-[14rem] truncate">{{ $tableData->name }}</span>
         </h3>
 
-        <button @mousedown.stop="toggleExpanded($el.closest('[table-box]'))"
-            class="py-1.5 px-1 text-white hover:text-white/80 hover:bg-white/10 dark:hover:bg-white/20 rounded-md transition-colors">
-            <flux:icon.play variant="solid" x-show="expanded" class="size-4 rotate-90" />
-            <flux:icon.play variant="solid" x-show="!expanded" class="size-4" />
+        <button
+            aria-label="__('Expand table')"
+            @mousedown.stop="toggleExpanded($el.closest('[table-box]'))"
+            class="w-6 h-6 flex min-w-6 min-h-6 items-center justify-center text-white hover:text-white/80 hover:bg-white/10 dark:hover:bg-white/20 rounded-md transition-colors"
+        >
+            <flux:icon.play variant="solid" x-show="expanded" class="size-5 rotate-90" />
+            <flux:icon.play variant="solid" x-show="!expanded" class="size-5" />
         </button>
     </div>
 </div>
