@@ -20,6 +20,8 @@
         class="adopt-injector"></script>
     @endif
 
+    @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/css/landing-page.css'])
+
     @fluxAppearance
 </head>
 <body class="min-h-screen bg-[#f7fcff] font-['Outfit',sans-serif] antialiased" x-data="{ mobileMenuOpen: false }">
