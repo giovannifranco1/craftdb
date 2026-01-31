@@ -35,7 +35,7 @@
 
                     <!-- Navbar -->
                     <flux:navbar class="-mb-px max-lg:hidden">
-                        <flux:navbar.item badge="Pro" badge:color="lime" href="#" :href="route('dashboard')" :current="request()->routeIs('home')" wire:navigate>{{ __('Diagrams') }}</flux:navbar.item>
+                        <flux:navbar.item badge="{{ auth()->user()->isPro() ? 'Pro' : 'Free' }}" badge:color="lime" :href="route('dashboard')" :current="request()->routeIs('home')" wire:navigate>{{ __('Diagrams') }}</flux:navbar.item>
                     </flux:navbar>
 
                     <div class="flex items-center space-x-4 ml-auto">

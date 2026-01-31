@@ -3,9 +3,11 @@
 namespace App\Models\Team;
 
 use App\Models\Concerns\HasMembers as ConcernsHasMembers;
+use App\Models\Diagram;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property int $id
@@ -80,5 +82,13 @@ class Team extends Model
         session(['current_team' => $ownedTeam]);
 
         return $ownedTeam;
+    }
+
+    /**
+     * @return HasMany<Diagram, $this>
+     */
+    public function diagrams(): HasMany
+    {
+        return $this->hasMany(Diagram::class, 'team_id');
     }
 }
