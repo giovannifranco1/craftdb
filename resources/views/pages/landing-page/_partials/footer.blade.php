@@ -7,9 +7,9 @@
             </a>
 
             <nav class="flex flex-wrap items-center justify-center gap-6">
-                <a href="{{ route('landing.features') }}" class="text-sm text-gray-600 hover:text-gray-900 transition-colors">Recursos</a>
-                <a href="{{ route('landing.pricing') }}" class="text-sm text-gray-600 hover:text-gray-900 transition-colors">Preços</a>
-                <a href="{{ route('landing.about') }}" class="text-sm text-gray-600 hover:text-gray-900 transition-colors">Sobre</a>
+                <a href="{{ route('home') }}#features" class="text-sm text-gray-600 hover:text-gray-900 transition-colors">Recursos</a>
+                <a href="{{ route('home') }}#pricing" class="text-sm text-gray-600 hover:text-gray-900 transition-colors">Preços</a>
+                {{-- <a href="{{ route('landing.about') }}" class="text-sm text-gray-600 hover:text-gray-900 transition-colors">Sobre</a> --}}
                 <a href="{{ route('landing.terms') }}" class="text-sm text-gray-600 hover:text-gray-900 transition-colors">Termos</a>
                 <a href="{{ route('landing.policy') }}" class="text-sm text-gray-600 hover:text-gray-900 transition-colors">Privacidade</a>
             </nav>
