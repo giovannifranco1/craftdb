@@ -24,7 +24,9 @@
                 @foreach($tableData->columns as $index => $column)
                     <tr
                         x-init="if ($wire.tableData.resize_column_position < {{ $index + 1 }}) { $el.setAttribute('is-hidden', true); }"
-                        x-data="{ isEventRenameColumn: false, loadingRenameColumn: false, renameActionTriggered: false }"
+                        x-data="{ isEventRenameColumn: false, loadingRenameColumn: false, renameActionTriggered: false, isHovering: false, hoverLeaveTimer: null }"
+                        @mouseenter="clearTimeout(hoverLeaveTimer); isHovering = true"
+                        @mouseleave="hoverLeaveTimer = setTimeout(() => { isHovering = false }, 150)"
                         id="column-{{ $tableId }}-{{ $column->id }}"
                         has-relationship-from="{{ $column->relationships_from_exists ? 'true' : 'false' }}"
                         has-relationship-to="{{ $column->relationships_to_exists ? 'true' : 'false' }}"
@@ -34,7 +36,7 @@
                         x-bind:is-hidden="!expanded || (hiddenColumnsCount > 0 && {{ $index }} >= visibleColumnsCount)"
                     >
                         <td @dblclick="isEventRenameColumn = true" class="px-3">
-                            <flux:tooltip position="right">
+                            <flux:tooltip position="right" gap="100">
                                 <div class="flex items-center gap-2">
                                     {!! Helpers::getIconDiamondByTypeColumn($column) !!}
 
@@ -85,7 +87,6 @@
                                                 isEventRenameColumn = false;
                                                 renameActionTriggered = false;
                                                 loadingRenameColumn = false;
-                                                console.log('new_column');
                                                 return;
                                             }
 
@@ -171,8 +172,8 @@
                             </flux:tooltip>
                         </td>
 
-                        <td>
-                            <span class="inline-flex items-center px-2 rounded text-[11px] uppercase font-medium bg-gray-100 dark:bg-zinc-700 text-zinc-800 dark:text-zinc-200">
+                        <td x-show="!isHovering">
+                            <span class="inline-flex items-center px-2 w-20 justify-center rounded text-[11px] uppercase font-medium bg-gray-100 dark:bg-zinc-700 text-zinc-800 dark:text-zinc-200">
                                 @if(($column->length ?? 0) > 0)
                                     @php
                                         $lengthStr = (string)$column->length;
@@ -183,6 +184,18 @@
                                     {{ $column->type }}
                                 @endif
                             </span>
+                        </td>
+
+                        <td class="text-center align-middle pr-2" x-show="isHovering">
+                            <button
+                                type="button"
+                                @click.stop="$wire.deleteColumn({{ $column->id }})"
+                                class="inline-flex items-center cursor-pointer justify-center w-20 h-4 shrink-0 rounded text-white bg-red-400 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 hover:text-red-600 dark:hover:text-red-300 transition-colors"
+                                title="{{ __('Remove column') }}"
+                                aria-label="{{ __('Remove column') }}"
+                            >
+                                <flux:icon.minus class="size-2.5 shrink-0" />
+                            </button>
                         </td>
                     </tr>
                 @endforeach

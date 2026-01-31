@@ -10,6 +10,10 @@ use Illuminate\Support\Facades\DB;
 
 class AddColumnToTable
 {
+    public function __construct(
+        public UpdateResizePositionTable $updateResizePositionTableAction
+    ) {}
+
     /**
      * Add a new column to a table
      *
@@ -31,21 +35,14 @@ class AddColumnToTable
             }
 
             $maxOrder = $table->columns()->max('order');
-            $maxColumns = $table->columns()->count();
             $newOrder = Helpers::calculateNextOrder($maxOrder);
-
-            $newResizeColumnPosition = $table->resize_column_position;
-
-            if($newResizeColumnPosition == $maxColumns) {
-                $newResizeColumnPosition = $maxColumns + 1;
-            }
 
             return tap($table->columns()->create([
                     'name'  => 'new_column',
                     'type'  => 'varchar',
                     'order' => $newOrder,
                     'is_notnull' => true,
-                ]), fn (): bool => $table->update(['resize_column_position' => $newResizeColumnPosition]));
+                ]), fn (): Table => $this->updateResizePositionTableAction->exec($table));
         });
     }
 }

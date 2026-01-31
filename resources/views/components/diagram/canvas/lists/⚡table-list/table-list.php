@@ -1,9 +1,12 @@
 <?php
 
 use App\Actions\Diagram\AddRelationship;
+use App\Actions\Diagram\UpdateResizePositionTable;
+use App\Actions\Diagram\UpdateTable;
 use App\Enums\RelationshipType;
 use App\Livewire\CanvasComponent;
 use App\Models\Diagram;
+use App\Models\Table;
 use App\Support\Helpers;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Contracts\Database\Query\Builder as QueryBuilder;
@@ -125,7 +128,7 @@ new #[Defer(bundle: true)] class extends CanvasComponent {
     }
 
     #[On('table::add-relationship')]
-    public function addRelationship(int $fromTableId, int $toTableId, RelationshipType $type, AddRelationship $action): void
+    public function addRelationship(int $fromTableId, int $toTableId, RelationshipType $type, AddRelationship $action, UpdateResizePositionTable $updateResizePositionTableAction): void
     {
         $this->authorizeDiagram('update');
 
@@ -143,6 +146,7 @@ new #[Defer(bundle: true)] class extends CanvasComponent {
         ])->validated();
 
         $action->exec($data);
+        $updateResizePositionTableAction->exec(Table::find($toTableId));
 
         $this->dispatch("table::relationship-added.{$fromTableId}");
         $this->dispatch("table::relationship-added.{$toTableId}");
