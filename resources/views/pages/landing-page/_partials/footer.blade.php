@@ -5,7 +5,7 @@
             <!-- Brand -->
             <div class="col-span-2 md:col-span-1">
                 <a href="/" class="flex items-center gap-2 mb-4">
-                    <x-app-logo-icon class="size-8 fill-current" />
+                    <x-app-logo-icon class="size-6 fill-current" />
                     <span class="text-lg font-semibold text-gray-900">CraftDB</span>
                 </a>
                 <p class="text-sm text-gray-600 mb-4">
@@ -78,7 +78,7 @@
                     © {{ date('Y') }} CraftDB. Todos os direitos reservados.
                 </p>
                 <div class="flex items-center gap-2">
-                    <img src="{{ Vite::asset('resources/images/logo.png') }}" alt="CraftDB Logo" class="size-10">
+                    <img src="{{ Vite::asset('resources/images/logo.png') }}" alt="CraftDB Logo" class="size-3">
                     <span class="text-sm text-gray-600">Todos os sistemas operacionais</span>
                 </div>
             </div>
