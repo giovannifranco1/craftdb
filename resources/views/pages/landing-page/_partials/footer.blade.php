@@ -78,7 +78,7 @@
                     © {{ date('Y') }} CraftDB. Todos os direitos reservados.
                 </p>
                 <div class="flex items-center gap-2">
-                    <img src="{{ Vite::asset('resources/images/logo_blop_v2.png') }}" alt="CraftDB Logo" class="w-10 h-10">
+                    <img src="{{ Vite::asset('resources/images/logo.png') }}" alt="CraftDB Logo" class="size-10">
                     <span class="text-sm text-gray-600">Todos os sistemas operacionais</span>
                 </div>
             </div>
