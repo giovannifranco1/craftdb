@@ -69,7 +69,7 @@ new #[Defer(bundle: true)] class extends CanvasComponent {
         }
 
         $table = $this->diagram->tables()->create([
-            'name'  => 'teste',
+            'name'  => 'new_table',
             'x'     => $x,
             'y'     => $y,
             'color' => Helpers::getRandomColor($this->diagram->style),
