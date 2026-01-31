@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Actions\Fortify\CreateUserFromOAuth;
+use App\Exceptions\EmailAlreadyRegisteredException;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
@@ -14,21 +15,11 @@ class AuthController extends Controller
     {
         $googleUser = Socialite::driver('google')->user();
 
-        $data = [
-            'name' => $googleUser->getName(),
-            'email' => $googleUser->getEmail(),
-        ];
-
-        $validator = validator()->make($data, [
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:users',
-        ]);
-
-        if ($validator->fails()) {
-            return redirect()->route('login')->withErrors($validator)->withInput();
+        try {
+            $user = $action->exec(User::PROVIDERS['google'], $googleUser);
+        } catch (EmailAlreadyRegisteredException $e) {
+            return redirect()->route('login')->withErrors(['email' => $e->getMessage()]);
         }
-
-        $user = $action->exec(User::PROVIDERS['google'], $googleUser);
 
         Auth::login($user);
 
@@ -39,21 +30,12 @@ class AuthController extends Controller
     {
         $githubUser = Socialite::driver('github')->user();
 
-        $data = [
-            'name' => $githubUser->getName(),
-            'email' => $githubUser->getEmail(),
-        ];
-
-        $validator = validator()->make($data, [
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:users',
-        ]);
-
-        if ($validator->fails()) {
-            return redirect()->route('login')->withErrors($validator)->withInput();
+        try {
+            $user = $action->exec(User::PROVIDERS['github'], $githubUser);
+        } catch (EmailAlreadyRegisteredException $e) {
+            return redirect()->route('login')->withErrors(['email' => $e->getMessage()]);
         }
 
-        $user = $action->exec(User::PROVIDERS['github'], $githubUser);
         Auth::login($user);
 
         return redirect()->intended(route('dashboard'));

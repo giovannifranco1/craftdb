@@ -2,6 +2,7 @@
 
 namespace App\Actions\Fortify;
 
+use App\Exceptions\EmailAlreadyRegisteredException;
 use App\Models\Team\Team;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -30,14 +31,22 @@ class CreateUserFromOAuth
 
             $user = User::where("{$provider}_id", $providerId)->first();
 
-            $user = User::updateOrCreate([
-                "{$provider}_id" => $providerId,
-            ], [
-                'name' => $name,
-                'email' => $email,
-                "{$provider}_token" => $socialiteUser->token,
-                "{$provider}_refresh_token" => $socialiteUser->refreshToken,
-            ]);
+            if (!$user && $email) {
+                $existingByEmail = User::where('email', $email)->whereNull("{$provider}_id")->first();
+                if ($existingByEmail) {
+                    throw EmailAlreadyRegisteredException::forProvider();
+                }
+            }
+
+            $user = User::updateOrCreate(
+                ["{$provider}_id" => $providerId],
+                [
+                    'name' => $name,
+                    'email' => $email,
+                    "{$provider}_token" => $socialiteUser->token,
+                    "{$provider}_refresh_token" => $socialiteUser->refreshToken,
+                ]
+            );
 
             $this->createTeam($user);
 
