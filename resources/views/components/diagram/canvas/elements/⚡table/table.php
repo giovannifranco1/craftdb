@@ -1,6 +1,7 @@
 <?php
 
 use App\Actions\Diagram\AddColumnToTable as AddColumnToTableAction;
+use App\Actions\Diagram\DeleteColumnToTable;
 use App\Actions\Diagram\DeleteTable as DeleteTableAction;
 use App\Livewire\Data\TableData;
 use App\Models\Column;
@@ -153,7 +154,19 @@ new class extends CanvasComponent {
         $this->dispatch("table::column-added.{$this->tableId}", columnId: $column->id);
     }
 
+    public function deleteColumn(Column $column, DeleteColumnToTable $action): void
+    {
+        $this->authorizeDiagram('update');
+
+        $action->exec($column);
+
+        $this->updateTableData();
+        $this->dispatch('table-side-editor::column-deleted');
+        $this->dispatch('alert', message: __('Column deleted successfully!'));
+    }
+
     #[On('table::relationship-added.{tableId}')]
+    #[On('table::column-added.{tableId}')]
     #[On('table-side-editor::column-reordered.{tableId}')]
     public function updateTableData(): void
     {

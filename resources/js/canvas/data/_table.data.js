@@ -24,7 +24,7 @@ export default (x, y, tableId) => ({
     maxResizeHeightUp: null,
     resizeStartX: 0,
     initialWidth: 0,
-    colWidths: [70, 30], // Column resize state
+    colWidths: [65, 30, 5], // name, type, button
     expanded: true,
     visibleColumnsCount: 0,
     hiddenColumnsCount: 0,
@@ -99,35 +99,14 @@ export default (x, y, tableId) => ({
 
         this.$root.addEventListener('dropdown-menu::opened', () => this.setHighestZIndex());
 
-        // Observa mudanças na altura para atualizar contagem de colunas
-        this.$watch('height', () => this.updateVisibleColumnsCount());
-        this.$watch('expanded', () => {
-            this.updateResizeLimits();
-            setTimeout(() => {
-                this.recalculateHeightIfNeeded();
-            }, 100);
-        });
-
-        // Observa quando as colunas são carregadas para recalcular altura
-        this.$el.addEventListener('table::columns-loaded', () => {
-            this.updateResizeLimits();
-            setTimeout(() => {
-                this.recalculateHeightIfNeeded();
-            }, 100);
-        });
-
-        // Observa eventos de mudança de colunas
-        // window.addEventListener(`table::column-added.${this.tableId}`, () => {
-        //     this.updateResizeLimits();
-        //     setTimeout(() => this.recalculateHeightIfNeeded(), 100);
-        // });
-
-        window.addEventListener(`relationships::fresh`, () => {
+        window.addEventListener(`table::relationship-added.${this.tableId}`, () => {
             this.updateResizeLimits();
             setTimeout(() => this.recalculateHeightIfNeeded(), 100);
         });
 
-        window.addEventListener(`table::column-saved`, () => {
+        // Observa mudanças na altura para atualizar contagem de colunas
+        this.$watch('height', () => this.updateVisibleColumnsCount());
+        this.$watch('expanded', () => {
             this.updateResizeLimits();
             setTimeout(() => this.recalculateHeightIfNeeded(), 100);
         });
@@ -223,7 +202,6 @@ export default (x, y, tableId) => ({
         this.x = snappedX;
         this.y = snappedY;
 
-        // Aplica sempre transform (sem left/top)
         this.$el.style.left = '0px';
         this.$el.style.top = '0px';
         this.$el.style.transform = `translate3d(${this.x}px, ${this.y}px, 0)`;
@@ -232,7 +210,6 @@ export default (x, y, tableId) => ({
     endDrag() {
         if (!this.isDragging) return;
         this.isDragging = false;
-        // Mantém o z-index alto (não reseta, para que a tabela permaneça sobre as outras)
         this.$dispatch(`table::move.${this.tableId}`, { x: this.x, y: this.y });
     },
     toggleExpanded(element) {
@@ -279,7 +256,6 @@ export default (x, y, tableId) => ({
     },
 
     updateResizeLimits() {
-        // Atualiza os limites de resize baseado no estado atual da tabela
         const headerHeight = this.getGridSize() / 2 + this.getGridSize();
         const footerHeight = this.getGridSize() / 2 + this.getGridSize();
         const rowHeight = this.getGridSize();
@@ -292,10 +268,8 @@ export default (x, y, tableId) => ({
     },
 
     recalculateHeightIfNeeded() {
-        // Atualiza os limites de resize primeiro
         this.updateResizeLimits();
 
-        // Recalcula apenas se a altura não foi aumentada via resize
         if (this.height <= this.maxHeight) {
             const newHeight = this.calculateInitialHeight();
             this.height = newHeight;
@@ -396,7 +370,6 @@ export default (x, y, tableId) => ({
             newHeight = Math.max(minAllowedHeight, Math.min(this.maxResizeHeightDown, calculatedHeight));
         }
 
-        // Snap to grid
         this.height = this.snapToGrid(newHeight);
 
         // Update element styles directly
@@ -425,7 +398,6 @@ export default (x, y, tableId) => ({
             !row.querySelector('td[colspan="3"]')
         );
 
-        // Determina o range de colunas que mudou
         const minIndex = Math.min(previousVisibleCount, this.visibleColumnsCount);
         const maxIndex = Math.max(previousVisibleCount, this.visibleColumnsCount);
 
@@ -444,7 +416,6 @@ export default (x, y, tableId) => ({
             break;
         }
 
-        // Dispara evento apenas se houver coluna com relacionamento que mudou
         if (hasRelationshipInChangedRange) {
             this.$dispatch('relationships::refresh');
         }
@@ -454,7 +425,6 @@ export default (x, y, tableId) => ({
         const columnEl = document.getElementById(columnId);
         if (!columnEl) return false;
 
-        // Usa o atributo has-relationship que foi adicionado no template
         const hasRelationshipFrom = columnEl.getAttribute('has-relationship-from');
         const hasRelationshipTo = columnEl.getAttribute('has-relationship-to');
         const hasRelationship = hasRelationshipFrom === 'true' || hasRelationshipTo === 'true';
@@ -474,10 +444,6 @@ export default (x, y, tableId) => ({
         this.$el.style.height = `${savedHeight}px`;
         this.$el.style.maxHeight = `${savedHeight}px`;
 
-        this.updateVisibleColumnsCount();
-
-        // Verifica se alguma coluna com relacionamento mudou de estado no final do resize
-        // Usa $nextTick para esperar o Alpine processar as mudanças no DOM
         if (previousCount !== this.visibleColumnsCount) {
             this.$nextTick(() => {
                 this.checkAndDispatchRelationshipRefresh(previousCount);

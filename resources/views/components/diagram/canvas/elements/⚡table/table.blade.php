@@ -4,6 +4,7 @@
     id="table-{{ $tableId }}"
     table-id="{{ $tableId }}"
     table-box
+    wire:ignore.self
     :style="`
         transform: translate3d(${x}px, ${y}px, 0);
         width: ${getSnappedWidth()}px;

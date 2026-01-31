@@ -24,7 +24,7 @@
             <div class="flex flex-col gap-2">
                 <div class="flex items-center gap-3">
                     <!-- Logo -->
-                    <a href="{{ route('dashboard') }}" class="flex ms-0 items-center rtl:space-x-reverse">
+                    <a href="{{ route('dashboard') }}" class="flex ms-0 ml-2 items-center rtl:space-x-reverse">
                         <x-app-logo />
                     </a>
 

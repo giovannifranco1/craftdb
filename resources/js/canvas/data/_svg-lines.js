@@ -45,8 +45,8 @@ export default (relationships) => ({
         });
 
         window.addEventListener('table::move', (e) => {this.debouncedCompute(); this.highlightTableConnections(e.detail?.tableId)});
-        window.addEventListener('table::expanded', () => this.compute());
-        window.addEventListener('relationships::refresh', () => this.compute());
+        window.addEventListener('table::expanded', () => this.debouncedCompute());
+        window.addEventListener('relationships::refresh', () => this.debouncedCompute());
         window.addEventListener('clear-highlight', () => this.clearHighlight());
         window.addEventListener('table-side-editor::open', e => this.highlightTableConnections(e.detail?.tableId));
         window.addEventListener('table-side-editor::closed', () => this.clearHighlight());
@@ -86,7 +86,6 @@ export default (relationships) => ({
         return Math.round(coord / this.gridSize) * this.gridSize;
     },
     debouncedCompute() {
-        // Debounce para evitar muitas atualizações
         if (this.computeTimeout) {
             clearTimeout(this.computeTimeout);
         }
@@ -187,7 +186,6 @@ export default (relationships) => ({
             const toIsCollapsed = toTable.hasAttribute('is-collapsed');
 
             if (fromIsCollapsed || toIsCollapsed) {
-                console.log('❌ From or to table is collapsed');
                 return
             }
 
@@ -197,7 +195,6 @@ export default (relationships) => ({
             const toColumnIsHidden = toEl.hasAttribute('is-hidden') && toEl.getAttribute('is-hidden') !== 'false';
 
             if (fromColumnIsHidden || toColumnIsHidden) {
-                console.log('❌ From or to column is hidden');
                 return;
             }
 
