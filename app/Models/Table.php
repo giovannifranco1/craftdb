@@ -3,10 +3,8 @@
 namespace App\Models;
 
 use App\Models\Relationship;
-use App\Models\Scopes\TableAccessible;
 use App\Observers\TableObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
