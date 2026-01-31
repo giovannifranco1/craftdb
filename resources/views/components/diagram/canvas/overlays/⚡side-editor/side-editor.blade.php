@@ -299,8 +299,8 @@
                                                                                 wire:model="columnForm.type"
                                                                                 class="w-full text-xs border border-zinc-300 dark:border-zinc-600 rounded-md px-2.5 py-1.5 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-[var(--table-base-bg)] focus:border-[var(--table-base-bg)]"
                                                                             >
-                                                                                @foreach($this->getColumnTypes() as $type => $label)
-                                                                                    <option value="{{ $type }}">{{ $label }}</option>
+                                                                                @foreach($this->getColumnTypes() as $type)
+                                                                                    <option value="{{ $type->value }}">{{ $type->name }}</option>
                                                                                 @endforeach
                                                                             </select>
                                                                             @error('columnForm.type') <span class="text-xs text-red-600 dark:text-red-400">{{ $message }}</span> @enderror
