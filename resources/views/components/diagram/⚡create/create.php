@@ -113,6 +113,9 @@ new class extends BaseComponent {
     {
         $validatedData = $this->validate();
 
+        /** @disregard */
+        auth()->user()->validateDiagramLimit();
+
         $diagram = $action->exec($validatedData);
 
         $this->modal('diagram-create')->close();
@@ -126,4 +129,7 @@ new class extends BaseComponent {
             $diagram->slug,
         ]));
     }
+
+
+
 };

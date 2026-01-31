@@ -4,8 +4,10 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
+use App\Exceptions\DiagramLimitExceededException;
 use App\Models\Concerns\HasTeam;
 use App\Models\Concerns\HasTeams;
+use App\Models\Team\Team;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -126,7 +128,6 @@ class User extends Authenticatable
         return in_array($provider, array_values(self::PROVIDERS));
     }
 
-
     /**
      * Check if the user is authenticated with Google or Github.
      *
@@ -155,5 +156,32 @@ class User extends Authenticatable
     public function isAuthenticatedWithGoogle(): bool
     {
         return $this->google_id !== null;
+    }
+
+    public function isPro(): bool
+    {
+        return false;
+    }
+
+    public function hasReachedDiagramLimit(): bool
+    {
+        if ($this->isPro()) {
+            return false;
+        }
+
+        $team = Team::currentTeam();
+
+        if (!$team) {
+            return false;
+        }
+
+        return $team->diagrams()->count() >= config('diagram.free.diagram_limit');
+    }
+
+    public function validateDiagramLimit(): void
+    {
+        if ($this->hasReachedDiagramLimit()) {
+            throw new DiagramLimitExceededException();
+        }
     }
 }
