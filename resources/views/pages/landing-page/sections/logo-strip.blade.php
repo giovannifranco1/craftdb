@@ -11,22 +11,22 @@
         </div>
         <div class="flex flex-wrap items-center justify-center gap-6 md:gap-10">
             {{-- MySQL --}}
-            <div class="flex items-center gap-2.5 px-5 py-3 rounded-xl bg-white border border-gray-200/50 shadow-xs hover:shadow-md hover:border-gray-200 transition-all duration-300">
+            <div class="w-full md:w-auto justify-center flex items-center gap-2.5 px-5 py-3 rounded-xl bg-white border border-gray-200/50 shadow-xs hover:shadow-md hover:border-gray-200 transition-all duration-300">
                 <flux:icon.database.mysql class="size-8 shrink-0" />
                 <span class="text-sm font-semibold text-gray-900">MySQL</span>
             </div>
             {{-- PostgreSQL --}}
-            <div class="flex items-center gap-2.5 px-5 py-3 rounded-xl bg-white border border-gray-200/50 shadow-xs hover:shadow-md hover:border-gray-200 transition-all duration-300">
+            <div class="w-full md:w-auto justify-center flex items-center gap-2.5 px-5 py-3 rounded-xl bg-white border border-gray-200/50 shadow-xs hover:shadow-md hover:border-gray-200 transition-all duration-300">
                 <flux:icon.database.postgresql class="size-8 shrink-0" />
                 <span class="text-sm font-semibold text-gray-900">PostgreSQL</span>
             </div>
             {{-- SQLite --}}
-            <div class="flex items-center gap-2.5 px-5 py-3 rounded-xl bg-white border border-gray-200/50 shadow-xs hover:shadow-md hover:border-gray-200 transition-all duration-300">
+            <div class="w-full md:w-auto justify-center flex items-center gap-2.5 px-5 py-3 rounded-xl bg-white border border-gray-200/50 shadow-xs hover:shadow-md hover:border-gray-200 transition-all duration-300">
                 <flux:icon.database.sqlite class="size-8 shrink-0" />
                 <span class="text-sm font-semibold text-gray-900">SQLite</span>
             </div>
             {{-- Laravel Migration --}}
-            <div class="flex items-center gap-2.5 px-5 py-3 rounded-xl bg-white border border-gray-200/50 shadow-xs hover:shadow-md hover:border-gray-200 transition-all duration-300">
+            <div class="w-full md:w-auto justify-center flex items-center gap-2.5 px-5 py-3 rounded-xl bg-white border border-gray-200/50 shadow-xs hover:shadow-md hover:border-gray-200 transition-all duration-300">
                 <flux:icon.framework.laravel class="size-8 shrink-0 text-[#FF2D20]" />
                 <span class="text-sm font-semibold text-gray-900">Laravel Migration</span>
             </div>
