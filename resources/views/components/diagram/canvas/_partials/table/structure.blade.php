@@ -190,6 +190,9 @@
                             <button
                                 type="button"
                                 @click.stop="$wire.deleteColumn({{ $column->id }})"
+                                wire:loading.attr="disabled"
+                                wire:target="deleteColumn({{ $column->id }})"
+                                wire:loading.class="opacity-50 cursor-not-allowed"
                                 class="inline-flex items-center cursor-pointer justify-center w-20 h-4 shrink-0 rounded text-white bg-red-400 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 hover:text-red-600 dark:hover:text-red-300 transition-colors"
                                 title="{{ __('Remove column') }}"
                                 aria-label="{{ __('Remove column') }}"
