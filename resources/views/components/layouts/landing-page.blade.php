@@ -6,6 +6,17 @@
     <title>{{ $title ?? 'CraftDB - A forma mais visual de projetar seu banco de dados' }}</title>
     <meta name="description" content="Crie diagramas de banco de dados intuitivos. Defina tabelas, relacionamentos e trabalhe em times. Zero complexidade, máxima produtividade.">
 
+    {{-- Open Graph (OG) --}}
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:title" content="{{ $title ?? 'CraftDB - A forma mais visual de projetar seu banco de dados' }}">
+    <meta property="og:description" content="Crie diagramas de banco de dados intuitivos. Defina tabelas, relacionamentos e trabalhe em times. Zero complexidade, máxima produtividade.">
+    <meta property="og:image" content="{{ asset('preview.png') }}">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:locale" content="pt_BR">
+    <meta property="og:site_name" content="CraftDB">
+
     <link rel="icon" href="/favicon.ico" sizes="192x192">
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
