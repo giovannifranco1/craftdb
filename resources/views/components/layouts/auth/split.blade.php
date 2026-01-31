@@ -8,8 +8,8 @@
             <div class="bg-muted relative hidden h-full flex-col p-10 text-white lg:flex dark:border-e dark:border-neutral-800">
                 <div class="absolute inset-0 bg-background-dark bg-cover bg-center bg-no-repeat" style="background-image: url('{{ Vite::asset('resources/images/auth/molecular_login_bg_final.png') }}');"></div>
                 <a href="{{ route('dashboard') }}" class="relative z-20 flex items-center text-lg font-medium" wire:navigate>
-                    <span class="flex h-20 w-20 items-center justify-center rounded-md">
-                        <x-app-logo-icon class="me-2 size-20 fill-current text-white" />
+                    <span class="flex size-20 items-center justify-center rounded-md">
+                        <x-app-logo-icon class="me-2 size-full fill-current text-white" />
                     </span>
                     {{ config('app.name', 'Laravel') }}
                 </a>
