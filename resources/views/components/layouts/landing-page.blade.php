@@ -6,7 +6,7 @@
     <title>{{ $title ?? 'CraftDB - A forma mais visual de projetar seu banco de dados' }}</title>
     <meta name="description" content="Crie diagramas de banco de dados intuitivos. Defina tabelas, relacionamentos e trabalhe em times. Zero complexidade, máxima produtividade.">
 
-    <link rel="icon" href="/favicon.ico" sizes="any">
+    <link rel="icon" href="/favicon.ico" sizes="192x192">
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
