@@ -8,10 +8,10 @@
 
     {{-- Open Graph (OG) --}}
     <meta property="og:type" content="website">
-    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:url" content="https://craftdb.app">
     <meta property="og:title" content="{{ $title ?? 'CraftDB - A forma mais visual de projetar seu banco de dados' }}">
     <meta property="og:description" content="Crie diagramas de banco de dados intuitivos. Defina tabelas, relacionamentos e trabalhe em times. Zero complexidade, máxima produtividade.">
-    <meta property="og:image" content="{{ asset('preview.png') }}">
+    <meta property="og:image" content="https://craftdb.app/preview.png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta property="og:locale" content="pt_BR">
