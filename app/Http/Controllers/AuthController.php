@@ -24,7 +24,6 @@ class AuthController extends Controller
     {
         $githubUser = Socialite::driver('github')->user();
         $user = $action->exec(User::PROVIDERS['github'], $githubUser);
-
         Auth::login($user);
 
         return redirect()->intended(route('dashboard'));
