@@ -26,4 +26,6 @@ return [
     'read_our' => 'Leia nossos',
     'and' => 'e',
 
+    'email_already_registered' => 'Este e-mail já está cadastrado no site.',
+
 ];

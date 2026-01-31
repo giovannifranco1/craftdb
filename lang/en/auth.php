@@ -26,4 +26,6 @@ return [
     'read_our' => 'Read our',
     'and' => 'and',
 
+    'email_already_registered' => 'This email is already registered on the site.',
+
 ];
