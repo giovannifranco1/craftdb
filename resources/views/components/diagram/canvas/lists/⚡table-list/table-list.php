@@ -18,6 +18,7 @@ use Livewire\Attributes\On;
 new #[Defer(bundle: true)] class extends CanvasComponent {
     /** @var array<string, string>  */
     protected $listeners = [
+        'diagram::imported'                   => '$refresh',
         'table::removed'                      => '$refresh',
         'table::color-updated'                => '$refresh',
         'table::column-added'                 => '$refresh',

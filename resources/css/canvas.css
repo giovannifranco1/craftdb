@@ -77,9 +77,13 @@ body {
 
 #controls {
     position: fixed;
-    top: 50%;
+    /* Centralizado quando há espaço; em telas curtas fica abaixo do topbar (~7rem) */
+    top: max(8.5rem, calc(50vh - 180px));
     left: 2rem;
-    transform: translateY(-50%);
+    /* Altura máxima para caber em qualquer tela, com scroll quando necessário */
+    max-height: calc(100vh - 9rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
 }
@@ -121,7 +125,7 @@ select {
     width: 50px;
     height: 50px;
 
-    /* background: #fbe96c; todo: change to theme color */
+    background: color-mix(in srgb, var(--table-base-bg), white 50%);
     transform: rotate(90deg);
     transform-origin: right;
 

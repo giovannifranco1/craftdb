@@ -4,6 +4,7 @@ use App\Models\Team\Team;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use App\Livewire\BaseComponent;
+use App\Models\Diagram;
 use Livewire\Attributes\Computed;
 
 new class extends BaseComponent {
@@ -26,6 +27,12 @@ new class extends BaseComponent {
 
         if ($team) {
             session(['current_team' => $team]);
+            session(['diagrams_count' => Cache::remember(
+                "diagrams_count_{$teamId}",
+                now()->addMinutes(5),
+                fn() => Diagram::query()->where('team_id', $teamId)->count()
+            )]);
+
             $this->dispatch('alert', message: __('Switched to team: ') . $team->name);
             $this->redirect(route('dashboard'), navigate: true);
         }

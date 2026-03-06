@@ -35,7 +35,7 @@
 
                     <!-- Navbar -->
                     <flux:navbar class="-mb-px max-lg:hidden">
-                        <flux:navbar.item badge="{{ auth()->user()->isPro() ? 'Pro' : 'Free' }}" badge:color="lime" :href="route('dashboard')" :current="request()->routeIs('home')" wire:navigate>{{ __('Diagrams') }}</flux:navbar.item>
+                        <flux:navbar.item badge="{{ auth()->user()->isPro() ? 'Pro' : 'Free' }}" badge:color="lime" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>{{ __('Diagrams') }}</flux:navbar.item>
                     </flux:navbar>
 
                     <div class="flex items-center space-x-4 ml-auto">
@@ -81,6 +81,7 @@
 
                                 <flux:menu.radio.group>
                                     <flux:menu.item :href="route('profile.edit')" icon="cog" wire:navigate>{{ __('Settings') }}</flux:menu.item>
+                                    <flux:menu.item :href="route('billing.index')" icon="credit-card" wire:navigate>{{ __('Billing') }}</flux:menu.item>
                                 </flux:menu.radio.group>
 
                                 <flux:menu.separator />

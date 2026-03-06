@@ -39,6 +39,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         View::addNamespace('layouts', resource_path('views/components/layouts'));
+        View::addNamespace('pages', resource_path('views/pages'));
         View::addNamespace('placeholders', resource_path('views/components/ui/placeholders'));
 
         /** @var \Illuminate\Foundation\Application $app */

@@ -174,6 +174,7 @@
 
                                 <flux:menu.radio.group>
                                     <flux:menu.item :href="route('profile.edit')" icon="cog" wire:navigate>{{ __('Settings') }}</flux:menu.item>
+                                    <flux:menu.item :href="route('billing.index')" icon="credit-card" wire:navigate>{{ __('Billing') }}</flux:menu.item>
                                 </flux:menu.radio.group>
 
                                 <flux:menu.separator />
@@ -207,8 +208,8 @@
                                 {{ __('Export (Coming Soon)') }}
                             </flux:menu.item>
 
-                            <flux:menu.item icon="arrow-up-tray">
-                                {{ __('Import (Coming Soon)') }}
+                            <flux:menu.item icon="arrow-up-tray" @click="$flux.modal('diagram-canvas-import').show()">
+                                {{ __('Import') }}
                             </flux:menu.item>
                         </flux:menu>
                     </flux:dropdown>

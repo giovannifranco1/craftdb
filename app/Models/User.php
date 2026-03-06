@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
+use Laravel\Cashier\Billable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 
 /**
@@ -57,7 +58,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, TwoFactorAuthenticatable, HasTeams;
+    use HasFactory, Notifiable, TwoFactorAuthenticatable, HasTeams, Billable;
 
     const PROVIDERS = [
         'github' => 'github',
@@ -160,7 +161,7 @@ class User extends Authenticatable
 
     public function isPro(): bool
     {
-        return false;
+        return $this->subscribed(config('billing.subscription_name', 'default'));
     }
 
     public function hasReachedDiagramLimit(): bool

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BillingController;
 use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\Pages\DiagramController;
 use App\Livewire\MyFavorites;
@@ -14,9 +15,6 @@ Route::get('/about', [LandingPageController::class, 'about'])->name('landing.abo
 Route::get('/terms', fn () => view('pages.landing-page.terms'))->name('landing.terms');
 Route::get('/policy', fn () => view('pages.landing-page.policy'))->name('landing.policy');
 
-/** Landing Page */
-Route::get('/', fn () => view('pages::landing-page.index'))->name('home');
-
 /** Dashboard */
 Route::livewire('/dashboard', 'pages::dashboard')->lazy()->middleware(['auth', 'verified'])->name('dashboard');
 Route::livewire('/my-favorites', MyFavorites::class)->middleware(['auth', 'verified'])->name('dashboard.my-favorites');
@@ -26,6 +24,10 @@ Route::middleware(['auth'])->group(function () {
     Route::redirect('settings', 'settings/profile');
 
     Route::livewire('settings/profile', 'settings.profile')->name('profile.edit');
+    Route::livewire('settings/billing', 'settings.billing')->name('billing.index');
+    Route::get('settings/billing/checkout/{plan}', [BillingController::class, 'checkout'])->name('billing.checkout');
+    Route::get('settings/billing/portal', [BillingController::class, 'portal'])->name('billing.portal');
+    Route::get('settings/billing/success', [BillingController::class, 'success'])->name('billing.success');
     Route::livewire('settings/password', 'settings.password')->name('user-password.edit');
     Route::livewire('settings/appearance', 'settings.appearance')->name('appearance.edit');
     Route::livewire('settings/language', 'settings.language')->name('language.edit');

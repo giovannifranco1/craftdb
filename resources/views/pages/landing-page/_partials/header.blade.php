@@ -7,7 +7,7 @@
     <div class="container mx-auto px-6">
         <div class="flex items-center justify-between h-16">
             <!-- Logo -->
-            <a href="{{ route('home') }}" class="flex items-center gap-1">
+            <a href="{{ route('landing.index') }}" class="flex items-center gap-1">
                 <div class="flex size-10 shrink-0 items-center justify-start relative">
                     <x-app-logo-icon class="size-full object-contain" />
                 </div>

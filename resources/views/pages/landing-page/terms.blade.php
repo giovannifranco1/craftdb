@@ -84,7 +84,7 @@
                 </div>
 
                 <div class="mt-12 pt-8 border-t border-gray-200">
-                    <a href="{{ route('home') }}" class="text-gray-600 hover:text-gray-900 text-sm font-medium transition-colors">
+                    <a href="{{ route('landing.index') }}" class="text-gray-600 hover:text-gray-900 text-sm font-medium transition-colors">
                         ← Voltar ao início
                     </a>
                 </div>

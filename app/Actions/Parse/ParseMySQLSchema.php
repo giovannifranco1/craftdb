@@ -28,7 +28,9 @@ class ParseMySQLSchema extends BaseSQLParse
         $this->diagram = $diagram;
 
         // Count all tables before processing to validate limit
-        $totalTables = $this->countTablesFromFiles($files);
+        $existingCount = $this->diagram->tables()->count();
+        $tablesFromFiles = $this->countTablesFromFiles($files);
+        $totalTables = $existingCount + $tablesFromFiles;
         if ($totalTables > config('diagram.table_limit')) {
             throw new TableLimitExceededException($totalTables);
         }
@@ -62,7 +64,8 @@ class ParseMySQLSchema extends BaseSQLParse
             // Convert to indexed array to work with array_rand
             $colors = array_values($colors);
 
-            $tableIndex = 0;
+            // Start from existing table count so new tables are positioned after existing ones
+            $tableIndex = $this->diagram->tables()->count();
 
             foreach ($parser->statements as $statement) {
                 if (!$statement instanceof CreateStatement) {

@@ -30,11 +30,13 @@ class ParseLaravelMigration extends BaseSQLParse
         Table::unsetEventDispatcher();
 
         $this->diagram = $diagram;
-        $this->tableIndex = 0; // Reset for this import
+        // Start from existing table count so new tables are positioned after existing ones
+        $this->tableIndex = $diagram->tables()->count();
 
-    // Count all tables before processing to validate limit
-        $totalTables = $this->countTablesFromFiles($files);
-
+        // Count all tables before processing to validate limit
+        $existingCount = $diagram->tables()->count();
+        $tablesFromFiles = $this->countTablesFromFiles($files);
+        $totalTables = $existingCount + $tablesFromFiles;
         if ($totalTables > config('diagram.table_limit')) {
             throw new TableLimitExceededException($totalTables);
         }
