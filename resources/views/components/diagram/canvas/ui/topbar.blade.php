@@ -175,6 +175,9 @@
                                 <flux:menu.radio.group>
                                     <flux:menu.item :href="route('profile.edit')" icon="cog" wire:navigate>{{ __('Settings') }}</flux:menu.item>
                                     <flux:menu.item :href="route('billing.index')" icon="credit-card" wire:navigate>{{ __('Billing') }}</flux:menu.item>
+                                    <flux:menu.item as="button" type="button" icon="chat-bubble-left-ellipsis" @click="$flux.modal('contact-us').show()">
+                                        {{ __('Contact Us') }}
+                                    </flux:menu.item>
                                 </flux:menu.radio.group>
 
                                 <flux:menu.separator />

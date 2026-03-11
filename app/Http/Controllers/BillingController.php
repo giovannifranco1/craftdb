@@ -2,18 +2,27 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\BillingCountry;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Laravel\Cashier\Checkout;
 
 class BillingController extends Controller
 {
     /**
      * Redirect to Stripe Checkout for the given plan.
+     * Uses CF-IPCountry header to resolve country-specific price (US or BR).
      */
-    public function checkout(Request $request, string $plan): RedirectResponse
+    public function checkout(Request $request, string $plan): Checkout|RedirectResponse
     {
+        $country = BillingCountry::fromRequest($request->header('CF-IPCountry'));
         $plans = config('billing.plans', []);
+
+        if (! $country->hasPlan($plan)) {
+            return redirect()->route('billing.index')->with('error', __('Invalid plan for your region.'));
+        }
+
         $planConfig = $plans[$plan] ?? null;
 
         if (! $planConfig || empty($planConfig['price_id'])) {
@@ -43,7 +52,7 @@ class BillingController extends Controller
     /**
      * Success page after checkout (optional; can redirect to billing).
      */
-    public function success(Request $request): RedirectResponse|View
+    public function success(): RedirectResponse|View
     {
         return redirect()->route('billing.index')->with('success', __('Thank you! Your subscription is now active.'));
     }

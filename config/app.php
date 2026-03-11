@@ -41,6 +41,8 @@ return [
 
     'debug' => (bool) env('APP_DEBUG', false),
 
+    'cloudflare_proxy' => (bool) env('CLOUDFLARE_PROXY', false),
+
     /*
     |--------------------------------------------------------------------------
     | Application URL

@@ -28,7 +28,6 @@
     --color-zinc-800: var(--color-slate-800);
     --color-zinc-900: var(--color-slate-900);
     --color-zinc-950: var(--color-slate-950);
-    --font-pixelify: "Pixelify Sans", sans-serif;
 }
 
 @theme {

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BillingController;
+use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\Pages\DiagramController;
 use App\Livewire\MyFavorites;
@@ -18,6 +19,11 @@ Route::get('/policy', fn () => view('pages.landing-page.policy'))->name('landing
 /** Dashboard */
 Route::livewire('/dashboard', 'pages::dashboard')->lazy()->middleware(['auth', 'verified'])->name('dashboard');
 Route::livewire('/my-favorites', MyFavorites::class)->middleware(['auth', 'verified'])->name('dashboard.my-favorites');
+
+/** Feedback (Contact Us) - Super root only */
+Route::get('/feedback', [FeedbackController::class, 'index'])
+    ->middleware(['auth', 'verified', 'super.root'])
+    ->name('feedback.index');
 
 /** Settings */
 Route::middleware(['auth'])->group(function () {

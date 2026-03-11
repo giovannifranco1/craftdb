@@ -39,6 +39,7 @@
         <livewire:diagram.canvas.overlays.import :$diagram/>
         <livewire:diagram.canvas.ui.limit :$diagram/>
         <livewire:diagram.ui.graph :$diagram/>
+        <livewire:ui.contact-us/>
         @fluxScripts
     </body>
 </html>

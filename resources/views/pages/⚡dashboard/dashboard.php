@@ -46,6 +46,14 @@ new #[Title('Dashboard')] class extends BaseComponent
     #[Computed]
     public function diagrams(): LengthAwarePaginator
     {
+        session()->put('diagrams_count', Cache::remember(
+            "diagrams_count_{$this->favorites}_{$this->search}_{$this->orderByDesc}",
+            now()->addMinutes(5),
+            fn() => Diagram::query()
+                ->where('team_id', Team::currentTeam()->getKey())
+                ->count()
+        ));
+
         return Diagram::query()
             ->when($this->favorites, fn ($q) => $q->where('is_favorite', true))
             ->when($this->search, fn ($q) => $q->where('name', 'like', "%{$this->search}%"))
@@ -96,16 +104,9 @@ new #[Title('Dashboard')] class extends BaseComponent
             return;
         }
 
-        $diagram = Diagram::find($this->diagramToDelete);
+        $diagram = Diagram::findOrFail($this->diagramToDelete);
 
-        if (!$diagram) {
-            return;
-        }
-
-        if (!$this->authorizeDiagramWithAlert('delete', $diagram)) {
-            $this->diagramToDelete = null;
-            return;
-        }
+        $this->authorizeDiagram('delete', $diagram);
 
         $action->exec($diagram);
 

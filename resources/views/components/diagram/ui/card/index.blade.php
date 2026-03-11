@@ -46,15 +46,17 @@
             </button>
 
             <flux:dropdown position="bottom" align="end" offset="-15" gap="2">
-                <flux:button icon="ellipsis-vertical" variant="ghost" size="xs" />
+                <flux:button class="cursor-pointer" icon="ellipsis-vertical" variant="ghost" size="xs" />
                 <flux:menu>
-                    <flux:menu.item icon="pencil" wire:click="editDiagram({{ $diagram->id }})">{{ __('Edit') }}</flux:menu.item>
+                    <flux:menu.item class="cursor-pointer" icon="pencil" wire:click="editDiagram({{ $diagram->id }})">{{ __('Edit') }}</flux:menu.item>
                     @can('delete', $diagram)
-                        <flux:modal.trigger name="confirm-delete-diagram" wire:click="confirmDelete({{ $diagram->id }})"><flux:menu.item icon="trash" variant="danger">{{ __('Delete') }}</flux:menu.item></flux:modal.trigger>
+                        <flux:modal.trigger name="confirm-delete-diagram" wire:click="confirmDelete({{ $diagram->id }})">
+                            <flux:menu.item class="cursor-pointer" icon="trash" variant="danger">{{ __('Delete') }}</flux:menu.item>
+                        </flux:modal.trigger>
                     @endcan
-                    <flux:menu.item icon="graph" wire:click="$dispatch('diagram-graph::load', {'diagram': {{ $diagram->id }}})">{{ __('Graph') }}<flux:badge class="ms-2" color="lime" size="sm">{{ __('New!') }}</flux:badge></flux:menu.item>
-                    <flux:menu.item icon="document-duplicate" disabled>{{ __('Clone (Coming Soon)') }}</flux:menu.item>
-                    <flux:menu.item icon="arrow-down-tray" disabled>{{ __('Export (Coming Soon)') }}</flux:menu.item>
+                    <flux:menu.item class="cursor-pointer" icon="graph" wire:click="$dispatch('diagram-graph::load', {'diagram': {{ $diagram->id }}})">{{ __('Graph') }}<flux:badge class="ms-2" color="lime" size="sm">{{ __('New!') }}</flux:badge></flux:menu.item>
+                    <flux:menu.item class="cursor-not-allowed" icon="document-duplicate" disabled>{{ __('Clone (Coming Soon)') }}</flux:menu.item>
+                    <flux:menu.item class="cursor-not-allowed" icon="arrow-down-tray" disabled>{{ __('Export (Coming Soon)') }}</flux:menu.item>
                 </flux:menu>
             </flux:dropdown>
         </div>

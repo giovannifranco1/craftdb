@@ -1,16 +1,30 @@
 <?php
 
+use App\Enums\BillingCountry;
 use App\Livewire\BaseComponent;
 use Illuminate\Support\Facades\Auth;
 
 new class extends BaseComponent {
     /**
-     * Get plans from config (excluding free).
+     * Billing country from CF-IPCountry header (US or BR, default US).
+     */
+    public function getBillingCountryProperty(): BillingCountry
+    {
+        return BillingCountry::fromRequest(request()->header('CF-IPCountry'));
+    }
+
+    /**
+     * Plans available for the user's country (excluding free).
      */
     public function getPlansProperty(): array
     {
         $plans = config('billing.plans', []);
-        return collect($plans)->filter(fn ($p) => ! empty($p['price_id']))->all();
+        $country = $this->billingCountry;
+        $planKeys = $country->planKeys();
+
+        return collect($plans)
+            ->filter(fn ($p, $key) => in_array($key, $planKeys, true) && ! empty($p['price_id']))
+            ->all();
     }
 
     /**
@@ -80,7 +94,7 @@ new class extends BaseComponent {
                         <flux:heading size="lg">{{ $plan['name'] }}</flux:heading>
                         <flux:text class="mt-1 text-zinc-600 dark:text-zinc-400">{{ $plan['description'] }}</flux:text>
                         <div class="mt-3 flex items-baseline gap-1">
-                            <span class="text-2xl font-bold">{{ config('cashier.currency', 'usd') === 'usd' ? '$' : '' }}{{ number_format($plan['price'], 0) }}</span>
+                            <span class="text-2xl font-bold">{{ $this->billingCountry->currencySymbol() }}{{ number_format($plan['price'], 0) }}</span>
                             <span class="text-zinc-500 dark:text-zinc-400">/ {{ $plan['interval'] === 'year' ? __('year') : __('month') }}</span>
                         </div>
                         <ul class="mt-4 space-y-2 flex-1">
