@@ -6,6 +6,7 @@ use App\Exceptions\AuthorizationDiagramException;
 use App\Models\Diagram;
 use App\Concerns\HandlesDiagramAuthAlert;
 use App\Exceptions\PlanFeatureException;
+use App\Exceptions\TableColumnLimitExceededException;
 use App\Exceptions\TableLimitExceededException;
 use App\Support\DiagramLimits;
 use Illuminate\Validation\ValidationException;
@@ -35,6 +36,11 @@ abstract class CanvasComponent extends BaseComponent
         }
 
         if ($e instanceof TableLimitExceededException) {
+            $stopPropagation();
+            $this->alert(message: $e->getMessage(), type: 'error');
+        }
+
+        if ($e instanceof TableColumnLimitExceededException) {
             $stopPropagation();
             $this->alert(message: $e->getMessage(), type: 'error');
         }
