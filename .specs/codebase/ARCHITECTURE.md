@@ -26,9 +26,22 @@ Middleware (auth, verified, role:viewer|editor|owner, super.root)
 **Propósito:** Encapsular operações de negócio com escopo único — separa lógica do Controller/Livewire
 **Implementação:** Classes invocáveis com método `handle()` ou `__invoke()`
 **Subdiretórios:**
-- `app/Actions/Diagram/` — 15+ operações (CreateNewDiagram, AddColumnToTable, AddRelationship, DeleteDiagram, etc.)
+- `app/Actions/Diagram/` — 13 operações:
+  - `CreateNewDiagram` — cria diagrama com validação de limites e parse de SQL/migrations
+  - `UpdateDiagram` — atualiza nome/slug do diagrama
+  - `DeleteDiagram` — remove diagrama e dados relacionados
+  - `ImportToExistingDiagram` — importa schema para diagrama existente
+  - `AddColumnToTable` — adiciona coluna validando limite do plano
+  - `DeleteColumnToTable` — remove coluna
+  - `UpdateTable` — atualiza propriedades de tabela
+  - `DeleteTable` — remove tabela
+  - `UpdateResizePositionTable` — persiste posição/tamanho de tabela no canvas
+  - `AddRelationship` — cria relacionamento genérico
+  - `AddRelationshipWithExistingForeignKey` — relacionamento com FK existente
+  - `AddRelationshipWithNewForeignKey` — relacionamento criando nova FK
+  - `AddMemberToTeam` — adiciona membro ao time
 - `app/Actions/Fortify/` — CreateNewUser, CreateUserFromOAuth, ResetUserPassword
-- `app/Actions/Parse/` — ParseMySQLSchema, ParseLaravelMigration
+- `app/Actions/Parse/` — 5 arquivos: `BaseSQLParse` (classe base), `ParseMySQLSchema`, `ParsePOstgreSQLSchema`, `ParseSQLiteSchema`, `ParseLaravelMigration`
 - `app/Actions/Team/` — Operações de equipe
 **Exemplo:** `app/Actions/Diagram/CreateNewDiagram.php` — valida nome, gera slug, faz parse de imports, verifica limites do plano
 
@@ -63,10 +76,12 @@ Middleware (auth, verified, role:viewer|editor|owner, super.root)
 **Localização:** `app/Exceptions/`
 **Propósito:** Comunicar violações de regras de negócio de forma expressiva
 **Tipos:**
-- `DiagramLimitExceededException` — plano free atingiu limite de 3 diagramas
+- `DiagramLimitExceededException` — plano free atingiu limite de diagramas
 - `TableLimitExceededException` — diagrama atingiu limite de tabelas do plano
+- `TableColumnLimitExceededException` — tabela atingiu limite de colunas do plano
 - `AuthorizationDiagramException` — acesso não autorizado ao diagrama
-- (+ 3 exceções adicionais)
+- `PlanFeatureException` — funcionalidade não disponível no plano atual
+- `EmailAlreadyRegisteredException` — email já cadastrado (OAuth com email existente)
 **Integração:** Capturadas em `BaseComponent.php` para feedback visual ao usuário
 
 ### Enums
@@ -132,6 +147,46 @@ Route model binding: {diagram:slug}
     → Cache miss: query no banco + armazena no cache
     → DiagramObserver invalida cache on save/delete
 ```
+
+### Wireable DTOs
+
+**Localização:** `app/Livewire/Data/`
+**Propósito:** DTOs que implementam `Livewire\Wireable` — permitem serialização/desserialização eficiente entre requests sem query extra
+**Implementação:**
+```php
+class TableData implements Wireable
+{
+    public function toLivewire(): array { /* serializa para array */ }
+    public static function fromLivewire($value): self { /* reconstrói do array */ }
+    public static function fromModel(Table $table): self { /* cria do model Eloquent */ }
+}
+```
+**Arquivos:** `TableData.php`, `ColumnData.php`
+**Benefício:** Livewire trafega o DTO serializado como array entre requests; `fromLivewire()` reconstrói o objeto sem re-consultar o banco
+
+### Canvas JS (Alpine.js Stores)
+
+**Localização:** `resources/js/canvas/`
+**Propósito:** Gerenciar estado client-side do canvas interativo — posicionamento, drag, resize, linhas SVG de relacionamentos
+**Orquestração:** `main.js` registra todos os stores como Alpine data components no evento `alpine:init`
+**Stores registrados:**
+- `runCanvas` → `_canvas.data.js` — coordenador principal, instancia `InfiniteCanvas`, gerencia zoom, modos de adição
+- `runTable` → `_table.data.js` — posição/drag/resize de tabelas; z-index inicia em 1000
+- `runArea` → `_area.data.js` — posição/drag/resize de áreas; z-index inicia em 500
+- `runNote` → `_note.data.js` — posição/drag/resize de notas; z-index inicia em 600
+- `runSvgLines` → `_svg-lines.js` — relacionamentos SVG com caches de performance (BoundingRect, SVG elements)
+- `foreignKeysGraph` → `_foreign-keys-graph.js` — grafo D3.js de FK de uma tabela
+- (sem nome Alpine) → `_diagram-graph.js` — grafo D3.js completo do diagrama
+
+Detalhes completos em `.specs/codebase/CANVAS.md`
+
+### AppServiceProvider
+
+**Localização:** `app/Providers/AppServiceProvider.php`
+**Configurações-chave:**
+- **Route model binding customizado:** `{diagram:slug}` com cache de 5min (prod) / 60s (local) — busca diagrama pelo slug com cache automático
+- **View namespacing:** registra `diagram::` como namespace de views para componentes Blade reutilizáveis
+- **Trusted proxies:** configura para ler IPs reais atrás do Cloudflare
 
 ## Organização do código
 

@@ -8,22 +8,37 @@
 craftdb/
 ├── app/
 │   ├── Actions/
-│   │   ├── Diagram/         # 15+ operações de diagrama
-│   │   ├── Fortify/         # Auth: registro, OAuth, reset de senha
-│   │   ├── Parse/           # ParseMySQLSchema, ParseLaravelMigration
+│   │   ├── Diagram/         # 13 operações: CreateNewDiagram, UpdateDiagram, DeleteDiagram,
+│   │   │                    #   ImportToExistingDiagram, AddColumnToTable, DeleteColumnToTable,
+│   │   │                    #   UpdateTable, DeleteTable, UpdateResizePositionTable,
+│   │   │                    #   AddRelationship, AddRelationshipWithExistingForeignKey,
+│   │   │                    #   AddRelationshipWithNewForeignKey, AddMemberToTeam
+│   │   ├── Fortify/         # Auth: CreateNewUser, CreateUserFromOAuth, ResetUserPassword
+│   │   ├── Parse/           # BaseSQLParse (base), ParseMySQLSchema, ParsePOstgreSQLSchema,
+│   │   │                    #   ParseSQLiteSchema, ParseLaravelMigration
 │   │   └── Team/            # Operações de equipe
 │   ├── Console/Commands/
 │   ├── Enums/               # Role, ColumnType, RelationshipType, BillingCountry
-│   ├── Exceptions/          # 6 exceções de domínio
+│   ├── Exceptions/          # DiagramLimitExceededException, TableLimitExceededException,
+│   │                        #   TableColumnLimitExceededException, AuthorizationDiagramException,
+│   │                        #   PlanFeatureException, EmailAlreadyRegisteredException
 │   ├── Http/
 │   │   ├── Controllers/
-│   │   │   └── Pages/       # DiagramController aqui
+│   │   │   ├── Pages/       # DiagramController, LandingPageController
+│   │   │   ├── BillingController.php
+│   │   │   ├── AuthController.php
+│   │   │   ├── InvitationController.php
+│   │   │   └── FeedbackController.php
 │   │   └── Middleware/
 │   ├── Listeners/
 │   ├── Livewire/
-│   │   ├── Forms/Diagram/   # ColumnForm, ImportForm
-│   │   ├── Data/            # TableData, ColumnData (DTOs)
-│   │   └── Contracts/       # PublicCanvas interface
+│   │   ├── BaseComponent.php     # Base abstrata: handler global de exceções de domínio
+│   │   ├── CanvasComponent.php   # Base abstrata: operações do canvas interativo
+│   │   ├── MyFavorites.php       # Componente: lista de diagramas favoritos
+│   │   ├── Forms/Diagram/        # ColumnForm.php, ImportForm.php (Livewire Form Objects)
+│   │   ├── Data/                 # TableData.php, ColumnData.php (implementam Wireable)
+│   │   ├── Actions/              # Logout.php (Livewire action)
+│   │   └── Contracts/            # PublicCanvas.php (interface para canvas read-only)
 │   ├── Models/
 │   │   ├── Team/            # Team, Membership, Role, Invitation
 │   │   ├── Scopes/          # TableAccessible
@@ -54,7 +69,20 @@ craftdb/
 ├── resources/
 │   ├── css/
 │   ├── js/
-│   │   └── canvas/          # InfiniteCanvas.js e sistema de canvas
+│   │   ├── app.js           # Entry point principal do Vite
+│   │   └── canvas/
+│   │       ├── main.js      # Registra Alpine data stores no alpine:init
+│   │       ├── helpers.js   # Utilitários compartilhados do canvas
+│   │       ├── classes/
+│   │       │   └── InfiniteCanvas.js  # HTML5 Canvas 2D: pan/zoom/touch/grid
+│   │       └── data/
+│   │           ├── _canvas.data.js         # runCanvas — coordenador principal
+│   │           ├── _table.data.js          # runTable — drag/resize de tabelas
+│   │           ├── _area.data.js           # runArea — drag/resize de áreas
+│   │           ├── _note.data.js           # runNote — drag/resize de notas
+│   │           ├── _svg-lines.js           # runSvgLines — linhas SVG de relacionamentos
+│   │           ├── _foreign-keys-graph.js  # foreignKeysGraph — grafo D3 de FK por tabela
+│   │           └── _diagram-graph.js       # grafo D3 completo do diagrama
 │   └── views/
 │       ├── components/      # Blade components (auth/, diagram/, layouts/, settings/, ui/)
 │       ├── livewire/        # Views de componentes Livewire
@@ -123,9 +151,14 @@ craftdb/
 
 ### Importação de Schema
 
-**Propósito:** Criar diagramas a partir de SQL ou migrations Laravel
+**Propósito:** Criar diagramas a partir de SQL (MySQL, PostgreSQL, SQLite) ou migrations Laravel
 **Localização:**
-- Actions: `app/Actions/Parse/ParseMySQLSchema.php`, `ParseLaravelMigration.php`
+- Actions: `app/Actions/Parse/` — 5 arquivos
+  - `BaseSQLParse.php` — classe base com lógica compartilhada entre parsers SQL
+  - `ParseMySQLSchema.php` — usa phpmyadmin/sql-parser
+  - `ParsePOstgreSQLSchema.php` — parser customizado para PostgreSQL (nota: typo no nome do arquivo)
+  - `ParseSQLiteSchema.php` — parser customizado para SQLite
+  - `ParseLaravelMigration.php` — parser customizado para migrations Laravel
 - Form: `app/Livewire/Forms/Diagram/ImportForm.php`
 - Fixtures de teste: `tests/Feature/Actions/Parse/`
 

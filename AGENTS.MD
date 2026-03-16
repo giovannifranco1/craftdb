@@ -15,6 +15,7 @@
 | Encontrar onde X está no projeto | `.specs/codebase/STRUCTURE.md` | Árvore de diretórios, responsabilidades |
 | Escrever ou entender testes | `.specs/codebase/TESTING.md` | Frameworks, padrões, como executar |
 | Integrar com APIs externas, webhooks | `.specs/codebase/INTEGRATIONS.md` | Stripe, OAuth, jobs, rotas |
+| Trabalhar com canvas, Alpine stores, SVG | `.specs/codebase/CANVAS.md` | InfiniteCanvas, Alpine stores, eventos, z-index |
 | Implementar feature específica | `AGENTS.MD` + contexto da tarefa | Workflow RPI + PREVC |
 
 **Regra de ouro:** Carregue 1–2 docs por vez. Para tarefas pesadas (ex.: refatorar um módulo), use ARCHITECTURE + STRUCTURE. Para testes, use TESTING + CONVENTIONS.
@@ -37,7 +38,8 @@ CraftDB é uma ferramenta SaaS para criação e visualização de diagramas de b
 
 - **Actions** em `app/Actions/` encapsulam toda lógica de negócio (não está nos Controllers ou Models)
 - **Controllers** são finos — apenas coordenam request/response e delegam para Actions
-- **Livewire** gerencia reatividade server-side sem JavaScript customizado (exceto canvas D3.js)
+- **Livewire** gerencia reatividade server-side; **Alpine.js** gerencia estado client-side do canvas
+- **Canvas:** `InfiniteCanvas.js` (HTML5 Canvas 2D) + 6 Alpine stores + D3.js para grafos de relacionamentos
 - **Exceções de domínio** em `app/Exceptions/` comunicam violações de regras — capturadas em `BaseComponent`
 - **Observers** em `app/Observers/` cuidam de side effects (ex: invalidação de cache de diagrama)
 
@@ -66,10 +68,10 @@ app/Livewire/       → Componentes reativos + Forms/, Data/, Contracts/
 app/Http/Controllers/ → Controllers finos (Pages/, BillingController, AuthController)
 app/Support/        → DiagramLimits (limites por plano)
 app/Enums/          → Role, ColumnType, RelationshipType, BillingCountry
-app/Exceptions/     → 6 exceções de domínio
+app/Exceptions/     → 6 exceções de domínio (DiagramLimit, TableLimit, TableColumnLimit, Authorization, PlanFeature, EmailAlreadyRegistered)
 config/diagram.php  → Limites de features por plano
 config/billing.php  → Preços e Price IDs do Stripe
-resources/js/canvas/ → InfiniteCanvas.js (canvas D3.js)
+resources/js/canvas/ → InfiniteCanvas.js + 6 Alpine stores + D3.js (ver CANVAS.md)
 routes/web.php      → Todas as rotas (arquivo único)
 ```
 
@@ -120,10 +122,11 @@ Detalhes completos em `.specs/codebase/TESTING.md`
 4. **Limites de plano** são verificados em `app/Support/DiagramLimits.php` + `config/diagram.php`
 5. **Billing regional** = detectar via `CF-IPCountry` e usar Price ID correto (USD ou BRL)
 6. **Ao modificar Models**, verifique Observers que podem reagir às mudanças
-7. **Escreva testes** seguindo os padrões em `.specs/codebase/TESTING.md`
-8. **Atualize este arquivo** sempre que padrões ou decisões arquiteturais mudarem
+7. **Ao tocar em canvas JS** (Alpine stores, SVG lines, InfiniteCanvas), carregue `.specs/codebase/CANVAS.md`
+8. **Escreva testes** seguindo os padrões em `.specs/codebase/TESTING.md`
+9. **Atualize este arquivo** sempre que padrões ou decisões arquiteturais mudarem
 
 ---
 
 **Última atualização:** 2026-03-16
-**Gerado por:** Skill Brownfield Mapping
+**Gerado por:** Skill Brownfield Mapping + revisão manual

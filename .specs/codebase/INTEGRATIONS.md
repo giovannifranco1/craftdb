@@ -9,19 +9,28 @@
 
 **Planos e preços:**
 ```
-Free:        $0 — 3 diagramas, 30 tabelas, 50 colunas/tabela
-Pro USD:     $9.99/mês — Ilimitado, 100 tabelas, 100 colunas
-Pro BRL:     R$29.99/mês — Mesmas features
-Pro USD Anual: preço anual com desconto
-Pro BRL Anual: preço anual com desconto
-Team USD:    $24.99/mês — Tudo Pro + 25 membros
-Team BRL:    R$59.99/mês — Mesmas features
-Team USD Anual: preço anual com desconto
-Team BRL Anual: preço anual com desconto
+Free:              $0 / R$0 — 3 diagramas, 30 tabelas, 50 colunas/tabela
+Pro USD mensal:    $9/mês
+Pro BRL mensal:    R$49.90/mês
+Pro USD anual:     preço anual com desconto
+Pro BRL anual:     preço anual com desconto
+Team USD mensal:   $24.99/mês — Tudo Pro + colaboração multi-usuário
+Team BRL mensal:   R$59.99/mês — Mesmas features
+Team USD anual:    preço anual com desconto
+Team BRL anual:    preço anual com desconto
+```
+
+**Environment variables de preço** (valores nominais, não Price IDs):
+```
+BILLING_PRO_USD_PRICE=9
+BILLING_PRO_BRL_PRICE=49.90
+BILLING_TEAM_USD_PRICE=24.99
+BILLING_TEAM_BRL_PRICE=59.99
+# variantes anuais equivalentes
 ```
 
 **Autenticação:** `STRIPE_KEY` (público) + `STRIPE_SECRET` (privado) no `.env`
-**Price IDs:** `STRIPE_PRICE_PRO_USD`, `STRIPE_PRICE_PRO_BRL`, `STRIPE_PRICE_TEAM_USD`, `STRIPE_PRICE_TEAM_BRL`, variantes anuais — todos via `.env`
+**Price IDs Stripe:** `STRIPE_PRICE_PRO_USD`, `STRIPE_PRICE_PRO_BRL`, `STRIPE_PRICE_TEAM_USD`, `STRIPE_PRICE_TEAM_BRL` + variantes `_ANNUAL` — todos via `.env`
 
 **Fluxo de checkout:**
 1. BillingController detecta país via `CF-IPCountry` header (Cloudflare)
@@ -73,10 +82,14 @@ Team BRL Anual: preço anual com desconto
 
 ## Parser de SQL
 
-**Serviço:** phpmyadmin/sql-parser 6 (biblioteca local)
-**Propósito:** Parsear schemas MySQL importados pelo usuário para criar diagramas automaticamente
-**Implementação:** `app/Actions/Parse/ParseMySQLSchema.php`
-**Uso:** Chamado por `CreateNewDiagram` quando usuário faz upload de arquivo `.sql`
+**Serviço:** phpmyadmin/sql-parser 6 (biblioteca para MySQL) + parsers customizados (PostgreSQL, SQLite)
+**Propósito:** Parsear schemas SQL importados pelo usuário para criar diagramas automaticamente
+**Implementação:**
+- `app/Actions/Parse/BaseSQLParse.php` — classe base com lógica compartilhada
+- `app/Actions/Parse/ParseMySQLSchema.php` — usa phpmyadmin/sql-parser
+- `app/Actions/Parse/ParsePOstgreSQLSchema.php` — parser customizado para PostgreSQL
+- `app/Actions/Parse/ParseSQLiteSchema.php` — parser customizado para SQLite
+**Uso:** Chamados por `CreateNewDiagram` / `ImportToExistingDiagram` quando usuário faz upload de arquivo `.sql`
 
 ---
 
@@ -121,6 +134,11 @@ Team BRL Anual: preço anual com desconto
 **Auth (Fortify + Social):**
 - Rotas padrão Fortify (login, register, forgot-password, verify-email)
 - `GET /auth/{provider}/redirect`, `GET /auth/{provider}/callback`
+
+**Convites de equipe** (`InvitationController`):
+- `POST /{team_id}/invite` — Envia convite por email
+- `GET /invite/accept/{token}` — Aceita convite (com ou sem auth)
+- `DELETE /invite/{invitation}` — Cancela convite
 
 **Administração:**
 - `GET /feedback` — Acesso super root apenas (middleware `super.root`)

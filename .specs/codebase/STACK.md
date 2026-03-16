@@ -13,9 +13,10 @@
 
 - Abordagem: Livewire 4 + Flux 2 (componentes UI)
 - Estilização: Tailwind CSS 4 (via @tailwindcss/vite)
-- Visualização: D3.js 7 para renderização do canvas de diagramas
-- Canvas customizado: `resources/js/canvas/InfiniteCanvas.js`
-- Gerenciamento de estado: Livewire (estado server-side, sem store client-side)
+- Interatividade client-side: Alpine.js (bundled com Livewire 4) — usado para os Alpine data stores do canvas
+- Visualização: D3.js 7 para grafo de FK e grafo de diagrama (dentro do canvas)
+- Canvas customizado: `resources/js/canvas/classes/InfiniteCanvas.js` — HTML5 Canvas 2D, pan/zoom, touch
+- Gerenciamento de estado: Livewire (estado server-side) + Alpine.js stores (estado client-side do canvas)
 
 ## Backend
 
@@ -43,4 +44,4 @@
 - Bundler: Vite 6 com laravel-vite-plugin 2
 - Formatação: Laravel Pint
 - IDE helpers: barryvdh/laravel-ide-helper 3
-- Parser SQL: phpmyadmin/sql-parser 6
+- Parser SQL: phpmyadmin/sql-parser 6 (MySQL); parsers customizados para PostgreSQL e SQLite em `app/Actions/Parse/BaseSQLParse.php`

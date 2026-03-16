@@ -151,6 +151,31 @@ protected function handleDomainException(DomainException $e): void
 - `<x-layouts.app>` → `resources/views/components/layouts/app.blade.php`
 - Flux UI via `<flux:*>` prefix
 
+## Wireable DTOs
+
+**Padrão:** Classes em `app/Livewire/Data/` que implementam `Livewire\Wireable` seguem três métodos obrigatórios:
+```php
+// Serializa para array (enviado ao frontend/request seguinte)
+public function toLivewire(): array { ... }
+
+// Reconstrói do array serializado (chamado pelo Livewire automaticamente)
+public static function fromLivewire($value): self { ... }
+
+// Cria a partir do model Eloquent
+public static function fromModel(Model $model): self { ... }
+```
+**Quando usar:** Sempre que um DTO precisar ser propriedade pública de um Livewire Component — Livewire usa `toLivewire`/`fromLivewire` automaticamente ao serializar o estado.
+
+## Alpine.js Canvas Stores
+
+**Naming:** Data stores do canvas usam prefixo `run*` ao serem registrados (ex: `runTable`, `runCanvas`, `runArea`, `runNote`, `runSvgLines`)
+**Arquivos:** kebab-case com prefixo `_` para indicar stores privados (ex: `_table.data.js`, `_canvas.data.js`)
+**Hierarquia de z-index global:**
+- Áreas (`areaZIndexCounter`): inicia em 500
+- Notas (`noteZIndexCounter`): inicia em 600
+- Tabelas (`tableZIndexCounter`): inicia em 1000
+- Contadores são `window.*` para serem compartilhados entre múltiplos componentes Alpine
+
 ## Scopes e Concerns
 
 **Global Scopes:** Em `app/Models/Scopes/` — ex: `TableAccessible` para filtrar por acesso de equipe
