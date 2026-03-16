@@ -7,6 +7,7 @@ use App\Exceptions\TableLimitExceededException;
 use App\Models\Column;
 use App\Models\Diagram;
 use App\Models\Table;
+use App\Support\DiagramLimits;
 use App\Support\Helpers;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
@@ -34,10 +35,13 @@ class ParseLaravelMigration extends BaseSQLParse
         $this->tableIndex = $diagram->tables()->count();
 
         // Count all tables before processing to validate limit
+        $owner = $diagram->team->owner;
+        $limits = DiagramLimits::forUser($owner);
+
         $existingCount = $diagram->tables()->count();
         $tablesFromFiles = $this->countTablesFromFiles($files);
         $totalTables = $existingCount + $tablesFromFiles;
-        if ($totalTables > config('diagram.table_limit')) {
+        if ($totalTables > $limits['table_limit']) {
             throw new TableLimitExceededException($totalTables);
         }
 

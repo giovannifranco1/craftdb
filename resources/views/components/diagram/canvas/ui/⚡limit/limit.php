@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Diagram;
+use App\Support\DiagramLimits;
 use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
@@ -20,7 +21,9 @@ new class extends BaseComponent {
     public function mount(Diagram $diagram): void
     {
         $this->diagram = $diagram;
-        $this->limit = config('diagram.table_limit');
+        $owner = $diagram->team->owner;
+        $limits = DiagramLimits::forUser($owner);
+        $this->limit = $limits['table_limit'];
     }
 
     #[Computed()]

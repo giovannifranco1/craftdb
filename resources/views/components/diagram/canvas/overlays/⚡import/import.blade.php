@@ -1,4 +1,4 @@
-<flux:modal :dismissible="false" name="diagram-canvas-import" class="md:w-150 z-50">
+<flux:modal :dismissible="false" name="diagram-canvas-import" class="md:w-150 z-30">
     <div class="space-y-6 flex flex-col">
         @if($importForm->type === 'sql')
             <flux:callout variant="warning" icon="exclamation-triangle">
@@ -115,6 +115,15 @@
                             </div>
                         @endforeach
                     </div>
+                    @if($importForm->type === 'migration' && !empty($importForm->file))
+                        <div class="mt-3 flex items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400">
+                            <span>{{ trans_choice(':count file|:count files', count($importForm->file)) }}</span>
+                            <span>·</span>
+                            <span class="font-medium text-zinc-700 dark:text-zinc-300">
+                                {{ trans_choice(':count table will be created|:count tables will be created', $this->tableCount) }}
+                            </span>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>

@@ -19,6 +19,8 @@ document.addEventListener(
         Alpine.plugin(anchor);
 
         Alpine.data('diagramGraph', _diagramGraph);
+
+        Alpine.store('proFeature', null);
     },
     { once: true },
 );

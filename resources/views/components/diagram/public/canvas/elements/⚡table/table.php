@@ -10,6 +10,7 @@ use Livewire\Attributes\On;
 use Livewire\Attributes\Validate;
 use App\Livewire\CanvasComponent;
 use App\Livewire\Contracts\PublicCanvas;
+use App\Support\DiagramLimits;
 
 new class extends CanvasComponent implements PublicCanvas {
 
@@ -66,6 +67,15 @@ new class extends CanvasComponent implements PublicCanvas {
     public function table(): TableModel
     {
         return TableModel::findOrFail($this->tableId);
+    }
+
+    #[Computed]
+    public function tableColumnsLimit(): int
+    {
+        $owner = $this->table->diagram->team->owner;
+        $limits = DiagramLimits::forUser($owner);
+
+        return $limits['table_columns_limit'];
     }
 
     #[On('table::relationship-added.{tableId}')]

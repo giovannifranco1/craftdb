@@ -15,6 +15,7 @@ use Livewire\Attributes\On;
 use Livewire\Attributes\Validate;
 use App\Livewire\CanvasComponent;
 use App\Livewire\Data\ColumnData;
+use App\Support\DiagramLimits;
 
 new class extends CanvasComponent {
 
@@ -126,11 +127,20 @@ new class extends CanvasComponent {
         $this->dispatch('table::column-renamed');
     }
 
+    #[Computed]
+    public function tableColumnsLimit(): int
+    {
+        $owner = $this->table->diagram->team->owner;
+        $limits = DiagramLimits::forUser($owner);
+
+        return $limits['table_columns_limit'];
+    }
+
     public function addColumn(AddColumnToTableAction $action): void
     {
         $this->authorizeDiagram('update');
 
-        if ($this->table->columns()->count() >= config('diagram.table_columns_limit')) {
+        if ($this->table->columns()->count() >= $this->tableColumnsLimit) {
             $this->dispatch('alert', message: __('You have reached the maximum number of columns for this table.'), type: 'error');
             return;
         }

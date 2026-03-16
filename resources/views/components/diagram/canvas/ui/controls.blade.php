@@ -92,23 +92,43 @@
             </button>
         </flux:tooltip>
 
-        <flux:tooltip position="right" :content="__('Add Area') . ' (A)'">
-            <button
-                class="p-2 rounded-md transition-all cursor-pointer hover:bg-orange-50 dark:hover:bg-orange-900/30 hover:text-orange-600 dark:hover:text-orange-400 active:scale-95 group relative text-zinc-700 dark:text-zinc-300"
-                type="button"
-                @click="$dispatch('area::adding')">
-                <flux:icon.add-area class="size-5"/>
-            </button>
-        </flux:tooltip>
+        @if(auth()->user()->isPro() || auth()->user()->isTeamPlan())
+            <flux:tooltip position="right" :content="__('Add Area') . ' (A)'">
+                <button
+                    class="p-2 rounded-md transition-all cursor-pointer hover:bg-orange-50 dark:hover:bg-orange-900/30 hover:text-orange-600 dark:hover:text-orange-400 active:scale-95 group relative text-zinc-700 dark:text-zinc-300"
+                    type="button"
+                    @click="$dispatch('area::adding')">
+                    <flux:icon.add-area class="size-5"/>
+                </button>
+            </flux:tooltip>
 
-        <flux:tooltip position="right" :content="__('Add Note') . ' (N)'">
-            <button
-                class="p-2 rounded-md transition-all cursor-pointer hover:bg-yellow-50 dark:hover:bg-yellow-900/30 hover:text-yellow-600 dark:hover:text-yellow-400 active:scale-95 group relative text-zinc-700 dark:text-zinc-300"
-                type="button"
-                @click="$dispatch('note::adding')">
-                <flux:icon.add-note class="size-5"/>
-            </button>
-        </flux:tooltip>
+            <flux:tooltip position="right" :content="__('Add Note') . ' (N)'">
+                <button
+                    class="p-2 rounded-md transition-all cursor-pointer hover:bg-yellow-50 dark:hover:bg-yellow-900/30 hover:text-yellow-600 dark:hover:text-yellow-400 active:scale-95 group relative text-zinc-700 dark:text-zinc-300"
+                    type="button"
+                    @click="$dispatch('note::adding')">
+                    <flux:icon.add-note class="size-5"/>
+                </button>
+            </flux:tooltip>
+        @else
+            <flux:tooltip position="right" :content="__('Add Area') . ' (A)'">
+                <button
+                    class="p-2 rounded-md transition-all cursor-pointer hover:bg-orange-50 dark:hover:bg-orange-900/30 hover:text-orange-600 dark:hover:text-orange-400 active:scale-95 group relative text-zinc-700 dark:text-zinc-300"
+                    type="button"
+                    @click="$dispatch('pro-feature::show', { key: 'areas' })">
+                    <flux:icon.add-area class="size-5"/>
+                </button>
+            </flux:tooltip>
+
+            <flux:tooltip position="right" :content="__('Add Note') . ' (N)'">
+                <button
+                    class="p-2 rounded-md transition-all cursor-pointer hover:bg-yellow-50 dark:hover:bg-yellow-900/30 hover:text-yellow-600 dark:hover:text-yellow-400 active:scale-95 group relative text-zinc-700 dark:text-zinc-300"
+                    type="button"
+                    @click="$dispatch('pro-feature::show', { key: 'notes' })">
+                    <flux:icon.add-note class="size-5"/>
+                </button>
+            </flux:tooltip>
+        @endif
     </div>
 
     <!-- Grupo: Zoom -->
@@ -175,15 +195,26 @@
 
     <!-- Grupo: Gráfico e Busca -->
     <div class="flex flex-col items-center gap-1">
-        <flux:modal.trigger name="diagram-graph">
+        @if(auth()->user()->isPro() || auth()->user()->isTeamPlan())
+            <flux:modal.trigger name="diagram-graph">
+                <flux:tooltip position="right" :content="__('Diagram Graph')">
+                    <button
+                        class="p-2 rounded-md transition-all cursor-pointer hover:bg-green-50 dark:hover:bg-green-900/30 hover:text-green-600 dark:hover:text-green-400 active:scale-95 group relative text-zinc-700 dark:text-zinc-300"
+                        type="button">
+                        <flux:icon.graph class="size-5"/>
+                    </button>
+                </flux:tooltip>
+            </flux:modal.trigger>
+        @else
             <flux:tooltip position="right" :content="__('Diagram Graph')">
                 <button
                     class="p-2 rounded-md transition-all cursor-pointer hover:bg-green-50 dark:hover:bg-green-900/30 hover:text-green-600 dark:hover:text-green-400 active:scale-95 group relative text-zinc-700 dark:text-zinc-300"
-                    type="button">
+                    type="button"
+                    @click="$dispatch('pro-feature::show', { key: 'graph' })">
                     <flux:icon.graph class="size-5"/>
                 </button>
             </flux:tooltip>
-        </flux:modal.trigger>
+        @endif
 
         <flux:modal.trigger name="spotlight" shortcut="cmd.k">
             <flux:tooltip position="right" :content="__('Search (⌘K)')">

@@ -33,7 +33,6 @@ new class extends BaseComponent {
     public function mount(): void
     {
         $this->team = Team::currentTeam();
-        $this->authorize('addTeamMember', $this->team);
     }
 
     public function inviteMember(): void
@@ -43,6 +42,15 @@ new class extends BaseComponent {
         $this->validate();
 
         throw_if($this->email == Auth::user()->email, RuntimeException::class, __('You cannot invite yourself.'));
+
+        $limit = Auth::user()->memberLimit();
+        $currentCount = $this->team->members()->count() + $this->team->invitations()->whereNull('cancelled_at')->whereNull('accepted_at')->count();
+
+        throw_if(
+            $currentCount >= $limit,
+            RuntimeException::class,
+            __('You have reached the member limit for your plan. Upgrade to add more members.')
+        );
 
         $this->team->inviteUser($this->email, $this->roleChoosen);
 
@@ -126,6 +134,7 @@ new class extends BaseComponent {
     <x-settings.layout :heading="__('Team Members')" :subheading="__('All of the people that are part of this team.')">
 
         <!-- Add Member -->
+        @if(Auth::user()->isTeamPlan())
         <div class="">
             <form wire:submit="inviteMember" class="space-y-4">
                 <flux:input
@@ -184,11 +193,27 @@ new class extends BaseComponent {
                     </div>
                 </div>
 
-                <flux:button variant="primary" type="submit">
+                <flux:button class="cursor-pointer" variant="primary" type="submit">
                     {{ __('Invite Member') }}
                 </flux:button>
             </form>
         </div>
+        @else
+        <div class="rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900 p-6 text-center space-y-3">
+            <div class="flex items-center justify-center">
+                <flux:icon.users variant="solid" class="size-10 bg-zinc-500 text-white rounded-full p-2" />
+            </div>
+            <flux:heading size="lg">{{ __('Colaboração em time') }}</flux:heading>
+            <flux:subheading>
+                {{ __('Convide membros e trabalhe junto em diagramas com o plano Team. Até 25 usuários por time.') }}
+            </flux:subheading>
+            <div class="pt-2">
+                <flux:button variant="primary" href="{{ route('billing.index') }}" wire:navigate>
+                    {{ __('Fazer upgrade para Team') }}
+                </flux:button>
+            </div>
+        </div>
+        @endif
 
         <flux:separator class="my-6" />
 

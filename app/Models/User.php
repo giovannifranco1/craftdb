@@ -5,7 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 use App\Exceptions\DiagramLimitExceededException;
-use App\Models\Concerns\HasTeam;
+use App\Support\DiagramLimits;
 use App\Models\Concerns\HasTeams;
 use App\Models\Team\Team;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -164,19 +164,56 @@ class User extends Authenticatable
         return $this->subscribed(config('billing.subscription_name', 'default'));
     }
 
+    public function isTeamPlan(): bool
+    {
+        $prices = array_filter([
+            config('billing.plans.team_usd.price_id'),
+            config('billing.plans.team_brl.price_id'),
+        ]);
+
+        foreach ($prices as $priceId) {
+            if ($this->subscribedToPrice($priceId, config('billing.subscription_name', 'default'))) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Max number of members (excluding owner) allowed in a team.
+     * Team = 24 (owner + 24 = 25 total). Free and Pro = 0 (no team features).
+     */
+    public function memberLimit(): int
+    {
+        if ($this->isTeamPlan()) {
+            return intval(config('diagram.team.member_limit')); // 24
+        }
+
+        return 0; // Free and Pro: no team members
+    }
+
+    public function canCreateTeam(): bool
+    {
+        return $this->isTeamPlan();
+    }
+
     public function hasReachedDiagramLimit(): bool
     {
-        if ($this->isPro()) {
-            return false;
-        }
-
         $team = Team::currentTeam();
 
-        if (!$team) {
+        if (! $team) {
             return false;
         }
 
-        return $team->diagrams()->count() >= config('diagram.free.diagram_limit');
+        $owner = $team->owner;
+        if (! $owner) {
+            return false;
+        }
+
+        $limits = DiagramLimits::forUser($owner);
+
+        return $team->diagrams()->count() >= $limits['diagram_limit'];
     }
 
     public function validateDiagramLimit(): void

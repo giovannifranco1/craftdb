@@ -16,7 +16,7 @@ enum BillingCountry: string
         $code = strtoupper(trim($header ?? ''));
 
         return match ($code) {
-            'BRL' => self::BRL,
+            'BR' => self::BRL,
             default => self::USD,
         };
     }
@@ -27,8 +27,8 @@ enum BillingCountry: string
     public function planKeys(): array
     {
         return match ($this) {
-            self::USD => ['pro_usd', 'team_usd'],
-            self::BRL => ['pro_brl', 'team_brl'],
+            self::USD => ['pro_usd', 'pro_usd_annual', 'team_usd', 'team_usd_annual'],
+            self::BRL => ['pro_brl', 'pro_brl_annual', 'team_brl', 'team_brl_annual'],
         };
     }
 

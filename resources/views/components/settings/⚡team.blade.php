@@ -28,7 +28,7 @@ new class extends BaseComponent {
     {
         $this->authorize('leaveTeam', $this->team);
 
-        if (!Auth::user()->isAuthenticatedWithGoogleOrGithub() && is_null(Auth::user()->password)) {
+        if (!Auth::user()->isAuthenticatedWithGoogleOrGithub() && !is_null(Auth::user()->password)) {
             $this->validate();
         }
 
@@ -92,13 +92,16 @@ new class extends BaseComponent {
 
             @can('updateTeam', $team)
                 <div class="flex items-center gap-4">
-                    <flux:button variant="primary" type="submit" class="w-full">
+                    <flux:button wire:transition variant="primary" type="submit" class="w-full cursor-pointer">
                         {{ __('Save') }}
                     </flux:button>
 
                     <x-action-message class="me-3" on="team-updated">
-                        {{ __('Saved.') }}
+                        <flux:tooltip position="right" :content="__('Saved.')">
+                            <flux:icon.check-circle class="size-5" />
+                        </flux:tooltip>
                     </x-action-message>
+
                 </div>
             @endcan
         </form>

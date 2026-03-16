@@ -35,7 +35,11 @@
 
                     <!-- Navbar -->
                     <flux:navbar class="-mb-px max-lg:hidden">
-                        <flux:navbar.item badge="{{ auth()->user()->isPro() ? 'Pro' : 'Free' }}" badge:color="{{ auth()->user()->isPro() ? 'lime' : 'sky' }}" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>{{ __('Diagrams') }}</flux:navbar.item>
+                        @php
+                            $planBadge = auth()->user()->isTeamPlan() ? 'Team' : (auth()->user()->isPro() ? 'Pro' : 'Free');
+                            $planColor = auth()->user()->isTeamPlan() ? 'violet' : (auth()->user()->isPro() ? 'lime' : 'sky');
+                        @endphp
+                        <flux:navbar.item badge="{{ $planBadge }}" badge:color="{{ $planColor }}" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>{{ __('Diagrams') }}</flux:navbar.item>
                     </flux:navbar>
 
                     <div class="flex items-center space-x-4 ml-auto">
@@ -72,8 +76,10 @@
                                     </div>
                                 </flux:menu.radio.group>
 
-                                <flux:menu.separator />
-                                <flux:menu.item as="button" icon="user-plus" type="button" :href="route('team.create')">{{__('Create New Team')}}</flux:menu.item>
+                                @can('create', $team)
+                                    <flux:menu.separator />
+                                    <flux:menu.item as="button" icon="user-plus" type="button" :href="route('team.create')">{{__('Create New Team')}}</flux:menu.item>
+                                @endcan
 
                                 <flux:menu.separator/>
 
@@ -110,6 +116,7 @@
 
         <livewire:diagram.create/>
         <livewire:ui.contact-us/>
+        <x-ui.pro-feature-modal/>
         @fluxScripts
     </body>
 </html>

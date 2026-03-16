@@ -19,9 +19,7 @@
                 @can('create', $team)
                     <flux:navlist.item :href="route('team.create')" wire:navigate>{{ __('Create New Team') }}</flux:navlist.item>
                 @endcan
-                @can('addTeamMember', $team)
-                    <flux:navlist.item :href="route('team.members.edit')" wire:navigate>{{ __('Members') }}</flux:navlist.item>
-                @endcan
+                <flux:navlist.item :href="route('team.members.edit')" wire:navigate>{{ __('Members') }}</flux:navlist.item>
             </flux:navlist.group>
         </flux:navlist>
     </div>

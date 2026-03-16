@@ -8,6 +8,7 @@ use App\Models\Column;
 use App\Models\Diagram;
 use App\Exceptions\TableLimitExceededException;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
@@ -26,6 +27,12 @@ class ImportToExistingDiagram
      */
     public function exec(Diagram $diagram, array $files, string $type): void
     {
+        if (! Auth::user()->isPro()) {
+            throw ValidationException::withMessages([
+                'importForm.file' => __('SQL and migration import are available on the Pro plan or higher.'),
+            ]);
+        }
+
         $this->_validate($diagram, $files, $type);
 
         try {

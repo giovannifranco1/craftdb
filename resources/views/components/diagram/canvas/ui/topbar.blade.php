@@ -174,7 +174,7 @@
 
                                 <flux:menu.radio.group>
                                     <flux:menu.item :href="route('profile.edit')" icon="cog" wire:navigate>{{ __('Settings') }}</flux:menu.item>
-                                    <flux:menu.item :href="route('billing.index')" icon="credit-card" wire:navigate>{{ __('Billing') }}</flux:menu.item>
+                                    <flux:menu.item :href="route('billing.index')" icon="credit-card">{{ __('Billing') }}</flux:menu.item>
                                     <flux:menu.item as="button" type="button" icon="chat-bubble-left-ellipsis" @click="$flux.modal('contact-us').show()">
                                         {{ __('Contact Us') }}
                                     </flux:menu.item>
@@ -211,9 +211,15 @@
                                 {{ __('Export (Coming Soon)') }}
                             </flux:menu.item>
 
-                            <flux:menu.item icon="arrow-up-tray" @click="$flux.modal('diagram-canvas-import').show()">
-                                {{ __('Import') }}
-                            </flux:menu.item>
+                            @if(auth()->user()->isPro() || auth()->user()->isTeamPlan())
+                                <flux:menu.item icon="arrow-up-tray" @click="$flux.modal('diagram-canvas-import').show()">
+                                    {{ __('Import') }}
+                                </flux:menu.item>
+                            @else
+                                <flux:menu.item icon="arrow-up-tray" @click="$dispatch('pro-feature::show', { key: 'import' })">
+                                    {{ __('Import') }}
+                                </flux:menu.item>
+                            @endif
                         </flux:menu>
                     </flux:dropdown>
 

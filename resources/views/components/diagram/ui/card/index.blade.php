@@ -54,7 +54,11 @@
                             <flux:menu.item class="cursor-pointer" icon="trash" variant="danger">{{ __('Delete') }}</flux:menu.item>
                         </flux:modal.trigger>
                     @endcan
-                    <flux:menu.item class="cursor-pointer" icon="graph" wire:click="$dispatch('diagram-graph::load', {'diagram': {{ $diagram->id }}})">{{ __('Graph') }}<flux:badge class="ms-2" color="lime" size="sm">{{ __('New!') }}</flux:badge></flux:menu.item>
+                    @if(auth()->user()->isPro() || auth()->user()->isTeamPlan())
+                        <flux:menu.item class="cursor-pointer" icon="graph" wire:click="$dispatch('diagram-graph::load', {'diagram': {{ $diagram->id }}})">{{ __('Graph') }}<flux:badge class="ms-2" color="lime" size="sm">{{ __('New!') }}</flux:badge></flux:menu.item>
+                    @else
+                        <flux:menu.item class="cursor-pointer" icon="graph" @click="$dispatch('pro-feature::show', { key: 'graph' })">{{ __('Graph') }}<flux:badge class="ms-2" color="lime" size="sm">{{ __('New!') }}</flux:badge></flux:menu.item>
+                    @endif
                     <flux:menu.item class="cursor-not-allowed" icon="document-duplicate" disabled>{{ __('Clone (Coming Soon)') }}</flux:menu.item>
                     <flux:menu.item class="cursor-not-allowed" icon="arrow-down-tray" disabled>{{ __('Export (Coming Soon)') }}</flux:menu.item>
                 </flux:menu>

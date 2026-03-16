@@ -7,6 +7,7 @@ use App\Enums\RelationshipType;
 use App\Livewire\CanvasComponent;
 use App\Models\Diagram;
 use App\Models\Table;
+use App\Support\DiagramLimits;
 use App\Support\Helpers;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Contracts\Database\Query\Builder as QueryBuilder;
@@ -64,7 +65,10 @@ new #[Defer(bundle: true)] class extends CanvasComponent {
     {
         $this->authorizeDiagram('update');
 
-        if ($this->diagram->tables()->count() >= Diagram::TABLE_LIMIT) {
+        $owner = $this->diagram->team->owner;
+        $limits = DiagramLimits::forUser($owner);
+
+        if ($this->diagram->tables()->count() >= $limits['table_limit']) {
             $this->dispatch('alert', message: __('You have reached the maximum number of tables for this diagram.'), type: 'error');
             return;
         }

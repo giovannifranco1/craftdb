@@ -5,7 +5,9 @@ namespace App\Livewire;
 use App\Exceptions\AuthorizationDiagramException;
 use App\Models\Diagram;
 use App\Concerns\HandlesDiagramAuthAlert;
+use App\Exceptions\PlanFeatureException;
 use App\Exceptions\TableLimitExceededException;
+use App\Support\DiagramLimits;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
@@ -36,6 +38,11 @@ abstract class CanvasComponent extends BaseComponent
             $stopPropagation();
             $this->alert(message: $e->getMessage(), type: 'error');
         }
+
+        if ($e instanceof PlanFeatureException) {
+            $stopPropagation();
+            $this->alert(message: $e->getMessage(), type: 'error');
+        }
     }
 
     #[Computed(cache: true, key: 'diagram', seconds: 300)]
@@ -46,7 +53,10 @@ abstract class CanvasComponent extends BaseComponent
 
     public function validateTableLimit(): void
     {
-        if ($this->diagram->tables()->count() >= config('diagram.table_limit')) {
+        $owner = $this->diagram->team->owner;
+        $limits = DiagramLimits::forUser($owner);
+
+        if ($this->diagram->tables()->count() >= $limits['table_limit']) {
             throw new TableLimitExceededException($this->diagram->tables()->count());
         }
     }

@@ -25,7 +25,7 @@
         @include('components.diagram.canvas._partials.table.structure')
 
         <!-- Footer -->
-        @include('components.diagram.canvas._partials.table.footer')
+        @include('components.diagram.canvas._partials.table.footer', ['tableColumnsLimit' => $this->tableColumnsLimit])
 
         <!-- Bottom Resize Handle -->
         <div

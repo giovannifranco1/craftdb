@@ -428,5 +428,7 @@
   "Made with": "Feito com",
   "by Developer": "pelo Desenvolvedor",
   "New diagram created. :emoji Let's build something great!": "Novo diagrama criado. :emoji Vamos construir algo incrível!",
-  "You have reached the maximum number of diagrams for your account.": "Você atingiu o número máximo de diagramas para sua conta."
+  "You have reached the maximum number of diagrams for your account.": "Você atingiu o número máximo de diagramas para sua conta.",
+  ":count file|:count files": ":count arquivo|:count arquivos",
+  ":count table will be created|:count tables will be created": ":count tabela será criada|:count tabelas serão criadas"
 }

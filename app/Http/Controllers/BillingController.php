@@ -38,6 +38,8 @@ class BillingController extends Controller
             ->checkout([
                 'success_url' => route('billing.success').'?session_id={CHECKOUT_SESSION_ID}',
                 'cancel_url' => route('billing.index'),
+                'billing_address_collection' => 'required',
+                // 'consent_collection' => ['terms_of_service' => 'required'], // requires Terms URL set in Stripe Dashboard > Settings > Public details
             ]);
     }
 
