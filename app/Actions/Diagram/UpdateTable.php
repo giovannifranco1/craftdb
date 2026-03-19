@@ -10,13 +10,7 @@ class UpdateTable
      * Update a table
      *
      * @param Table $table
-     * @param array {
-     *     name: string,
-     *     color: string,
-     *     x: int,
-     *     y: int,
-     *     resize_column_position: int,
-     * } $data
+     * @param array<string, mixed> $data
      *
      * @example
      * ```php
@@ -40,6 +34,7 @@ class UpdateTable
     }
 
 
+    /** @param array<string, mixed> $data */
     private function _validate(array $data): void
     {
         validator($data, [

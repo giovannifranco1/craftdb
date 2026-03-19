@@ -29,7 +29,8 @@ class ParseMySQLSchema extends BaseSQLParse
         $this->diagram = $diagram;
 
         // Count all tables before processing to validate limit
-        $owner = $this->diagram->team->owner;
+        $owner = $this->diagram->team?->owner;
+        abort_if($owner === null, 403, 'Team owner not found');
         $limits = DiagramLimits::forUser($owner);
 
         $existingCount = $this->diagram->tables()->count();

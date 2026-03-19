@@ -54,7 +54,7 @@ new #[Defer(bundle: true)] class extends CanvasComponent {
             ->with(['diagram'])
             ->with(['columns' => fn(QueryBuilder $query): QueryBuilder
                 => $query->orderBy('order')
-                    ->withExists(['relationshipsFrom', 'relationshipsTo'])
+                    ->withExists(['relationshipsFrom', 'relationshipsTo']) // @phpstan-ignore-line
             ])
             ->with(['foreignKeys' => fn(QueryBuilder $query): QueryBuilder => $query->orderByDesc('order')])
             ->get();
@@ -65,7 +65,8 @@ new #[Defer(bundle: true)] class extends CanvasComponent {
     {
         $this->authorizeDiagram('update');
 
-        $owner = $this->diagram->team->owner;
+        $owner = $this->diagram->team?->owner;
+        abort_if($owner === null, 403, 'Team owner not found');
         $limits = DiagramLimits::forUser($owner);
 
         if ($this->diagram->tables()->count() >= $limits['table_limit']) {
@@ -139,7 +140,7 @@ new #[Defer(bundle: true)] class extends CanvasComponent {
 
         if ($type === RelationshipType::MANY_TO_MANY) $this->validateTableLimit();
 
-        /** @var array{fromTableId: int, toTableId: int, type: string} $data */
+        /** @var array{fromTableId: int, toTableId: int, type: '1:1'|'1:n'|'n:1'|'n:n', fromColumnId: int|null, toColumnId: int|null} $data */
         $data = validator()->make([
             'fromTableId' => $fromTableId,
             'toTableId'   => $toTableId,
@@ -151,7 +152,7 @@ new #[Defer(bundle: true)] class extends CanvasComponent {
         ])->validated();
 
         $action->exec($data);
-        $updateResizePositionTableAction->exec(Table::find($toTableId));
+        $updateResizePositionTableAction->exec(Table::findOrFail($toTableId));
 
         $this->dispatch("table::relationship-added.{$fromTableId}");
         $this->dispatch("table::relationship-added.{$toTableId}");

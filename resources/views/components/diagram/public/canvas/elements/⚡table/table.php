@@ -26,8 +26,8 @@ new class extends CanvasComponent implements PublicCanvas {
     #[Locked]
     public int $tableId;
 
-    /** @var Collection<int,Column> */
-    public $columns = [];
+    /** @var array<int, mixed> */
+    public array $columns = [];
     public bool $loadTable;
     public bool $hasColumnsInDatabase;
 
@@ -47,10 +47,11 @@ new class extends CanvasComponent implements PublicCanvas {
         $this->tableId = $table->id;
         $this->diagramId = $table->diagram_id;
         $this->name = $table->name;
-        $this->hasColumnsInDatabase = $table->columns_exists;
+        $this->hasColumnsInDatabase = $table->columns_exists ?? false;
         $this->tableData = TableData::fromModel($table);
     }
 
+    /** @return Collection<int, Column> */
     #[Computed]
     public function columns(): Collection
     {
@@ -72,7 +73,8 @@ new class extends CanvasComponent implements PublicCanvas {
     #[Computed]
     public function tableColumnsLimit(): int
     {
-        $owner = $this->table->diagram->team->owner;
+        $owner = $this->table->diagram?->team?->owner;
+        abort_if($owner === null, 403, 'Team owner not found');
         $limits = DiagramLimits::forUser($owner);
 
         return $limits['table_columns_limit'];

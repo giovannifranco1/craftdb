@@ -15,7 +15,7 @@ beforeEach(function () {
 
     $this->diagram = Diagram::factory()->create(['team_id' => $this->team->id]);
     $this->table = Table::factory()->create(['diagram_id' => $this->diagram->id]);
-    $this->component = Livewire::test('diagram.table', ['table' => $this->table]);
+    $this->component = Livewire::test('diagram.canvas.elements.⚡table', ['table' => $this->table]);
 });
 
 
@@ -44,7 +44,7 @@ describe('Table Management', function() {
 
         $this->component
             ->call('addColumn')
-            ->assertDispatched('table::column-added');
+            ->assertDispatched("table::column-added.{$this->table->id}");
 
         expect($this->table->columns()->count())->toBe(1);
     });

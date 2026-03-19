@@ -27,7 +27,7 @@ class ImportToExistingDiagram
      */
     public function exec(Diagram $diagram, array $files, string $type): void
     {
-        if (! Auth::user()->isPro()) {
+        if (! Auth::user()?->isPro()) {
             throw ValidationException::withMessages([
                 'importForm.file' => __('SQL and migration import are available on the Pro plan or higher.'),
             ]);

@@ -50,6 +50,7 @@ class ColumnData implements Wireable
     /**
      * Convert to array for Livewire serialization
      */
+    /** @return array<string, mixed> */
     public function toLivewire(): array
     {
         return [
@@ -71,7 +72,7 @@ class ColumnData implements Wireable
     /**
      * Reconstruct from Livewire serialized data
      */
-    public static function fromLivewire($value): self
+    public static function fromLivewire(mixed $value): self
     {
         return new self(
             id: $value['id'],
@@ -98,13 +99,13 @@ class ColumnData implements Wireable
             id: $column->id,
             name: $column->name,
             type: $column->type,
-            is_primary: $column->is_primary,
-            is_foreign: $column->is_foreign,
-            is_notnull: $column->is_notnull,
+            is_primary: (bool) $column->is_primary,
+            is_foreign: (bool) $column->is_foreign,
+            is_notnull: (bool) $column->is_notnull,
             order: $column->order ?? 0,
             length: $column->length ?? null,
-            relationships_from_exists: $column?->relationships_from_exists ?? null,
-            relationships_to_exists: $column?->relationships_to_exists ?? null,
+            relationships_from_exists: $column->relationships_from_exists ?? null,
+            relationships_to_exists: $column->relationships_to_exists ?? null,
             default_value: $column->default_value ?? null,
             comment: $column->comment ?? null,
         );
@@ -113,6 +114,7 @@ class ColumnData implements Wireable
     /**
      * Convert to array
      */
+    /** @return array<string, mixed> */
     public function toArray(): array
     {
         return $this->toLivewire();

@@ -22,9 +22,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Team\Invitation> $invitations
  * @property-read int|null $invitations_count
  * @property-read User|null $owner
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Team\Role> $roles
- * @property-read int|null $roles_count
- * @property-read \App\Models\Team\Membership|null $membership
+ *@property-read \App\Models\Team\Membership|null $membership
  * @property-read \Illuminate\Database\Eloquent\Collection<int, User> $users
  * @property-read int|null $users_count
  * @method static \Database\Factories\Team\TeamFactory factory($count = null, $state = [])

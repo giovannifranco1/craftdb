@@ -61,7 +61,10 @@ new class extends CanvasComponent {
         foreach ($this->importForm->file as $file) {
             $ext = strtolower($file->getClientOriginalExtension());
             if ($ext === 'php') {
-                $count += $this->countCreatesInContent(file_get_contents($file->getRealPath()));
+                $content = file_get_contents($file->getRealPath());
+                if ($content !== false) {
+                    $count += $this->countCreatesInContent($content);
+                }
             } elseif ($ext === 'zip') {
                 $count += $this->countCreatesInZip($file->getRealPath());
             }
@@ -82,8 +85,11 @@ new class extends CanvasComponent {
         $count = 0;
         for ($i = 0; $i < $zip->numFiles; $i++) {
             $name = $zip->getNameIndex($i);
-            if (str_ends_with($name, '.php')) {
-                $count += $this->countCreatesInContent($zip->getFromIndex($i));
+            if ($name !== false && str_ends_with($name, '.php')) {
+                $zipContent = $zip->getFromIndex($i);
+                if ($zipContent !== false) {
+                    $count += $this->countCreatesInContent($zipContent);
+                }
             }
         }
         $zip->close();
@@ -99,7 +105,7 @@ new class extends CanvasComponent {
 
         $this->validateTableLimit();
 
-        $action->exec($this->diagram, $this->importForm->file, $this->importForm->type);
+        $action->exec($this->diagram, $this->importForm->file, $this->importForm->type ?? '');
 
         Flux::modal('diagram-canvas-import')->close();
 

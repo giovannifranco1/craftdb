@@ -12,8 +12,10 @@ beforeEach(function () {
 
     $this->autenticated();
 
+    Livewire::withoutLazyLoading();
+
     $this->diagram = Diagram::factory()->create(['team_id' => $this->team->id]);
-    $this->component = Livewire::test('diagram.table-list', ['diagram' => $this->diagram]);
+    $this->component = Livewire::test('diagram.canvas.lists.⚡table-list', ['diagram' => $this->diagram]);
 });
 
 

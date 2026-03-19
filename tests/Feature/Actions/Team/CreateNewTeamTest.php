@@ -3,7 +3,6 @@
 namespace Tests\Feature\Actions\Team;
 
 use App\Actions\Team\CreateNewTeam;
-use App\Models\Team\Role;
 use App\Models\Team\Team;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -47,37 +46,6 @@ describe('Team creation', function (): void {
         ]);
     });
 
-    it('creates default roles when team is created', function () {
-        /** @var TestCase $this */
-        $team = $this->action->exec([
-            'name' => 'My Team',
-            'user_id' => $this->user->id,
-        ]);
-
-        // Check editor role
-        $editorRole = Role::where('team_id', $team->id)
-            ->where('code', 'editor')
-            ->first();
-
-        expect($editorRole)->not->toBeNull();
-
-        if ($editorRole) {
-            expect($editorRole->name)->toBe('Editor')
-                ->and($editorRole->description)->toBe('Can create, edit and view diagrams');
-        }
-
-        // Check viewer role
-        $viewerRole = Role::where('team_id', $team->id)
-            ->where('code', 'viewer')
-            ->first();
-
-        expect($viewerRole)->not->toBeNull();
-
-        if ($viewerRole) {
-            expect($viewerRole->name)->toBe('Viewer')
-                ->and($viewerRole->description)->toBe('Can only view diagrams');
-        }
-    });
 });
 
 describe('Validation', function (): void {

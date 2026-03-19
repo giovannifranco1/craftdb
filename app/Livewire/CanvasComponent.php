@@ -23,7 +23,7 @@ abstract class CanvasComponent extends BaseComponent
     public int $diagramId;
 
     #[Override]
-    public function exception(Throwable $e, $stopPropagation): void
+    public function exception(Throwable $e, \Closure $stopPropagation): void
     {
         if ($e instanceof AuthorizationDiagramException) {
             $stopPropagation();
@@ -59,7 +59,8 @@ abstract class CanvasComponent extends BaseComponent
 
     public function validateTableLimit(): void
     {
-        $owner = $this->diagram->team->owner;
+        $owner = $this->diagram->team?->owner;
+        abort_if($owner === null, 403, 'Team owner not found');
         $limits = DiagramLimits::forUser($owner);
 
         if ($this->diagram->tables()->count() >= $limits['table_limit']) {

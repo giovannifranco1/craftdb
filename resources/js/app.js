@@ -20,7 +20,7 @@ document.addEventListener(
 
         Alpine.data('diagramGraph', _diagramGraph);
 
-        Alpine.store('proFeature', null);
+        Alpine.store('proFeature', {});
     },
     { once: true },
 );

@@ -35,7 +35,8 @@ class ParseLaravelMigration extends BaseSQLParse
         $this->tableIndex = $diagram->tables()->count();
 
         // Count all tables before processing to validate limit
-        $owner = $diagram->team->owner;
+        $owner = $diagram->team?->owner;
+        abort_if($owner === null, 403, 'Team owner not found');
         $limits = DiagramLimits::forUser($owner);
 
         $existingCount = $diagram->tables()->count();

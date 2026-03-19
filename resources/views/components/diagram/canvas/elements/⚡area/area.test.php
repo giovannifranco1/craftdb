@@ -15,7 +15,7 @@ beforeEach(function () {
 
     $this->diagram = Diagram::factory()->create(['team_id' => $this->team->id]);
     $this->area = Area::factory()->create(['diagram_id' => $this->diagram->id]);
-    $this->component = Livewire::test('diagram.area', ['area' => $this->area]);
+    $this->component = Livewire::test('diagram.canvas.elements.⚡area', ['area' => $this->area]);
 });
 
 

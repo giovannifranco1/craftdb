@@ -19,7 +19,7 @@ beforeEach(function () {
     $this->diagram = Diagram::factory()->create(['team_id' => $this->team->id]);
     $this->table = Table::factory()->create(['diagram_id' => $this->diagram->id]);
 
-    $this->component = Livewire::test('diagram.table.side-editor', ['table' => $this->table->id]);
+    $this->component = Livewire::test('diagram.canvas.overlays.⚡side-editor', ['diagram' => $this->diagram]);
 });
 
 
@@ -53,7 +53,7 @@ describe('Column Management', function() {
             'order' => 1,
         ]);
 
-        $this->component = Livewire::test('diagram.table.side-editor', ['table' => $this->table]);
+        $this->component = Livewire::test('diagram.canvas.overlays.⚡side-editor', ['diagram' => $this->diagram]);
         $this->component
             ->dispatch('table-side-editor::open', $this->table->id)
             ->assertSet('tableId', $this->table->id)

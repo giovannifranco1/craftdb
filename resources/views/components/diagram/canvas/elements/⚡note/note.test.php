@@ -16,7 +16,7 @@ beforeEach(function () {
     $this->diagram = Diagram::factory()->create(['team_id' => $this->team->id]);
     $this->note = Note::factory()->create(['diagram_id' => $this->diagram->id]);
 
-    $this->component = Livewire::test('diagram.note', ['note' => $this->note]);
+    $this->component = Livewire::test('diagram.canvas.elements.⚡note', ['note' => $this->note]);
 });
 
 

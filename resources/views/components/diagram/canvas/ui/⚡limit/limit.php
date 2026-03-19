@@ -21,7 +21,8 @@ new class extends BaseComponent {
     public function mount(Diagram $diagram): void
     {
         $this->diagram = $diagram;
-        $owner = $diagram->team->owner;
+        $owner = $diagram->team?->owner;
+        abort_if($owner === null, 403, 'Team owner not found');
         $limits = DiagramLimits::forUser($owner);
         $this->limit = $limits['table_limit'];
     }

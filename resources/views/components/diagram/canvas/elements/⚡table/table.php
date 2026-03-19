@@ -31,8 +31,8 @@ new class extends CanvasComponent {
     #[Locked]
     public int $tableId;
 
-    /** @var Collection<int,Column> */
-    public $columns = [];
+    /** @var array<int, mixed> */
+    public array $columns = [];
     public bool $loadTable;
     public bool $hasColumnsInDatabase;
 
@@ -52,10 +52,11 @@ new class extends CanvasComponent {
         $this->tableId = $table->id;
         $this->diagramId = $table->diagram_id;
         $this->name = $table->name;
-        $this->hasColumnsInDatabase = $table->columns_exists;
+        $this->hasColumnsInDatabase = $table->columns_exists ?? false;
         $this->tableData = TableData::fromModel($table);
     }
 
+    /** @return Collection<int, Column> */
     #[Computed]
     public function columns(): Collection
     {
@@ -81,7 +82,7 @@ new class extends CanvasComponent {
         $this->validateOnly('name');
 
         $this->table->update(['name' => $this->name]);
-        $this->tableData->name = $this->name;
+        $this->tableData->name = $this->name ?? '';
 
         $this->dispatch('table::renamed');
     }
@@ -119,7 +120,7 @@ new class extends CanvasComponent {
             return;
         }
 
-        $column->name = $newName;
+        $column->name = $newName ?? '';
         $column->save();
 
         $this->updateTableData();
@@ -130,7 +131,8 @@ new class extends CanvasComponent {
     #[Computed]
     public function tableColumnsLimit(): int
     {
-        $owner = $this->table->diagram->team->owner;
+        $owner = $this->table->diagram?->team?->owner;
+        abort_if($owner === null, 403, 'Team owner not found');
         $limits = DiagramLimits::forUser($owner);
 
         return $limits['table_columns_limit'];
@@ -169,6 +171,10 @@ new class extends CanvasComponent {
         $this->authorizeDiagram('update');
 
         $action->exec($column);
+
+        $newResizeColumnPosition = $this->table->resize_column_position + 1;
+
+        $this->table->update(['resize_column_position' => $newResizeColumnPosition]);
 
         $this->updateTableData();
         $this->dispatch('table-side-editor::column-deleted');
@@ -209,7 +215,7 @@ new class extends CanvasComponent {
         $this->dispatch('alert', message: __('Table Removed'));
         $this->dispatch('table::removed', tableId: $this->tableId);
 
-        $relationships = $this->diagram->relationships()->get() ?? collect();
+        $relationships = $this->diagram->relationships()->get();
 
         $this->dispatch('relationships::fresh', relationships: $relationships);
     }

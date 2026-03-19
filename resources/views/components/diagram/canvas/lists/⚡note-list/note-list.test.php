@@ -12,8 +12,19 @@ beforeEach(function () {
 
     $this->autenticated();
 
+    // Note creation requires Pro plan
+    $this->user->subscriptions()->create([
+        'type' => config('billing.subscription_name', 'default'),
+        'stripe_id' => 'sub_test_' . uniqid(),
+        'stripe_status' => 'active',
+        'stripe_price' => 'price_test',
+        'quantity' => 1,
+    ]);
+
+    Livewire::withoutLazyLoading();
+
     $this->diagram = Diagram::factory()->create(['team_id' => $this->team->id]);
-    $this->component = Livewire::test('diagram.⚡note-list', ['diagram' => $this->diagram]);
+    $this->component = Livewire::test('diagram.canvas.lists.⚡note-list', ['diagram' => $this->diagram]);
 });
 
 

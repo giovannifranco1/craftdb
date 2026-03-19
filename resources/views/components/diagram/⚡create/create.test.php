@@ -15,7 +15,7 @@ beforeEach(function () {
 
     $this->autenticated();
 
-    $this->component = Livewire::test('diagram.diagram-create');
+    $this->component = Livewire::test('diagram.⚡create');
 });
 
 

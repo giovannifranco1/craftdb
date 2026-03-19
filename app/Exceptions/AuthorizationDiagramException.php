@@ -8,6 +8,7 @@ use Illuminate\Contracts\Debug\ShouldntReport;
 class AuthorizationDiagramException extends Exception implements ShouldntReport
 {
 
+    /** @var int */
     protected $code = 403;
 
     public static function withMessage(string $message): self
@@ -18,7 +19,7 @@ class AuthorizationDiagramException extends Exception implements ShouldntReport
     /**
      * Report the exception.
      */
-    protected static function summarize($validator)
+    protected static function summarize(mixed $validator): void
     {
         // do nothing
     }

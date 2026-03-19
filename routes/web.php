@@ -50,7 +50,7 @@ Route::middleware(['auth'])->group(function () {
         ->name('two-factor.show');
 
     Route::middleware(['auth'])->group(function () {
-        Route::livewire('settings/team/create', 'settings.team.create')->name('team.create');
+        Route::livewire('settings/team/create', 'settings.team.⚡create')->name('team.create');
         Route::livewire('settings/team', 'settings.team')->name('team.edit');
         Route::livewire('settings/team/members', 'settings.team.members')->name('team.members.edit');
         Route::livewire('settings/team/invitations', 'settings.team.invitations')->name('team.invitations.edit');
@@ -69,4 +69,4 @@ Route::middleware(['auth', 'role:viewer|editor|owner', 'throttle:60,1'])->group(
 Route::get('/diagram/public/{token}', [DiagramController::class, 'showPublic'])->name('diagram.public');
 
 /** Authentication Routes */
-require_once __DIR__ . '/auth.php';
+require __DIR__ . '/auth.php';

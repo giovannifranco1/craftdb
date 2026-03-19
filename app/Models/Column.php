@@ -25,6 +25,8 @@ use Illuminate\Support\Facades\Auth;
  * @property string|null $comment
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read bool|null $relationships_from_exists
+ * @property-read bool|null $relationships_to_exists
  * @property-read mixed $all_relationships
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Relationship> $relationshipsFrom
  * @property-read int|null $relationships_from_count

@@ -29,7 +29,8 @@ class AddColumnToTable
         return DB::transaction(function () use ($table): Column {
             $table->lockForUpdate();
 
-            $owner = $table->diagram->team->owner;
+            $owner = $table->diagram?->team?->owner;
+            abort_if($owner === null, 403, 'Team owner not found');
             $limits = DiagramLimits::forUser($owner);
 
             $currentCount = $table->columns()->count();

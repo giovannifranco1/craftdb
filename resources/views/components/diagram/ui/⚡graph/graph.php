@@ -18,7 +18,7 @@ new class extends BaseComponent {
     {
         $this->diagram = $diagram;
 
-        if ($this->diagram->exists && Auth::user()->isPro()) {
+        if ($this->diagram->exists && Auth::user()?->isPro()) {
             $this->loadGraph = true;
         }
     }
@@ -26,7 +26,7 @@ new class extends BaseComponent {
     #[On('diagram-graph::load')]
     public function loadGraph(Diagram $diagram): void
     {
-        if (! Auth::user()->isPro()) {
+        if (! Auth::user()?->isPro()) {
             return;
         }
 

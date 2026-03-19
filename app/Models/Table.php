@@ -22,6 +22,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Column> $columns
  * @property-read int|null $columns_count
+ * @property-read bool|null $columns_exists
  * @property-read \App\Models\Diagram|null $diagram
  * @method static \Database\Factories\TableFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Table newModelQuery()

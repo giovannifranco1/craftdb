@@ -12,7 +12,7 @@ beforeEach(function () {
     $this->autenticated();
 
     $this->diagram = Diagram::factory()->create(['team_id' => $this->team->id]);
-    $this->component = Livewire::test('diagram.table.limit', ['diagram' => $this->diagram]);
+    $this->component = Livewire::test('diagram.canvas.ui.⚡limit', ['diagram' => $this->diagram]);
 });
 
 describe('Rendering & Initialization', function() {
@@ -34,6 +34,6 @@ describe('Table Count', function() {
         $this->component->assertSet('limit', 30);
         $this->component->assertSee('2 / 30');
 
-        expect($this->component->get('getTableCount'))->toBe(2);
+        expect($this->component->get('tableCount'))->toBe(2);
     });
 });

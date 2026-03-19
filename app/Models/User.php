@@ -27,10 +27,6 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
  * @property string|null $two_factor_secret
  * @property string|null $two_factor_recovery_codes
  * @property string|null $two_factor_confirmed_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Team\Ability> $abilities
- * @property-read int|null $abilities_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Team\Group> $groups
- * @property-read int|null $groups_count
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Team\Team> $ownedTeams

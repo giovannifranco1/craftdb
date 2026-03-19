@@ -40,7 +40,7 @@ new class extends BaseComponent {
         $this->dispatch('team-created', name: $team->name);
         $this->dispatch('alert', message: __('Team created successfully.'));
 
-        $this->redirect(route('dashboard'), navigate: true);
+        $this->redirect(route('team.edit'), navigate: true);
     }
 }; ?>
 

@@ -13,7 +13,7 @@ beforeEach(function () {
     $this->autenticated();
 
     $this->diagram = Diagram::factory()->create(['team_id' => $this->team->id]);
-    $this->component = Livewire::test('diagram.diagram-edit', ['diagram' => $this->diagram]);
+    $this->component = Livewire::test('diagram.⚡edit', ['diagram' => $this->diagram]);
 });
 
 describe('Rendering & Initialization', function() {

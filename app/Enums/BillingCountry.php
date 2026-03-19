@@ -24,6 +24,7 @@ enum BillingCountry: string
     /**
      * Plan keys available for this country.
      */
+    /** @return array<string> */
     public function planKeys(): array
     {
         return match ($this) {

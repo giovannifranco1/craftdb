@@ -29,6 +29,7 @@ class BillingController extends Controller
             return redirect()->route('billing.index')->with('error', __('Invalid plan.'));
         }
 
+        /** @var \App\Models\User $user */
         $user = $request->user();
         $priceId = $planConfig['price_id'];
 
@@ -48,7 +49,9 @@ class BillingController extends Controller
      */
     public function portal(Request $request): RedirectResponse
     {
-        return $request->user()->redirectToBillingPortal(route('billing.index'));
+        /** @var \App\Models\User $user */
+        $user = $request->user();
+        return $user->redirectToBillingPortal(route('billing.index'));
     }
 
     /**
