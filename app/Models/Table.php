@@ -5,6 +5,8 @@ namespace App\Models;
 use App\Models\Relationship;
 use App\Observers\TableObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Attributes\Table as TableAttribute;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -41,6 +43,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @mixin \Eloquent
  */
 #[ObservedBy(TableObserver::class)]
+#[TableAttribute('table')]
 // #[ScopedBy(TableAccessible::class)]
 class Table extends Model
 {
@@ -48,8 +51,6 @@ class Table extends Model
 
     /** @use HasFactory<\Database\Factories\TableFactory> */
     use HasFactory;
-
-    protected $table = 'table';
 
     /**
      * @return HasMany<Column, $this>
@@ -71,7 +72,8 @@ class Table extends Model
      * @param  Builder<$this> $query
      * @return Builder<$this>
      */
-    public function scopeWithPrimaryCount(Builder $query): Builder
+    #[Scope]
+    public function withPrimaryCount(Builder $query): Builder
     {
         return $query->withCount([
             'columns as primary_count' => function (Builder $q): void {
@@ -84,7 +86,8 @@ class Table extends Model
      * @param  Builder<$this> $query
      * @return Builder<$this>
      */
-    public function scopeWithForeignCount(Builder $query): Builder
+    #[Scope]
+    public function withForeignCount(Builder $query): Builder
     {
         return $query->withCount([
             'columns as foreign_count' => function (Builder $q): void {
@@ -97,7 +100,8 @@ class Table extends Model
      * @param Builder<$this> $query
      * @return Builder<$this>
      */
-    public function scopeWithColumnsCount(Builder $query): Builder
+    #[Scope]
+    public function withColumnsCount(Builder $query): Builder
     {
         return $query->withCount('columns');
     }
@@ -106,7 +110,8 @@ class Table extends Model
      * @param Builder<$this> $query
      * @return Builder<$this>
      */
-    public function scopeFirstPrimaryColumn(Builder $query): Builder
+    #[Scope]
+    public function firstPrimaryColumn(Builder $query): Builder
     {
         return $query->with(['columns' => function ($q): void {
             $q->where('is_primary', true)->orderBy('order')->limit(1);

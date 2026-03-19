@@ -4,7 +4,10 @@ namespace App\Models;
 
 use App\Models\Team\Team;
 use App\Observers\DiagramObserver;
+use Illuminate\Database\Eloquent\Attributes\Appends;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Attributes\Table as TableAttribute;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -45,18 +48,14 @@ use Illuminate\Support\Str;
  * @mixin \Eloquent
  */
 #[ObservedBy(DiagramObserver::class)]
+#[TableAttribute('diagram')]
+#[Appends(['colors'])]
 class Diagram extends Model
 {
     /** @use HasFactory<\Database\Factories\DiagramFactory> */
     use HasFactory;
 
     const TABLE_LIMIT = 30;
-
-    protected $table = 'diagram';
-
-    protected $appends = [
-        'colors',
-    ];
 
     /**
      * @return HasMany<\App\Models\Table, $this>
@@ -120,7 +119,8 @@ class Diagram extends Model
      * @param string $slug
      * @return Builder<$this>
      */
-    public function scopefindBySlug(Builder $query, string $slug): Builder
+    #[Scope]
+    public function findBySlug(Builder $query, string $slug): Builder
     {
         return $query->where('slug', $slug);
     }

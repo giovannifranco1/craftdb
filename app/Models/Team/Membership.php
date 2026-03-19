@@ -2,26 +2,16 @@
 
 namespace App\Models\Team;
 
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Attributes\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Exception;
 
+#[Table('team_user', incrementing: true)]
 class Membership extends Pivot
 {
-    /**
-     * The table associated with the pivot model.
-     *
-     * @var string
-     */
-    protected $table = 'team_user';
-
-    /**
-     * Indicates if the IDs are auto-incrementing.
-     *
-     * @var bool
-     */
-    public $incrementing = true;
-
     /**
      * Creates a new instance of the model.
      *
@@ -45,13 +35,9 @@ class Membership extends Pivot
 
     /**
      * Scope a query to filter memberships by team and user.
-     *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param int $teamId
-     * @param int $userId
-     * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeForTeam($query, int $teamId, int $userId)
+    #[Scope]
+    public function forTeam(Builder $query, int $teamId, int $userId): Builder
     {
         return $query->where('team_id', $teamId)
             ->where('user_id', $userId)

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -13,12 +14,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read User $user
  */
+#[Fillable(['user_id', 'message'])]
 class Feedback extends Model
 {
-    protected $fillable = [
-        'user_id',
-        'message',
-    ];
 
     protected function casts(): array
     {

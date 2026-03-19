@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\RelationshipType;
+use Illuminate\Database\Eloquent\Attributes\Table as TableAttribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -36,18 +37,18 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Relationship whereUpdatedAt($value)
  * @mixin \Eloquent
  */
+#[TableAttribute('relationship')]
 class Relationship extends Model
 {
     /** @use HasFactory<\Database\Factories\RelationshipFactory> */
     use HasFactory;
 
-    /** @var string */
-    protected $table = 'relationship';
-
-    /** @var array<string, string> */
-    protected $casts = [
-        'type' => RelationshipType::class,
-    ];
+    protected function casts(): array
+    {
+        return [
+            'type' => RelationshipType::class,
+        ];
+    }
 
     /**
      * @return BelongsTo<Table, $this>

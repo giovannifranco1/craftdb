@@ -8,6 +8,8 @@ use App\Exceptions\DiagramLimitExceededException;
 use App\Support\DiagramLimits;
 use App\Models\Concerns\HasTeams;
 use App\Models\Team\Team;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -51,6 +53,8 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereUpdatedAt($value)
  * @mixin \Eloquent
  */
+#[Fillable(['name', 'email', 'password', 'github_id', 'github_token', 'github_refresh_token','google_id', 'google_token', 'google_refresh_token', 'locale'])]
+#[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token', 'github_token', 'github_refresh_token', 'google_token', 'google_refresh_token'])]
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
@@ -59,40 +63,6 @@ class User extends Authenticatable
     const PROVIDERS = [
         'github' => 'github',
         'google' => 'google',
-    ];
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-        'github_id',
-        'github_token',
-        'github_refresh_token',
-        'google_id',
-        'google_token',
-        'google_refresh_token',
-        'locale',
-    ];
-
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
-    protected $hidden = [
-        'password',
-        'two_factor_secret',
-        'two_factor_recovery_codes',
-        'remember_token',
-        'github_token',
-        'github_refresh_token',
-        'google_token',
-        'google_refresh_token',
     ];
 
     /**

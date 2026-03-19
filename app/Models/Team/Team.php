@@ -5,6 +5,8 @@ namespace App\Models\Team;
 use App\Models\Concerns\HasMembers as ConcernsHasMembers;
 use App\Models\Diagram;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -36,18 +38,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Team whereUserId($value)
  * @mixin \Eloquent
  */
+#[Table('team')]
+#[Fillable(['user_id', 'name'])]
 class Team extends Model
 {
     use ConcernsHasMembers, HasFactory;
-
-    protected $table = 'team';
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<string>
-     */
-    protected $fillable = ['user_id', 'name'];
 
     /**
      * Creates a new instance of the model.

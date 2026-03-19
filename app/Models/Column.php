@@ -3,7 +3,10 @@
 namespace App\Models;
 
 use App\Models\User;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Attributes\Table as TableAttribute;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -27,7 +30,7 @@ use Illuminate\Support\Facades\Auth;
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read bool|null $relationships_from_exists
  * @property-read bool|null $relationships_to_exists
- * @property-read mixed $all_relationships
+ * @property-read Collection<int, Relationship> $all_relationships
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Relationship> $relationshipsFrom
  * @property-read int|null $relationships_from_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Relationship> $relationshipsTo
@@ -52,12 +55,11 @@ use Illuminate\Support\Facades\Auth;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Column whereUpdatedAt($value)
  * @mixin \Eloquent
  */
+#[TableAttribute('column')]
 class Column extends Model
 {
     /** @use HasFactory<\Database\Factories\ColumnFactory> */
     use HasFactory;
-
-    protected $table = 'column';
 
     /**
      * @return HasMany<Relationship, $this>
@@ -83,19 +85,19 @@ class Column extends Model
         return $this->belongsTo(Table::class, 'table_id');
     }
 
-    /**
-     * @return Collection<int, Relationship>
-     */
-    public function getAllRelationshipsAttribute()
+    public function allRelationships(): Attribute
     {
-        return $this->relationshipsFrom->merge($this->relationshipsTo);
+        return Attribute::make(
+            get: fn (): Collection => $this->relationshipsFrom->merge($this->relationshipsTo)
+        );
     }
 
     /**
      * @param Builder<Column> $query
      * @return Builder<Column>
      */
-    public function scopeFilterByForeignKeys(Builder $query): Builder
+    #[Scope]
+    public function filterByForeignKeys(Builder $query): Builder
     {
         return $query->where('is_foreign', true);
     }
@@ -107,7 +109,8 @@ class Column extends Model
      * @param User|null $user
      * @return Builder<Column>
      */
-    public function scopeAccessible(Builder $query, ?User $user = null): Builder
+    #[Scope]
+    public function accessible(Builder $query, ?User $user = null): Builder
     {
         if ($user === null) {
             /** @var User|null $authenticatedUser */
