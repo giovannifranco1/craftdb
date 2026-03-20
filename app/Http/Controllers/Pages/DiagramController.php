@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Pages;
 
 use App\Actions\Diagram\ExportDiagramToJson;
+use App\Actions\Diagram\ExportDiagramToLaravelMigration;
+use App\Actions\Diagram\GenerateMigrationZip;
 use App\Http\Controllers\Controller;
 use App\Models\Diagram;
 use Illuminate\Contracts\View\View;
@@ -62,6 +64,24 @@ class DiagramController extends Controller
             fn () => print(json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)),
             $filename,
             ['Content-Type' => 'application/json']
+        );
+    }
+
+    public function exportLaravelMigration(int $teamId, Diagram $diagram): StreamedResponse
+    {
+        Gate::authorize('view', $diagram);
+
+        $files = app(ExportDiagramToLaravelMigration::class)->exec($diagram);
+        $zipPath = app(GenerateMigrationZip::class)->exec($files);
+        $filename = str()->slug($diagram->name) . '-migrations-' . now()->format('Ymd') . '.zip';
+
+        return response()->streamDownload(
+            function () use ($zipPath) {
+                readfile($zipPath);
+                @unlink($zipPath);
+            },
+            $filename,
+            ['Content-Type' => 'application/zip']
         );
     }
 

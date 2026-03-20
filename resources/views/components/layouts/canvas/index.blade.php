@@ -49,6 +49,7 @@
         <livewire:diagram.canvas.overlays.spotlight :$diagram/>
         <livewire:diagram.canvas.overlays.side-editor :$diagram/>
         <livewire:diagram.canvas.overlays.import :$diagram/>
+        <livewire:diagram.canvas.overlays.export :$diagram/>
         <livewire:diagram.canvas.ui.limit :$diagram/>
         <livewire:diagram.ui.graph :$diagram/>
         <livewire:ui.contact-us/>

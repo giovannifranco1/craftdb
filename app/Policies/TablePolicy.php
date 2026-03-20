@@ -12,7 +12,8 @@ class TablePolicy
      */
     public function delete(User $user, Table $table): bool
     {
-        $team = $table->diagram?->team;
+        $diagram = $table->diagram()->first();
+        $team = $diagram ? $diagram->team()->first() : null;
         return $team !== null && $user->ownsTeam($team);
     }
 }

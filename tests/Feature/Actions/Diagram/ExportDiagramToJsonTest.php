@@ -14,6 +14,8 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 uses(RefreshDatabase::class);
 
 beforeEach(function (): void {
+    /** @var TestCase $this */
+
     $this->user = User::factory()->create();
 
     $this->team = Team::factory()->create([
@@ -32,6 +34,8 @@ beforeEach(function (): void {
 
 describe('ExportDiagramToJson action', function (): void {
     it('serializes diagram metadata correctly', function () {
+        /** @var TestCase $this */
+
         $result = $this->action->exec($this->diagram);
 
         expect($result['craftdb_format'])->toBe('full')
@@ -43,6 +47,8 @@ describe('ExportDiagramToJson action', function (): void {
     });
 
     it('serializes tables with columns', function () {
+        /** @var TestCase $this */
+
         $table = Table::factory()->create([
             'diagram_id' => $this->diagram->id,
             'name'       => 'users',
@@ -72,6 +78,8 @@ describe('ExportDiagramToJson action', function (): void {
     });
 
     it('does not include x/y positions in tables', function () {
+        /** @var TestCase $this */
+
         Table::factory()->create(['diagram_id' => $this->diagram->id]);
 
         $result = $this->action->exec($this->diagram->fresh());
@@ -81,6 +89,8 @@ describe('ExportDiagramToJson action', function (): void {
     });
 
     it('orders columns by order field', function () {
+        /** @var TestCase $this */
+
         $table = Table::factory()->create(['diagram_id' => $this->diagram->id]);
 
         Column::factory()->create(['table_id' => $table->id, 'name' => 'email', 'order' => 2]);
@@ -96,6 +106,8 @@ describe('ExportDiagramToJson action', function (): void {
     });
 
     it('serializes relationships using table and column names', function () {
+        /** @var TestCase $this */
+
         $usersTable = Table::factory()->create(['diagram_id' => $this->diagram->id, 'name' => 'users']);
         $ordersTable = Table::factory()->create(['diagram_id' => $this->diagram->id, 'name' => 'orders']);
 
@@ -123,12 +135,16 @@ describe('ExportDiagramToJson action', function (): void {
     });
 
     it('returns empty array when no relationships exist', function () {
+        /** @var TestCase $this */
+
         $result = $this->action->exec($this->diagram);
 
         expect($result['relationships'])->toBe([]);
     });
 
     it('does not include areas or notes in output', function () {
+        /** @var TestCase $this */
+
         $result = $this->action->exec($this->diagram);
 
         expect($result)->not->toHaveKey('areas')
@@ -136,6 +152,8 @@ describe('ExportDiagramToJson action', function (): void {
     });
 
     it('does not include any database id fields in output', function () {
+        /** @var TestCase $this */
+
         $table = Table::factory()->create(['diagram_id' => $this->diagram->id]);
         Column::factory()->create(['table_id' => $table->id]);
 
@@ -150,6 +168,8 @@ describe('ExportDiagramToJson action', function (): void {
 
 describe('ExportJson endpoint', function (): void {
     it('returns 200 with json content-type for authorized user', function () {
+        /** @var TestCase $this */
+
         $this->actingAs($this->user)
             ->get(route('diagram.export-json', [
                 'team_id' => $this->team->id,
@@ -160,6 +180,8 @@ describe('ExportJson endpoint', function (): void {
     });
 
     it('returns 403 for user without team access', function () {
+        /** @var TestCase $this */
+
         $otherUser = User::factory()->create();
 
         $this->actingAs($otherUser)
@@ -171,6 +193,8 @@ describe('ExportJson endpoint', function (): void {
     });
 
     it('returns 401 for unauthenticated request', function () {
+        /** @var TestCase $this */
+
         $this->get(route('diagram.export-json', [
             'team_id' => $this->team->id,
             'diagram' => $this->diagram->slug,
@@ -179,6 +203,8 @@ describe('ExportJson endpoint', function (): void {
     });
 
     it('downloaded filename contains diagram slug and date', function () {
+        /** @var TestCase $this */
+
         $response = $this->actingAs($this->user)
             ->get(route('diagram.export-json', [
                 'team_id' => $this->team->id,

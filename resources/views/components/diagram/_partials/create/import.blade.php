@@ -6,7 +6,7 @@
                 {{ __('Import Source') }}
             </flux:heading>
             <flux:text class="text-zinc-600 dark:text-zinc-400">
-                {{ __('Import a SQL file or Laravel migration to criar automaticamente a estrutura do seu diagrama.') }}
+                {{ __('Import a SQL file or Laravel migration to automatically create the structure of your diagram.') }}
             </flux:text>
         </div>
 
@@ -73,7 +73,7 @@
             </div>
 
             <div>
-                <flux:label badge="Required" class="pb-3">{{ __('Import Files') }}</flux:label>
+                <flux:label badge="{{ __('Required') }}" class="pb-3">{{ __('Import Files') }}</flux:label>
                 <div class="bg-[#fafbfc] dark:bg-background-dark min-h-[15rem] rounded-lg flex flex-col justify-center items-center gap-3 p-4 border border-zinc-200 dark:border-zinc-700">
                     <p class="text-sm text-zinc-600 dark:text-zinc-400 text-center max-w-md">
                         @if ($importForm->type === 'migration')

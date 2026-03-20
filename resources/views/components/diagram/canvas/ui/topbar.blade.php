@@ -211,6 +211,10 @@
                                 <flux:menu.item icon="code-bracket" :href="route('diagram.export-json', [$teamId, $diagram->slug])">
                                     {{ __('JSON') }}
                                 </flux:menu.item>
+                                <flux:menu.item icon="code-bracket" @click="$flux.modal('diagram-canvas-export').show()">
+                                    {{ __('Migration') }}
+                                    <flux:badge class="ms-2" color="amber" size="sm">{{ __('Beta') }}</flux:badge>
+                                </flux:menu.item>
                             </flux:menu.submenu>
 
                             @if(auth()->user()->isPro() || auth()->user()->isTeamPlan())

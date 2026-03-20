@@ -31,12 +31,12 @@
                     wire:loading.class.delay.shorter="opacity-25"
                     wire:target="importForm.type"
                     @class([
-                        'relative rounded-xl border-1 px-4 py-5 flex flex-col items-center min-h-24 transition-all duration-150 text-center group',
-                        'cursor-pointer' => !$isSqlLocked,
+                        'relative rounded-xl border-1 px-4 py-5 flex flex-col items-center min-h-24 transition-all duration-150 text-center group dark:bg-background-dark',
+                        'cursor-pointer dark:hover:bg-background-dark' => !$isSqlLocked,
                         'cursor-not-allowed opacity-50' => $isSqlLocked,
-                        'border-primary-300 ring-primary-200 dark:ring-primary-900 bg-primary-50/40 dark:bg-primary-950/60' => $importForm->type === 'sql' && !$isSqlLocked,
-                        'border-zinc-300 hover:border-zinc-400 dark:border-zinc-600 dark:hover:border-zinc-600 bg-white/90 dark:bg-zinc-900/50' => $importForm->type !== 'sql' && !$isSqlLocked,
-                        'border-zinc-200 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-800/30' => $isSqlLocked,
+                        'border-primary-300 ring-primary-200 dark:ring-primary-900 bg-primary-50/40 dark:bg-background-dark' => $importForm->type === 'sql' && !$isSqlLocked,
+                        'border-zinc-300 hover:border-zinc-400 dark:border-zinc-600 dark:hover:border-zinc-600 bg-white/90 dark:bg-background-dark' => $importForm->type !== 'sql' && !$isSqlLocked,
+                        'border-zinc-200 dark:border-zinc-700 bg-zinc-50/50 dark:bg-background-dark' => $isSqlLocked,
                     ])
                 >
                     <input
@@ -46,7 +46,7 @@
                         class="sr-only"
                         @if($isSqlLocked) disabled @endif
                     />
-                    <flux:icon.circle-stack class="size-10 text-zinc-600 mb-2" />
+                    <flux:icon.circle-stack class="size-10 text-zinc-600 dark:text-zinc-400 mb-2" />
                     <span class="font-light text-sm">{{ __('SQL File') }}</span>
                     <span class="absolute top-2 right-2">
                         @if ($importForm->type === 'sql' && !$isSqlLocked)
@@ -61,9 +61,9 @@
                     wire:loading.class.delay.shorter="opacity-25"
                     wire:target="importForm.type"
                     @class([
-                        'relative cursor-pointer rounded-xl border-1 px-4 py-5 flex flex-col items-center min-h-24 transition-all duration-150 text-center group',
-                        'border-primary-300 ring-primary-200 dark:ring-primary-900 bg-primary-50/40 dark:bg-primary-950/60' => $importForm->type === 'migration',
-                        'border-zinc-300 hover:border-zinc-400 dark:border-zinc-600 dark:hover:border-zinc-600 bg-white/90 dark:bg-zinc-900/50' => $importForm->type !== 'migration',
+                        'relative cursor-pointer rounded-xl border-1 px-4 py-5 flex flex-col dark:bg-background-dark items-center min-h-24 transition-all duration-150 text-center group dark:hover:bg-background-dark',
+                        'border-primary-300 ring-primary-200 dark:ring-primary-900 bg-primary-50/40 dark:bg-background-dark' => $importForm->type === 'migration',
+                        'border-zinc-300 hover:border-zinc-400 dark:border-zinc-600 dark:hover:border-zinc-600 bg-white/90 dark:bg-background-dark' => $importForm->type !== 'migration',
                     ])
                 >
                     <input
@@ -83,8 +83,8 @@
             </div>
 
             <div>
-                <flux:label badge="Required" class="pb-3">{{ __('Import Files') }}</flux:label>
-                <div class="bg-[#fafbfc] dark:bg-zinc-900/50 min-h-[15rem] rounded-lg flex flex-col justify-center items-center gap-3 p-4 border border-zinc-200 dark:border-zinc-700">
+                <flux:label badge="{{ __('Required') }}" class="pb-3">{{ __('Import Files') }}</flux:label>
+                <div class="bg-[#fafbfc] dark:bg-background-dark min-h-[15rem] rounded-lg flex flex-col justify-center items-center gap-3 p-4 border border-zinc-200 dark:border-zinc-700">
                     <p class="text-sm text-zinc-600 dark:text-zinc-400 text-center max-w-md">
                         @if ($importForm->type === 'migration')
                             {!! __('Import <span class="font-bold">.zip</span> or <span class="font-bold">.php</span> files to automatically create your diagram structure.') !!}
