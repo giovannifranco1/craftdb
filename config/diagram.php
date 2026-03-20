@@ -3,7 +3,7 @@
 return [
     'free' => [
         'diagram_limit' => 3,
-        'table_limit' => 30,
+        'table_limit' => 10,
         'table_columns_limit' => 50,
     ],
 

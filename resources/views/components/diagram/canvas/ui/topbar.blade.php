@@ -201,12 +201,6 @@
                         </flux:button>
 
                         <flux:menu class="min-w-52">
-                            <flux:menu.item disabled icon="document-duplicate">
-                                {{ __('Clone (Coming Soon)') }}
-                            </flux:menu.item>
-
-                            <flux:menu.separator />
-
                             @if(auth()->user()->isPro() || auth()->user()->isTeamPlan())
                                 <flux:menu.submenu heading="{{ __('Export') }}" icon="arrow-down-tray">
                                     <flux:menu.item icon="code-bracket" :href="route('diagram.export-json', [$teamId, $diagram->slug])">
@@ -238,7 +232,13 @@
                                     {{ __('Import') }}
                                 </flux:menu.item>
                             @endif
+                            <flux:menu.separator />
+
+                            <flux:menu.item disabled icon="document-duplicate">
+                                {{ __('Clone (Coming Soon)') }}
+                            </flux:menu.item>
                         </flux:menu>
+
                     </flux:dropdown>
 
                     {{-- Editar Menu --}}
