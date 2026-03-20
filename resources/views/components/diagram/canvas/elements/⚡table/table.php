@@ -131,7 +131,7 @@ new class extends CanvasComponent {
     #[Computed]
     public function tableColumnsLimit(): int
     {
-        $owner = $this->table->diagram?->team?->owner;
+        $owner = $this->diagram->team?->owner;
         abort_if($owner === null, 403, 'Team owner not found');
         $limits = DiagramLimits::forUser($owner);
 

@@ -28,6 +28,7 @@ class DiagramController extends Controller
         $diagram->load([
             'tables.columns',
             'tables.foreignKeys',
+            'team.owner',
         ]);
 
         return view('pages.diagram.show', compact('diagram'));

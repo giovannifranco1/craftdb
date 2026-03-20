@@ -9,6 +9,7 @@ use App\Exceptions\PlanFeatureException;
 use App\Exceptions\TableColumnLimitExceededException;
 use App\Exceptions\TableLimitExceededException;
 use App\Support\DiagramLimits;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
@@ -51,10 +52,13 @@ abstract class CanvasComponent extends BaseComponent
         }
     }
 
-    #[Computed(cache: true, key: 'diagram', seconds: 300)]
+    #[Computed]
     public function diagram(): Diagram
     {
-        return Diagram::query()->findOrFail($this->diagramId);
+        return Cache::store('array')->rememberForever(
+            "diagram:{$this->diagramId}",
+            fn() => Diagram::query()->with(['team.owner'])->findOrFail($this->diagramId)
+        );
     }
 
     public function validateTableLimit(): void

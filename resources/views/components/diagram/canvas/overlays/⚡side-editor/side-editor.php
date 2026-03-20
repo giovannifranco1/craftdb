@@ -44,12 +44,6 @@ new class extends CanvasComponent {
         });
     }
 
-    #[Computed]
-    public function diagram(): Diagram
-    {
-        return Diagram::query()->findOrFail($this->diagramId);
-    }
-
     #[On('table-side-editor::open')]
     public function open(int $tableId): void
     {

@@ -18,4 +18,9 @@
 <title>{{ $title ?? 'Page Title' }}</title>
 
 @vite(['resources/css/app.css', 'resources/js/app.js'])
+@auth
+<script>
+    localStorage.setItem('flux.appearance', '{{ auth()->user()->is_dark ? 'dark' : 'light' }}');
+</script>
+@endauth
 @fluxAppearance

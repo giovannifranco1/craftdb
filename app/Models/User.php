@@ -23,6 +23,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
  * @property string $email
  * @property \Illuminate\Support\Carbon|null $email_verified_at
  * @property string $password
+ * @property bool $is_dark
  * @property string|null $remember_token
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -53,7 +54,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-#[Fillable(['name', 'email', 'password', 'github_id', 'github_token', 'github_refresh_token','google_id', 'google_token', 'google_refresh_token', 'locale'])]
+#[Fillable(['name', 'email', 'password', 'github_id', 'github_token', 'github_refresh_token','google_id', 'google_token', 'google_refresh_token', 'locale', 'is_dark'])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token', 'github_token', 'github_refresh_token', 'google_token', 'google_refresh_token'])]
 class User extends Authenticatable
 {
@@ -75,6 +76,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_dark' => 'boolean',
         ];
     }
 
@@ -125,25 +127,32 @@ class User extends Authenticatable
         return $this->google_id !== null;
     }
 
+    private static array $isProCache = [];
+    private static array $isTeamPlanCache = [];
+
     public function isPro(): bool
     {
-        return $this->subscribed(config('billing.subscription_name', 'default'));
+        return static::$isProCache[$this->id] ??= $this->subscribed(
+            config('billing.subscription_name', 'default')
+        );
     }
 
     public function isTeamPlan(): bool
     {
-        $prices = array_filter([
-            config('billing.plans.team_usd.price_id'),
-            config('billing.plans.team_brl.price_id'),
-        ]);
+        return static::$isTeamPlanCache[$this->id] ??= (function () {
+            $prices = array_filter([
+                config('billing.plans.team_usd.price_id'),
+                config('billing.plans.team_brl.price_id'),
+            ]);
 
-        foreach ($prices as $priceId) {
-            if ($this->subscribedToPrice($priceId, config('billing.subscription_name', 'default'))) {
-                return true;
+            foreach ($prices as $priceId) {
+                if ($this->subscribedToPrice($priceId, config('billing.subscription_name', 'default'))) {
+                    return true;
+                }
             }
-        }
 
-        return false;
+            return false;
+        })();
     }
 
     /**

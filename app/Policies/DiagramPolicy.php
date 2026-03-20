@@ -22,7 +22,7 @@ class DiagramPolicy
      */
     public function view(User $user, Diagram $diagram): bool
     {
-        $team = Team::find($diagram->getTeamId());
+        $team = $diagram->team;
 
         if (!$team) {
             return false;
@@ -60,7 +60,7 @@ class DiagramPolicy
      */
     public function update(User $user, Diagram $diagram): bool
     {
-        $team = Team::find($diagram->getTeamId());
+        $team = $diagram->team;
 
         if ($team && $user->ownsTeam($team)) {
             return true;
@@ -78,7 +78,7 @@ class DiagramPolicy
      */
     public function delete(User $user, Diagram $diagram): bool
     {
-        $team = Team::find($diagram->getTeamId());
+        $team = $diagram->team;
 
         if ($team && $user->ownsTeam($team)) {
             return true;
@@ -92,7 +92,7 @@ class DiagramPolicy
      */
     public function share(User $user, Diagram $diagram): bool
     {
-        $team = Team::find($diagram->getTeamId());
+        $team = $diagram->team;
 
         if ($team && $user->ownsTeam($team)) {
             return true;
