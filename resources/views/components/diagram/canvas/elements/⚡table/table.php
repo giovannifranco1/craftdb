@@ -69,6 +69,12 @@ new class extends CanvasComponent {
         $this->hasColumnsInDatabase = true;
     }
 
+    public function unloadColumns(): void
+    {
+        $this->loadTable = false;
+        $this->hasColumnsInDatabase = true;
+    }
+
     #[Computed]
     public function table(): TableModel
     {
