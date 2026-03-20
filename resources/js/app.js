@@ -25,4 +25,4 @@ document.addEventListener(
     { once: true },
 );
 
-window.DEBUG_TABLE_DRAG = true;
+window.DEBUG_TABLE_DRAG = import.meta.env.VITE_DEBUG_TABLE_DRAG === 'true';
