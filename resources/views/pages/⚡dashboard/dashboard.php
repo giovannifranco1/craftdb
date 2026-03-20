@@ -80,6 +80,8 @@ new #[Title('Dashboard')] class extends BaseComponent
         $diagram->timestamps = false;
         $diagram->save();
 
+        session(['favorites_count' => Diagram::query()->where('team_id', Team::currentTeam()->getKey())->where('is_favorite', true)->count()]);
+
         $this->dispatch('diagram::favorite-toggled', $diagram->id);
         $this->dispatch('alert', message: $diagram->isFavorite() ? __('Diagram :name was added to your favorites', ['name' => $diagram->name]) : __('Diagram :name was removed from your favorites', ['name' => $diagram->name]));
     }

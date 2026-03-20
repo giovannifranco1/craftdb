@@ -43,7 +43,7 @@
                     </flux:navbar>
 
                     <div class="flex items-center space-x-4 ml-auto">
-                        <flux:button @click="$flux.modal('diagram-create').show()" icon="plus" variant="primary" color="sky" size="sm">
+                        <flux:button class="cursor-pointer" @click="$flux.modal('diagram-create').show()" icon="plus" variant="primary" color="sky" size="sm">
                             {{ __('New Diagram') }}
                         </flux:button>
 
