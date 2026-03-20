@@ -16,7 +16,7 @@
                 </flux:text>
             </div>
 
-            <div wire:transition>
+            <div>
                 @php
                     $steps = "components.diagram._partials.edit";
 
@@ -25,8 +25,8 @@
                     $STEP_FINAL = 2;
                 @endphp
 
-                <!-- Steps content -->
-                <div class="flex-1">
+                <!-- Steps content: CSS enter animation (wire:transition is disabled while dialog:modal is open). -->
+                <div wire:key="edit-step-{{ $step }}-{{ $diagram->id }}" class="flex-1 lw-wizard-step-enter">
                     @switch($step)
                         @case($STEP_1)
                             @include("$steps.edit-step-1")

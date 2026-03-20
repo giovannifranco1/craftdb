@@ -11,16 +11,25 @@ use Livewire\Features\SupportTesting\Testable;
 abstract class TestCase extends BaseTestCase
 {
     protected User $user;
+
     protected Team $team;
 
     /** @var Testable<Component> */
     public $component;
 
-    public function autenticated(){
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        User::clearSubscriptionCaches();
+    }
+
+    public function autenticated()
+    {
         $this->user = User::factory()->withoutTwoFactor()->create();
         $this->team = $this->user->ownedTeams()->create([
             'user_id' => $this->user->id,
-            'name' => $this->user->name . "'s Team",
+            'name' => $this->user->name."'s Team",
         ]);
 
         session(['current_team' => $this->team]);

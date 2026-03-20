@@ -16,6 +16,7 @@ use Livewire\Attributes\Validate;
 use App\Livewire\CanvasComponent;
 use App\Livewire\Data\ColumnData;
 use App\Support\DiagramLimits;
+use Livewire\Attributes\Async;
 
 new class extends CanvasComponent {
 
@@ -63,12 +64,14 @@ new class extends CanvasComponent {
         return $this->table->columns;
     }
 
+    #[Async]
     public function loadColumns(): void
     {
         $this->loadTable = true;
         $this->hasColumnsInDatabase = true;
     }
 
+    #[Async]
     public function unloadColumns(): void
     {
         $this->loadTable = false;
