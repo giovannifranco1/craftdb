@@ -207,9 +207,11 @@
 
                             <flux:menu.separator />
 
-                            <flux:menu.item disabled icon="arrow-down-tray">
-                                {{ __('Export (Coming Soon)') }}
-                            </flux:menu.item>
+                            <flux:menu.submenu heading="{{ __('Export') }}" icon="arrow-down-tray">
+                                <flux:menu.item icon="code-bracket" :href="route('diagram.export-json', [$teamId, $diagram->slug])">
+                                    {{ __('JSON') }}
+                                </flux:menu.item>
+                            </flux:menu.submenu>
 
                             @if(auth()->user()->isPro() || auth()->user()->isTeamPlan())
                                 <flux:menu.item icon="arrow-up-tray" @click="$flux.modal('diagram-canvas-import').show()">

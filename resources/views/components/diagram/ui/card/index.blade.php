@@ -60,7 +60,9 @@
                         <flux:menu.item class="cursor-pointer" icon="graph" @click="$dispatch('pro-feature::show', { key: 'graph' })">{{ __('Graph') }}<flux:badge class="ms-2" color="lime" size="sm">{{ __('New!') }}</flux:badge></flux:menu.item>
                     @endif
                     <flux:menu.item class="cursor-not-allowed" icon="document-duplicate" disabled>{{ __('Clone (Coming Soon)') }}</flux:menu.item>
-                    <flux:menu.item class="cursor-not-allowed" icon="arrow-down-tray" disabled>{{ __('Export (Coming Soon)') }}</flux:menu.item>
+                    <flux:menu.submenu heading="{{ __('Export') }}" icon="arrow-down-tray">
+                        <flux:menu.item icon="code-bracket" :href="route('diagram.export-json', [$diagram->team_id, $diagram->slug])">{{ __('JSON') }}</flux:menu.item>
+                    </flux:menu.submenu>
                 </flux:menu>
             </flux:dropdown>
         </div>

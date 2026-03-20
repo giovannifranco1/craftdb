@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\Pages;
 
+use App\Actions\Diagram\ExportDiagramToJson;
 use App\Http\Controllers\Controller;
 use App\Models\Diagram;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class DiagramController extends Controller
 {
@@ -48,6 +50,20 @@ class DiagramController extends Controller
 
          return view('pages.diagram.public', compact('diagram'));
      }
+
+    public function exportJson(int $teamId, Diagram $diagram): StreamedResponse
+    {
+        Gate::authorize('view', $diagram);
+
+        $data = app(ExportDiagramToJson::class)->exec($diagram);
+        $filename = str()->slug($diagram->name) . '-' . now()->format('Ymd') . '.json';
+
+        return response()->streamDownload(
+            fn () => print(json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)),
+            $filename,
+            ['Content-Type' => 'application/json']
+        );
+    }
 
     public function toggleFavorite(int $teamId, Diagram $diagram): JsonResponse
     {
