@@ -4,7 +4,9 @@ namespace App\Actions\Diagram;
 
 use App\Models\Diagram;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class ExportDiagramToLaravelMigration
 {
@@ -25,6 +27,12 @@ class ExportDiagramToLaravelMigration
      */
     public function exec(Diagram $diagram): array
     {
+        if (! Auth::user()?->isPro()) {
+            throw ValidationException::withMessages([
+                'export' => __('Export is available on the Pro plan or higher.'),
+            ]);
+        }
+
         $diagram->loadMissing('tables.columns');
 
         $relationships = $diagram->relationships()

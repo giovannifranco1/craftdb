@@ -7,9 +7,16 @@
             <div class="absolute -top-10 -left-10 w-48 h-48 rounded-full bg-violet-500/20 blur-3xl pointer-events-none"></div>
             <div class="absolute -bottom-10 -right-10 w-48 h-48 rounded-full bg-amber-400/20 blur-3xl pointer-events-none"></div>
 
-            <!-- icon -->
+            <!-- icon: Alpine store is client-side — render each flux icon and toggle with x-show -->
             <div class="relative z-10 flex items-center justify-center w-16 h-16 rounded-2xl bg-white/10 ring-1 ring-white/20 shadow-lg">
-                <x-lucide-rocket class="w-8 h-8 text-amber-300" />
+                @foreach (collect(config('pro-features.features'))->pluck('icon')->unique() as $icon)
+                    <div x-show='$store.proFeature?.icon === @json($icon)' class="contents">
+                        <flux:icon name="{{ $icon }}" class="size-8 text-amber-300" />
+                    </div>
+                @endforeach
+                <div x-show="!$store.proFeature?.icon" class="contents">
+                    <flux:icon name="sparkles" class="size-8 text-amber-300" />
+                </div>
             </div>
 
             <div class="relative z-10 text-center space-y-1">
@@ -31,14 +38,15 @@
             <!-- Feature highlights -->
             <ul class="space-y-2">
                 @foreach([
-                    ['icon' => 'infinity',        'text' => __('Diagramas ilimitados')],
-                    ['icon' => 'table',            'text' => __('Import SQL / Laravel Migrations')],
-                    ['icon' => 'sticky-note',      'text' => __('Áreas, Sticky Notes, Graph View')],
-                    ['icon' => 'zap',              'text' => __('Suporte prioritário')],
+                    ['icon' => 'squares-plus',   'text' => __('Diagramas ilimitados')],
+                    ['icon' => 'arrow-up-tray',  'text' => __('Import SQL / Laravel Migrations')],
+                    ['icon' => 'layout-grid',    'text' => __('Áreas, Sticky Notes, Graph View')],
+                    ['icon' => 'bolt',           'text' => __('Suporte prioritário')],
+                    ['icon' => 'arrow-down-tray', 'text' => __('Export your diagram as JSON or Laravel migrations.')],
                 ] as $item)
                 <li class="flex items-center gap-3 text-sm text-zinc-700 dark:text-zinc-300">
                     <span class="flex items-center justify-center w-7 h-7 rounded-lg bg-zinc-100 dark:bg-zinc-800 flex-shrink-0">
-                        <x-dynamic-component :component="'lucide-' . $item['icon']" class="w-4 h-4 text-zinc-500 dark:text-zinc-400" />
+                        <flux:icon name="{{ $item['icon'] }}" class="size-4 text-zinc-500 dark:text-zinc-400" />
                     </span>
                     {{ $item['text'] }}
                 </li>

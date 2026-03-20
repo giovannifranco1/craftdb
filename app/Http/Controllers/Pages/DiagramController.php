@@ -56,6 +56,7 @@ class DiagramController extends Controller
     public function exportJson(int $teamId, Diagram $diagram): StreamedResponse
     {
         Gate::authorize('view', $diagram);
+        abort_unless(Auth::user()?->isPro(), 403, __('Export is available on the Pro plan or higher.'));
 
         $data = app(ExportDiagramToJson::class)->exec($diagram);
         $filename = str()->slug($diagram->name) . '-' . now()->format('Ymd') . '.json';
@@ -70,6 +71,7 @@ class DiagramController extends Controller
     public function exportLaravelMigration(int $teamId, Diagram $diagram): StreamedResponse
     {
         Gate::authorize('view', $diagram);
+        abort_unless(Auth::user()?->isPro(), 403, __('Export is available on the Pro plan or higher.'));
 
         $files = app(ExportDiagramToLaravelMigration::class)->exec($diagram);
         $zipPath = app(GenerateMigrationZip::class)->exec($files);

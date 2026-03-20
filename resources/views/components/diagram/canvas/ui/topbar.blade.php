@@ -207,15 +207,27 @@
 
                             <flux:menu.separator />
 
-                            <flux:menu.submenu heading="{{ __('Export') }}" icon="arrow-down-tray">
-                                <flux:menu.item icon="code-bracket" :href="route('diagram.export-json', [$teamId, $diagram->slug])">
-                                    {{ __('JSON') }}
-                                </flux:menu.item>
-                                <flux:menu.item icon="code-bracket" @click="$flux.modal('diagram-canvas-export').show()">
-                                    {{ __('Migration') }}
-                                    <flux:badge class="ms-2" color="amber" size="sm">{{ __('Beta') }}</flux:badge>
-                                </flux:menu.item>
-                            </flux:menu.submenu>
+                            @if(auth()->user()->isPro() || auth()->user()->isTeamPlan())
+                                <flux:menu.submenu heading="{{ __('Export') }}" icon="arrow-down-tray">
+                                    <flux:menu.item icon="code-bracket" :href="route('diagram.export-json', [$teamId, $diagram->slug])">
+                                        {{ __('JSON') }}
+                                    </flux:menu.item>
+                                    <flux:menu.item icon="code-bracket" @click="$flux.modal('diagram-canvas-export').show()">
+                                        {{ __('Migration') }}
+                                        <flux:badge class="ms-2" color="amber" size="sm">{{ __('Beta') }}</flux:badge>
+                                    </flux:menu.item>
+                                </flux:menu.submenu>
+                            @else
+                                <flux:menu.submenu heading="{{ __('Export') }}" icon="arrow-down-tray">
+                                    <flux:menu.item icon="code-bracket" @click="$dispatch('pro-feature::show', { key: 'export' })">
+                                        {{ __('JSON') }}
+                                    </flux:menu.item>
+                                    <flux:menu.item icon="code-bracket" @click="$dispatch('pro-feature::show', { key: 'export-migration' })">
+                                        {{ __('Migration') }}
+                                        <flux:badge class="ms-2" color="amber" size="sm">{{ __('Beta') }}</flux:badge>
+                                    </flux:menu.item>
+                                </flux:menu.submenu>
+                            @endif
 
                             @if(auth()->user()->isPro() || auth()->user()->isTeamPlan())
                                 <flux:menu.item icon="arrow-up-tray" @click="$flux.modal('diagram-canvas-import').show()">

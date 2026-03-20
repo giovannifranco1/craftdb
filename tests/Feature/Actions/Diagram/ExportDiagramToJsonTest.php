@@ -167,7 +167,22 @@ describe('ExportDiagramToJson action', function (): void {
 });
 
 describe('ExportJson endpoint', function (): void {
-    it('returns 200 with json content-type for authorized user', function () {
+    it('returns 200 with json content-type for pro user', function () {
+        /** @var TestCase $this */
+
+        $proUser = \Mockery::mock($this->user)->makePartial();
+        $proUser->shouldReceive('isPro')->andReturn(true);
+
+        $this->actingAs($proUser)
+            ->get(route('diagram.export-json', [
+                'team_id' => $this->team->id,
+                'diagram' => $this->diagram->slug,
+            ]))
+            ->assertOk()
+            ->assertHeader('Content-Type', 'application/json');
+    });
+
+    it('returns 403 for non-pro user', function () {
         /** @var TestCase $this */
 
         $this->actingAs($this->user)
@@ -175,8 +190,7 @@ describe('ExportJson endpoint', function (): void {
                 'team_id' => $this->team->id,
                 'diagram' => $this->diagram->slug,
             ]))
-            ->assertOk()
-            ->assertHeader('Content-Type', 'application/json');
+            ->assertForbidden();
     });
 
     it('returns 403 for user without team access', function () {
@@ -205,7 +219,10 @@ describe('ExportJson endpoint', function (): void {
     it('downloaded filename contains diagram slug and date', function () {
         /** @var TestCase $this */
 
-        $response = $this->actingAs($this->user)
+        $proUser = \Mockery::mock($this->user)->makePartial();
+        $proUser->shouldReceive('isPro')->andReturn(true);
+
+        $response = $this->actingAs($proUser)
             ->get(route('diagram.export-json', [
                 'team_id' => $this->team->id,
                 'diagram' => $this->diagram->slug,

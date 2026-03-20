@@ -683,7 +683,24 @@ describe('complete table scenario', function (): void {
 
 describe('ExportLaravelMigration endpoint', function (): void {
 
-    it('returns 200 with zip content-type for authorized user', function () {
+    it('returns 200 with zip content-type for pro user', function () {
+        /** @var TestCase $this */
+
+        createTable($this, 'users');
+
+        $proUser = \Mockery::mock($this->user)->makePartial();
+        $proUser->shouldReceive('isPro')->andReturn(true);
+
+        $this->actingAs($proUser)
+            ->get(route('diagram.export-laravel-migration', [
+                'team_id' => $this->team->id,
+                'diagram' => $this->diagram->slug,
+            ]))
+            ->assertOk()
+            ->assertHeader('Content-Type', 'application/zip');
+    });
+
+    it('returns 403 for non-pro user', function () {
         /** @var TestCase $this */
 
         createTable($this, 'users');
@@ -693,8 +710,7 @@ describe('ExportLaravelMigration endpoint', function (): void {
                 'team_id' => $this->team->id,
                 'diagram' => $this->diagram->slug,
             ]))
-            ->assertOk()
-            ->assertHeader('Content-Type', 'application/zip');
+            ->assertForbidden();
     });
 
     it('returns 403 for user without team access', function () {
@@ -725,7 +741,10 @@ describe('ExportLaravelMigration endpoint', function (): void {
 
         createTable($this, 'users');
 
-        $response = $this->actingAs($this->user)
+        $proUser = \Mockery::mock($this->user)->makePartial();
+        $proUser->shouldReceive('isPro')->andReturn(true);
+
+        $response = $this->actingAs($proUser)
             ->get(route('diagram.export-laravel-migration', [
                 'team_id' => $this->team->id,
                 'diagram' => $this->diagram->slug,

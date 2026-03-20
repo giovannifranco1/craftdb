@@ -155,7 +155,7 @@ new class extends BaseComponent {
                     @endphp
                     <div class="flex flex-col rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800/50 p-5 shadow-sm">
                         <flux:heading size="lg">{{ $plan['emoji'] ?? '' }} {{ $plan['name'] }}</flux:heading>
-                        <flux:text class="mt-1 text-zinc-600 dark:text-zinc-400">{{ $plan['description'] }}</flux:text>
+                        <flux:text class="mt-1 text-zinc-600 dark:text-zinc-400">{{ __($plan['description']) }}</flux:text>
                         <div class="mt-3 flex items-baseline gap-1">
                             <span class="text-2xl font-bold">{{ $this->billingCountry->currencySymbol() }}{{ number_format($plan['price'], 2) }}</span>
                             <span class="text-zinc-500 dark:text-zinc-400">/ {{ $plan['interval'] === 'year' ? __('year') : __('month') }}</span>
@@ -164,14 +164,14 @@ new class extends BaseComponent {
                             @foreach ($plan['features'] ?? [] as $feature)
                                 <li class="flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400">
                                     <flux:icon.check-circle class="size-4 text-emerald-500 shrink-0" />
-                                    {{ $feature }}
+                                    {{ __($feature) }}
                                 </li>
                             @endforeach
                         </ul>
                         <div class="mt-5">
                             @if ($this->subscribed)
                                 <flux:button variant="ghost" size="sm" wire:click="manageSubscription" class="w-full cursor-pointer">
-                                    {{ __('Manage') }}
+                                    {{ __('Manage in Stripe') }}
                                 </flux:button>
                             @else
                                 <flux:button variant="primary" color="sky" wire:click="subscribe('{{ $planKey }}')" class="w-full cursor-pointer">
