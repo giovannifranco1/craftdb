@@ -2,11 +2,11 @@
     <div class="container mx-auto px-6">
         <div class="text-center mb-16">
             <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
-                Suporte a diversos
-                <span class="gradient-text">bancos de dados</span>
+                {{ __('landing-page.logo_strip.title_prefix') }}
+                <span class="gradient-text">{{ __('landing-page.logo_strip.title_gradient') }}</span>
             </h2>
             <p class="text-center text-gray-600 max-w-2xl mx-auto">
-                Compatível com os principais bancos relacionais e tecnologias
+                {{ __('landing-page.logo_strip.subtitle') }}
             </p>
         </div>
         <div class="flex flex-wrap items-center justify-center gap-6 md:gap-10">

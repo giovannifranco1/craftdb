@@ -13,37 +13,36 @@
             <div class="text-left">
                 <!-- Headline -->
                 <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight fade-in-up">
-                    A forma mais visual de
-                    <span class="bg-gradient-to-r from-gray-800 via-gray-500 to-gray-900 bg-clip-text text-transparent">projetar seu banco de dados</span>
+                    {{ __('landing-page.hero.headline_prefix') }}
+                    <span class="bg-gradient-to-r from-gray-800 via-gray-500 to-gray-900 bg-clip-text text-transparent">{{ __('landing-page.hero.headline_gradient') }}</span>
                 </h1>
 
                 <!-- Subheadline -->
                 <p class="text-lg md:text-xl text-gray-600 mb-10 max-w-xl fade-in-up fade-in-delay-1">
-                    Crie diagramas de banco de dados intuitivos. Defina tabelas, relacionamentos
-                    e trabalhe em times. Zero complexidade, máxima produtividade.
+                    {{ __('landing-page.hero.subheadline') }}
                 </p>
 
                 <!-- CTAs -->
                 <div class="flex flex-col sm:flex-row items-start gap-4 mb-8 fade-in-up fade-in-delay-2">
                     @auth
                         <a href="{{ route('dashboard') }}" class="btn-primary group">
-                            Ir para Dashboard
+                            {{ __('landing-page.hero.cta_dashboard') }}
                             <x-lucide-arrow-right class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                         </a>
                     @else
                         <a href="{{ route('register') }}" class="btn-primary group">
-                            Começar grátis
+                            {{ __('landing-page.hero.cta_register') }}
                             <x-lucide-arrow-right class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                         </a>
                     @endauth
                     <a href="#features" class="btn-secondary group">
-                        Ver funcionalidades
+                        {{ __('landing-page.hero.cta_secondary') }}
                     </a>
                 </div>
 
                 <!-- Support text -->
                 <p class="text-sm text-gray-600 fade-in-up fade-in-delay-3">
-                    MySQL, PostgreSQL, SQLite e Laravel Migration
+                    {{ __('landing-page.hero.tech_line') }}
                 </p>
             </div>
 
@@ -51,8 +50,8 @@
             <div class="relative fade-in-up fade-in-delay-3">
                 <div class="relative">
                     <!-- Laptop mockup image -->
-                    <img src="{{ Vite::asset('resources/images/landing-page/macbook.png') }}" alt="MacBook" class="w-full h-auto relative z-10"/>
-                    <img src="{{ Vite::asset('resources/images/landing-page/image_macbook.png') }}" alt="MacBook Screen" class="absolute w-[70%] h-auto top-[14%] left-[15%] z-5"/>
+                    <img src="{{ Vite::asset('resources/images/landing-page/macbook.png') }}" alt="{{ __('landing-page.hero.macbook_alt') }}" class="w-full h-auto relative z-10"/>
+                    <img src="{{ Vite::asset('resources/images/landing-page/image_macbook.png') }}" alt="{{ __('landing-page.hero.macbook_screen_alt') }}" class="absolute w-[70%] h-auto top-[14%] left-[15%] z-5"/>
                 </div>
 
                 <!-- Shadow effect -->

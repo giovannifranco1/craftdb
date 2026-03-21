@@ -1,4 +1,4 @@
-<x-layouts.landing-page title="CraftDB - A forma mais visual de projetar seu banco de dados">
+<x-layouts.landing-page :title="__('landing-page.meta.index_title')">
     @include('pages::landing-page.sections.hero')
     @include('pages::landing-page.sections.logo-strip')
     @include('pages::landing-page.sections.features')

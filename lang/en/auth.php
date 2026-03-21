@@ -23,6 +23,11 @@ return [
     'terms_of_service' => 'Terms of Service',
     'privacy_policy' => 'Privacy Policy',
     'accept_terms_label' => 'I accept the :terms and :policy',
+    'accept_terms_aria' => 'I accept the Terms of Service and Privacy Policy',
+
+    'login_terms_prefix' => 'I agree to the',
+    'login_terms_between' => 'and',
+
     'read_our' => 'Read our',
     'and' => 'and',
 

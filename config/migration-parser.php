@@ -205,8 +205,9 @@ return [
     |
     */
     'schema_patterns' => [
-        'create_table' => '/Schema::create\s*\(\s*[\'"]([^\'"]+)[\'"]\s*,\s*function\s*\([^)]*\)\s*{(.*?)}\s*\)/s',
-        'alter_table' => '/Schema::table\s*\(\s*[\'"]([^\'"]+)[\'"]\s*,\s*function\s*\([^)]*\)\s*{(.*?)}\s*\)/s',
+        // Optional return type on closure (e.g. function (Blueprint $table): void {) — Laravel / Pint stubs
+        'create_table' => '/Schema::create\s*\(\s*[\'"]([^\'"]+)[\'"]\s*,\s*function\s*\([^)]*\)(?:\s*:\s*\w+)?\s*{(.*?)}\s*\)/s',
+        'alter_table' => '/Schema::table\s*\(\s*[\'"]([^\'"]+)[\'"]\s*,\s*function\s*\([^)]*\)(?:\s*:\s*\w+)?\s*{(.*?)}\s*\)/s',
     ],
 
     /*
@@ -305,4 +306,3 @@ return [
     */
     'modify_column_pattern' => '/->change\s*\(\s*\)/i',
 ];
-

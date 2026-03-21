@@ -31,6 +31,8 @@ beforeEach(function (): void {
     $this->action = new ExportDiagramToLaravelMigration();
 });
 
+describe('ExportDiagramToLaravelMigration generation', function (): void {
+
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -675,6 +677,8 @@ describe('complete table scenario', function (): void {
             ->toContain('$table->softDeletes();')
             ->toContain('$table->timestamps();');
     });
+});
+
 });
 
 // ---------------------------------------------------------------------------

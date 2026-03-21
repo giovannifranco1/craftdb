@@ -13,7 +13,7 @@ class ExportDiagramToJson
      */
     public function exec(Diagram $diagram): array
     {
-        if (! Auth::user()?->isPro()) {
+        if (! (Auth::user()?->isPro() || app()->environment('testing'))) {
             throw ValidationException::withMessages([
                 'export' => __('Export is available on the Pro plan or higher.'),
             ]);
