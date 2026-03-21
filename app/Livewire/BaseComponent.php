@@ -9,7 +9,7 @@ use Throwable;
 
 abstract class BaseComponent extends Component
 {
-    public function exception(Throwable $e, $stopPropagation): void
+    public function exception(Throwable $e, \Closure $stopPropagation): void
     {
         if ($e instanceof AuthorizationDiagramException) {
             $stopPropagation();

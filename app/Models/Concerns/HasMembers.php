@@ -208,7 +208,7 @@ trait HasMembers
             throw new RuntimeException(__("Invited user not found."));
         }
 
-        $this->addUser($user, $invitation->role);
+        $this->addUser($user, $invitation->role_enum);
 
         $this->invitations()->cancelled()->delete();
     }

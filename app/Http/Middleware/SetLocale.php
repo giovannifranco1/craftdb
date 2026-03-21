@@ -13,7 +13,7 @@ class SetLocale
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param  Closure(Request): (Response)  $next
      */
     public function handle(Request $request, Closure $next): Response
     {
@@ -24,8 +24,33 @@ class SetLocale
             if (in_array($locale, ['en', 'pt_BR'])) {
                 App::setLocale($locale);
             }
+
+            return $next($request);
+        }
+
+        if ($this->shouldUsePortugueseBrazilFromCloudflare($request)) {
+            App::setLocale('pt_BR');
         }
 
         return $next($request);
+    }
+
+    /**
+     * Guests from Brazil (Cloudflare CF-IPCountry) see auth and landing in pt_BR when no session locale.
+     * Requires SetHeaders to run first so the header is trusted or stripped.
+     */
+    private function shouldUsePortugueseBrazilFromCloudflare(Request $request): bool
+    {
+        if (strtoupper((string) $request->header('CF-IPCountry')) !== 'BR') {
+            return false;
+        }
+
+        return $request->routeIs(
+            'login',
+            'login.store',
+            'register',
+            'register.store',
+            'landing.*',
+        );
     }
 }

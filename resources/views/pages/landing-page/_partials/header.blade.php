@@ -7,14 +7,14 @@
     <div class="container mx-auto px-6">
         <div class="flex items-center justify-between h-16">
             <!-- Logo -->
-            <a href="{{ route('home') }}" class="flex items-center gap-1">
+            <a href="{{ route('landing.index') }}" class="flex items-center gap-1">
                 <div class="flex size-10 shrink-0 items-center justify-start relative">
                     <x-app-logo-icon class="size-full object-contain" />
                 </div>
 
                 <div class="ml-2 flex flex-col leading-none">
                     <span class="text-3xl font-semibold font-[Outfit] text-gray-900 mb-1">CraftDB</span>
-                    <span class="text-sm font-medium -mt-2.5 ml-0.5 font-[Outfit] text-left self-start">Beta</span>
+                    <span class="text-sm font-medium -mt-2.5 ml-0.5 font-[Outfit] text-left self-start">{{ __('landing-page.brand.beta') }}</span>
                 </div>
 
             </a>
@@ -23,25 +23,25 @@
             <div class="hidden md:flex items-center gap-10">
                 <nav class="flex items-center gap-8">
                     <a href="#features" class="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
-                        Recursos
+                        {{ __('landing-page.nav.features') }}
                     </a>
                     <a href="#pricing" class="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
-                        Preços
+                        {{ __('landing-page.nav.pricing') }}
                     </a>
                     <a href="#how-it-works" class="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
-                        Como funciona
+                        {{ __('landing-page.nav.how_it_works') }}
                     </a>
                     <a href="#faq" class="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
-                        FAQ
+                        {{ __('landing-page.nav.faq') }}
                     </a>
                 </nav>
                 @auth
                     <a href="{{ route('dashboard') }}" class="px-5 py-2 text-sm font-medium text-white bg-gray-900 rounded-full hover:bg-gray-800 transition-colors">
-                        Dashboard
+                        {{ __('landing-page.nav.dashboard') }}
                     </a>
                 @else
                     <a href="{{ route('login') }}" class="px-5 py-2 text-sm font-medium text-white bg-gray-900 rounded-full hover:bg-gray-800 transition-colors">
-                        Entrar
+                        {{ __('landing-page.nav.sign_in') }}
                     </a>
                 @endauth
             </div>
@@ -69,26 +69,26 @@
         >
             <nav class="flex flex-col gap-4">
                 <a href="#features" @click="mobileMenuOpen = false" class="text-sm font-medium text-gray-600 hover:text-gray-900 py-2">
-                    Recursos
+                    {{ __('landing-page.nav.features') }}
                 </a>
                 <a href="#pricing" @click="mobileMenuOpen = false" class="text-sm font-medium text-gray-600 hover:text-gray-900 py-2">
-                    Preços
+                    {{ __('landing-page.nav.pricing') }}
                 </a>
                 <a href="#how-it-works" @click="mobileMenuOpen = false" class="text-sm font-medium text-gray-600 hover:text-gray-900 py-2">
-                    Como funciona
+                    {{ __('landing-page.nav.how_it_works') }}
                 </a>
                 <a href="#faq" @click="mobileMenuOpen = false" class="text-sm font-medium text-gray-600 hover:text-gray-900 py-2">
-                    FAQ
+                    {{ __('landing-page.nav.faq') }}
                 </a>
 
                 <div class="pt-4 border-t border-gray-200">
                     @auth
                         <a href="{{ route('dashboard') }}" class="block w-full px-5 py-2 text-sm font-medium text-white bg-gray-900 rounded-full text-center hover:bg-gray-800 transition-colors">
-                            Dashboard
+                            {{ __('landing-page.nav.dashboard') }}
                         </a>
                     @else
                         <a href="{{ route('login') }}" class="block w-full px-5 py-2 text-sm font-medium text-white bg-gray-900 rounded-full text-center hover:bg-gray-800 transition-colors">
-                            Entrar
+                            {{ __('landing-page.nav.sign_in') }}
                         </a>
                     @endauth
                 </div>

@@ -15,6 +15,8 @@ use Livewire\Attributes\On;
 use Livewire\Attributes\Validate;
 use App\Livewire\CanvasComponent;
 use App\Livewire\Data\ColumnData;
+use App\Support\DiagramLimits;
+use Livewire\Attributes\Async;
 
 new class extends CanvasComponent {
 
@@ -30,8 +32,8 @@ new class extends CanvasComponent {
     #[Locked]
     public int $tableId;
 
-    /** @var Collection<int,Column> */
-    public $columns = [];
+    /** @var array<int, mixed> */
+    public array $columns = [];
     public bool $loadTable;
     public bool $hasColumnsInDatabase;
 
@@ -51,19 +53,28 @@ new class extends CanvasComponent {
         $this->tableId = $table->id;
         $this->diagramId = $table->diagram_id;
         $this->name = $table->name;
-        $this->hasColumnsInDatabase = $table->columns_exists;
+        $this->hasColumnsInDatabase = $table->columns_exists ?? false;
         $this->tableData = TableData::fromModel($table);
     }
 
+    /** @return Collection<int, Column> */
     #[Computed]
     public function columns(): Collection
     {
         return $this->table->columns;
     }
 
+    #[Async]
     public function loadColumns(): void
     {
         $this->loadTable = true;
+        $this->hasColumnsInDatabase = true;
+    }
+
+    #[Async]
+    public function unloadColumns(): void
+    {
+        $this->loadTable = false;
         $this->hasColumnsInDatabase = true;
     }
 
@@ -80,7 +91,7 @@ new class extends CanvasComponent {
         $this->validateOnly('name');
 
         $this->table->update(['name' => $this->name]);
-        $this->tableData->name = $this->name;
+        $this->tableData->name = $this->name ?? '';
 
         $this->dispatch('table::renamed');
     }
@@ -118,7 +129,7 @@ new class extends CanvasComponent {
             return;
         }
 
-        $column->name = $newName;
+        $column->name = $newName ?? '';
         $column->save();
 
         $this->updateTableData();
@@ -126,11 +137,21 @@ new class extends CanvasComponent {
         $this->dispatch('table::column-renamed');
     }
 
+    #[Computed]
+    public function tableColumnsLimit(): int
+    {
+        $owner = $this->diagram->team?->owner;
+        abort_if($owner === null, 403, 'Team owner not found');
+        $limits = DiagramLimits::forUser($owner);
+
+        return $limits['table_columns_limit'];
+    }
+
     public function addColumn(AddColumnToTableAction $action): void
     {
         $this->authorizeDiagram('update');
 
-        if ($this->table->columns()->count() >= config('diagram.table_columns_limit')) {
+        if ($this->table->columns()->count() >= $this->tableColumnsLimit) {
             $this->dispatch('alert', message: __('You have reached the maximum number of columns for this table.'), type: 'error');
             return;
         }
@@ -159,6 +180,10 @@ new class extends CanvasComponent {
         $this->authorizeDiagram('update');
 
         $action->exec($column);
+
+        $newResizeColumnPosition = $this->table->resize_column_position + 1;
+
+        $this->table->update(['resize_column_position' => $newResizeColumnPosition]);
 
         $this->updateTableData();
         $this->dispatch('table-side-editor::column-deleted');
@@ -199,7 +224,7 @@ new class extends CanvasComponent {
         $this->dispatch('alert', message: __('Table Removed'));
         $this->dispatch('table::removed', tableId: $this->tableId);
 
-        $relationships = $this->diagram->relationships()->get() ?? collect();
+        $relationships = $this->diagram->relationships()->get();
 
         $this->dispatch('relationships::fresh', relationships: $relationships);
     }

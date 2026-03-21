@@ -23,7 +23,9 @@ class Canvas extends Component
         public Diagram $diagram
     )
     {
-        $this->relationships = $diagram->relationships()->get();
+        $this->relationships = $diagram->relationships()
+            ->with(['fromTable', 'toTable', 'fromColumn', 'toColumn'])
+            ->get();
         $this->isInitialLoad = (bool) $diagram->is_initial_load;
 
         if ($this->isInitialLoad) {

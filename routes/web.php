@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\BillingController;
+use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\Pages\DiagramController;
 use App\Livewire\MyFavorites;
@@ -14,18 +16,24 @@ Route::get('/about', [LandingPageController::class, 'about'])->name('landing.abo
 Route::get('/terms', fn () => view('pages.landing-page.terms'))->name('landing.terms');
 Route::get('/policy', fn () => view('pages.landing-page.policy'))->name('landing.policy');
 
-/** Landing Page */
-Route::get('/', fn () => view('pages::landing-page.index'))->name('home');
-
 /** Dashboard */
 Route::livewire('/dashboard', 'pages::dashboard')->lazy()->middleware(['auth', 'verified'])->name('dashboard');
 Route::livewire('/my-favorites', MyFavorites::class)->middleware(['auth', 'verified'])->name('dashboard.my-favorites');
+
+/** Feedback (Contact Us) - Super root only */
+Route::get('/feedback', [FeedbackController::class, 'index'])
+    ->middleware(['auth', 'verified', 'super.root'])
+    ->name('feedback.index');
 
 /** Settings */
 Route::middleware(['auth'])->group(function () {
     Route::redirect('settings', 'settings/profile');
 
     Route::livewire('settings/profile', 'settings.profile')->name('profile.edit');
+    Route::livewire('settings/billing', 'settings.billing')->name('billing.index');
+    Route::get('settings/billing/checkout/{plan}', [BillingController::class, 'checkout'])->name('billing.checkout');
+    Route::get('settings/billing/portal', [BillingController::class, 'portal'])->name('billing.portal');
+    Route::get('settings/billing/success', [BillingController::class, 'success'])->name('billing.success');
     Route::livewire('settings/password', 'settings.password')->name('user-password.edit');
     Route::livewire('settings/appearance', 'settings.appearance')->name('appearance.edit');
     Route::livewire('settings/language', 'settings.language')->name('language.edit');
@@ -42,7 +50,7 @@ Route::middleware(['auth'])->group(function () {
         ->name('two-factor.show');
 
     Route::middleware(['auth'])->group(function () {
-        Route::livewire('settings/team/create', 'settings.team.create')->name('team.create');
+        Route::livewire('settings/team/create', 'settings.team.⚡create')->name('team.create');
         Route::livewire('settings/team', 'settings.team')->name('team.edit');
         Route::livewire('settings/team/members', 'settings.team.members')->name('team.members.edit');
         Route::livewire('settings/team/invitations', 'settings.team.invitations')->name('team.invitations.edit');
@@ -52,13 +60,13 @@ Route::middleware(['auth'])->group(function () {
 /** Diagram */
 Route::middleware(['auth', 'role:viewer|editor|owner', 'throttle:60,1'])->group(function () {
     Route::get('{team_id}/diagram/{diagram:slug}', [DiagramController::class, 'show'])->name('diagram.show');
+    Route::get('{team_id}/diagram/{diagram:slug}/export-json', [DiagramController::class, 'exportJson'])->name('diagram.export-json');
+    Route::get('{team_id}/diagram/{diagram:slug}/export-laravel-migration', [DiagramController::class, 'exportLaravelMigration'])->name('diagram.export-laravel-migration');
     Route::post('{team_id}/diagram/{diagram:slug}/toggle-favorite', [DiagramController::class, 'toggleFavorite'])->name('diagram.toggle-favorite');
-    Route::post('{team_id}/diagram/{diagram:slug}/make-public', [DiagramController::class, 'makePublic'])->name('diagram.make-public');
-    Route::delete('{team_id}/diagram/{diagram:slug}/revoke-public', [DiagramController::class, 'revokePublic'])->name('diagram.revoke-public');
 });
 
 /** Public Diagram (no auth required) */
 Route::get('/diagram/public/{token}', [DiagramController::class, 'showPublic'])->name('diagram.public');
 
 /** Authentication Routes */
-require_once __DIR__ . '/auth.php';
+require __DIR__ . '/auth.php';

@@ -8,49 +8,23 @@
         <div class="max-w-3xl mx-auto text-center mb-20">
             <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-sm font-medium mb-6">
                 <x-lucide-sparkles class="w-4 h-4" />
-                Simples e poderoso
+                {{ __('landing-page.how_it_works.badge') }}
             </div>
             <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 tracking-tight">
-                Da ideia ao diagrama
+                {{ __('landing-page.how_it_works.title_line1') }}
                 <br />
-                <span class="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">em minutos</span>
+                <span class="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">{{ __('landing-page.how_it_works.title_line2') }}</span>
             </h2>
             <p class="text-xl text-white/60 max-w-2xl mx-auto">
-                Quatro passos simples para criar, conectar e compartilhar seus schemas de banco de dados de forma profissional.
+                {{ __('landing-page.how_it_works.subtitle') }}
             </p>
         </div>
 
         {{-- Steps Grid (pt-8 evita corte do badge pelo overflow da section) --}}
         <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 pt-8">
             @php
-                $steps = [
-                    [
-                        'icon' => 'users',
-                        'title' => 'Crie seu time',
-                        'description' => 'Monte seu time e gerencie permissões para colaboração eficiente.',
-                        'color' => 'from-blue-500 to-cyan-500',
-                    ],
-                    [
-                        'icon' => 'add-table',
-                        'title' => 'Crie o diagrama',
-                        'description' => 'Modele seu banco visualmente, criando tabelas, campos e relacionamentos em um canvas intuitivo.',
-                        'color' => 'from-violet-500 to-purple-500',
-                    ],
-                    [
-                        'icon' => 'code',
-                        'title' => 'Importe seu schema',
-                        'description' => 'Traga rapidamente sua estrutura existente com importação de SQL ou Laravel Migration.',
-                        'color' => 'from-yellow-500 to-orange-500',
-                    ],
-                    [
-                        'icon' => 'share',
-                        'title' => 'Compartilhe',
-                        'description' => 'Gere um link público e compartilhe o diagrama sem exigir login.',
-                        'color' => 'from-emerald-500 to-teal-500',
-                    ],
-                ];
+                $steps = __('landing-page.how_it_works.steps');
             @endphp
-
             @foreach($steps as $index => $step)
                 <div class="relative flex">
                     {{-- Connection line (atrás dos cards, só desktop) --}}

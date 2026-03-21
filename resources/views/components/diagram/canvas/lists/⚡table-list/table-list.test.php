@@ -12,8 +12,10 @@ beforeEach(function () {
 
     $this->autenticated();
 
+    Livewire::withoutLazyLoading();
+
     $this->diagram = Diagram::factory()->create(['team_id' => $this->team->id]);
-    $this->component = Livewire::test('diagram.table-list', ['diagram' => $this->diagram]);
+    $this->component = Livewire::test('diagram.canvas.lists.⚡table-list', ['diagram' => $this->diagram]);
 });
 
 
@@ -43,8 +45,10 @@ describe('Table Management', function() {
     it('prevents adding tables beyond limit', function () {
         /** @var TestCase&object{diagram: Diagram} $this */
 
+        $tableLimit = config('diagram.free.table_limit');
+
         // Create tables up to the limit
-        for ($i = 0; $i < Diagram::TABLE_LIMIT; $i++) {
+        for ($i = 0; $i < $tableLimit; $i++) {
             $this->diagram->tables()->create([
                 'name' => "table_$i",
                 'x' => 0,
@@ -56,6 +60,6 @@ describe('Table Management', function() {
             ->call('addTable', 100, 100)
             ->assertDispatched('alert');
 
-        expect($this->diagram->tables()->count())->toBe(Diagram::TABLE_LIMIT);
+        expect($this->diagram->tables()->count())->toBe($tableLimit);
     });
 })->group('livewire-components');

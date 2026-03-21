@@ -1,6 +1,6 @@
 <?php
 
-namespace App\View\Components\Diagram\UI;
+namespace App\View\Components\Diagram\Ui;
 
 use App\Models\Diagram;
 use Closure;

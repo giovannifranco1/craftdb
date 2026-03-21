@@ -1,20 +1,31 @@
+@props([
+    'title' => null,
+    'description' => null,
+])
+
+@php
+    $pageTitle = $title ?? __('landing-page.meta.default_title');
+    $pageDescription = $description ?? __('landing-page.meta.default_description');
+    $htmlLang = app()->getLocale() === 'pt_BR' ? 'pt-BR' : 'en';
+    $ogLocale = app()->getLocale() === 'pt_BR' ? 'pt_BR' : 'en_US';
+@endphp
 <!DOCTYPE html>
-<html lang="pt-BR" class="h-full">
+<html lang="{{ $htmlLang }}" class="h-full">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{{ $title ?? 'CraftDB - A forma mais visual de projetar seu banco de dados' }}</title>
-    <meta name="description" content="Crie diagramas de banco de dados intuitivos. Defina tabelas, relacionamentos e trabalhe em times. Zero complexidade, máxima produtividade.">
+    <title>{{ $pageTitle }}</title>
+    <meta name="description" content="{{ $pageDescription }}">
 
     {{-- Open Graph (OG) --}}
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://craftdb.app">
-    <meta property="og:title" content="{{ $title ?? 'CraftDB - A forma mais visual de projetar seu banco de dados' }}">
-    <meta property="og:description" content="Crie diagramas de banco de dados intuitivos. Defina tabelas, relacionamentos e trabalhe em times. Zero complexidade, máxima produtividade.">
+    <meta property="og:title" content="{{ $pageTitle }}">
+    <meta property="og:description" content="{{ $pageDescription }}">
     <meta property="og:image" content="https://craftdb.app/preview.png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
-    <meta property="og:locale" content="pt_BR">
+    <meta property="og:locale" content="{{ $ogLocale }}">
     <meta property="og:site_name" content="CraftDB">
 
     <link rel="icon" href="/favicon.ico" sizes="192x192">

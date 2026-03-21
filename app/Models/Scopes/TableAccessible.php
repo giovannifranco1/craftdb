@@ -15,10 +15,15 @@ class TableAccessible implements Scope
     public function apply(Builder $builder, Model $model): void
     {
         $builder->whereHas('diagram', function (Builder $q) : void {
-            $teamIds = Auth::user()
+            $user = Auth::user();
+            if ($user === null) {
+                $q->whereRaw('1 = 0');
+                return;
+            }
+            $teamIds = $user
                 ->teams()
                 ->pluck('team.id')
-                ->merge(Auth::user()->ownedTeams()->pluck('team.id'))
+                ->merge($user->ownedTeams()->pluck('team.id'))
                 ->unique();
 
             $q->whereIn('team_id', $teamIds);

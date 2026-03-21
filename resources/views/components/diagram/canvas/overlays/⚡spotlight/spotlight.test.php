@@ -15,7 +15,7 @@ beforeEach(function () {
 
     $this->diagram = Diagram::factory()->create(['team_id' => $this->team->id]);
     $this->table = Table::factory()->create(['diagram_id' => $this->diagram->id, 'name' => 'users']);
-    $this->component = Livewire::test('diagram.⚡spotlight', ['diagram' => $this->diagram]);
+    $this->component = Livewire::test('diagram.canvas.overlays.⚡spotlight', ['diagram' => $this->diagram]);
 });
 
 

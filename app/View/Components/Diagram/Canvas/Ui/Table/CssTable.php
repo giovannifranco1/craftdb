@@ -1,6 +1,6 @@
 <?php
 
-namespace App\View\Components\Diagram\Canvas\UI\Table;
+namespace App\View\Components\Diagram\Canvas\Ui\Table;
 
 use App\Models\Table;
 use Closure;

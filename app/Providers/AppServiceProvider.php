@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Route;
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Vite;
@@ -39,6 +40,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         View::addNamespace('layouts', resource_path('views/components/layouts'));
+        View::addNamespace('pages', resource_path('views/pages'));
         View::addNamespace('placeholders', resource_path('views/components/ui/placeholders'));
 
         /** @var \Illuminate\Foundation\Application $app */

@@ -21,6 +21,7 @@ new #[Defer(bundle: true)] class extends CanvasComponent implements PublicCanvas
         $this->diagramId = $diagram->id;
     }
 
+    /** @return Collection<int, \App\Models\Note> */
     #[Computed]
     public function notes(): Collection
     {

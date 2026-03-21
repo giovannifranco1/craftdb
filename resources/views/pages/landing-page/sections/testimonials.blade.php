@@ -3,64 +3,17 @@
         <!-- Section Header -->
         <div class="max-w-3xl mx-auto text-center mb-16">
             <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
-                Amado por{" "}
-                <span class="gradient-text">desenvolvedores</span>
+                {{ __('landing-page.testimonials.title_line1') }}
+                <span class="gradient-text">{{ __('landing-page.testimonials.title_gradient') }}</span>
             </h2>
             <p class="text-lg text-gray-600">
-                Veja o que profissionais de tecnologia estão dizendo sobre o CraftDB.
+                {{ __('landing-page.testimonials.subtitle') }}
             </p>
         </div>
 
         <!-- Testimonials Grid -->
         <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            @php
-                $testimonials = [
-                    [
-                        'quote' => 'A experiência visual é muito boa. Organizamos os diagramas em times e o link público facilita compartilhar com o cliente.',
-                        'author' => 'Carlos Silva',
-                        'role' => 'Tech Lead @ Fintech Brasil',
-                        'avatar' => 'CS',
-                        'rating' => 5,
-                    ],
-                    [
-                        'quote' => 'As sticky notes são perfeitas para documentar decisões de arquitetura. Consigo explicar o "porquê" de cada decisão direto no diagrama.',
-                        'author' => 'Marina Costa',
-                        'role' => 'DBA @ E-commerce Plus',
-                        'avatar' => 'MC',
-                        'rating' => 5,
-                    ],
-                    [
-                        'quote' => 'A importação de Laravel Migration economizou muito tempo. Já tinha as migrações e em poucos cliques o diagrama estava pronto.',
-                        'author' => 'João Santos',
-                        'role' => 'Backend Developer @ SaaS Startup',
-                        'avatar' => 'JS',
-                        'rating' => 5,
-                    ],
-                    [
-                        'quote' => 'As áreas no canvas ajudam a separar domínios do modelo. Fica muito mais legível do que um monte de tabela solta.',
-                        'author' => 'Ana Oliveira',
-                        'role' => 'Arquiteta de Software @ Consultoria',
-                        'avatar' => 'AO',
-                        'rating' => 5,
-                    ],
-                    [
-                        'quote' => 'A interface é intuitiva. Nossa equipe começou a usar e em pouco tempo todo mundo estava modelando sem precisar de treinamento.',
-                        'author' => 'Pedro Lima',
-                        'role' => 'CTO @ Agency Digital',
-                        'avatar' => 'PL',
-                        'rating' => 5,
-                    ],
-                    [
-                        'quote' => 'O dark mode e os temas do diagrama fazem diferença quando você passa horas modelando. Menos cansaço visual.',
-                        'author' => 'Fernanda Rocha',
-                        'role' => 'Full Stack Developer @ Tech Corp',
-                        'avatar' => 'FR',
-                        'rating' => 5,
-                    ],
-                ];
-            @endphp
-
-            @foreach($testimonials as $index => $testimonial)
+            @foreach(__('landing-page.testimonials.items') as $testimonial)
                 <div class="glass-card p-6 glow-effect testimonial-card">
                     <!-- Star Rating -->
                     <div class="flex gap-0.5 mb-4">

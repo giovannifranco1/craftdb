@@ -20,13 +20,13 @@ trait HandlesDiagramAuthAlert
     /**
      * Authorize the diagram action and throw exception if unauthorized.
      *
-     * @param string update|delete|view $action The action to authorize
+     * @param string $action The action to authorize (update|delete|view)
      * @param array<string> $dispatches The dispatches to dispatch if unauthorized
      * @return void
      */
     protected function authorizeDiagram(string $action, ?Diagram $diagram = null, array $dispatches = []): void
     {
-        if (Gate::denies($action, $diagram ?? $this->diagram ?? cache()->get('diagram:slug:' . $this->diagram->slug))) {
+        if (Gate::denies($action, $diagram ?? $this->diagram)) {
             foreach ($dispatches as $dispatch) {
                 $this->dispatch($dispatch);
             }

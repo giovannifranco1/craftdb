@@ -1,9 +1,11 @@
 <?php
 
 
+use App\Exceptions\PlanFeatureException;
 use App\Models\Diagram;
 use App\Support\Helpers;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Defer;
 use Livewire\Attributes\On;
@@ -36,6 +38,10 @@ new #[Defer(bundle: true)] class extends CanvasComponent {
     public function addArea(int $x = 100, int $y = 100): void
     {
         $this->authorizeDiagram('update');
+
+        if (! Auth::user()?->isPro()) {
+            throw new PlanFeatureException(__('Areas are available on the Pro plan or higher.'));
+        }
 
         $area = $this->diagram->areas()->create([
             'name' => 'New Area',

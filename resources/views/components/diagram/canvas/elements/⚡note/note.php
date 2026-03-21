@@ -74,7 +74,7 @@ new class extends CanvasComponent {
         $diagram = $this->note->diagram;
 
         $currentTeam = Team::currentTeam();
-        if (!$currentTeam || $diagram->team_id !== $currentTeam->getKey()) {
+        if (!$currentTeam || $diagram?->team_id !== $currentTeam->getKey()) {
             abort(403, 'Unauthorized access to diagram');
         }
 

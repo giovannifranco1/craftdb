@@ -293,6 +293,79 @@ php artisan test
 
 ---
 
+## 🚀 Deploy em Produção
+
+### Variáveis de Ambiente Obrigatórias
+
+Além das variáveis padrão, configure no `.env` de produção:
+
+```env
+APP_ENV=production
+APP_DEBUG=false
+APP_URL=https://seu-dominio.com
+
+# Banco de dados (MySQL ou PostgreSQL recomendados para produção)
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=craftdb
+DB_USERNAME=
+DB_PASSWORD=
+
+# Cache e filas (Redis recomendado)
+CACHE_STORE=redis
+QUEUE_CONNECTION=redis
+
+# Stripe (Cashier)
+STRIPE_KEY=pk_live_...
+STRIPE_SECRET=sk_live_...
+STRIPE_WEBHOOK_SECRET=whsec_...
+
+# Billing - Price IDs do Stripe
+STRIPE_PRICE_PRO_MONTHLY=price_xxx
+STRIPE_PRICE_PRO_YEARLY=price_xxx
+
+# OAuth
+GITHUB_CLIENT_ID=
+GITHUB_CLIENT_SECRET=
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+```
+
+### Stripe e Webhook
+
+1. Crie produtos e preços no [Stripe Dashboard](https://dashboard.stripe.com/products)
+2. Configure o webhook apontando para: `https://seu-dominio.com/stripe/webhook`
+3. Defina `STRIPE_WEBHOOK_SECRET` com o valor retornado pelo Stripe
+
+### OAuth em Produção
+
+Registre as URLs de callback nos provedores:
+
+- **GitHub**: `https://seu-dominio.com/auth/callback`
+- **Google**: `https://seu-dominio.com/auth/google/callback`
+
+Certifique-se de que `APP_URL` esteja correto para os redirects.
+
+### Filas e Scheduler
+
+Configure um processo de fila (ex.: Supervisor) e o cron para o scheduler:
+
+```bash
+* * * * * cd /caminho/do/projeto && php artisan schedule:run >> /dev/null 2>&1
+```
+
+### Pré-lançamento
+
+- [x] `User::isPro()` integrado ao Cashier (subscriptions)
+- [x] Middleware `ValidateLoginTermsAcceptance` registrado (valida aceite de termos no login)
+- [ ] Migrações Cashier executadas
+- [ ] Webhook Stripe configurado
+- [ ] OAuth callbacks registrados
+- [ ] Teste: criar conta → assinar Pro → diagramas ilimitados
+
+---
+
 ## 📝 Licença
 
 Este projeto utiliza a licença MIT.

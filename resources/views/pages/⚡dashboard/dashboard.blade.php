@@ -5,6 +5,7 @@
     @keydown.meta.k.window="searchFocused = true;"
     @keydown.ctrl.k.window="searchFocused = true;"
     @keydown.escape.window="searchFocused = false; $wire.resetSearch()"
+    class="w-full"
 >
     <div class="flex items-center mb-5">
         <flux:heading size="xl" class="font-normal text-zinc-900 dark:text-zinc-50 me-auto">{{ __('My Diagrams') }}</flux:heading>
@@ -21,15 +22,18 @@
         </div>
     </div>
 
-    <div class="flex flex-col h-[40.2rem]">
+    <div class="flex flex-col min-h-[30rem]">
         <div class="flex-1 overflow-y-auto">
-            <div class="h-full grid lg:grid-cols-2 xl:grid-cols-3 gap-4">
+            <div class="min-h-full grid lg:grid-cols-2 xl:grid-cols-3 gap-4 w-full">
                 @forelse($this->diagrams as $diagram)
                     <x-diagram.ui.card wire:key="diagram-card-{{ $diagram->id }}" :diagram="$diagram"/>
                 @empty
-                    <div class= "col-span-1 lg:col-span-3 w-full h-full flex flex-col items-center justify-center gap-6 px-4">
+                    <div class="col-span-1 lg:col-span-3 w-full h-full flex flex-col items-center justify-center gap-6 px-4">
                         <div class="flex flex-col items-center gap-4">
-                            <div class="rounded-full bg-zinc-100 dark:bg-zinc-800 p-6">
+                            <div x-data="{ isDarkTheme: $flux.dark }" x-show="isDarkTheme" class="rounded-full bg-zinc-100 dark:bg-zinc-800 p-6">
+                                <img src="{{ Vite::asset('resources/images/craftdb_logo_transparent_light.png') }}" alt="CraftDB Logo" class="size-15 text-zinc-400 dark:text-zinc-500" />
+                            </div>
+                            <div x-data="{ isDarkTheme: $flux.dark }" x-show="!isDarkTheme" class="rounded-full bg-zinc-100 dark:bg-zinc-800 p-6">
                                 <img src="{{ Vite::asset('resources/images/craftdb_logo_transparent_dark.png') }}" alt="CraftDB Logo" class="size-15 text-zinc-400 dark:text-zinc-500" />
                             </div>
                             @if($this->favorites)

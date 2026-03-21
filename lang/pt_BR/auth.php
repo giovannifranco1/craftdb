@@ -23,6 +23,11 @@ return [
     'terms_of_service' => 'Termos de Serviço',
     'privacy_policy' => 'Política de Privacidade',
     'accept_terms_label' => 'Aceito os :terms e a :policy',
+    'accept_terms_aria' => 'Aceito os Termos de Serviço e a Política de Privacidade',
+
+    'login_terms_prefix' => 'Concordo com os',
+    'login_terms_between' => 'e a',
+
     'read_our' => 'Leia nossos',
     'and' => 'e',
 

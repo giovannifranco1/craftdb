@@ -5,7 +5,10 @@ namespace App\Models\Team;
 use App\Enums\Role as EnumsRole;
 use App\Models\User;
 use App\Notifications\TeamInvitationNotification;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\DB;
@@ -19,11 +22,11 @@ use function Symfony\Component\Translation\t;
  * @property int $team_id
  * @property int $role_id
  * @property string $token
- * @property EnumsRole $role
  * @property string $email
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Team\Role $role
+ * @property-read EnumsRole $role_enum
  * @property-read \App\Models\Team\Team $team
  * @property-read User|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Invitation newModelQuery()
@@ -37,17 +40,11 @@ use function Symfony\Component\Translation\t;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Invitation whereUpdatedAt($value)
  * @mixin \Eloquent
  */
+#[Table('invitation')]
+#[Fillable(['team_id', 'role_id', 'email'])]
 class Invitation extends Model
 {
     const MAX_INVITATIONS_PER_DAY = 12;
-    protected $table = 'invitation';
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<string>
-     */
-    protected $fillable = ['team_id', 'role_id', 'email'];
 
     public function __construct(array $attributes = [])
     {
@@ -107,9 +104,11 @@ class Invitation extends Model
         $this->update(['cancelled_at' => now()]);
     }
 
-    public function getRoleAttribute(): EnumsRole
+    public function roleEnum(): Attribute
     {
-        return EnumsRole::from($this->role()->first()->code);
+        return Attribute::make(
+            get: fn (): EnumsRole => EnumsRole::from($this->role()->first()->code)
+        );
     }
 
     public function resend(): void
@@ -124,7 +123,7 @@ class Invitation extends Model
 
         $this->update(['cancelled_at' => now()]);
 
-        $this->team->inviteUser($this->email, $this->role);
+        $this->team->inviteUser($this->email, $this->role_enum);
     }
 
     public function getRouteKeyName(): string

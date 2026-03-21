@@ -16,7 +16,7 @@
                 </flux:text>
             </div>
 
-            <div wire:ignore.self @diagram-import::show.window="$el.removeAttribute('style')" @diagram-import::hide.window="$el.setAttribute('style', 'view-transition-name: match-element;')" wire:transition>
+            <div wire:ignore.self>
                 @php
                     $steps = "components.diagram._partials.create";
 
@@ -25,15 +25,16 @@
                     $STEP_FINAL = 2;
                 @endphp
 
-                <!-- Steps content -->
-                @switch($step)
-                    @case($STEP_1)
-                        @include("$steps.create-step-1")
-                        @break
-                    @case($STEP_2)
-                        @include("$steps.create-step-2")
-                        @break
-                @endswitch
+                <div wire:key="create-step-{{ $step }}" class="lw-wizard-step-enter">
+                    @switch($step)
+                        @case($STEP_1)
+                            @include("$steps.create-step-1")
+                            @break
+                        @case($STEP_2)
+                            @include("$steps.create-step-2")
+                            @break
+                    @endswitch
+                </div>
             </div>
 
             <!-- Footer actions -->

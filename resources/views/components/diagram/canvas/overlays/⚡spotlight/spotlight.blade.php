@@ -1,18 +1,18 @@
-<flux:modal variant="bare" :closable="false" name="spotlight" class="min-w-2xl min-h-2/3">
+<flux:modal variant="bare" :closable="false" name="spotlight" class="min-w-2xl min-h-2/3 dark:border dark:border-gray-700 rounded-2xl p-2">
 
     <div
         class="h-2/3 min-h-2/3"
         x-data
         @wheel.stop
     >
-        <div class="bg-white p-2 rounded-2xl">
+        <div class="bg-white dark:bg-gray-800 p-2 rounded-2xl">
             <flux:input autocomplete="off" x-trap="true" wire:model.live="search" kbd="⌘K" icon="magnifying-glass" placeholder="Search..."/>
         </div>
 
-        <div class="mt-3">
+        <div class="mt-3 h-full">
             @if($this->results->isNotEmpty())
                 <ul
-                    class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden divide-y divide-gray-100 dark:divide-gray-700 max-h-96 overflow-y-auto"
+                    class="bg-white dark:bg-background-dark rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden divide-y divide-gray-100 dark:divide-gray-700 max-h-96 overflow-y-auto"
                     @wheel.stop
                 >
                     @foreach ($this->results as $item)
@@ -23,7 +23,7 @@
                                 wire:click="selectTable({{ $item->id }})"
                             >
                                 <div class="flex-shrink-0 w-10 h-10 rounded-lg bg-gray-100 dark:bg-gray-700/50 flex items-center justify-center border border-gray-200 dark:border-gray-600 group-hover:bg-gray-200 dark:group-hover:bg-gray-700 transition-colors">
-                                    <flux:icon.table class="size-5 text-gray-600 dark:text-gray-300" />
+                                    <flux:icon.list-bullet class="size-5 text-gray-600 dark:text-gray-300" />
                                 </div>
 
                                 <div class="flex-1 min-w-0">
@@ -50,7 +50,7 @@
                     @endforeach
                 </ul>
             @elseif(!empty($this->search))
-                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-8 text-center">
+                <div class="bg-white dark:bg-background-dark rounded-xl dark:border-gray-700 p-8 text-center">
                     <div class="flex flex-col items-center gap-3">
                         <div class="w-16 h-16 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
                             <flux:icon.magnifying-glass class="size-8 text-gray-400 dark:text-gray-500" />
@@ -66,7 +66,7 @@
                     </div>
                 </div>
             @else
-                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-8 text-center">
+                <div class="bg-white h-full dark:bg-background-dark rounded-xl p-8 text-center">
                     <div class="flex flex-col items-center gap-3">
                         <div class="w-16 h-16 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
                             <flux:icon.magnifying-glass class="size-8 text-gray-400 dark:text-gray-500" />

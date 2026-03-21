@@ -1,16 +1,12 @@
 <x-layouts.auth>
 
-    <div class="flex flex-col gap-6" x-init="() => $flux.dark = false">
-        <!-- Header Minimalista -->
-        <div class="flex flex-col gap-1 text-center">
-            <flux:heading size="2xl" class="font-semibold">{{ __('Welcome back') }} 👋</flux:heading>
-            <p class="text-sm text-zinc-500 dark:text-zinc-400">{{ __('Sign in to continue') }}</p>
-        </div>
+    <div class="flex flex-col gap-6">
+        <x-auth-header :title="__('Welcome back')" :description="__('Sign in to continue')" />
 
         <!-- Session Status -->
         <x-auth-session-status class="text-center" :status="session('status')" />
 
-        <form method="POST" action="{{ route('login.store') }}" class="flex flex-col gap-5">
+        <form method="POST" action="{{ route('login.store') }}" class="flex flex-col gap-6">
             @csrf
 
             <!-- Email Address -->
@@ -20,6 +16,7 @@
                 type="email"
                 required
                 autofocus
+                value="{{ old('email') }}"
                 autocomplete="email"
                 placeholder="you@example.com"
             />
@@ -45,34 +42,35 @@
                 @endif
             </div>
 
-            <!-- Accept Terms and Policy -->
-            <div class="flex flex-col gap-2">
-                @error('accept_terms')
-                    <p class="text-sm text-red-600 dark:text-red-400" role="alert">{{ $message }}</p>
-                @enderror
-                <flux:checkbox
-                    name="accept_terms"
-                    value="1"
-                    :label="__('auth.accept_terms_label', ['terms' => __('auth.terms_of_service'), 'policy' => __('auth.privacy_policy')])"
-                    :checked="(bool) old('accept_terms')"
-                />
-                <p class="text-xs text-zinc-500 dark:text-zinc-400">
-                    {{ __('auth.read_our') }}
-                    <flux:link :href="route('landing.terms')" target="_blank" rel="noopener" class="font-medium underline">
-                        {{ __('auth.terms_of_service') }}
-                    </flux:link>
-                    {{ __('auth.and') }}
-                    <flux:link :href="route('landing.policy')" target="_blank" rel="noopener" class="font-medium underline">
-                        {{ __('auth.privacy_policy') }}
-                    </flux:link>.
-                </p>
-            </div>
-
             <!-- Remember Me -->
             <flux:checkbox name="remember" :label="__('Remember me')" :checked="old('remember')" />
 
+            <!-- Accept Terms and Policy -->
+            <flux:field>
+                <div class="flex items-start gap-3">
+                    <flux:checkbox
+                        name="accept_terms"
+                        value="1"
+                        :checked="(bool) old('accept_terms')"
+                        :aria-label="__('auth.accept_terms_aria')"
+                        class="mt-1 shrink-0"
+                    />
+                    <flux:text class="text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
+                        {{ __('auth.login_terms_prefix') }}
+                        <flux:link :href="route('landing.terms')" target="_blank" rel="noopener" class="font-medium underline">
+                            {{ __('auth.terms_of_service') }}
+                        </flux:link>
+                        {{ __('auth.login_terms_between') }}
+                        <flux:link :href="route('landing.policy')" target="_blank" rel="noopener" class="font-medium underline">
+                            {{ __('auth.privacy_policy') }}
+                        </flux:link>.
+                    </flux:text>
+                </div>
+                <flux:error name="accept_terms" />
+            </flux:field>
+
             <!-- Submit Button -->
-            <flux:button variant="primary" type="submit" class="w-full mt-2" data-test="login-button">
+            <flux:button variant="primary" type="submit" class="w-full" data-test="login-button">
                 {{ __('Sign in') }}
             </flux:button>
         </form>
@@ -87,7 +85,6 @@
         <!-- Social Login Buttons -->
         <div class="flex flex-col gap-3">
             <a
-                type="button"
                 class="flex w-full items-center justify-center gap-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950/50 px-4 py-3 text-sm font-medium text-zinc-700 dark:text-zinc-300 shadow-sm transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-900/50"
                 href="{{ route('auth.google.redirect') }}"
             >

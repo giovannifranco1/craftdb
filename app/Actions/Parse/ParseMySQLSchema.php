@@ -7,6 +7,7 @@ use App\Exceptions\TableLimitExceededException;
 use App\Models\Column;
 use App\Models\Diagram;
 use App\Models\Table;
+use App\Support\DiagramLimits;
 use App\Support\Helpers;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
@@ -28,8 +29,14 @@ class ParseMySQLSchema extends BaseSQLParse
         $this->diagram = $diagram;
 
         // Count all tables before processing to validate limit
-        $totalTables = $this->countTablesFromFiles($files);
-        if ($totalTables > config('diagram.table_limit')) {
+        $owner = $this->diagram->team?->owner;
+        abort_if($owner === null, 403, 'Team owner not found');
+        $limits = DiagramLimits::forUser($owner);
+
+        $existingCount = $this->diagram->tables()->count();
+        $tablesFromFiles = $this->countTablesFromFiles($files);
+        $totalTables = $existingCount + $tablesFromFiles;
+        if ($totalTables > $limits['table_limit']) {
             throw new TableLimitExceededException($totalTables);
         }
 
@@ -62,7 +69,8 @@ class ParseMySQLSchema extends BaseSQLParse
             // Convert to indexed array to work with array_rand
             $colors = array_values($colors);
 
-            $tableIndex = 0;
+            // Start from existing table count so new tables are positioned after existing ones
+            $tableIndex = $this->diagram->tables()->count();
 
             foreach ($parser->statements as $statement) {
                 if (!$statement instanceof CreateStatement) {

@@ -1,7 +1,10 @@
 <?php
 
-use App\Exceptions\AuthorizationDiagramException;
-use App\Exceptions\DiagramLimitExceededException;
+use App\Http\Middleware\CheckTeamRole;
+use App\Http\Middleware\EnsureSuperRoot;
+use App\Http\Middleware\SetHeaders;
+use App\Http\Middleware\SetLocale;
+use App\Http\Middleware\ValidateLoginTermsAcceptance;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -14,12 +17,16 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
-            'role' => \App\Http\Middleware\CheckTeamRole::class,
+            'role' => CheckTeamRole::class,
+            'super.root' => EnsureSuperRoot::class,
         ]);
 
         $middleware->web(append: [
-            \App\Http\Middleware\SetLocale::class
+            SetHeaders::class,
+            SetLocale::class,
+            ValidateLoginTermsAcceptance::class,
         ]);
+
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

@@ -5,38 +5,45 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 use App\Exceptions\DiagramLimitExceededException;
-use App\Models\Concerns\HasTeam;
 use App\Models\Concerns\HasTeams;
+use App\Models\Team\Membership;
 use App\Models\Team\Team;
+use App\Support\DiagramLimits;
+use Database\Factories\UserFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\DatabaseNotification;
+use Illuminate\Notifications\DatabaseNotificationCollection;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
+use Laravel\Cashier\Billable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 
 /**
  * @property int $id
  * @property string $name
  * @property string $email
- * @property \Illuminate\Support\Carbon|null $email_verified_at
+ * @property Carbon|null $email_verified_at
  * @property string $password
+ * @property bool $is_dark
  * @property string|null $remember_token
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
  * @property string|null $two_factor_secret
  * @property string|null $two_factor_recovery_codes
  * @property string|null $two_factor_confirmed_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Team\Ability> $abilities
- * @property-read int|null $abilities_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Team\Group> $groups
- * @property-read int|null $groups_count
- * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
+ * @property-read DatabaseNotificationCollection<int, DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Team\Team> $ownedTeams
+ * @property-read Collection<int, Team> $ownedTeams
  * @property-read int|null $owned_teams_count
- * @property-read \App\Models\Team\Membership|null $membership
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Team\Team> $teams
+ * @property-read Membership|null $membership
+ * @property-read Collection<int, Team> $teams
  * @property-read int|null $teams_count
+ *
  * @method static \Database\Factories\UserFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User newQuery()
@@ -52,50 +59,30 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereTwoFactorRecoveryCodes($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereTwoFactorSecret($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereUpdatedAt($value)
+ *
  * @mixin \Eloquent
  */
+#[Fillable(['name', 'email', 'password', 'github_id', 'github_token', 'github_refresh_token', 'google_id', 'google_token', 'google_refresh_token', 'locale', 'is_dark'])]
+#[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token', 'github_token', 'github_refresh_token', 'google_token', 'google_refresh_token'])]
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, TwoFactorAuthenticatable, HasTeams;
+    /** @use HasFactory<UserFactory> */
+    use Billable, HasFactory, HasTeams, Notifiable, TwoFactorAuthenticatable;
+
+    /**
+     * Default attribute values so strict mode never sees missing keys after insert
+     * (DB defaults are not always merged back onto the in-memory model).
+     *
+     * @var array<string, mixed>
+     */
+    protected $attributes = [
+        'locale' => 'en',
+        'is_dark' => false,
+    ];
 
     const PROVIDERS = [
         'github' => 'github',
         'google' => 'google',
-    ];
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-        'github_id',
-        'github_token',
-        'github_refresh_token',
-        'google_id',
-        'google_token',
-        'google_refresh_token',
-        'locale',
-    ];
-
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
-    protected $hidden = [
-        'password',
-        'two_factor_secret',
-        'two_factor_recovery_codes',
-        'remember_token',
-        'github_token',
-        'github_refresh_token',
-        'google_token',
-        'google_refresh_token',
     ];
 
     /**
@@ -108,6 +95,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_dark' => 'boolean',
         ];
     }
 
@@ -130,8 +118,6 @@ class User extends Authenticatable
 
     /**
      * Check if the user is authenticated with Google or Github.
-     *
-     * @return bool
      */
     public function isAuthenticatedWithGoogleOrGithub(): bool
     {
@@ -140,8 +126,6 @@ class User extends Authenticatable
 
     /**
      * Check if the user is authenticated with Github.
-     *
-     * @return bool
      */
     public function isAuthenticatedWithGithub(): bool
     {
@@ -150,38 +134,90 @@ class User extends Authenticatable
 
     /**
      * Check if the user is authenticated with Google.
-     *
-     * @return bool
      */
     public function isAuthenticatedWithGoogle(): bool
     {
         return $this->google_id !== null;
     }
 
+    private static array $isProCache = [];
+
+    private static array $isTeamPlanCache = [];
+
+    /**
+     * Reset subscription lookups (tests reuse user ids after RefreshDatabase; ??= would keep stale booleans).
+     */
+    public static function clearSubscriptionCaches(): void
+    {
+        static::$isProCache = [];
+        static::$isTeamPlanCache = [];
+    }
+
     public function isPro(): bool
     {
-        return false;
+        return static::$isProCache[$this->id] ??= $this->subscribed(
+            config('billing.subscription_name', 'default')
+        );
+    }
+
+    public function isTeamPlan(): bool
+    {
+        return static::$isTeamPlanCache[$this->id] ??= (function () {
+            $prices = array_filter([
+                config('billing.plans.team_usd.price_id'),
+                config('billing.plans.team_brl.price_id'),
+            ]);
+
+            foreach ($prices as $priceId) {
+                if ($this->subscribedToPrice($priceId, config('billing.subscription_name', 'default'))) {
+                    return true;
+                }
+            }
+
+            return false;
+        })();
+    }
+
+    /**
+     * Max number of members (excluding owner) allowed in a team.
+     * Team = 24 (owner + 24 = 25 total). Free and Pro = 0 (no team features).
+     */
+    public function memberLimit(): int
+    {
+        if ($this->isTeamPlan()) {
+            return intval(config('diagram.team.member_limit')); // 24
+        }
+
+        return 0; // Free and Pro: no team members
+    }
+
+    public function canCreateTeam(): bool
+    {
+        return $this->isTeamPlan();
     }
 
     public function hasReachedDiagramLimit(): bool
     {
-        if ($this->isPro()) {
-            return false;
-        }
-
         $team = Team::currentTeam();
 
-        if (!$team) {
+        if (! $team) {
             return false;
         }
 
-        return $team->diagrams()->count() >= config('diagram.free.diagram_limit');
+        $owner = $team->owner;
+        if (! $owner) {
+            return false;
+        }
+
+        $limits = DiagramLimits::forUser($owner);
+
+        return $team->diagrams()->count() >= $limits['diagram_limit'];
     }
 
     public function validateDiagramLimit(): void
     {
         if ($this->hasReachedDiagramLimit()) {
-            throw new DiagramLimitExceededException();
+            throw new DiagramLimitExceededException;
         }
     }
 }

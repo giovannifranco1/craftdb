@@ -2,9 +2,11 @@
 
 use App\Attributes\AuthorizeDiagram;
 use App\Concerns\HandlesDiagramAuthAlert;
+use App\Exceptions\PlanFeatureException;
 use App\Models\Diagram;
 use App\Models\Note;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Defer;
 use Livewire\Attributes\On;
@@ -24,6 +26,7 @@ new #[Defer(bundle: true)] class extends CanvasComponent {
         $this->diagramId = $diagram->id;
     }
 
+    /** @return Collection<int, \App\Models\Note> */
     #[Computed]
     public function notes(): Collection
     {
@@ -34,6 +37,10 @@ new #[Defer(bundle: true)] class extends CanvasComponent {
     public function addNote(int $x = 100, int $y = 100): void
     {
         $this->authorizeDiagram('update');
+
+        if (! Auth::user()?->isPro()) {
+            throw new PlanFeatureException(__('Sticky notes are available on the Pro plan or higher.'));
+        }
 
         $note = $this->diagram->notes()->create([
             'name' => 'New Note',

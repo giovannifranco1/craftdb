@@ -8,6 +8,7 @@ use App\Models\Team\Team;
 use Illuminate\Http\UploadedFile;
 use App\Actions\Parse\ParseLaravelMigration;
 use App\Exceptions\TableLimitExceededException;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 
 /**
@@ -53,6 +54,13 @@ class CreateNewDiagram
         ]);
 
         if (data_has($data, 'file') && !empty(data_get($data, 'file')) && data_has($data, 'type')) {
+            if (! Auth::user()?->isPro()) {
+                $diagram->delete();
+                throw ValidationException::withMessages([
+                    'importForm.file' => __('SQL and migration import are available on the Pro plan or higher.'),
+                ]);
+            }
+
             $diagram->imported_at = now();
             $diagram->save();
 

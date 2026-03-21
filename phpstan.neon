@@ -18,6 +18,13 @@ parameters:
         - **/*.blade.php
 
     ignoreErrors:
-        # Ignore common Blade component patterns that PHPStan doesn't understand
-        - '#Expression "new class extends \\Livewire\\Component…" on a separate line does not do anything#'
-        - '#Access to an undefined property Livewire\\Component@anonymous.*#'
+        # Volt anonymous class false positives (Livewire Volt syntax)
+        - '#Expression "new .*class (extends|implements).*" on a separate line does not do anything#'
+        # Livewire #[Computed] properties accessed as magic $this->propName
+        - '#Access to an undefined property .*@anonymous.*#'
+        # HasMembers trait: App\Models\Team path is excluded, so PHPStan can't see users
+        - '#Trait App\\Models\\Concerns\\HasMembers is used zero times#'
+        # Eloquent new-style Attribute accessor (colors(): Attribute) not recognized by larastan
+        - '#Property ''colors'' does not exist in model#'
+        # Socialite concrete class properties ($token, $refreshToken) not on interface
+        - '#Access to an undefined property Laravel\\Socialite\\Contracts\\User::\$(token|refreshToken)#'

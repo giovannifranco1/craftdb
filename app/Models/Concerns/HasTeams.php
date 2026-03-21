@@ -14,7 +14,7 @@ trait HasTeams
 {
 
     /**
-     * @var array $decisionCache Used to hold decisions made
+     * @var array<string, mixed> $decisionCache Used to hold decisions made
      */
     private array $decisionCache = [];
 
@@ -32,7 +32,7 @@ trait HasTeams
     /**
      * Retrieve all teams the user owns or belongs to.
      *
-     * @return Collection
+     * @return Collection<int, \App\Models\Team\Team>
      */
     public function allTeams(): Collection
     {
@@ -42,7 +42,7 @@ trait HasTeams
     /**
      * Retrieve all teams the user owns.
      *
-     * @return HasMany
+     * @return HasMany<\App\Models\Team\Team, $this>
      * @throws Exception
      */
     public function ownedTeams(): HasMany
@@ -59,13 +59,14 @@ trait HasTeams
      */
     public function belongsToTeam(object $team): bool
     {
+        // @phpstan-ignore-next-line
         return $this->ownsTeam($team) || $this->teams()->where('team_id', $team->id)->exists();
     }
 
     /**
      * Retrieve all teams the user belongs to.
      *
-     * @return BelongsToMany
+     * @return BelongsToMany<\App\Models\Team\Team, $this, \Illuminate\Database\Eloquent\Relations\Pivot, 'membership'>
      * @throws Exception
      */
     public function teams(): BelongsToMany
@@ -78,6 +79,9 @@ trait HasTeams
             ->as('membership');
     }
 
+    /**
+     * @return BelongsToMany<\App\Models\Team\Role, $this>
+     */
     public function roles(): BelongsToMany
     {
         return $this

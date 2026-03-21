@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Feature\Actions\Parse;
 
 use App\Actions\Diagram\AddRelationshipWithExistingForeignKey;
@@ -11,7 +12,6 @@ use App\Models\Team\Team;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use ReflectionClass;
 
@@ -408,15 +408,15 @@ describe('Full integration test', function (): void {
         $files = [
             UploadedFile::fake()->createWithContent(
                 '2024_01_01_create_users_table.php',
-                File::get(__DIR__ . '/Fixtures/migrations/2024_01_01_000001_create_users_table.php')
+                File::get(__DIR__.'/Fixtures/migrations/2024_01_01_000001_create_users_table.php')
             ),
             UploadedFile::fake()->createWithContent(
                 '2024_01_02_create_posts_table.php',
-                File::get(__DIR__ . '/Fixtures/migrations/2024_01_01_000002_create_posts_table.php')
+                File::get(__DIR__.'/Fixtures/migrations/2024_01_01_000002_create_posts_table.php')
             ),
             UploadedFile::fake()->createWithContent(
                 '2024_01_03_create_comments_table.php',
-                File::get(__DIR__ . '/Fixtures/migrations/2024_01_01_000003_create_comments_table.php')
+                File::get(__DIR__.'/Fixtures/migrations/2024_01_01_000003_create_comments_table.php')
             ),
         ];
 
@@ -461,19 +461,19 @@ describe('Full integration test', function (): void {
         $files = [
             UploadedFile::fake()->createWithContent(
                 '2024_01_01_create_users_table.php',
-                File::get(__DIR__ . '/Fixtures/migrations/2024_01_01_000001_create_users_table.php')
+                File::get(__DIR__.'/Fixtures/migrations/2024_01_01_000001_create_users_table.php')
             ),
             UploadedFile::fake()->createWithContent(
                 '2024_01_02_create_posts_table.php',
-                File::get(__DIR__ . '/Fixtures/migrations/2024_01_01_000002_create_posts_table.php')
+                File::get(__DIR__.'/Fixtures/migrations/2024_01_01_000002_create_posts_table.php')
             ),
             UploadedFile::fake()->createWithContent(
                 '2024_01_03_create_comments_table.php',
-                File::get(__DIR__ . '/Fixtures/migrations/2024_01_01_000003_create_comments_table.php')
+                File::get(__DIR__.'/Fixtures/migrations/2024_01_01_000003_create_comments_table.php')
             ),
             UploadedFile::fake()->createWithContent(
                 '2024_01_04_create_relationships_table.php',
-                File::get(__DIR__ . '/Fixtures/migrations/2024_01_01_000004_create_relationships_table.php')
+                File::get(__DIR__.'/Fixtures/migrations/2024_01_01_000004_create_relationships_table.php')
             ),
         ];
 
@@ -520,11 +520,11 @@ describe('Full integration test', function (): void {
         $files = [
             UploadedFile::fake()->createWithContent(
                 '2024_01_01_create_users_table.php',
-                File::get(__DIR__ . '/Fixtures/migrations/2024_01_01_000001_create_users_table.php')
+                File::get(__DIR__.'/Fixtures/migrations/2024_01_01_000001_create_users_table.php')
             ),
             UploadedFile::fake()->createWithContent(
                 '2024_01_05_create_tags_table.php',
-                File::get(__DIR__ . '/Fixtures/migrations/2024_01_01_000005_create_tags_table.php')
+                File::get(__DIR__.'/Fixtures/migrations/2024_01_01_000005_create_tags_table.php')
             ),
         ];
 
@@ -569,7 +569,7 @@ describe('Advanced migration scenarios', function (): void {
     it('can parse self-referencing foreign key and softDeletes', function () {
         $file = UploadedFile::fake()->createWithContent(
             '2024_01_01_create_categories_table.php',
-            File::get(__DIR__ . '/Fixtures/migrations/2024_01_01_000006_create_categories_table.php')
+            File::get(__DIR__.'/Fixtures/migrations/2024_01_01_000006_create_categories_table.php')
         );
 
         /** @disregard */
@@ -612,17 +612,17 @@ describe('Advanced migration scenarios', function (): void {
     it('can parse UUID primary key and JSON columns', function () {
         $usersFile = UploadedFile::fake()->createWithContent(
             '2024_01_01_create_users_table.php',
-            File::get(__DIR__ . '/Fixtures/migrations/2024_01_01_000001_create_users_table.php')
+            File::get(__DIR__.'/Fixtures/migrations/2024_01_01_000001_create_users_table.php')
         );
 
         $categoriesFile = UploadedFile::fake()->createWithContent(
             '2024_01_01_create_categories_table.php',
-            File::get(__DIR__ . '/Fixtures/migrations/2024_01_01_000006_create_categories_table.php')
+            File::get(__DIR__.'/Fixtures/migrations/2024_01_01_000006_create_categories_table.php')
         );
 
         $productsFile = UploadedFile::fake()->createWithContent(
             '2024_01_01_create_products_table.php',
-            File::get(__DIR__ . '/Fixtures/migrations/2024_01_01_000007_create_products_table.php')
+            File::get(__DIR__.'/Fixtures/migrations/2024_01_01_000007_create_products_table.php')
         );
 
         /** @disregard */
@@ -669,14 +669,15 @@ describe('Advanced migration scenarios', function (): void {
     });
 
     it('can parse old-style foreign key syntax', function () {
+        /** @var TestCase $this */
         $usersFile = UploadedFile::fake()->createWithContent(
             '2024_01_01_create_users_table.php',
-            File::get(__DIR__ . '/Fixtures/migrations/2024_01_01_000001_create_users_table.php')
+            File::get(__DIR__.'/Fixtures/migrations/2024_01_01_000001_create_users_table.php')
         );
 
         $ordersFile = UploadedFile::fake()->createWithContent(
             '2024_01_01_create_orders_table.php',
-            File::get(__DIR__ . '/Fixtures/migrations/2024_01_01_000008_create_orders_table.php')
+            File::get(__DIR__.'/Fixtures/migrations/2024_01_01_000008_create_orders_table.php')
         );
 
         /** @disregard */
@@ -713,27 +714,27 @@ describe('Advanced migration scenarios', function (): void {
     it('can parse foreignUuid with cascadeOnDelete', function () {
         $usersFile = UploadedFile::fake()->createWithContent(
             '2024_01_01_create_users_table.php',
-            File::get(__DIR__ . '/Fixtures/migrations/2024_01_01_000001_create_users_table.php')
+            File::get(__DIR__.'/Fixtures/migrations/2024_01_01_000001_create_users_table.php')
         );
 
         $categoriesFile = UploadedFile::fake()->createWithContent(
             '2024_01_01_create_categories_table.php',
-            File::get(__DIR__ . '/Fixtures/migrations/2024_01_01_000006_create_categories_table.php')
+            File::get(__DIR__.'/Fixtures/migrations/2024_01_01_000006_create_categories_table.php')
         );
 
         $productsFile = UploadedFile::fake()->createWithContent(
             '2024_01_01_create_products_table.php',
-            File::get(__DIR__ . '/Fixtures/migrations/2024_01_01_000007_create_products_table.php')
+            File::get(__DIR__.'/Fixtures/migrations/2024_01_01_000007_create_products_table.php')
         );
 
         $ordersFile = UploadedFile::fake()->createWithContent(
             '2024_01_01_create_orders_table.php',
-            File::get(__DIR__ . '/Fixtures/migrations/2024_01_01_000008_create_orders_table.php')
+            File::get(__DIR__.'/Fixtures/migrations/2024_01_01_000008_create_orders_table.php')
         );
 
         $orderItemsFile = UploadedFile::fake()->createWithContent(
             '2024_01_01_create_order_items_table.php',
-            File::get(__DIR__ . '/Fixtures/migrations/2024_01_01_000009_create_order_items_table.php')
+            File::get(__DIR__.'/Fixtures/migrations/2024_01_01_000009_create_order_items_table.php')
         );
 
         /** @disregard */
@@ -766,22 +767,22 @@ describe('Advanced migration scenarios', function (): void {
     it('can parse multiple foreign keys to same table', function () {
         $usersFile = UploadedFile::fake()->createWithContent(
             '2024_01_01_create_users_table.php',
-            File::get(__DIR__ . '/Fixtures/migrations/2024_01_01_000001_create_users_table.php')
+            File::get(__DIR__.'/Fixtures/migrations/2024_01_01_000001_create_users_table.php')
         );
 
         $categoriesFile = UploadedFile::fake()->createWithContent(
             '2024_01_01_create_categories_table.php',
-            File::get(__DIR__ . '/Fixtures/migrations/2024_01_01_000006_create_categories_table.php')
+            File::get(__DIR__.'/Fixtures/migrations/2024_01_01_000006_create_categories_table.php')
         );
 
         $productsFile = UploadedFile::fake()->createWithContent(
             '2024_01_01_create_products_table.php',
-            File::get(__DIR__ . '/Fixtures/migrations/2024_01_01_000007_create_products_table.php')
+            File::get(__DIR__.'/Fixtures/migrations/2024_01_01_000007_create_products_table.php')
         );
 
         $reviewsFile = UploadedFile::fake()->createWithContent(
             '2024_01_01_create_reviews_table.php',
-            File::get(__DIR__ . '/Fixtures/migrations/2024_01_01_000010_create_reviews_table.php')
+            File::get(__DIR__.'/Fixtures/migrations/2024_01_01_000010_create_reviews_table.php')
         );
 
         /** @disregard */
@@ -819,12 +820,12 @@ describe('Advanced migration scenarios', function (): void {
     it('can parse complex FK with cascadeOnDelete and enum types', function () {
         $usersFile = UploadedFile::fake()->createWithContent(
             '2024_01_01_create_users_table.php',
-            File::get(__DIR__ . '/Fixtures/migrations/2024_01_01_000001_create_users_table.php')
+            File::get(__DIR__.'/Fixtures/migrations/2024_01_01_000001_create_users_table.php')
         );
 
         $addressesFile = UploadedFile::fake()->createWithContent(
             '2024_01_01_create_addresses_table.php',
-            File::get(__DIR__ . '/Fixtures/migrations/2024_01_01_000011_create_addresses_table.php')
+            File::get(__DIR__.'/Fixtures/migrations/2024_01_01_000011_create_addresses_table.php')
         );
 
         /** @disregard */
@@ -863,12 +864,12 @@ describe('Advanced migration scenarios', function (): void {
     it('can parse Schema::table() to add columns to existing table', function () {
         $usersFile = UploadedFile::fake()->createWithContent(
             '2024_01_01_create_users_table.php',
-            File::get(__DIR__ . '/Fixtures/migrations/2024_01_01_000001_create_users_table.php')
+            File::get(__DIR__.'/Fixtures/migrations/2024_01_01_000001_create_users_table.php')
         );
 
         $addBioFile = UploadedFile::fake()->createWithContent(
             '2024_01_01_add_bio_to_users_table.php',
-            File::get(__DIR__ . '/Fixtures/migrations/2024_01_01_000012_add_bio_to_users_table.php')
+            File::get(__DIR__.'/Fixtures/migrations/2024_01_01_000012_add_bio_to_users_table.php')
         );
 
         /** @disregard */
@@ -909,31 +910,31 @@ describe('Advanced migration scenarios', function (): void {
         $files = [
             UploadedFile::fake()->createWithContent(
                 '2024_01_01_000001_create_users_table.php',
-                File::get(__DIR__ . '/Fixtures/migrations/2024_01_01_000001_create_users_table.php')
+                File::get(__DIR__.'/Fixtures/migrations/2024_01_01_000001_create_users_table.php')
             ),
             UploadedFile::fake()->createWithContent(
                 '2024_01_01_000006_create_categories_table.php',
-                File::get(__DIR__ . '/Fixtures/migrations/2024_01_01_000006_create_categories_table.php')
+                File::get(__DIR__.'/Fixtures/migrations/2024_01_01_000006_create_categories_table.php')
             ),
             UploadedFile::fake()->createWithContent(
                 '2024_01_01_000007_create_products_table.php',
-                File::get(__DIR__ . '/Fixtures/migrations/2024_01_01_000007_create_products_table.php')
+                File::get(__DIR__.'/Fixtures/migrations/2024_01_01_000007_create_products_table.php')
             ),
             UploadedFile::fake()->createWithContent(
                 '2024_01_01_000008_create_orders_table.php',
-                File::get(__DIR__ . '/Fixtures/migrations/2024_01_01_000008_create_orders_table.php')
+                File::get(__DIR__.'/Fixtures/migrations/2024_01_01_000008_create_orders_table.php')
             ),
             UploadedFile::fake()->createWithContent(
                 '2024_01_01_000009_create_order_items_table.php',
-                File::get(__DIR__ . '/Fixtures/migrations/2024_01_01_000009_create_order_items_table.php')
+                File::get(__DIR__.'/Fixtures/migrations/2024_01_01_000009_create_order_items_table.php')
             ),
             UploadedFile::fake()->createWithContent(
                 '2024_01_01_000010_create_reviews_table.php',
-                File::get(__DIR__ . '/Fixtures/migrations/2024_01_01_000010_create_reviews_table.php')
+                File::get(__DIR__.'/Fixtures/migrations/2024_01_01_000010_create_reviews_table.php')
             ),
             UploadedFile::fake()->createWithContent(
                 '2024_01_01_000011_create_addresses_table.php',
-                File::get(__DIR__ . '/Fixtures/migrations/2024_01_01_000011_create_addresses_table.php')
+                File::get(__DIR__.'/Fixtures/migrations/2024_01_01_000011_create_addresses_table.php')
             ),
         ];
 
@@ -974,6 +975,61 @@ describe('Advanced migration scenarios', function (): void {
         $metadata = $productsColumns->firstWhere('name', 'metadata');
         expect($metadata->type)->toBe('json');
     });
+
+    it('can parse Seego tenant-style migrations (cache, users, clients)', function () {
+        $files = [
+            UploadedFile::fake()->createWithContent(
+                '0001_01_01_000001_create_cache_table.php',
+                File::get(__DIR__.'/Fixtures/migrations/0001_01_01_000001_create_cache_table.php')
+            ),
+            UploadedFile::fake()->createWithContent(
+                '0001_01_01_000001_create_users_table.php',
+                File::get(__DIR__.'/Fixtures/migrations/0001_01_01_000001_create_users_table.php')
+            ),
+            UploadedFile::fake()->createWithContent(
+                '2025_01_22_120000_create_clients_table.php',
+                File::get(__DIR__.'/Fixtures/migrations/2025_01_22_120000_create_clients_table.php')
+            ),
+        ];
+
+        /** @disregard */
+        $this->parser->exec($files, $this->diagram);
+
+        /** @disregard */
+        $tables = Table::where('diagram_id', $this->diagram->id)->get();
+
+        expect($tables)->toHaveCount(6)
+            ->and($tables->pluck('name')->sort()->values()->all())->toEqual(
+                collect(['cache', 'cache_locks', 'clients', 'password_reset_tokens', 'sessions', 'users'])
+                    ->sort()
+                    ->values()
+                    ->all()
+            );
+
+        $cacheTable = $tables->firstWhere('name', 'cache');
+        expect($cacheTable)->not->toBeNull();
+        $cacheColumns = Column::where('table_id', $cacheTable->id)->get();
+        expect($cacheColumns)->toHaveCount(3);
+        expect($cacheColumns->pluck('name')->all())->toEqualCanonicalizing(['key', 'value', 'expiration']);
+
+        $usersTable = $tables->firstWhere('name', 'users');
+        expect($usersTable)->not->toBeNull();
+        $usersColumns = Column::where('table_id', $usersTable->id)->get();
+        expect($usersColumns)->toHaveCount(16);
+
+        $clientsTable = $tables->firstWhere('name', 'clients');
+        expect($clientsTable)->not->toBeNull();
+        $clientsColumns = Column::where('table_id', $clientsTable->id)->get();
+        expect($clientsColumns)->toHaveCount(6);
+        expect($clientsColumns->firstWhere('name', 'deleted_at'))->not->toBeNull()
+            ->and($clientsColumns->firstWhere('name', 'deleted_at')->type)->toBe('timestamp');
+
+        // FKs to organizations* are skipped (referenced tables not in import); sessions.user_id has no constrained()
+        $relationships = Relationship::whereIn('from_table_id', $tables->pluck('id'))
+            ->orWhereIn('to_table_id', $tables->pluck('id'))
+            ->get();
+        expect($relationships)->toHaveCount(0);
+    });
 });
 
 function createMigrationFile(string $tableName, string $blueprint): UploadedFile
@@ -1000,4 +1056,3 @@ function createMigrationFile(string $tableName, string $blueprint): UploadedFile
         $content
     );
 }
-

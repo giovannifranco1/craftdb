@@ -3,6 +3,8 @@
 namespace App\Models\Team;
 
 use App\Enums\Roles;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
@@ -28,17 +30,10 @@ use Jurager\Teams\Support\Facades\Teams as TeamsFacade;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Role whereName($value)
  * @mixin \Eloquent
  */
+#[Table('role', timestamps: false)]
+#[Fillable(['code', 'name', 'description'])]
 class Role extends Model
 {
-    protected $table = 'role';
-
     const CODE_EDITOR = 'editor';
     const CODE_VIEWER = 'viewer';
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<string>
-     */
-    protected $fillable = ['code', 'name', 'description'];
 }

@@ -17,7 +17,7 @@ beforeEach(function () {
     // Create test diagram for component
     $this->diagram = Diagram::factory()->create(['team_id' => $this->team->id]);
 
-    $this->component = Livewire::test('diagram.⚡graph', ['diagram' => $this->diagram]);
+    $this->component = Livewire::test('diagram.ui.⚡graph', ['diagram' => $this->diagram]);
 });
 
 

@@ -25,7 +25,7 @@
             class="font-[Poppins] text-xs {{ ($area->is_solid ?? false) ? '' : 'opacity-50' }}"
         >
             <flux:icon.paint-brush variant="solid" class="size-3.5"/>
-            {{ $area->is_solid ?? false ? __('Remove transparency') : __('Solid color') }}
+            {{ $area->is_solid ?? false ? __('Transparency') : __('Solid') }}
         </flux:button>
 
         <flux:button @mousedown.stop="$wire.remove()" variant="primary" square icon="trash" color="red" class="font-[Kalam]"/>

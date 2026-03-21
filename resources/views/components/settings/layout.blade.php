@@ -4,6 +4,7 @@
     <div class="me-10 w-full pb-4 md:w-[220px]">
         <flux:navlist>
             <flux:navlist.item :href="route('profile.edit')" wire:navigate>{{ __('Profile') }}</flux:navlist.item>
+            <flux:navlist.item :href="route('billing.index')" wire:navigate>{{ __('Billing') }}</flux:navlist.item>
             <flux:navlist.item :href="route('user-password.edit')" wire:navigate>{{ __('Password') }}</flux:navlist.item>
             @if (Laravel\Fortify\Features::canManageTwoFactorAuthentication())
                 <flux:navlist.item :href="route('two-factor.show')" wire:navigate>{{ __('Two-Factor Auth') }}</flux:navlist.item>
@@ -18,9 +19,7 @@
                 @can('create', $team)
                     <flux:navlist.item :href="route('team.create')" wire:navigate>{{ __('Create New Team') }}</flux:navlist.item>
                 @endcan
-                @can('addTeamMember', $team)
-                    <flux:navlist.item :href="route('team.members.edit')" wire:navigate>{{ __('Members') }}</flux:navlist.item>
-                @endcan
+                <flux:navlist.item :href="route('team.members.edit')" wire:navigate>{{ __('Members') }}</flux:navlist.item>
             </flux:navlist.group>
         </flux:navlist>
     </div>
@@ -28,10 +27,10 @@
     <flux:separator class="md:hidden" />
 
     <div class="flex-1 self-stretch max-md:pt-6">
-        <flux:heading class="underline">{{ $heading ?? '' }}</flux:heading>
+        <flux:heading size="lg" class="underline">{{ $heading ?? '' }}</flux:heading>
         <flux:subheading>{{ $subheading ?? '' }}</flux:subheading>
 
-        <div class="mt-5 w-full max-w-lg bg-white dark:bg-background-dark rounded-lg p-5 shadow-sm">
+        <div class="mt-5 w-full max-w-2xl bg-white dark:bg-background-dark border border-zinc-200 dark:border-zinc-700 rounded-lg p-5">
             {{ $slot }}
         </div>
     </div>

@@ -34,17 +34,19 @@ class TableData implements Wireable
     /**
      * Get primary columns
      */
+    /** @return array<int, ColumnData> */
     public function getPrimaryColumns(): array
     {
-        return array_filter($this->columns, fn($col) => $col['is_primary'] ?? false);
+        return array_filter($this->columns, fn(ColumnData $col) => $col->is_primary);
     }
 
     /**
      * Get foreign columns
      */
+    /** @return array<int, ColumnData> */
     public function getForeignColumns(): array
     {
-        return array_filter($this->columns, fn($col) => $col['is_foreign'] ?? false);
+        return array_filter($this->columns, fn(ColumnData $col) => $col->is_foreign);
     }
 
     /**
@@ -52,12 +54,13 @@ class TableData implements Wireable
      */
     public function getColor(): string
     {
-        return $this->color ?? \App\Models\Table::COLOR_DEFAULT;
+        return $this->color;
     }
 
     /**
      * Convert to array for Livewire serialization
      */
+    /** @return array<string, mixed> */
     public function toLivewire(): array
     {
         return [
@@ -78,7 +81,7 @@ class TableData implements Wireable
     /**
      * Reconstruct from Livewire serialized data
      */
-    public static function fromLivewire($value): self
+    public static function fromLivewire(mixed $value): self
     {
         return new self(
             id: $value['id'],
@@ -113,7 +116,7 @@ class TableData implements Wireable
             resize_column_position: $table->resize_column_position ?? 10,
 
             /** @var array<ColumnData> */
-            columns: $table->columns?->map(fn(Column $col): ColumnData => ColumnData::fromModel($col))->all() ?? [],
+            columns: $table->columns->map(fn(Column $col): ColumnData => ColumnData::fromModel($col))->all(),
         );
     }
 }

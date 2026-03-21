@@ -33,9 +33,9 @@ class TeamPolicy
     /**
      * Determine whether the user can create models.
      */
-    public function create(): bool
+    public function create(User $user): bool
     {
-        return true;
+        return $user->canCreateTeam();
     }
 
     /**
@@ -51,6 +51,18 @@ class TeamPolicy
     }
 
     /**
+     * Determine whether the user can update the team information.
+     *
+     * @param User $user
+     * @param object $team
+     * @return bool
+     */
+    public function updateTeam(User $user, object $team): bool
+    {
+        return $user->ownsTeam($team);
+    }
+
+    /**
      * Determine whether the user can add team members.
      *
      * @param User $user
@@ -59,7 +71,7 @@ class TeamPolicy
      */
     public function addTeamMember(User $user, object $team): bool
     {
-        return $user->ownsTeam($team);
+        return $user->ownsTeam($team) && $user->isTeamPlan();
     }
 
     /**

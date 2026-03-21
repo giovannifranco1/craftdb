@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers\Pages;
 
+use App\Actions\Diagram\ExportDiagramToJson;
+use App\Actions\Diagram\ExportDiagramToLaravelMigration;
+use App\Actions\Diagram\GenerateMigrationZip;
 use App\Http\Controllers\Controller;
 use App\Models\Diagram;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class DiagramController extends Controller
 {
@@ -28,6 +32,7 @@ class DiagramController extends Controller
         $diagram->load([
             'tables.columns',
             'tables.foreignKeys',
+            'team.owner',
         ]);
 
         return view('pages.diagram.show', compact('diagram'));
@@ -47,6 +52,40 @@ class DiagramController extends Controller
 
          return view('pages.diagram.public', compact('diagram'));
      }
+
+    public function exportJson(int $teamId, Diagram $diagram): StreamedResponse
+    {
+        Gate::authorize('view', $diagram);
+        abort_unless(Auth::user()?->isPro(), 403, __('Export is available on the Pro plan or higher.'));
+
+        $data = app(ExportDiagramToJson::class)->exec($diagram);
+        $filename = str()->slug($diagram->name) . '-' . now()->format('Ymd') . '.json';
+
+        return response()->streamDownload(
+            fn () => print(json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)),
+            $filename,
+            ['Content-Type' => 'application/json']
+        );
+    }
+
+    public function exportLaravelMigration(int $teamId, Diagram $diagram): StreamedResponse
+    {
+        Gate::authorize('view', $diagram);
+        abort_unless(Auth::user()?->isPro(), 403, __('Export is available on the Pro plan or higher.'));
+
+        $files = app(ExportDiagramToLaravelMigration::class)->exec($diagram);
+        $zipPath = app(GenerateMigrationZip::class)->exec($files);
+        $filename = str()->slug($diagram->name) . '-migrations-' . now()->format('Ymd') . '.zip';
+
+        return response()->streamDownload(
+            function () use ($zipPath) {
+                readfile($zipPath);
+                @unlink($zipPath);
+            },
+            $filename,
+            ['Content-Type' => 'application/zip']
+        );
+    }
 
     public function toggleFavorite(int $teamId, Diagram $diagram): JsonResponse
     {
