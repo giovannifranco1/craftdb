@@ -33,6 +33,13 @@ beforeEach(function (): void {
 
 describe('ExportDiagramToLaravelMigration generation', function (): void {
 
+    beforeEach(function (): void {
+        /** @var TestCase $this */
+        $proUser = \Mockery::mock($this->user)->makePartial();
+        $proUser->shouldReceive('isPro')->andReturn(true);
+        $this->actingAs($proUser);
+    });
+
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
