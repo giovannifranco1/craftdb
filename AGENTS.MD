@@ -95,7 +95,7 @@ Detalhes completos em `.specs/codebase/CONVENTIONS.md`
 
 - **Stripe / Cashier** — checkout, portal, webhooks automáticos em `/stripe/webhook`
 - **GitHub + Google OAuth** — via Socialite, campos `*_id/*_token` no model User
-- **Cloudflare** — header `CF-IPCountry` para detecção de região (USD vs BRL)
+- **Cloudflare** — header `cf-ipcountry` para detecção de região (USD vs BRL)
 - **phpmyadmin/sql-parser** — import de schemas MySQL
 - **AWS S3** — storage configurado
 
@@ -120,7 +120,7 @@ Detalhes completos em `.specs/codebase/TESTING.md`
 2. **Não carregue** vários docs de codebase ao mesmo tempo
 3. **Novas features de diagrama** = nova Action em `app/Actions/Diagram/`
 4. **Limites de plano** são verificados em `app/Support/DiagramLimits.php` + `config/diagram.php`
-5. **Billing regional** = detectar via `CF-IPCountry` e usar Price ID correto (USD ou BRL)
+5. **Billing regional** = detectar via `cf-ipcountry` e usar Price ID correto (USD ou BRL)
 6. **Ao modificar Models**, verifique Observers que podem reagir às mudanças
 7. **Ao tocar em canvas JS** (Alpine stores, SVG lines, InfiniteCanvas), carregue `.specs/codebase/CANVAS.md`
 8. **Escreva testes** seguindo os padrões em `.specs/codebase/TESTING.md`

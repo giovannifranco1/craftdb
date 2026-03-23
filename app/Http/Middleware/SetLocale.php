@@ -36,12 +36,12 @@ class SetLocale
     }
 
     /**
-     * Guests from Brazil (Cloudflare CF-IPCountry) see auth and landing in pt_BR when no session locale.
+     * Guests from Brazil (Cloudflare cf-ipcountry) see auth and landing in pt_BR when no session locale.
      * Requires SetHeaders to run first so the header is trusted or stripped.
      */
     private function shouldUsePortugueseBrazilFromCloudflare(Request $request): bool
     {
-        if (strtoupper((string) $request->header('CF-IPCountry')) !== 'BR') {
+        if (strtoupper((string) $request->header('cf-ipcountry')) !== 'BR') {
             return false;
         }
 

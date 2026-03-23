@@ -8,7 +8,7 @@ enum BillingCountry: string
     case BRL = 'BRL';
 
     /**
-     * Parse country code from CF-IPCountry header or string.
+     * Parse country code from cf-ipcountry header or string.
      * Returns US as default when not BR.
      */
     public static function fromRequest(?string $header = null): self

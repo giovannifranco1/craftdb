@@ -8,11 +8,11 @@ new class extends BaseComponent {
     public bool $annual = false;
 
     /**
-     * Billing country from CF-IPCountry header (US or BR, default US).
+     * Billing country from cf-ipcountry header (US or BR, default US).
      */
     public function getBillingCountryProperty(): BillingCountry
     {
-        return BillingCountry::fromRequest(request()->header('CF-IPCountry'));
+        return BillingCountry::fromRequest(request()->header('cf-ipcountry'));
     }
 
     /**

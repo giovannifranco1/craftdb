@@ -12,11 +12,11 @@ class BillingController extends Controller
 {
     /**
      * Redirect to Stripe Checkout for the given plan.
-     * Uses CF-IPCountry header to resolve country-specific price (US or BR).
+     * Uses cf-ipcountry header to resolve country-specific price (US or BR).
      */
     public function checkout(Request $request, string $plan): Checkout|RedirectResponse
     {
-        $country = BillingCountry::fromRequest($request->header('CF-IPCountry'));
+        $country = BillingCountry::fromRequest($request->header('cf-ipcountry'));
         $plans = config('billing.plans', []);
 
         if (! $country->hasPlan($plan)) {
