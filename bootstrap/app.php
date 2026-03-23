@@ -27,6 +27,8 @@ return Application::configure(basePath: dirname(__DIR__))
             ValidateLoginTermsAcceptance::class,
         ]);
 
+        $middleware->trustProxies(at: '*');
+
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
