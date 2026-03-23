@@ -68,5 +68,15 @@ Route::middleware(['auth', 'role:viewer|editor|owner', 'throttle:60,1'])->group(
 /** Public Diagram (no auth required) */
 Route::get('/diagram/public/{token}', [DiagramController::class, 'showPublic'])->name('diagram.public');
 
+/** Debug CF-IPCountry */
+Route::get('/debug-cf', function () {
+    return [
+        'all_headers' => request()->headers->all(),
+        'country'     => request()->header('CF-IPCountry'),
+        'ip'          => request()->ip(),
+        'server'      => request()->server->all(),
+    ];
+});
+
 /** Authentication Routes */
 require __DIR__ . '/auth.php';
