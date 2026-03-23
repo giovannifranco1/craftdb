@@ -36,7 +36,7 @@
 
 - Pagamentos: Stripe via Laravel Cashier 16
 - OAuth: GitHub, Google (via Laravel Socialite)
-- Detecção de região: Cloudflare header `CF-IPCountry`
+- Detecção de região: Cloudflare header `cf-ipcountry`
 - Storage: AWS S3 (configurado, não verificado se em uso ativo)
 
 ## Ferramentas de Desenvolvimento

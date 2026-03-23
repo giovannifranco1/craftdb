@@ -14,10 +14,10 @@ class SetHeaders
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
     /**
-     * SECURITY: This middleware is the trust boundary for the CF-IPCountry header.
+     * SECURITY: This middleware is the trust boundary for the cf-ipcountry header.
      *
-     * BillingController reads CF-IPCountry to determine the user's country for pricing.
-     * Without this middleware, any client could send a forged CF-IPCountry header and
+     * BillingController reads cf-ipcountry to determine the user's country for pricing.
+     * Without this middleware, any client could send a forged cf-ipcountry header and
      * receive pricing intended for a different country.
      *
      * Trust model:
@@ -33,13 +33,13 @@ class SetHeaders
     public function handle(Request $request, Closure $next): Response
     {
         if (app()->environment('local')) {
-            $request->headers->set('CF-IPCountry', 'BR');
+            $request->headers->set('cf-ipcountry', 'BR');
         } elseif (! config('app.cloudflare_proxy', false)) {
             /**
-             * Strip CF-IPCountry when not behind Cloudflare to prevent header spoofing.
+             * Strip cf-ipcountry when not behind Cloudflare to prevent header spoofing.
              * Set CLOUDFLARE_PROXY=true in production when traffic flows through Cloudflare.
             */
-            $request->headers->remove('CF-IPCountry');
+            $request->headers->remove('cf-ipcountry');
         }
 
         return $next($request);

@@ -33,7 +33,7 @@ BILLING_TEAM_BRL_PRICE=59.99
 **Price IDs Stripe:** `STRIPE_PRICE_PRO_USD`, `STRIPE_PRICE_PRO_BRL`, `STRIPE_PRICE_TEAM_USD`, `STRIPE_PRICE_TEAM_BRL` + variantes `_ANNUAL` — todos via `.env`
 
 **Fluxo de checkout:**
-1. BillingController detecta país via `CF-IPCountry` header (Cloudflare)
+1. BillingController detecta país via `cf-ipcountry` header (Cloudflare)
 2. Seleciona Price ID correspondente (USD ou BRL)
 3. Redireciona para Stripe Checkout: `$user->newSubscription()->checkout()`
 4. Stripe retorna para `/settings/billing/success`
@@ -66,7 +66,7 @@ BILLING_TEAM_BRL_PRICE=59.99
 
 **Serviço:** Cloudflare (proxy reverso)
 **Propósito:** Detectar país do usuário para aplicar precificação regional (USD vs BRL)
-**Implementação:** `BillingController::checkout()` lê header `CF-IPCountry`
+**Implementação:** `BillingController::checkout()` lê header `cf-ipcountry`
 **Configuração:** `CLOUDFLARE_PROXY=true` no `.env` (habilita leitura do header)
 **Enum:** `app/Enums/BillingCountry` — `USD` (default) ou `BRL` (Brasil)
 

@@ -114,7 +114,7 @@ POST /dashboard (Livewire)
 ```
 GET /settings/billing/checkout/{plan}
     → BillingController::checkout()
-        → Detecta país via CF-IPCountry header
+        → Detecta país via cf-ipcountry header
         → Seleciona Price ID (USD ou BRL)
         → $user->newSubscription()->checkout()
         → Redireciona para Stripe Checkout
