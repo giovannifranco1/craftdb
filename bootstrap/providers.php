@@ -3,5 +3,5 @@
 return [
     App\Providers\AppServiceProvider::class,
     App\Providers\FortifyServiceProvider::class,
-    Barryvdh\Debugbar\ServiceProvider::class,
+    Resend\Laravel\ResendServiceProvider::class,
 ];
