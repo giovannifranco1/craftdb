@@ -1,6 +1,6 @@
 <x-layouts.auth>
 
-    <div class="flex flex-col gap-6">
+    <div class="flex flex-col gap-6" x-init="() => $flux.dark = false">
         <x-auth-header :title="__('Welcome back')" :description="__('Sign in to continue')" />
 
         <!-- Session Status -->
