@@ -18,7 +18,10 @@ new class extends BaseComponent {
     {
         $this->diagram = $diagram;
 
-        if ($this->diagram->exists && Auth::user()?->isPro()) {
+        /** @var User $user */
+        $user = Auth::user();
+
+        if ($this->diagram->exists && $user->hasDiagramPremiumAccess($this->diagram)) {
             $this->loadGraph = true;
         }
     }
@@ -26,7 +29,10 @@ new class extends BaseComponent {
     #[On('diagram-graph::load')]
     public function loadGraph(Diagram $diagram): void
     {
-        if (! Auth::user()?->isPro()) {
+        /** @var User $user */
+        $user = Auth::user();
+
+        if (! $user->hasDiagramPremiumAccess($diagram)) {
             return;
         }
 

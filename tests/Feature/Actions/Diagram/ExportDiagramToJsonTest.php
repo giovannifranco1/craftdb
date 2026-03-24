@@ -10,12 +10,12 @@ use App\Models\Table;
 use App\Models\Team\Team;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Cashier\Subscription;
 
 uses(RefreshDatabase::class);
 
 beforeEach(function (): void {
     /** @var TestCase $this */
-
     $this->user = User::factory()->create();
 
     $this->team = Team::factory()->create([
@@ -23,19 +23,18 @@ beforeEach(function (): void {
     ]);
 
     $this->diagram = Diagram::factory()->create([
-        'name'     => 'My Diagram',
-        'style'    => 'colorful',
+        'name' => 'My Diagram',
+        'style' => 'colorful',
         'database' => 'mysql',
-        'team_id'  => $this->team->id,
+        'team_id' => $this->team->id,
     ]);
 
-    $this->action = new ExportDiagramToJson();
+    $this->action = new ExportDiagramToJson;
 });
 
 describe('ExportDiagramToJson action', function (): void {
     it('serializes diagram metadata correctly', function () {
         /** @var TestCase $this */
-
         $result = $this->action->exec($this->diagram);
 
         expect($result['craftdb_format'])->toBe('full')
@@ -48,20 +47,19 @@ describe('ExportDiagramToJson action', function (): void {
 
     it('serializes tables with columns', function () {
         /** @var TestCase $this */
-
         $table = Table::factory()->create([
             'diagram_id' => $this->diagram->id,
-            'name'       => 'users',
+            'name' => 'users',
         ]);
 
         Column::factory()->create([
-            'table_id'   => $table->id,
-            'name'       => 'id',
-            'type'       => 'bigint',
+            'table_id' => $table->id,
+            'name' => 'id',
+            'type' => 'bigint',
             'is_primary' => true,
             'is_foreign' => false,
             'is_notnull' => true,
-            'order'      => 0,
+            'order' => 0,
         ]);
 
         $result = $this->action->exec($this->diagram->fresh());
@@ -79,7 +77,6 @@ describe('ExportDiagramToJson action', function (): void {
 
     it('does not include x/y positions in tables', function () {
         /** @var TestCase $this */
-
         Table::factory()->create(['diagram_id' => $this->diagram->id]);
 
         $result = $this->action->exec($this->diagram->fresh());
@@ -90,7 +87,6 @@ describe('ExportDiagramToJson action', function (): void {
 
     it('orders columns by order field', function () {
         /** @var TestCase $this */
-
         $table = Table::factory()->create(['diagram_id' => $this->diagram->id]);
 
         Column::factory()->create(['table_id' => $table->id, 'name' => 'email', 'order' => 2]);
@@ -107,7 +103,6 @@ describe('ExportDiagramToJson action', function (): void {
 
     it('serializes relationships using table and column names', function () {
         /** @var TestCase $this */
-
         $usersTable = Table::factory()->create(['diagram_id' => $this->diagram->id, 'name' => 'users']);
         $ordersTable = Table::factory()->create(['diagram_id' => $this->diagram->id, 'name' => 'orders']);
 
@@ -115,12 +110,12 @@ describe('ExportDiagramToJson action', function (): void {
         $userIdColumn = Column::factory()->create(['table_id' => $ordersTable->id, 'name' => 'user_id']);
 
         Relationship::factory()->create([
-            'from_table_id'  => $usersTable->id,
+            'from_table_id' => $usersTable->id,
             'from_column_id' => $idColumn->id,
-            'to_table_id'    => $ordersTable->id,
-            'to_column_id'   => $userIdColumn->id,
-            'type'           => '1:n',
-            'label'          => null,
+            'to_table_id' => $ordersTable->id,
+            'to_column_id' => $userIdColumn->id,
+            'type' => '1:n',
+            'label' => null,
         ]);
 
         $result = $this->action->exec($this->diagram->fresh());
@@ -136,7 +131,6 @@ describe('ExportDiagramToJson action', function (): void {
 
     it('returns empty array when no relationships exist', function () {
         /** @var TestCase $this */
-
         $result = $this->action->exec($this->diagram);
 
         expect($result['relationships'])->toBe([]);
@@ -144,7 +138,6 @@ describe('ExportDiagramToJson action', function (): void {
 
     it('does not include areas or notes in output', function () {
         /** @var TestCase $this */
-
         $result = $this->action->exec($this->diagram);
 
         expect($result)->not->toHaveKey('areas')
@@ -153,7 +146,6 @@ describe('ExportDiagramToJson action', function (): void {
 
     it('does not include any database id fields in output', function () {
         /** @var TestCase $this */
-
         $table = Table::factory()->create(['diagram_id' => $this->diagram->id]);
         Column::factory()->create(['table_id' => $table->id]);
 
@@ -169,11 +161,12 @@ describe('ExportDiagramToJson action', function (): void {
 describe('ExportJson endpoint', function (): void {
     it('returns 200 with json content-type for pro user', function () {
         /** @var TestCase $this */
+        Subscription::factory()->for($this->user)->create([
+            'type' => config('billing.subscription_name', 'default'),
+        ]);
+        User::clearSubscriptionCaches();
 
-        $proUser = \Mockery::mock($this->user)->makePartial();
-        $proUser->shouldReceive('isPro')->andReturn(true);
-
-        $this->actingAs($proUser)
+        $this->actingAs($this->user)
             ->get(route('diagram.export-json', [
                 'team_id' => $this->team->id,
                 'diagram' => $this->diagram->slug,
@@ -184,7 +177,6 @@ describe('ExportJson endpoint', function (): void {
 
     it('returns 403 for non-pro user', function () {
         /** @var TestCase $this */
-
         $this->actingAs($this->user)
             ->get(route('diagram.export-json', [
                 'team_id' => $this->team->id,
@@ -195,7 +187,6 @@ describe('ExportJson endpoint', function (): void {
 
     it('returns 403 for user without team access', function () {
         /** @var TestCase $this */
-
         $otherUser = User::factory()->create();
 
         $this->actingAs($otherUser)
@@ -208,7 +199,6 @@ describe('ExportJson endpoint', function (): void {
 
     it('returns 401 for unauthenticated request', function () {
         /** @var TestCase $this */
-
         $this->get(route('diagram.export-json', [
             'team_id' => $this->team->id,
             'diagram' => $this->diagram->slug,
@@ -218,11 +208,12 @@ describe('ExportJson endpoint', function (): void {
 
     it('downloaded filename contains diagram slug and date', function () {
         /** @var TestCase $this */
+        Subscription::factory()->for($this->user)->create([
+            'type' => config('billing.subscription_name', 'default'),
+        ]);
+        User::clearSubscriptionCaches();
 
-        $proUser = \Mockery::mock($this->user)->makePartial();
-        $proUser->shouldReceive('isPro')->andReturn(true);
-
-        $response = $this->actingAs($proUser)
+        $response = $this->actingAs($this->user)
             ->get(route('diagram.export-json', [
                 'team_id' => $this->team->id,
                 'diagram' => $this->diagram->slug,

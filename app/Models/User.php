@@ -179,6 +179,34 @@ class User extends Authenticatable
     }
 
     /**
+     * Pro/Team features on a diagram: own subscription, or team owner paid (invited members inherit).
+     */
+    public function hasDiagramPremiumAccess(?Diagram $diagram = null): bool
+    {
+        if ($this->isPro() || $this->isTeamPlan()) {
+            return true;
+        }
+
+        if ($diagram === null) {
+            return false;
+        }
+
+        $diagram->loadMissing('team.owner');
+
+        $team = $diagram->team;
+        if (! $team || ! $team->hasUser($this)) {
+            return false;
+        }
+
+        $owner = $team->owner;
+        if (! $owner) {
+            return false;
+        }
+
+        return $owner->isPro() || $owner->isTeamPlan();
+    }
+
+    /**
      * Max number of members (excluding owner) allowed in a team.
      * Team = 24 (owner + 24 = 25 total). Free and Pro = 0 (no team features).
      */

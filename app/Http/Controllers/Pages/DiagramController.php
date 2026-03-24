@@ -26,7 +26,7 @@ class DiagramController extends Controller
             $diagram->recordView($user);
         }
 
-        cache()->forget('diagram:slug:' . $diagram->slug);
+        cache()->forget('diagram:slug:'.$diagram->slug);
         cache()->forget('diagram');
 
         $diagram->load([
@@ -38,31 +38,31 @@ class DiagramController extends Controller
         return view('pages.diagram.show', compact('diagram'));
     }
 
-     /** Show Public Diagram (no authentication required) */
-     public function showPublic(string $token): View
-     {
-         $diagram = Diagram::where('public_token', $token)->firstOrFail();
+    /** Show Public Diagram (no authentication required) */
+    public function showPublic(string $token): View
+    {
+        $diagram = Diagram::where('public_token', $token)->firstOrFail();
 
-         $diagram->load([
-             'tables.columns',
-             'tables.foreignKeys',
-             'areas',
-             'notes',
-         ]);
+        $diagram->load([
+            'tables.columns',
+            'tables.foreignKeys',
+            'areas',
+            'notes',
+        ]);
 
-         return view('pages.diagram.public', compact('diagram'));
-     }
+        return view('pages.diagram.public', compact('diagram'));
+    }
 
     public function exportJson(int $teamId, Diagram $diagram): StreamedResponse
     {
         Gate::authorize('view', $diagram);
-        abort_unless(Auth::user()?->isPro(), 403, __('Export is available on the Pro plan or higher.'));
+        abort_unless(Auth::user()?->hasDiagramPremiumAccess($diagram), 403, __('Export is available on the Pro plan or higher.'));
 
         $data = app(ExportDiagramToJson::class)->exec($diagram);
-        $filename = str()->slug($diagram->name) . '-' . now()->format('Ymd') . '.json';
+        $filename = str()->slug($diagram->name).'-'.now()->format('Ymd').'.json';
 
         return response()->streamDownload(
-            fn () => print(json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)),
+            fn () => print (json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)),
             $filename,
             ['Content-Type' => 'application/json']
         );
@@ -71,11 +71,11 @@ class DiagramController extends Controller
     public function exportLaravelMigration(int $teamId, Diagram $diagram): StreamedResponse
     {
         Gate::authorize('view', $diagram);
-        abort_unless(Auth::user()?->isPro(), 403, __('Export is available on the Pro plan or higher.'));
+        abort_unless(Auth::user()?->hasDiagramPremiumAccess($diagram), 403, __('Export is available on the Pro plan or higher.'));
 
         $files = app(ExportDiagramToLaravelMigration::class)->exec($diagram);
         $zipPath = app(GenerateMigrationZip::class)->exec($files);
-        $filename = str()->slug($diagram->name) . '-migrations-' . now()->format('Ymd') . '.zip';
+        $filename = str()->slug($diagram->name).'-migrations-'.now()->format('Ymd').'.zip';
 
         return response()->streamDownload(
             function () use ($zipPath) {
@@ -96,7 +96,7 @@ class DiagramController extends Controller
             ], 403);
         }
 
-        $diagram->is_favorite = !$diagram->isFavorite();
+        $diagram->is_favorite = ! $diagram->isFavorite();
         $diagram->timestamps = false;
         $diagram->save();
 
@@ -105,7 +105,7 @@ class DiagramController extends Controller
             'message' => $diagram->isFavorite()
                 ? __('Diagram :name was added to your favorites', ['name' => $diagram->name])
                 : __('Diagram :name was removed from your favorites', ['name' => $diagram->name]
-            ),
+                ),
         ]);
     }
 }

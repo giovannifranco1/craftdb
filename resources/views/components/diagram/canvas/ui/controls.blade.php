@@ -1,3 +1,5 @@
+@props(['diagram'])
+
 <div
     id="controls"
     class="w-[4rem] min-w-[4rem] py-3 z-20 flex-shrink-0 bg-white dark:bg-[#0F0F0F] items-center rounded-lg flex flex-col gap-2 shadow-lg border border-gray-200 dark:border-zinc-700"
@@ -92,7 +94,7 @@
             </button>
         </flux:tooltip>
 
-        @if(auth()->user()->isPro() || auth()->user()->isTeamPlan())
+        @if(auth()->user()->hasDiagramPremiumAccess($diagram))
             <flux:tooltip position="right" :content="__('Add Area') . ' (A)'">
                 <button
                     class="p-2 rounded-md transition-all cursor-pointer hover:bg-orange-50 dark:hover:bg-orange-900/30 hover:text-orange-600 dark:hover:text-orange-400 active:scale-95 group relative text-zinc-700 dark:text-zinc-300"
@@ -195,7 +197,7 @@
 
     <!-- Grupo: Gráfico e Busca -->
     <div class="flex flex-col items-center gap-1">
-        @if(auth()->user()->isPro() || auth()->user()->isTeamPlan())
+        @if(auth()->user()->hasDiagramPremiumAccess($diagram))
             <flux:modal.trigger name="diagram-graph">
                 <flux:tooltip position="right" :content="__('Diagram Graph')">
                     <button

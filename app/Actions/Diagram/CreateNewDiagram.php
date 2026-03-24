@@ -2,12 +2,12 @@
 
 namespace App\Actions\Diagram;
 
+use App\Actions\Parse\ParseLaravelMigration;
 use App\Actions\Parse\ParseMySQLSchema;
+use App\Exceptions\TableLimitExceededException;
 use App\Models\Diagram;
 use App\Models\Team\Team;
 use Illuminate\Http\UploadedFile;
-use App\Actions\Parse\ParseLaravelMigration;
-use App\Exceptions\TableLimitExceededException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 
@@ -23,14 +23,13 @@ use Illuminate\Validation\ValidationException;
  */
 class CreateNewDiagram
 {
-
     public function __construct(
         public ParseMySQLSchema $parseMySQLSchemaAction,
         public ParseLaravelMigration $parseLaravelMigrationAction
     ) {}
 
     /**
-     * @param DTODiagram $data
+     * @param  DTODiagram  $data
      */
     public function exec(array $data): Diagram
     {
@@ -38,23 +37,26 @@ class CreateNewDiagram
 
         $currentTeam = Team::currentTeam();
 
-        if (!$currentTeam) {
+        if (! $currentTeam) {
             throw new \Exception('No team found for the current user.');
         }
 
-        $slug = str()->slug($data['name']) . '-' . str()->random(10);
+        $slug = str()->slug($data['name']).'-'.str()->random(10);
 
         $diagram = Diagram::create([
-            'name'        => $data['name'],
+            'name' => $data['name'],
             'description' => data_get($data, 'description'),
-            'style'       => data_get($data, 'style'),
-            'database'    => data_get($data, 'database'),
-            'team_id'     => $currentTeam->getKey(),
-            'slug'        => $slug,
+            'style' => data_get($data, 'style'),
+            'database' => data_get($data, 'database'),
+            'team_id' => $currentTeam->getKey(),
+            'slug' => $slug,
         ]);
 
-        if (data_has($data, 'file') && !empty(data_get($data, 'file')) && data_has($data, 'type')) {
-            if (! Auth::user()?->isPro()) {
+        if (data_has($data, 'file') && ! empty(data_get($data, 'file')) && data_has($data, 'type')) {
+            /** @var User $user */
+            $user = Auth::user();
+
+            if (! $user->hasDiagramPremiumAccess($diagram)) {
                 $diagram->delete();
                 throw ValidationException::withMessages([
                     'importForm.file' => __('SQL and migration import are available on the Pro plan or higher.'),
@@ -80,34 +82,34 @@ class CreateNewDiagram
     }
 
     /**
-     * @param DTODiagram $data
+     * @param  DTODiagram  $data
      */
     private function _validate($data): void
     {
         $validator = validator()->make($data, [
-            'name'        => ['required', 'string', 'max:255'],
+            'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:255'],
-            'style'       => ['required', 'in:neutral,colorful'],
-            'database'    => ['required', 'in:mysql,postgresql,sqlite'],
+            'style' => ['required', 'in:neutral,colorful'],
+            'database' => ['required', 'in:mysql,postgresql,sqlite'],
         ]);
 
         $validator->validate();
     }
 
     /**
-     * @param array<UploadedFile> $file
+     * @param  array<UploadedFile>  $file
      */
     private function _parseSqlFile(array $file, Diagram $diagram): void
     {
         match ($diagram->database) {
             'mysql' => $this->parseMySQLSchemaAction->exec($file, $diagram),
-            //todo: add other database types => postgresql, sqlite
+            // todo: add other database types => postgresql, sqlite
             default => throw new \Exception('Invalid database type'),
         };
     }
 
     /**
-     * @param array<UploadedFile> $file
+     * @param  array<UploadedFile>  $file
      */
     private function _parseMigrationFile(array $file, Diagram $diagram): void
     {
