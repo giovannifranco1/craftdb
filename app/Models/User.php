@@ -179,22 +179,23 @@ class User extends Authenticatable
     }
 
     /**
-     * Pro/Team features on a diagram: own subscription, or team owner paid (invited members inherit).
+     * Pro/Team features in a workspace: own subscription, or team owner paid (invited members inherit).
      */
-    public function hasDiagramPremiumAccess(?Diagram $diagram = null): bool
+    public function hasTeamWorkspacePremiumAccess(?Team $team = null): bool
     {
         if ($this->isPro() || $this->isTeamPlan()) {
             return true;
         }
 
-        if ($diagram === null) {
+        $team ??= Team::currentTeam();
+
+        if (! $team) {
             return false;
         }
 
-        $diagram->loadMissing('team.owner');
+        $team->loadMissing('owner');
 
-        $team = $diagram->team;
-        if (! $team || ! $team->hasUser($this)) {
+        if (! $team->hasUser($this)) {
             return false;
         }
 
@@ -204,6 +205,20 @@ class User extends Authenticatable
         }
 
         return $owner->isPro() || $owner->isTeamPlan();
+    }
+
+    /**
+     * Pro/Team features on a diagram: own subscription, or team owner paid (invited members inherit).
+     */
+    public function hasDiagramPremiumAccess(?Diagram $diagram = null): bool
+    {
+        if ($diagram === null) {
+            return false;
+        }
+
+        $diagram->loadMissing('team');
+
+        return $this->hasTeamWorkspacePremiumAccess($diagram->team);
     }
 
     /**

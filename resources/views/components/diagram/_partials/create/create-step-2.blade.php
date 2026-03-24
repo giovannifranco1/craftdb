@@ -51,7 +51,7 @@
             <p class="text-sm text-zinc-600 dark:text-zinc-400 text-center max-w-md">
                 {{ __('Import files or framework migrations to automatically create your diagram structure.') }}
             </p>
-            @if(auth()->user()->isPro() || auth()->user()->isTeamPlan())
+            @if(auth()->user()->hasTeamWorkspacePremiumAccess())
                 <flux:button
                     @click="$flux.modal('diagram-import').show(); $dispatch('diagram-import::show')"
                     variant="primary"
