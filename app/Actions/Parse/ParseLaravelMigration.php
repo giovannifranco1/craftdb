@@ -30,102 +30,104 @@ class ParseLaravelMigration extends BaseSQLParse
 
         Table::unsetEventDispatcher();
 
-        $this->diagram = $diagram;
-        // Start from existing table count so new tables are positioned after existing ones
-        $this->tableIndex = $diagram->tables()->count();
+        try {
+            $this->diagram = $diagram;
+            // Start from existing table count so new tables are positioned after existing ones
+            $this->tableIndex = $diagram->tables()->count();
 
-        // Count all tables before processing to validate limit
-        $owner = $diagram->team()->with('owner')->first()?->owner;
-        abort_if($owner === null, 403, 'Team owner not found');
-        $limits = DiagramLimits::forUser($owner);
+            // Count all tables before processing to validate limit
+            $owner = $diagram->team()->with('owner')->first()?->owner;
+            abort_if($owner === null, 403, 'Team owner not found');
+            $limits = DiagramLimits::forUser($owner);
 
-        $existingCount = $diagram->tables()->count();
-        $tablesFromFiles = $this->countTablesFromFiles($files);
-        $totalTables = $existingCount + $tablesFromFiles;
-        if ($totalTables > $limits['table_limit']) {
-            throw new TableLimitExceededException($totalTables);
-        }
-
-        // Process ALL files in a SINGLE transaction so foreign keys can reference tables from other files
-        DB::transaction(function () use ($files): void {
-            /** @var array<string, Table> */
-            $allTables = [];
-
-            /** @var array<array{table: string, column: string, ref_table: string, ref_column: string}> */
-            $allForeignKeys = [];
-
-            // Get available colors from diagram style
-            $colors = $this->diagram->colors;
-            if (empty($colors)) {
-                $colors = [Table::COLOR_DEFAULT];
+            $existingCount = $diagram->tables()->count();
+            $tablesFromFiles = $this->countTablesFromFiles($files);
+            $totalTables = $existingCount + $tablesFromFiles;
+            if ($totalTables > $limits['table_limit']) {
+                throw new TableLimitExceededException($totalTables);
             }
 
-            // Convert to indexed array to work with array_rand
-            $colors = array_values($colors);
+            // Process ALL files in a SINGLE transaction so foreign keys can reference tables from other files
+            DB::transaction(function () use ($files): void {
+                /** @var array<string, Table> */
+                $allTables = [];
 
-            // First pass: Create all tables and columns from all files
-            foreach ($files as $file) {
-                $content = $this->getFileContent($file);
-                $createPatterns = $this->extractSchemaCreateBlocks($content);
+                /** @var array<array{table: string, column: string, ref_table: string, ref_column: string}> */
+                $allForeignKeys = [];
 
-                foreach ($createPatterns as $schemaBlock) {
-                    $tableName = $schemaBlock['table'];
-                    $blueprint = $schemaBlock['blueprint'];
-
-                    // Select a random color from available colors
-                    $randomColor = $colors[array_rand($colors)];
-
-                    // Calculate grid position for the table
-                    $this->tableIndex++;
-                    $position = Helpers::calculateGridPosition($this->tableIndex);
-
-                    // Create table
-                    $table = Table::create([
-                        'diagram_id' => $this->diagram->id,
-                        'name' => $tableName,
-                        'x' => $position['x'],
-                        'y' => $position['y'],
-                        'color' => $randomColor,
-                    ]);
-
-                    $allTables[$tableName] = $table;
-
-                    // Parse columns from blueprint
-                    $this->parseColumns($blueprint, $table);
-
-                    // Extract foreign keys from blueprint (but don't create relationships yet)
-                    $this->extractForeignKeysFromBlueprint($blueprint, $tableName, $allForeignKeys);
+                // Get available colors from diagram style
+                $colors = $this->diagram->colors;
+                if (empty($colors)) {
+                    $colors = [Table::COLOR_DEFAULT];
                 }
-            }
 
-            // Process Schema::table() blocks to add/modify columns in existing tables
-            foreach ($files as $file) {
-                $content = $this->getFileContent($file);
-                $tablePatterns = $this->extractSchemaTableBlocks($content);
+                // Convert to indexed array to work with array_rand
+                $colors = array_values($colors);
 
-                foreach ($tablePatterns as $schemaBlock) {
-                    $tableName = $schemaBlock['table'];
-                    $blueprint = $schemaBlock['blueprint'];
+                // First pass: Create all tables and columns from all files
+                foreach ($files as $file) {
+                    $content = $this->getFileContent($file);
+                    $createPatterns = $this->extractSchemaCreateBlocks($content);
 
-                    // Check if table exists in our imported tables
-                    if (isset($allTables[$tableName])) {
-                        $table = $allTables[$tableName];
+                    foreach ($createPatterns as $schemaBlock) {
+                        $tableName = $schemaBlock['table'];
+                        $blueprint = $schemaBlock['blueprint'];
 
-                        // Parse new columns from blueprint
+                        // Select a random color from available colors
+                        $randomColor = $colors[array_rand($colors)];
+
+                        // Calculate grid position for the table
+                        $this->tableIndex++;
+                        $position = Helpers::calculateGridPosition($this->tableIndex);
+
+                        // Create table
+                        $table = Table::create([
+                            'diagram_id' => $this->diagram->id,
+                            'name' => $tableName,
+                            'x' => $position['x'],
+                            'y' => $position['y'],
+                            'color' => $randomColor,
+                        ]);
+
+                        $allTables[$tableName] = $table;
+
+                        // Parse columns from blueprint
                         $this->parseColumns($blueprint, $table);
 
-                        // Extract foreign keys from blueprint
+                        // Extract foreign keys from blueprint (but don't create relationships yet)
                         $this->extractForeignKeysFromBlueprint($blueprint, $tableName, $allForeignKeys);
                     }
                 }
+
+                // Process Schema::table() blocks to add/modify columns in existing tables
+                foreach ($files as $file) {
+                    $content = $this->getFileContent($file);
+                    $tablePatterns = $this->extractSchemaTableBlocks($content);
+
+                    foreach ($tablePatterns as $schemaBlock) {
+                        $tableName = $schemaBlock['table'];
+                        $blueprint = $schemaBlock['blueprint'];
+
+                        // Check if table exists in our imported tables
+                        if (isset($allTables[$tableName])) {
+                            $table = $allTables[$tableName];
+
+                            // Parse new columns from blueprint
+                            $this->parseColumns($blueprint, $table);
+
+                            // Extract foreign keys from blueprint
+                            $this->extractForeignKeysFromBlueprint($blueprint, $tableName, $allForeignKeys);
+                        }
+                    }
+                }
+
+                // Second pass: Create all relationships now that all tables exist
+                $this->createRelationships($allForeignKeys, $allTables);
+            });
+        } finally {
+            if ($tableObserver) {
+                Table::setEventDispatcher($tableObserver);
             }
-
-            // Second pass: Create all relationships now that all tables exist
-            $this->createRelationships($allForeignKeys, $allTables);
-        });
-
-        if ($tableObserver) {
-            Table::setEventDispatcher($tableObserver);
         }
     }
 

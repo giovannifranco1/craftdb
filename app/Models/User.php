@@ -166,6 +166,8 @@ class User extends Authenticatable
             $prices = array_filter([
                 config('billing.plans.team_usd.price_id'),
                 config('billing.plans.team_brl.price_id'),
+                config('billing.plans.team_usd_annual.price_id'),
+                config('billing.plans.team_brl_annual.price_id'),
             ]);
 
             foreach ($prices as $priceId) {

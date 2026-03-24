@@ -81,11 +81,11 @@ class Team extends Model
             return $replacement;
         }
 
-        $ownedTeam = $user->ownedTeams()->first();
+        $firstTeam = $user->allTeams()->first();
 
-        session(['current_team' => $ownedTeam]);
+        session(['current_team' => $firstTeam]);
 
-        return $ownedTeam;
+        return $firstTeam;
     }
 
     /**
