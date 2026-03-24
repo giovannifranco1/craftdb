@@ -39,7 +39,10 @@ new #[Defer(bundle: true)] class extends CanvasComponent {
     {
         $this->authorizeDiagram('update');
 
-        if (! Auth::user()?->isPro()) {
+        /** @var User $user */
+        $user = Auth::user();
+
+        if (! $user?->hasDiagramPremiumAccess($this->diagram)) {
             throw new PlanFeatureException(__('Areas are available on the Pro plan or higher.'));
         }
 

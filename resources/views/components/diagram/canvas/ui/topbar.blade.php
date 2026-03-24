@@ -201,7 +201,7 @@
                         </flux:button>
 
                         <flux:menu class="min-w-52">
-                            @if(auth()->user()->isPro() || auth()->user()->isTeamPlan())
+                            @if(auth()->user()->hasDiagramPremiumAccess($diagram))
                                 <flux:menu.submenu heading="{{ __('Export') }}" icon="arrow-down-tray">
                                     <flux:menu.item icon="code-bracket" :href="route('diagram.export-json', [$teamId, $diagram->slug])">
                                         {{ __('JSON') }}
@@ -223,7 +223,7 @@
                                 </flux:menu.submenu>
                             @endif
 
-                            @if(auth()->user()->isPro() || auth()->user()->isTeamPlan())
+                            @if(auth()->user()->hasDiagramPremiumAccess($diagram))
                                 <flux:menu.item icon="arrow-up-tray" @click="$flux.modal('diagram-canvas-import').show()">
                                     {{ __('Import') }}
                                 </flux:menu.item>

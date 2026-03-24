@@ -4,9 +4,10 @@ namespace App\Actions\Diagram;
 
 use App\Actions\Parse\ParseLaravelMigration;
 use App\Actions\Parse\ParseMySQLSchema;
+use App\Exceptions\TableLimitExceededException;
 use App\Models\Column;
 use App\Models\Diagram;
-use App\Exceptions\TableLimitExceededException;
+use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -23,11 +24,18 @@ class ImportToExistingDiagram
     ) {}
 
     /**
-     * @param array<UploadedFile> $files
+     * @param  array<UploadedFile>  $files
      */
     public function exec(Diagram $diagram, array $files, string $type): void
     {
-        if (! Auth::user()?->isPro()) {
+        $user = Auth::user();
+        if (! $user instanceof User) {
+            throw ValidationException::withMessages([
+                'importForm.file' => __('You must be logged in to import.'),
+            ]);
+        }
+
+        if (! $user->hasDiagramPremiumAccess($diagram)) {
             throw ValidationException::withMessages([
                 'importForm.file' => __('SQL and migration import are available on the Pro plan or higher.'),
             ]);
@@ -53,7 +61,7 @@ class ImportToExistingDiagram
      * SQL import resets the entire diagram before importing.
      * Both reset and parse run in a single transaction so parse failures roll back the reset.
      *
-     * @param array<UploadedFile> $files
+     * @param  array<UploadedFile>  $files
      */
     private function _importSql(array $files, Diagram $diagram): void
     {
@@ -77,7 +85,7 @@ class ImportToExistingDiagram
     }
 
     /**
-     * @param array<UploadedFile> $files
+     * @param  array<UploadedFile>  $files
      */
     private function _validate(Diagram $diagram, array $files, string $type): void
     {
@@ -90,18 +98,18 @@ class ImportToExistingDiagram
         validator()->make(
             [
                 'files' => $files,
-                'type'  => $type,
+                'type' => $type,
             ],
             [
-                'files'   => ['required', 'array'],
+                'files' => ['required', 'array'],
                 'files.*' => ['file'],
-                'type'    => ['required', 'in:sql,migration'],
+                'type' => ['required', 'in:sql,migration'],
             ]
         )->validate();
     }
 
     /**
-     * @param array<UploadedFile> $files
+     * @param  array<UploadedFile>  $files
      */
     private function _parseSqlFile(array $files, Diagram $diagram): void
     {
@@ -112,7 +120,7 @@ class ImportToExistingDiagram
     }
 
     /**
-     * @param array<UploadedFile> $files
+     * @param  array<UploadedFile>  $files
      */
     private function _parseMigrationFile(array $files, Diagram $diagram): void
     {

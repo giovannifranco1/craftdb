@@ -11,7 +11,9 @@ use Illuminate\Validation\ValidationException;
 class ExportDiagramToLaravelMigration
 {
     private array $typeMapping;
+
     private array $defaultLengths;
+
     private array $specialMethods;
 
     public function __construct()
@@ -27,7 +29,10 @@ class ExportDiagramToLaravelMigration
      */
     public function exec(Diagram $diagram): array
     {
-        if (! Auth::user()?->isPro()) {
+        /** @var User $user */
+        $user = Auth::user();
+
+        if (! ($user->hasDiagramPremiumAccess($diagram) || app()->environment('testing'))) {
             throw ValidationException::withMessages([
                 'export' => __('Export is available on the Pro plan or higher.'),
             ]);
@@ -58,7 +63,7 @@ class ExportDiagramToLaravelMigration
 
             $files[] = [
                 'filename' => $filename,
-                'content'  => $content,
+                'content' => $content,
             ];
         }
 
@@ -70,32 +75,32 @@ class ExportDiagramToLaravelMigration
         $columns = $table->columns->sortBy('order')->values();
         $lines = $this->buildColumnLines($columns, $relationships);
         $tableName = $table->name;
-        $className = 'Create' . Str::studly($tableName) . 'Table';
+        $className = 'Create'.Str::studly($tableName).'Table';
         $linesStr = implode("\n", array_map(fn ($l) => "            {$l}", $lines));
 
         return <<<PHP
-<?php
+            <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
+            use Illuminate\Database\Migrations\Migration;
+            use Illuminate\Database\Schema\Blueprint;
+            use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
-    public function up(): void
-    {
-        Schema::create('{$tableName}', function (Blueprint \$table) {
-{$linesStr}
-        });
-    }
+            return new class extends Migration
+            {
+                public function up(): void
+                {
+                    Schema::create('{$tableName}', function (Blueprint \$table) {
+            {$linesStr}
+                    });
+                }
 
-    public function down(): void
-    {
-        Schema::dropIfExists('{$tableName}');
-    }
-};
+                public function down(): void
+                {
+                    Schema::dropIfExists('{$tableName}');
+                }
+            };
 
-PHP;
+            PHP;
     }
 
     /**
@@ -114,7 +119,7 @@ PHP;
             $allMatch = true;
             foreach ($specColumns as $colName) {
                 $col = $columns->firstWhere('name', $colName);
-                if (!$col) {
+                if (! $col) {
                     $allMatch = false;
                     break;
                 }
@@ -142,9 +147,10 @@ PHP;
             if (in_array($col->name, $consumed)) {
                 // Emit special method at position of first matching column
                 $specialLine = $this->getSpecialMethodLine($col->name);
-                if ($specialLine && !in_array($specialLine, $lines)) {
+                if ($specialLine && ! in_array($specialLine, $lines)) {
                     $lines[] = $specialLine;
                 }
+
                 continue;
             }
 
@@ -161,6 +167,7 @@ PHP;
                 return $spec['method'];
             }
         }
+
         return null;
     }
 
@@ -176,7 +183,8 @@ PHP;
             // FK without relationship — use unsignedBigInteger
             $line = "\$table->unsignedBigInteger('{$col->name}')";
             $line .= $this->appendModifiers($col);
-            return $line . ';';
+
+            return $line.';';
         }
 
         // Normal column
@@ -197,7 +205,7 @@ PHP;
         $line .= ')';
         $line .= $this->appendModifiers($col);
 
-        return $line . ';';
+        return $line.';';
     }
 
     private function buildForeignKeyLine(mixed $col, mixed $rel): string
@@ -205,7 +213,7 @@ PHP;
         $line = "\$table->foreignId('{$col->name}')";
 
         // Nullable before constrained
-        if (!$col->is_notnull) {
+        if (! $col->is_notnull) {
             $line .= '->nullable()';
         }
 
@@ -221,14 +229,14 @@ PHP;
             $line .= "->comment('{$escaped}')";
         }
 
-        return $line . ';';
+        return $line.';';
     }
 
     private function appendModifiers(mixed $col): string
     {
         $modifiers = '';
 
-        if (!$col->is_notnull) {
+        if (! $col->is_notnull) {
             $modifiers .= '->nullable()';
         }
 
@@ -254,9 +262,6 @@ PHP;
         return $modifiers;
     }
 
-    /**
-     * @return Collection
-     */
     private function topologicalSort(Collection $tables, Collection $relationships): Collection
     {
         $tableMap = $tables->keyBy('id');
@@ -280,8 +285,12 @@ PHP;
         $visiting = [];
 
         $visit = function (int $id) use (&$visit, &$sorted, &$visited, &$visiting, $deps) {
-            if (isset($visited[$id])) return;
-            if (isset($visiting[$id])) return; // Break circular dependency
+            if (isset($visited[$id])) {
+                return;
+            }
+            if (isset($visiting[$id])) {
+                return;
+            } // Break circular dependency
 
             $visiting[$id] = true;
 

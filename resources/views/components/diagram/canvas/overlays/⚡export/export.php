@@ -21,8 +21,10 @@ new class extends CanvasComponent {
     #[Computed]
     public function canExport(): bool
     {
+        /** @var User $user */
         $user = Auth::user();
-        return $user && ($user->isPro() || $user->isTeamPlan());
+
+        return $user && $user->hasDiagramPremiumAccess($this->diagram);
     }
 
     public function export(): mixed
