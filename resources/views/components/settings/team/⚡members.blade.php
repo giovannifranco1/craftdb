@@ -303,7 +303,7 @@ new class extends BaseComponent {
                                     <div>
                                         <div class="font-medium text-sm">{{ $invitation->email }}</div>
                                         <div class="text-xs text-zinc-500 dark:text-zinc-400">
-                                            {{ __('Role') }}: {{ $invitation->role->name() ?? $invitation->role->code() }}
+                                            {{ __('Role') }}: {{ $invitation->role->name ?? $invitation->role->code }}
                                             <span class="mx-1">•</span>
                                             {{ __('Sent') }} {{ $invitation->created_at->diffForHumans() }}
                                         </div>
