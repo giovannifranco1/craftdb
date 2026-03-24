@@ -49,7 +49,7 @@ class DiagramPolicy
         }
 
         if ($team && $user->belongsToTeam($team)) {
-            return $team->userHasRole($user, [EnumsRole::EDITOR, EnumsRole::VIEWER]);
+            return $team->userHasRole($user, EnumsRole::EDITOR);
         }
 
         return false;

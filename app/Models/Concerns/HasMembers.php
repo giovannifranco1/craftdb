@@ -5,16 +5,13 @@ namespace App\Models\Concerns;
 use App\Enums\Role as EnumsRole;
 use App\Models\Team\Invitation;
 use App\Models\Team\Membership;
-use App\Models\Team\Owner;
 use App\Models\User;
 use App\Notifications\TeamInvitationNotification;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 use RuntimeException;
-use Str;
 
 trait HasMembers
 {
@@ -249,7 +246,7 @@ trait HasMembers
     public function hasReachedMaxInvitationsPerDay(string $email): bool
     {
         return $this->invitations()
-            ->where('email', $email)
+            ->whereRaw('LOWER(email) = ?', [str()->lower($email)])
             ->where('created_at', '>=', today()->subDay())
             ->count() > Invitation::MAX_INVITATIONS_PER_DAY;
     }
@@ -263,16 +260,41 @@ trait HasMembers
      */
     public function userHasRole(object $user, EnumsRole|int|string|array|null $keyword = null): bool
     {
-        return $this->owner === $user ? true : $this->users()
-            ->where('user_id', $user->id)
-            ->whereHas('roles', function ($query) use ($keyword) {
-                $query->when(is_array($keyword), function ($query) use ($keyword) {
-                    $query->whereIn('code', $keyword);
-                }, function ($query) use ($keyword) {
-                    $query->where((is_numeric($keyword) ? 'id' : 'code'), $keyword);
-                });
-            })
-            ->exists();
+        if ($this->user_id === $user->id) {
+            return true;
+        }
+
+        $query = $this->users()->where('user_id', $user->id);
+
+        if ($keyword === null) {
+            return $query->exists();
+        }
+
+        $keywords = is_array($keyword) ? $keyword : [$keyword];
+
+        $roleIds = [];
+        $roleCodes = [];
+
+        foreach ($keywords as $k) {
+            if ($k instanceof EnumsRole) {
+                $roleIds[] = $k->key();
+            } elseif (is_numeric($k)) {
+                $roleIds[] = (int) $k;
+            } else {
+                $roleCodes[] = $k;
+            }
+        }
+
+        if (! empty($roleCodes)) {
+            $resolved = \App\Models\Team\Role::whereIn('code', $roleCodes)->pluck('id')->all();
+            $roleIds = array_merge($roleIds, $resolved);
+        }
+
+        if (empty($roleIds)) {
+            return false;
+        }
+
+        return $query->wherePivotIn('role_id', $roleIds)->exists();
     }
 
     /**

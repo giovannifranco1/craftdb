@@ -25,7 +25,7 @@
                             <x-app-logo />
                         </a>
 
-                        @if(request()->routeIs('diagram.show'))
+                        @if(request()->routeIs('diagram.show') && isset($diagram))
                             <flux:breadcrumbs class="ms-5">
                                 <flux:breadcrumbs.item href="{{ route('dashboard') }}">Diagrams</flux:breadcrumbs.item>
                                 <flux:breadcrumbs.item href="{{ route('diagram.show', [$team->id, $diagram->slug])}}">{{ $diagram->name }}</flux:breadcrumbs.item>

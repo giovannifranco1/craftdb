@@ -1,5 +1,6 @@
 <?php
 
+use App\Actions\Diagram\AddColumnToTable;
 use App\Concerns\HasSidePanel;
 use App\Enums\ColumnType;
 use App\Livewire\Forms\Diagram\ColumnForm;
@@ -165,16 +166,7 @@ new class extends CanvasComponent {
             return;
         }
 
-        $maxOrder = $table->columns()->max('order');
-        $newOrder = Helpers::calculateNextOrder($maxOrder);
-
-        $baseColumn = [
-            'name'  => 'new_column',
-            'type'  => 'varchar',
-            'order' => $newOrder,
-        ];
-
-        $table->columns()->create($baseColumn);
+        app(AddColumnToTable::class)->exec($table);
         $this->dispatch('table-side-editor::column-added');
     }
 
