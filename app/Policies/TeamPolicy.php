@@ -75,6 +75,14 @@ class TeamPolicy
     }
 
     /**
+     * Pending invitations: resend, cancel, and listing (owner only).
+     */
+    public function manageTeamInvitations(User $user, object $team): bool
+    {
+        return $user->ownsTeam($team);
+    }
+
+    /**
      * Determine whether the user can update team member
      *
      * @param User $user

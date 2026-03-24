@@ -1,5 +1,6 @@
 <?php
 
+use App\Exceptions\InvitationException;
 use App\Http\Middleware\CheckTeamRole;
 use App\Http\Middleware\EnsureSuperRoot;
 use App\Http\Middleware\EnsureValidCurrentTeam;
@@ -9,6 +10,7 @@ use App\Http\Middleware\ValidateLoginTermsAcceptance;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Request;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -33,5 +35,14 @@ return Application::configure(basePath: dirname(__DIR__))
 
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        //
+        $exceptions->renderable(function (InvitationException $e, Request $request) {
+            if ($request->expectsJson()) {
+                return response()->json(['message' => $e->getMessage()], 422);
+            }
+
+            return redirect()
+                ->route('dashboard')
+                ->with('message', $e->getMessage())
+                ->with('type', 'error');
+        });
     })->create();
