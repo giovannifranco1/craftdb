@@ -39,8 +39,9 @@
                             $user = auth()->user();
                             $teamOwner = $team?->owner;
                             $teamContextHasTeamPlan = $teamOwner && $teamOwner->isTeamPlan();
+                            $isOwnerOfCurrentTeam = $team && $user->ownsTeam($team);
 
-                            if ($teamContextHasTeamPlan && $team) {
+                            if ($teamContextHasTeamPlan && $team && ! $isOwnerOfCurrentTeam) {
                                 $planBadge = $team->name;
                                 $planColor = 'violet';
                             } elseif ($user->isTeamPlan()) {
@@ -54,7 +55,7 @@
                                 $planColor = 'sky';
                             }
                         @endphp
-                        <flux:navbar.item badge="{{ $planBadge }}" badge:color="{{ $planColor }}" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>{{ __('Diagrams') }}</flux:navbar.item>
+                        <flux:navbar.item :badge="$planBadge" badge:color="{{ $planColor }}" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>{{ __('Diagrams') }}</flux:navbar.item>
                     </flux:navbar>
 
                     <div class="flex items-center space-x-4 ml-auto">
