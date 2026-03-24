@@ -32,7 +32,7 @@ class ExportDiagramToLaravelMigration
         /** @var User $user */
         $user = Auth::user();
 
-        if (! ($user->hasDiagramPremiumAccess($diagram) || app()->environment('testing'))) {
+        if (! ($user?->hasDiagramPremiumAccess($diagram) || app()->environment('testing'))) {
             throw ValidationException::withMessages([
                 'export' => __('Export is available on the Pro plan or higher.'),
             ]);

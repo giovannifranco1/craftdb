@@ -19,7 +19,7 @@ new class extends BaseComponent {
     public string $email = '';
 
     #[Validate('required|exists:role,code')]
-    public Role $roleChoosen;
+    public Role $roleChoosen = Role::EDITOR;
 
     public Role $editorRole = Role::EDITOR;
     public Role $viewerRole = Role::VIEWER;
@@ -86,6 +86,7 @@ new class extends BaseComponent {
             ->where('team_id', $this->team->id)
             ->whereNull('cancelled_at')
             ->whereNull('accepted_at')
+            ->with('role')
             ->get();
     }
 
@@ -198,21 +199,24 @@ new class extends BaseComponent {
                 </flux:button>
             </form>
         </div>
+        @elseif(Auth::user()->ownsTeam($team))
+            <div class="rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900 p-6 text-center space-y-3">
+                <div class="flex items-center justify-center">
+                    <flux:icon.users variant="solid" class="size-10 bg-zinc-500 text-white rounded-full p-2" />
+                </div>
+                <flux:heading size="lg">{{ __('Team collaboration') }}</flux:heading>
+                <flux:subheading>
+                    {{ __('Invite members and work together on diagrams with the Team plan. Up to 25 users per team.') }}
+                </flux:subheading>
+                <div class="pt-2">
+                    <flux:button variant="primary" href="{{ route('billing.index') }}" wire:navigate>
+                        {{ __('Upgrade to Team') }}
+                    </flux:button>
+                </div>
+            </div>
         @else
-        <div class="rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900 p-6 text-center space-y-3">
-            <div class="flex items-center justify-center">
-                <flux:icon.users variant="solid" class="size-10 bg-zinc-500 text-white rounded-full p-2" />
-            </div>
-            <flux:heading size="lg">{{ __('Colaboração em time') }}</flux:heading>
-            <flux:subheading>
-                {{ __('Convide membros e trabalhe junto em diagramas com o plano Team. Até 25 usuários por time.') }}
-            </flux:subheading>
-            <div class="pt-2">
-                <flux:button variant="primary" href="{{ route('billing.index') }}" wire:navigate>
-                    {{ __('Fazer upgrade para Team') }}
-                </flux:button>
-            </div>
-        </div>
+            <flux:heading size="lg">{{ __('Team collaboration') }}</flux:heading>
+            <flux:subheading> {{ __('Members') }} </flux:subheading>
         @endif
 
         <flux:separator class="my-6" />

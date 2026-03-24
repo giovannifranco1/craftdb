@@ -171,6 +171,10 @@ trait HasMembers
             throw new RuntimeException(__("This user already belongs to the team."));
         }
 
+        if ($this->hasPendingInvitationForEmail($email)) {
+            throw new RuntimeException(__('An invitation has already been sent to this email address.'));
+        }
+
         if ($this->hasReachedMaxInvitationsPerDay($email)) {
             throw new RuntimeException(__("You have reached the maximum number of invitations per day."));
         }
@@ -222,6 +226,18 @@ trait HasMembers
     public function hasUserWithEmail(string $email): bool
     {
         return $this->allUsers()->contains(fn ($user) => $user->email === $email);
+    }
+
+    /**
+     * Whether this team already has a non-cancelled, non-accepted invitation for the email.
+     */
+    public function hasPendingInvitationForEmail(string $email): bool
+    {
+        return $this->invitations()
+            ->whereRaw('LOWER(email) = ?', [Str::lower($email)])
+            ->whereNull('cancelled_at')
+            ->whereNull('accepted_at')
+            ->exists();
     }
 
     /**
