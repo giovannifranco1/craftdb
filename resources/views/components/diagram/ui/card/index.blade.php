@@ -50,7 +50,7 @@
                 <flux:menu>
                     <flux:menu.item class="cursor-pointer" icon="pencil" wire:click="editDiagram({{ $diagram->id }})">{{ __('Edit') }}</flux:menu.item>
                     <flux:menu.separator/>
-                    @if(auth()->user()->isPro() || auth()->user()->isTeamPlan())
+                    @if(auth()->user()->hasDiagramPremiumAccess($diagram))
                         <flux:menu.item class="cursor-pointer" icon="graph" wire:click="$dispatch('diagram-graph::load', {'diagram': {{ $diagram->id }}})">{{ __('Graph') }}<flux:badge class="ms-2" color="lime" size="sm">{{ __('New!') }}</flux:badge></flux:menu.item>
                         <flux:menu.item class="cursor-not-allowed" icon="document-duplicate" disabled>{{ __('Clone (Coming Soon)') }}</flux:menu.item>
                         <flux:menu.submenu heading="{{ __('Export') }}" icon="arrow-down-tray">
