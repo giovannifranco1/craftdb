@@ -41,7 +41,7 @@
                             $teamContextHasTeamPlan = $teamOwner && $teamOwner->isTeamPlan();
 
                             if ($teamContextHasTeamPlan && $team) {
-                                $planBadge = \Illuminate\Support\Str::limit($team->name, 40);
+                                $planBadge = $team->name;
                                 $planColor = 'violet';
                             } elseif ($user->isTeamPlan()) {
                                 $planBadge = 'Team';
