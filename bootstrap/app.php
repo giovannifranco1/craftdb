@@ -2,6 +2,7 @@
 
 use App\Http\Middleware\CheckTeamRole;
 use App\Http\Middleware\EnsureSuperRoot;
+use App\Http\Middleware\EnsureValidCurrentTeam;
 use App\Http\Middleware\SetHeaders;
 use App\Http\Middleware\SetLocale;
 use App\Http\Middleware\ValidateLoginTermsAcceptance;
@@ -25,6 +26,7 @@ return Application::configure(basePath: dirname(__DIR__))
             SetHeaders::class,
             SetLocale::class,
             ValidateLoginTermsAcceptance::class,
+            EnsureValidCurrentTeam::class,
         ]);
 
         $middleware->trustProxies(at: '*');

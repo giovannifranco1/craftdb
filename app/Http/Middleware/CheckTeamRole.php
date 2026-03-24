@@ -18,13 +18,15 @@ class CheckTeamRole
      */
     public function handle(Request $request, Closure $next, string $roles): Response
     {
+        /** @var User $user */
         $user = Auth::user();
+
         $teamId = $request->route('team_id');
         $team = Team::find($teamId);
 
-        abort_if(!$user, 401, __('Unauthenticated.'));
-        abort_if(!$teamId, 400, __('Team ID is required.'));
-        abort_if(!$team, 404, __('Team not found.'));
+        abort_if(! $user, 401, __('Unauthenticated.'));
+        abort_if(! $teamId, 400, __('Team ID is required.'));
+        abort_if(! $team, 404, __('Team not found.'));
 
         $allowedRoles = explode('|', $roles);
 
@@ -36,7 +38,18 @@ class CheckTeamRole
             ->where('team_id', $teamId)
             ->first();
 
-        abort_if(!$teamMembership, 403, __('You do not have access to this team.'));
+        if (! $teamMembership) {
+            if ($user->allTeams()->isNotEmpty()) {
+                session(['current_team' => $user->allTeams()->first()]);
+
+                return redirect()
+                    ->route('dashboard')
+                    ->with('message', __('You do not have access to that team. Your workspace was switched.'))
+                    ->with('type', 'default');
+            }
+
+            abort(403, __('You do not have access to this team.'));
+        }
         abort_if(!$teamMembership->userHasRole($user, $allowedRoles), 403, __('You do not have permission to access this resource.'));
 
         return $next($request);

@@ -28,29 +28,38 @@ new #[Title('Dashboard')] class extends BaseComponent
 
     public ?int $diagramToDelete = null;
 
-    public Team $team;
+    public ?Team $team = null;
 
     public function mount(): void
     {
         $this->team = Team::currentTeam();
+
+        if (! $this->team) {
+            return;
+        }
+
         session()->put('diagrams_count',
-        Cache::remember(
-            "diagrams_count_{$this->favorites}_{$this->search}_{$this->orderByDesc}",
-            now()->addMinutes(5),
-            fn() => Diagram::query()
-                ->where('team_id', Team::currentTeam()->getKey())
-                ->count()
-        ));
+            Cache::remember(
+                "diagrams_count_{$this->favorites}_{$this->search}_{$this->orderByDesc}",
+                now()->addMinutes(5),
+                fn () => Diagram::query()
+                    ->where('team_id', $this->team->getKey())
+                    ->count()
+            ));
     }
 
     #[Computed]
     public function diagrams(): LengthAwarePaginator
     {
+        if (! $this->team) {
+            return Diagram::query()->whereRaw('0 = 1')->paginate(10);
+        }
+
         session()->put('diagrams_count', Cache::remember(
             "diagrams_count_{$this->favorites}_{$this->search}_{$this->orderByDesc}",
             now()->addMinutes(5),
-            fn() => Diagram::query()
-                ->where('team_id', Team::currentTeam()->getKey())
+            fn () => Diagram::query()
+                ->where('team_id', $this->team->getKey())
                 ->count()
         ));
 
@@ -64,7 +73,7 @@ new #[Title('Dashboard')] class extends BaseComponent
                 'areas',
                 'notes'
             ])
-            ->where('team_id', Team::currentTeam()->getKey())
+            ->where('team_id', $this->team->getKey())
             ->orderBy('created_at', $this->orderByDesc ? 'asc' : 'desc')
             ->paginate(10);
     }
@@ -76,11 +85,15 @@ new #[Title('Dashboard')] class extends BaseComponent
 
     public function toggleFavorite(Diagram $diagram): void
     {
+        if (! $this->team) {
+            return;
+        }
+
         $diagram->is_favorite = !$diagram->isFavorite();
         $diagram->timestamps = false;
         $diagram->save();
 
-        session(['favorites_count' => Diagram::query()->where('team_id', Team::currentTeam()->getKey())->where('is_favorite', true)->count()]);
+        session(['favorites_count' => Diagram::query()->where('team_id', $this->team?->getKey() ?? 0)->where('is_favorite', true)->count()]);
 
         $this->dispatch('diagram::favorite-toggled', $diagram->id);
         $this->dispatch('alert', message: $diagram->isFavorite() ? __('Diagram :name was added to your favorites', ['name' => $diagram->name]) : __('Diagram :name was removed from your favorites', ['name' => $diagram->name]));

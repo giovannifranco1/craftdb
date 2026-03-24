@@ -7,26 +7,29 @@ use App\Models\Diagram;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
  * @property int $user_id
  * @property string $name
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Team\Ability> $abilities
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property-read Collection<int, Ability> $abilities
  * @property-read int|null $abilities_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Team\Group> $groups
+ * @property-read Collection<int, Group> $groups
  * @property-read int|null $groups_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Team\Invitation> $invitations
+ * @property-read Collection<int, Invitation> $invitations
  * @property-read int|null $invitations_count
  * @property-read User|null $owner
- *@property-read \App\Models\Team\Membership|null $membership
- * @property-read \Illuminate\Database\Eloquent\Collection<int, User> $users
+ *@property-read Membership|null $membership
+ * @property-read Collection<int, User> $users
  * @property-read int|null $users_count
+ *
  * @method static \Database\Factories\Team\TeamFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Team newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Team newQuery()
@@ -36,6 +39,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Team whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Team whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Team whereUserId($value)
+ *
  * @mixin \Eloquent
  */
 #[Table('team')]
@@ -46,8 +50,6 @@ class Team extends Model
 
     /**
      * Creates a new instance of the model.
-     *
-     * @param array $attributes
      */
     public function __construct(array $attributes = [])
     {
@@ -56,18 +58,27 @@ class Team extends Model
 
     public static function currentTeam(): ?self
     {
-        $team = session('current_team');
-
-        if (!is_null($team)) {
-            return $team;
-        }
-
         /** @var User|null */
         /** @disregard  */
         $user = auth()->user();
 
-        if (!$user) {
+        if (! $user) {
             return null;
+        }
+
+        $sessionTeam = session('current_team');
+
+        if ($sessionTeam instanceof self) {
+            $team = self::find($sessionTeam->getKey());
+
+            if ($team && $user->belongsToTeam($team)) {
+                return $team;
+            }
+
+            $replacement = $user->allTeams()->first();
+            session(['current_team' => $replacement]);
+
+            return $replacement;
         }
 
         $ownedTeam = $user->ownedTeams()->first();
