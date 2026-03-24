@@ -76,7 +76,7 @@
                                     </div>
                                 </flux:menu.radio.group>
 
-                                @can('create', $team)
+                                @can('create', \App\Models\Team\Team::class)
                                     <flux:menu.separator />
                                     <flux:menu.item as="button" icon="user-plus" type="button" :href="route('team.create')">{{__('Create New Team')}}</flux:menu.item>
                                 @endcan

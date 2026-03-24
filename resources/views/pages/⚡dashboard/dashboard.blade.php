@@ -7,6 +7,12 @@
     @keydown.escape.window="searchFocused = false; $wire.resetSearch()"
     class="w-full"
 >
+    @if(!$this->team)
+        <flux:callout color="amber" icon="exclamation-triangle" class="mb-5">
+            {{ __('You are not in any workspace. Create a team or ask to be invited to one.') }}
+        </flux:callout>
+    @endif
+
     <div class="flex items-center mb-5">
         <flux:heading size="xl" class="font-normal text-zinc-900 dark:text-zinc-50 me-auto">{{ __('My Diagrams') }}</flux:heading>
 
