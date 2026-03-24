@@ -181,7 +181,7 @@ trait HasMembers
 
         $invitation = $this->invitations()->create([
             'email'   => $email,
-            'token'   => Str::random(64),
+            'token'   => str()->random(64),
             'expires_at' => today()->addDays(15),
             'role_id' => $role->key(),
         ]);
@@ -234,7 +234,7 @@ trait HasMembers
     public function hasPendingInvitationForEmail(string $email): bool
     {
         return $this->invitations()
-            ->whereRaw('LOWER(email) = ?', [Str::lower($email)])
+            ->whereRaw('LOWER(email) = ?', [str()->lower($email)])
             ->whereNull('cancelled_at')
             ->whereNull('accepted_at')
             ->exists();

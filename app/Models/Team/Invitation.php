@@ -3,19 +3,15 @@
 namespace App\Models\Team;
 
 use App\Enums\Role as EnumsRole;
+use App\Exceptions\InvitationException;
 use App\Models\User;
-use App\Notifications\TeamInvitationNotification;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Facades\DB;
 use RuntimeException;
-use Str;
-
-use function Symfony\Component\Translation\t;
 
 /**
  * @property int $id
@@ -83,15 +79,15 @@ class Invitation extends Model
     public function accept(): void
     {
         if ($this->accepted_at) {
-            throw new RuntimeException(__('Invitation already accepted.'));
+            throw InvitationException::alreadyAccepted();
         }
 
         if ($this->expires_at < now()) {
-            throw new RuntimeException(__('Invitation expired.'));
+            throw InvitationException::expired();
         }
 
         if ($this->cancelled_at) {
-            throw new RuntimeException(__('Invitation cancelled.'));
+            throw InvitationException::cancelled();
         }
 
         $this->update(['accepted_at' => now()]);

@@ -7,6 +7,7 @@ use App\Livewire\BaseComponent;
 use Livewire\Attributes\Computed;
 use Illuminate\Support\Collection;
 use App\Models\Team\Invitation;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Validate;
@@ -43,7 +44,10 @@ new class extends BaseComponent {
 
         throw_if($this->email == Auth::user()->email, RuntimeException::class, __('You cannot invite yourself.'));
 
-        $limit = Auth::user()->memberLimit();
+        /** @var User $user */
+        $user = Auth::user();
+        $limit = $user->memberLimit();
+
         $currentCount = $this->team->members()->count() + $this->team->invitations()->whereNull('cancelled_at')->whereNull('accepted_at')->count();
 
         throw_if(
@@ -82,6 +86,10 @@ new class extends BaseComponent {
     #[Computed]
     public function invitations(): Collection
     {
+        if (! Auth::user()->can('manageTeamInvitations', $this->team)) {
+            return collect();
+        }
+
         return Invitation::query()
             ->where('team_id', $this->team->id)
             ->whereNull('cancelled_at')
@@ -92,6 +100,8 @@ new class extends BaseComponent {
 
     public function resendInvitation(int $invitationId): void
     {
+        $this->authorize('manageTeamInvitations', $this->team);
+
         $invitation = Invitation::where('team_id', $this->team->id)
             ->where('id', $invitationId)
             ->first();
@@ -106,6 +116,8 @@ new class extends BaseComponent {
 
     public function cancelInvitation(int $invitationId): void
     {
+        $this->authorize('manageTeamInvitations', $this->team);
+
         $invitation = Invitation::where('team_id', $this->team->id)
             ->where('id', $invitationId)
             ->first();
@@ -124,6 +136,11 @@ new class extends BaseComponent {
         if ($e instanceof RuntimeException) {
             $stopPropagation();
             $this->alert(message: $e->getMessage(), type: 'error');
+        }
+
+        if ($e instanceof AuthorizationException) {
+            $stopPropagation();
+            $this->alert(message: __('You are not authorized to perform this action.'), type: 'error');
         }
     }
 
@@ -294,6 +311,7 @@ new class extends BaseComponent {
                     </div>
                 @endforeach
 
+                @can('manageTeamInvitations', $team)
                 @if(!$this->invitations->isEmpty())
                     <flux:heading size="lg">{{ __('Pending Invitations') }}</flux:heading>
 
@@ -336,6 +354,7 @@ new class extends BaseComponent {
                         @endforeach
                     </div>
                 @endif
+                @endcan
             </div>
         </div>
     </x-settings.layout>

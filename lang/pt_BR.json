@@ -228,6 +228,7 @@
   "Invitation cancelled successfully.": "Convite cancelado com sucesso.",
   "Invitation resent successfully.": "Convite reenviado com sucesso.",
   "Are you sure you want to cancel this invitation?": "Tem certeza que deseja cancelar este convite?",
+  "You are not authorized to perform this action.": "Você não tem permissão para realizar esta ação.",
   "Team collaboration": "Colaboração em time",
   "Invite members and work together on diagrams with the Team plan. Up to 25 users per team.": "Convide membros e trabalhem juntos em diagramas com o plano Team. Até 25 usuários por time.",
   "Upgrade to Team": "Fazer upgrade para Team",
@@ -518,5 +519,6 @@
   "Per-member roles (reader, editor, owner)": "Papéis por membro (leitor, editor, proprietário)",
   "View history": "Histórico de visualizações",
   "Dedicated support": "Suporte dedicado",
-  "Manage in Stripe": "Gerenciar na Stripe"
+  "Manage in Stripe": "Gerenciar na Stripe",
+  "You cannot invite yourself.": "Você não pode convidar você mesmo."
 }
