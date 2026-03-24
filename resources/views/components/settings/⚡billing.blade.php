@@ -2,6 +2,7 @@
 
 use App\Enums\BillingCountry;
 use App\Livewire\BaseComponent;
+use App\Support\Helpers;
 use Illuminate\Support\Facades\Auth;
 
 new class extends BaseComponent {
@@ -128,7 +129,7 @@ new class extends BaseComponent {
                     @if ($this->currentPlan)
                         {{ $this->currentPlan['interval'] === 'year' ? __('Billed annually') : __('Billed monthly') }}
                         @if (($this->currentPlan['price'] ?? 0) > 0)
-                            · {{ $this->billingCountry->currencySymbol() }}{{ number_format($this->currentPlan['price'], 2) }}/{{ $this->currentPlan['interval'] === 'year' ? __('year') : __('month') }}
+                            · {{ $this->billingCountry->currencySymbol() }}{{ Helpers::formatPriceAmount($this->currentPlan['price'], 2, $this->billingCountry) }}/{{ $this->currentPlan['interval'] === 'year' ? __('year') : __('month') }}
                         @endif
                     @else
                         {{ __('Free plan for personal projects and learning.') }}
@@ -157,7 +158,7 @@ new class extends BaseComponent {
                         <flux:heading size="lg">{{ $plan['emoji'] ?? '' }} {{ $plan['name'] }}</flux:heading>
                         <flux:text class="mt-1 text-zinc-600 dark:text-zinc-400">{{ __($plan['description']) }}</flux:text>
                         <div class="mt-3 flex items-baseline gap-1">
-                            <span class="text-2xl font-bold">{{ $this->billingCountry->currencySymbol() }}{{ number_format($plan['price'], 2) }}</span>
+                            <span class="text-2xl font-bold">{{ $this->billingCountry->currencySymbol() }}{{ Helpers::formatPriceAmount($plan['price'], 2, $this->billingCountry) }}</span>
                             <span class="text-zinc-500 dark:text-zinc-400">/ {{ $plan['interval'] === 'year' ? __('year') : __('month') }}</span>
                         </div>
                         <ul class="mt-4 space-y-2 flex-1">

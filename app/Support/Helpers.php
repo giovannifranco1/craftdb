@@ -2,6 +2,7 @@
 
 namespace App\Support;
 
+use App\Enums\BillingCountry;
 use App\Livewire\Data\ColumnData;
 use App\Models\Column;
 use App\Models\Diagram;
@@ -10,22 +11,32 @@ use Illuminate\Support\Facades\Blade;
 
 class Helpers
 {
+    /**
+     * Format a price amount for display.
+     * Brazilian style (comma decimals) when BRL is used or app locale is Portuguese.
+     */
+    public static function formatPriceAmount(float|int $amount, int $decimals = 2, ?BillingCountry $billingCountry = null): string
+    {
+        $brazilianStyle = $billingCountry === BillingCountry::BRL;
+
+        if ($brazilianStyle) {
+            return number_format((float) $amount, $decimals, ',', '.');
+        }
+
+        return number_format((float) $amount, $decimals, '.', ',');
+    }
+
     public static function getIconDiamondByTypeColumn(Column|ColumnData $column): Htmlable|string
     {
         if ($column->is_primary) {
             $iconComponent = '<flux:icon.key variant="solid" class="size-3 text-amber-400"/>';
-        }
-        elseif ($column->is_foreign && $column->is_notnull) {
+        } elseif ($column->is_foreign && $column->is_notnull) {
             $iconComponent = '<flux:icon.circle-small variant="solid" class="size-2.5 text-red-400"/>';
-        }
-        elseif ($column->is_foreign) {
+        } elseif ($column->is_foreign) {
             $iconComponent = '<flux:icon.circle-small class="size-2.5 text-red-400"/>';
-        }
-
-        elseif ($column->is_notnull) {
+        } elseif ($column->is_notnull) {
             $iconComponent = '<flux:icon.circle-small variant="solid" class="size-2.5 text-blue-300"/>';
-        }
-        else {
+        } else {
             $iconComponent = '<flux:icon.circle-small class="size-2.5 text-blue-300"/>';
         }
 
@@ -37,14 +48,13 @@ class Helpers
     }
 
     /**
-     * @param Diagram $diagram
      * @return array{int, int}
      */
     public static function getPositionCanvasByDiagram(Diagram $diagram): array
     {
         $firstTable = $diagram->tables->first();
 
-        if (!$firstTable) {
+        if (! $firstTable) {
             return [0, 0];
         }
 
@@ -62,7 +72,7 @@ class Helpers
 
     public static function getRandomColor(string $style): string
     {
-        $colors = match($style) {
+        $colors = match ($style) {
             'neutral' => config('color.neutral', []),
             'colorful' => config('color.colorful', []),
             default => [],
@@ -70,7 +80,7 @@ class Helpers
 
         // Convert to indexed array to work with array_rand
         $colors = array_values($colors);
-        
+
         return $colors[array_rand($colors)];
     }
 
@@ -78,7 +88,7 @@ class Helpers
     {
         $colorful = array_values(config('color.colorful', []));
         $neutral = array_values(config('color.neutral', []));
-        
+
         return in_array($color, array_merge($colorful, $neutral));
     }
 
@@ -90,7 +100,7 @@ class Helpers
         $hex = str_replace('#', '', $hex);
 
         if (strlen($hex) === 3) {
-            $hex = $hex[0] . $hex[0] . $hex[1] . $hex[1] . $hex[2] . $hex[2];
+            $hex = $hex[0].$hex[0].$hex[1].$hex[1].$hex[2].$hex[2];
         }
 
         $r = hexdec(substr($hex, 0, 2));
@@ -103,12 +113,12 @@ class Helpers
     /**
      * Calculate grid position with random offset for diagram tables
      *
-     * @param int $index The index of the item (1-based)
-     * @param int $maxPerRow Maximum items per row
-     * @param int $spacingX Horizontal spacing between items
-     * @param int $spacingY Vertical spacing between items
-     * @param int $offsetX Maximum random offset on X axis
-     * @param int $offsetY Maximum random offset on Y axis
+     * @param  int  $index  The index of the item (1-based)
+     * @param  int  $maxPerRow  Maximum items per row
+     * @param  int  $spacingX  Horizontal spacing between items
+     * @param  int  $spacingY  Vertical spacing between items
+     * @param  int  $offsetX  Maximum random offset on X axis
+     * @param  int  $offsetY  Maximum random offset on Y axis
      * @return array{x: int, y: int}
      */
     public static function calculateGridPosition(
@@ -136,9 +146,9 @@ class Helpers
     /**
      * Calculate the next order value based on the current maximum order
      *
-     * @param int|float|null $maxOrder The current maximum order value
-     * @param int $defaultOrder Default order value when max is null (default: 100)
-     * @param int $minOrder Minimum order value (default: 1)
+     * @param  int|float|null  $maxOrder  The current maximum order value
+     * @param  int  $defaultOrder  Default order value when max is null (default: 100)
+     * @param  int  $minOrder  Minimum order value (default: 1)
      * @return int The next order value to use
      */
     public static function calculateNextOrder(
