@@ -36,8 +36,23 @@
                     <!-- Navbar -->
                     <flux:navbar class="-mb-px max-lg:hidden">
                         @php
-                            $planBadge = auth()->user()->isTeamPlan() ? 'Team' : (auth()->user()->isPro() ? 'Pro' : 'Free');
-                            $planColor = auth()->user()->isTeamPlan() ? 'violet' : (auth()->user()->isPro() ? 'lime' : 'sky');
+                            $user = auth()->user();
+                            $teamOwner = $team?->owner;
+                            $teamContextHasTeamPlan = $teamOwner && $teamOwner->isTeamPlan();
+
+                            if ($teamContextHasTeamPlan && $team) {
+                                $planBadge = \Illuminate\Support\Str::limit($team->name, 40);
+                                $planColor = 'violet';
+                            } elseif ($user->isTeamPlan()) {
+                                $planBadge = 'Team';
+                                $planColor = 'violet';
+                            } elseif ($user->isPro()) {
+                                $planBadge = 'Pro';
+                                $planColor = 'lime';
+                            } else {
+                                $planBadge = 'Free';
+                                $planColor = 'sky';
+                            }
                         @endphp
                         <flux:navbar.item badge="{{ $planBadge }}" badge:color="{{ $planColor }}" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>{{ __('Diagrams') }}</flux:navbar.item>
                     </flux:navbar>
