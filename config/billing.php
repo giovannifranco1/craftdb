@@ -10,7 +10,7 @@ return [
     | Define your plans here. Create products and prices in the Stripe
     | Dashboard, then add the price IDs below. Use env() for sensitive IDs.
     |
-    */  
+    */
 
     'plans' => [
         'free' => [

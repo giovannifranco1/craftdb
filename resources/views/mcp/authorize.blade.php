@@ -1,21 +1,18 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" @class(['dark' => ($appearance ?? 'system') == 'dark'])>
+@php
+    $appearance = ($user->is_dark ?? false) ? 'dark' : 'light';
+@endphp
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" @class(['dark' => $appearance === 'dark'])>
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    {{-- Inline script to detect system dark mode preference and apply it immediately --}}
+    {{-- Inline script to apply appearance immediately --}}
     <script>
         (function() {
-            const appearance = '{{ $appearance ?? "system" }}';
-
-            if (appearance === 'system') {
-                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-                if (prefersDark) {
-                    document.documentElement.classList.add('dark');
-                }
-            }
+            const appearance = '{{ $appearance }}';
+            if (appearance === 'dark') document.documentElement.classList.add('dark');
+            else document.documentElement.classList.remove('dark');
         })();
     </script>
 
@@ -26,6 +23,27 @@
 
         html.dark {
             background-color: oklch(0.145 0 0);
+        }
+
+        /* Custom checkbox so the checkmark is always white (accent-color is browser-controlled). */
+        .team-checkbox {
+            -webkit-appearance: none;
+            appearance: none;
+            display: grid;
+            place-content: center;
+        }
+
+        .team-checkbox::after {
+            content: "";
+            width: 0.35rem;
+            height: 0.7rem;
+            border-right: 2px solid transparent;
+            border-bottom: 2px solid transparent;
+            transform: rotate(45deg) translateY(-0.05rem);
+        }
+
+        .team-checkbox:checked::after {
+            border-color: #fff;
         }
     </style>
 
@@ -47,19 +65,20 @@
 <body class="min-h-screen font-sans antialiased bg-zinc-50 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-50">
 
 @php
-    $teams = $user->allTeams()->values();
+    // Preload owner so we can show "Pro" vs "Team" accurately.
+    $teams = $user->allTeams()->loadMissing('owner')->values();
     $multipleTeams = $teams->count() > 1;
 @endphp
 
-<div class="min-h-screen flex items-center justify-center p-4">
-    <div class="w-full max-w-md">
+<div class="min-h-screen flex items-center justify-center p-4 sm:p-6">
+    <div class="w-full max-w-lg">
         <!-- Card Container -->
         <div class="rounded-xl border border-zinc-200 bg-white text-zinc-900 shadow-sm dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50">
             <!-- Header -->
             <div class="flex flex-col space-y-1.5 p-6">
                 <div class="flex items-center justify-center mb-4">
                     <!-- Shield Icon -->
-                    <svg class="h-12 w-12 text-teal-600 dark:text-teal-400" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <svg class="h-12 w-12  dark:text-zinc-400" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.618 5.984A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.031 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
                     </svg>
                 </div>
@@ -105,7 +124,7 @@
                     <div class="flex items-center justify-between">
                         <p class="text-sm font-medium">Workspace access:</p>
                         @if($multipleTeams)
-                            <button type="button" id="toggleAllBtn" class="text-xs text-teal-600 hover:underline dark:text-teal-400" onclick="toggleAll()">
+                            <button type="button" id="toggleAllBtn" class="text-xs text-sky-700 cursor-pointer hover:underline dark:text-sky-400" onclick="toggleAll()">
                                 Deselect all
                             </button>
                         @endif
@@ -114,33 +133,59 @@
                     @if($teams->isEmpty())
                         <p class="text-sm text-zinc-500 dark:text-zinc-400">No workspaces found.</p>
                     @else
-                        <div class="rounded-lg border border-zinc-200 divide-y divide-zinc-200 overflow-hidden dark:border-zinc-600 dark:divide-zinc-600" id="teamList">
-                            @foreach($teams as $team)
-                                <label class="flex items-center gap-3 px-4 py-3 hover:bg-zinc-50 cursor-pointer transition-colors dark:hover:bg-zinc-800/80" for="team_{{ $team->id }}">
-                                    <input
-                                        type="checkbox"
-                                        id="team_{{ $team->id }}"
-                                        name="mcp_teams[]"
-                                        value="{{ $team->id }}"
-                                        checked
-                                        class="h-4 w-4 rounded border-zinc-300 text-teal-600 accent-teal-600 dark:border-zinc-500 dark:accent-teal-500 team-checkbox"
-                                        onchange="onTeamChange()"
-                                    />
-                                    <div class="flex-1 min-w-0">
-                                        <p class="text-sm font-medium truncate">{{ $team->name }}</p>
-                                        @if($user->ownsTeam($team))
-                                            <p class="text-xs text-zinc-500 dark:text-zinc-400">Owner</p>
-                                        @else
-                                            <p class="text-xs text-zinc-500 dark:text-zinc-400">Member</p>
-                                        @endif
-                                    </div>
-                                    @if($user->hasTeamWorkspacePremiumAccess($team))
-                                        <span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-teal-500/15 text-teal-700 shrink-0 dark:bg-teal-400/15 dark:text-teal-300">
-                                            Premium
-                                        </span>
-                                    @endif
-                                </label>
-                            @endforeach
+                        <div
+                            class="max-h-64 overflow-y-auto rounded-lg border border-zinc-200 bg-zinc-50/80 dark:border-zinc-600 dark:bg-zinc-950/40"
+                            id="teamList"
+                        >
+                            <ul class="divide-y divide-zinc-200 dark:divide-zinc-600">
+                                @foreach($teams as $team)
+                                    <li>
+                                        <label
+                                            class="flex cursor-pointer items-start gap-3 px-4 py-3.5 transition-colors hover:bg-white dark:hover:bg-zinc-800/90 sm:items-center sm:py-3"
+                                            for="team_{{ $team->id }}"
+                                        >
+                                            <input
+                                                type="checkbox"
+                                                form="authorizeForm"
+                                                id="team_{{ $team->id }}"
+                                                name="mcp_teams[]"
+                                                value="{{ $team->id }}"
+                                                checked
+                                                class="team-checkbox mt-0.5 h-4 w-4 shrink-0 rounded border border-zinc-300 bg-white checked:border-sky-500 checked:bg-sky-600 dark:border-zinc-500 dark:bg-zinc-950 dark:checked:border-sky-500 dark:checked:bg-sky-600 sm:mt-0"
+                                                onchange="onTeamChange()"
+                                            />
+                                            <div class="min-w-0 flex-1">
+                                                <p class="text-sm font-medium leading-snug text-zinc-900 dark:text-zinc-100">{{ $team->name }}</p>
+                                                <p class="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
+                                                    @if($user->ownsTeam($team))
+                                                        Owner
+                                                    @else
+                                                        Member
+                                                    @endif
+                                                </p>
+                                            </div>
+                                            @php
+                                                $hasPremium = $user->hasTeamWorkspacePremiumAccess($team);
+                                                $planLabel = match (true) {
+                                                    ! $hasPremium => 'Free',
+                                                    $team->owner?->isTeamPlan() => 'Team',
+                                                    default => 'Pro',
+                                                };
+
+                                                $badgeClass = match ($planLabel) {
+                                                    'Team' => 'bg-violet-500/15 text-violet-700 dark:bg-violet-400/15 dark:text-violet-300',
+                                                    'Pro'  => 'bg-sky-500/15 text-sky-700 dark:bg-sky-400/15 dark:text-sky-300',
+                                                    default => 'bg-zinc-500/15 text-zinc-700 dark:bg-zinc-400/15 dark:text-zinc-300',
+                                                };
+                                            @endphp
+
+                                            <span class="inline-flex shrink-0 self-center rounded-full px-2 py-0.5 text-xs font-medium {{ $badgeClass }}">
+                                                {{ $planLabel }}
+                                            </span>
+                                        </label>
+                                    </li>
+                                @endforeach
+                            </ul>
                         </div>
 
                         <p class="text-xs text-zinc-500 dark:text-zinc-400" id="selectionHint">
@@ -173,8 +218,8 @@
                     <input type="hidden" name="state" value="">
                     <input type="hidden" name="client_id" value="{{ $client->id }}">
                     <input type="hidden" name="auth_token" value="{{ $authToken }}">
-                    <!-- team checkboxes are rendered in the content section above and included via form association via id -->
-                    <button type="submit" id="authorizeButton" class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white disabled:pointer-events-none disabled:opacity-50 bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-100 dark:focus-visible:ring-offset-zinc-900 h-10 px-4 py-2 w-full">
+                    {{-- Workspace checkboxes use form="authorizeForm" so they stay in the list layout but submit with this form --}}
+                    <button type="submit" id="authorizeButton" class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white disabled:pointer-events-none disabled:opacity-50 bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-100 dark:focus-visible:ring-offset-zinc-900 h-10 px-4 py-2 w-full">
                         <span id="authorizeText">Authorize</span>
 
                         <svg id="loadingSpinner" class="animate-spin ml-2 h-4 w-4 hidden text-white dark:text-zinc-900" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -189,15 +234,12 @@
 </div>
 
 <script>
-    // Move team checkboxes into the authorize form so they're submitted with it
     document.addEventListener('DOMContentLoaded', function() {
-        const form     = document.getElementById('authorizeForm');
-        const teamList = document.getElementById('teamList');
-        const button   = document.getElementById('authorizeButton');
+        const form   = document.getElementById('authorizeForm');
+        const button = document.getElementById('authorizeButton');
 
-        // Move the team checkbox container inside the form
-        if (teamList && form) {
-            form.appendChild(teamList);
+        if (! form) {
+            return;
         }
 
         // Submit handler — loading state + close on redirect

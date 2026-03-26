@@ -49,6 +49,12 @@ BEFORE creating or modifying any diagram, always call `list_teams` first. The re
 Prefer bulk tools to minimize round-trips: `create_schema` creates a full diagram in one call; `add_tables` adds multiple tables with columns to an existing diagram in one call; `add_columns` adds multiple columns to a table in one call.')]
 class CraftdbServer extends Server
 {
+    /**
+     * Cursor and other MCP clients often don't paginate tool listings in the UI.
+     * Increase the default page size so all tools show up.
+     */
+    public int $defaultPaginationLength = 50;
+
     protected function boot(): void
     {
         StdioMcpAuth::bootstrapIfStdio($this->transport);
