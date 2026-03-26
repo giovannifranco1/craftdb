@@ -142,6 +142,14 @@ class User extends Authenticatable implements OAuthenticatable
         return $this->google_id !== null;
     }
 
+    /**
+     * Platform super admin (fixed user id from migrations — see EnsureSuperRoot).
+     */
+    public function isSuperRoot(): bool
+    {
+        return $this->id === 1;
+    }
+
     private static array $isProCache = [];
 
     private static array $isTeamPlanCache = [];
@@ -187,6 +195,10 @@ class User extends Authenticatable implements OAuthenticatable
      */
     public function hasTeamWorkspacePremiumAccess(?Team $team = null): bool
     {
+        if ($this->isSuperRoot()) {
+            return true;
+        }
+
         if ($this->isPro() || $this->isTeamPlan()) {
             return true;
         }
@@ -245,6 +257,10 @@ class User extends Authenticatable implements OAuthenticatable
 
     public function hasReachedDiagramLimit(?Team $team = null): bool
     {
+        if ($this->isSuperRoot()) {
+            return false;
+        }
+
         $team ??= Team::currentTeam();
 
         if (! $team) {
