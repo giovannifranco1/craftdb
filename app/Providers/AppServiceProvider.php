@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Listeners\Mcp\StoreMcpTokenTeamsListener;
+use App\Mcp\Registrar as AppMcpRegistrar;
 use App\Models\Diagram;
 use App\Models\Team\Team;
 use App\Models\User;
@@ -17,6 +19,7 @@ use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\RateLimiter;
@@ -27,7 +30,7 @@ use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Sleep;
 use Illuminate\Validation\Rules\Password;
-use App\Listeners\Mcp\StoreMcpTokenTeamsListener;
+use Laravel\Mcp\Server\Registrar as McpRegistrar;
 use Laravel\Passport\Events\AccessTokenCreated;
 use Laravel\Passport\Passport;
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
@@ -39,7 +42,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(McpRegistrar::class, fn (): McpRegistrar => new AppMcpRegistrar);
     }
 
     /**
@@ -190,7 +193,7 @@ class AppServiceProvider extends ServiceProvider
     {
         Passport::authorizationView('mcp.authorize');
 
-        \Illuminate\Support\Facades\Event::listen(
+        Event::listen(
             AccessTokenCreated::class,
             StoreMcpTokenTeamsListener::class,
         );
