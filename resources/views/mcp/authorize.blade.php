@@ -38,12 +38,13 @@
     <meta name="apple-mobile-web-app-title" content="Authorize MCP" />
     <link rel="manifest" href="/site.webmanifest" />
 
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 
     @vite(['resources/css/app.css'])
 </head>
-<body class="font-sans antialiased bg-background text-foreground">
+<body class="min-h-screen font-sans antialiased bg-zinc-50 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-50">
 
 @php
     $teams = $user->allTeams()->values();
@@ -53,12 +54,12 @@
 <div class="min-h-screen flex items-center justify-center p-4">
     <div class="w-full max-w-md">
         <!-- Card Container -->
-        <div class="rounded-lg border bg-card text-card-foreground shadow-sm">
+        <div class="rounded-xl border border-zinc-200 bg-white text-zinc-900 shadow-sm dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50">
             <!-- Header -->
             <div class="flex flex-col space-y-1.5 p-6">
                 <div class="flex items-center justify-center mb-4">
                     <!-- Shield Icon -->
-                    <svg class="h-12 w-12 text-primary" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <svg class="h-12 w-12 text-teal-600 dark:text-teal-400" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.618 5.984A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.031 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
                     </svg>
                 </div>
@@ -67,7 +68,7 @@
                     Authorize {{ $client->name }}
                 </h3>
 
-                <p class="text-sm text-muted-foreground text-center">
+                <p class="text-sm text-zinc-500 dark:text-zinc-400 text-center">
                     This application will be able to use the CraftDB MCP server.
                 </p>
             </div>
@@ -75,8 +76,8 @@
             <!-- Content -->
             <div class="p-6 pt-0 space-y-4">
                 <!-- User Info -->
-                <div class="rounded-lg border p-4 bg-muted/50">
-                    <p class="text-sm text-muted-foreground mb-2">Logged in as:</p>
+                <div class="rounded-lg border border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-600 dark:bg-zinc-800/60">
+                    <p class="text-sm text-zinc-500 dark:text-zinc-400 mb-2">Logged in as:</p>
                     <p class="font-medium">{{ $user->email }}</p>
                 </div>
 
@@ -85,16 +86,16 @@
                     <p class="text-sm font-medium">Permissions:</p>
                     <ul class="space-y-1.5">
                         <li class="flex items-start gap-2">
-                            <div class="rounded-full bg-primary/10 p-1 mt-0.5 shrink-0">
-                                <div class="h-1.5 w-1.5 rounded-full bg-primary"></div>
+                            <div class="rounded-full bg-teal-500/15 p-1 mt-0.5 shrink-0 dark:bg-teal-400/15">
+                                <div class="h-1.5 w-1.5 rounded-full bg-teal-600 dark:bg-teal-400"></div>
                             </div>
-                            <span class="text-sm text-muted-foreground">Create, edit and delete diagrams</span>
+                            <span class="text-sm text-zinc-600 dark:text-zinc-400">Create, edit and delete diagrams</span>
                         </li>
                         <li class="flex items-start gap-2">
-                            <div class="rounded-full bg-primary/10 p-1 mt-0.5 shrink-0">
-                                <div class="h-1.5 w-1.5 rounded-full bg-primary"></div>
+                            <div class="rounded-full bg-teal-500/15 p-1 mt-0.5 shrink-0 dark:bg-teal-400/15">
+                                <div class="h-1.5 w-1.5 rounded-full bg-teal-600 dark:bg-teal-400"></div>
                             </div>
-                            <span class="text-sm text-muted-foreground">Add and update tables, columns and relationships</span>
+                            <span class="text-sm text-zinc-600 dark:text-zinc-400">Add and update tables, columns and relationships</span>
                         </li>
                     </ul>
                 </div>
@@ -104,37 +105,37 @@
                     <div class="flex items-center justify-between">
                         <p class="text-sm font-medium">Workspace access:</p>
                         @if($multipleTeams)
-                            <button type="button" id="toggleAllBtn" class="text-xs text-primary hover:underline" onclick="toggleAll()">
+                            <button type="button" id="toggleAllBtn" class="text-xs text-teal-600 hover:underline dark:text-teal-400" onclick="toggleAll()">
                                 Deselect all
                             </button>
                         @endif
                     </div>
 
                     @if($teams->isEmpty())
-                        <p class="text-sm text-muted-foreground">No workspaces found.</p>
+                        <p class="text-sm text-zinc-500 dark:text-zinc-400">No workspaces found.</p>
                     @else
-                        <div class="rounded-lg border divide-y overflow-hidden" id="teamList">
+                        <div class="rounded-lg border border-zinc-200 divide-y divide-zinc-200 overflow-hidden dark:border-zinc-600 dark:divide-zinc-600" id="teamList">
                             @foreach($teams as $team)
-                                <label class="flex items-center gap-3 px-4 py-3 hover:bg-muted/50 cursor-pointer transition-colors" for="team_{{ $team->id }}">
+                                <label class="flex items-center gap-3 px-4 py-3 hover:bg-zinc-50 cursor-pointer transition-colors dark:hover:bg-zinc-800/80" for="team_{{ $team->id }}">
                                     <input
                                         type="checkbox"
                                         id="team_{{ $team->id }}"
                                         name="mcp_teams[]"
                                         value="{{ $team->id }}"
                                         checked
-                                        class="h-4 w-4 rounded border-input accent-primary team-checkbox"
+                                        class="h-4 w-4 rounded border-zinc-300 text-teal-600 accent-teal-600 dark:border-zinc-500 dark:accent-teal-500 team-checkbox"
                                         onchange="onTeamChange()"
                                     />
                                     <div class="flex-1 min-w-0">
                                         <p class="text-sm font-medium truncate">{{ $team->name }}</p>
                                         @if($user->ownsTeam($team))
-                                            <p class="text-xs text-muted-foreground">Owner</p>
+                                            <p class="text-xs text-zinc-500 dark:text-zinc-400">Owner</p>
                                         @else
-                                            <p class="text-xs text-muted-foreground">Member</p>
+                                            <p class="text-xs text-zinc-500 dark:text-zinc-400">Member</p>
                                         @endif
                                     </div>
                                     @if($user->hasTeamWorkspacePremiumAccess($team))
-                                        <span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-primary/10 text-primary shrink-0">
+                                        <span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-teal-500/15 text-teal-700 shrink-0 dark:bg-teal-400/15 dark:text-teal-300">
                                             Premium
                                         </span>
                                     @endif
@@ -142,7 +143,7 @@
                             @endforeach
                         </div>
 
-                        <p class="text-xs text-muted-foreground" id="selectionHint">
+                        <p class="text-xs text-zinc-500 dark:text-zinc-400" id="selectionHint">
                             The application will only access the selected workspaces.
                         </p>
                     @endif
@@ -158,7 +159,7 @@
                     <input type="hidden" name="state" value="">
                     <input type="hidden" name="client_id" value="{{ $client->id }}">
                     <input type="hidden" name="auth_token" value="{{ $authToken }}">
-                    <button type="submit" class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 w-full">
+                    <button type="submit" class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-50 disabled:pointer-events-none disabled:opacity-50 border border-zinc-300 bg-white text-zinc-900 hover:bg-zinc-100 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700 dark:focus-visible:ring-offset-zinc-950 h-10 px-4 py-2 w-full">
                         <svg class="mr-2 h-4 w-4" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                         </svg>
@@ -173,10 +174,10 @@
                     <input type="hidden" name="client_id" value="{{ $client->id }}">
                     <input type="hidden" name="auth_token" value="{{ $authToken }}">
                     <!-- team checkboxes are rendered in the content section above and included via form association via id -->
-                    <button type="submit" id="authorizeButton" class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-full">
+                    <button type="submit" id="authorizeButton" class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white disabled:pointer-events-none disabled:opacity-50 bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-100 dark:focus-visible:ring-offset-zinc-900 h-10 px-4 py-2 w-full">
                         <span id="authorizeText">Authorize</span>
 
-                        <svg id="loadingSpinner" class="animate-spin ml-2 h-4 w-4 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <svg id="loadingSpinner" class="animate-spin ml-2 h-4 w-4 hidden text-white dark:text-zinc-900" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
