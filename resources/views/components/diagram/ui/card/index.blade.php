@@ -88,7 +88,7 @@
                     </template>
                 </div>
                 <div class="flex-1 min-w-0">
-                    <h3 class="text-sm w-35 underline font-semibold text-zinc-900 dark:text-zinc-100 dark:group-hover:text-zinc-300 transition-colors duration-300 truncate mb-2">
+                    <h3 class="text-sm w-34 line-clamp-2 underline font-semibold text-zinc-900 dark:text-zinc-100 dark:group-hover:text-zinc-300 transition-colors duration-300 mb-2">
                         {{ $diagram->name }}
                     </h3>
                     <div class="flex items-center gap-2 flex-wrap">

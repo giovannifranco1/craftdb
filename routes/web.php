@@ -37,6 +37,7 @@ Route::middleware(['auth'])->group(function () {
     Route::livewire('settings/password', 'settings.password')->name('user-password.edit');
     Route::livewire('settings/appearance', 'settings.appearance')->name('appearance.edit');
     Route::livewire('settings/language', 'settings.language')->name('language.edit');
+    Route::livewire('settings/integrations', 'settings.integrations')->name('integrations.edit');
 
     Route::livewire('settings/two-factor', 'settings.two-factor')
         ->middleware(
