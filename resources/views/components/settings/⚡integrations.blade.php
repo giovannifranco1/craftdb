@@ -37,7 +37,7 @@ new class extends BaseComponent {}; ?>
                     class="inline-flex items-center gap-2 rounded-md px-3.5 py-1.5 text-sm font-medium transition-all"
                 >
                     <flux:icon name="claude-agente" variant="micro" />
-                    Claude Desktop
+                    {{ __('Claude') }}
                 </button>
             </div>
 
@@ -102,7 +102,7 @@ new class extends BaseComponent {}; ?>
                 </div>
             </div>
 
-            {{-- ── CLAUDE DESKTOP TAB ── --}}
+            {{-- ── CLAUDE TAB (Code CLI + Desktop) ── --}}
             <div x-show="tab === 'claude'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 translate-y-1" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-5">
 
                 <div class="flex items-start gap-4">
@@ -110,12 +110,38 @@ new class extends BaseComponent {}; ?>
                         <flux:icon name="claude-agente" variant="solid" class="text-white" />
                     </div>
                     <div class="flex-1 min-w-0">
-                        <flux:heading size="sm" class="font-semibold">{{ __('Claude Desktop') }}</flux:heading>
+                        <flux:heading size="sm" class="font-semibold">{{ __('Claude') }}</flux:heading>
                         <flux:text class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
-                            {{ __('Connect CraftDB to Claude Desktop via MCP. Design entire database schemas through conversation — just describe your app and Claude will create the diagrams for you.') }}
+                            {{ __('Connect CraftDB via MCP from Claude Code (CLI) or Claude Desktop.') }}
                         </flux:text>
                     </div>
                 </div>
+
+                {{-- Claude Code CLI --}}
+                <div class="space-y-2">
+                    <flux:heading size="sm" class="font-semibold text-zinc-800 dark:text-zinc-200">{{ __('Claude Code (CLI)') }}</flux:heading>
+                    <flux:text class="text-sm text-zinc-500 dark:text-zinc-400">
+                        {{ __('Run this in your terminal (replace the URL if you use a custom domain):') }}
+                    </flux:text>
+                    @php
+                        $claudeMcpAddCmd = 'claude mcp add --transport http craftdb '.$mcpUrl;
+                    @endphp
+                    <div x-data="{ copied: false }" class="relative">
+                        <pre class="rounded-lg bg-zinc-900 dark:bg-zinc-950 text-zinc-100 text-xs font-mono p-4 overflow-x-auto leading-relaxed whitespace-pre-wrap break-all">{{ $claudeMcpAddCmd }}</pre>
+                        <button
+                            x-on:click="navigator.clipboard.writeText(@js($claudeMcpAddCmd)); copied = true; setTimeout(() => copied = false, 2000)"
+                            class="absolute top-2.5 right-2.5 p-1.5 rounded-md text-zinc-400 hover:text-zinc-200 hover:bg-zinc-700 transition-colors"
+                            :title="copied ? '{{ __('Copied!') }}' : '{{ __('Copy') }}'"
+                        >
+                            <svg x-show="!copied" class="size-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.666 3.888A2.25 2.25 0 0 0 13.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 0 1-.75.75H9a.75.75 0 0 1-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 0 1-2.25 2.25H6.75A2.25 2.25 0 0 1 4.5 19.5V6.278c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 0 1 1.927-.184" /></svg>
+                            <svg x-show="copied" class="size-4 text-emerald-400" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <flux:separator />
+
+                <flux:heading size="sm" class="font-semibold text-zinc-800 dark:text-zinc-200">{{ __('Claude Desktop (manual)') }}</flux:heading>
 
                 {{-- Step 1 --}}
                 <div class="space-y-3">
