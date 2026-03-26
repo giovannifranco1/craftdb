@@ -22,6 +22,8 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Laravel\Cashier\Billable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
+use Laravel\Passport\Contracts\OAuthenticatable;
+use Laravel\Passport\HasApiTokens;
 
 /**
  * @property int $id
@@ -64,10 +66,10 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
  */
 #[Fillable(['name', 'email', 'password', 'github_id', 'github_token', 'github_refresh_token', 'google_id', 'google_token', 'google_refresh_token', 'locale', 'is_dark'])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token', 'github_token', 'github_refresh_token', 'google_token', 'google_refresh_token'])]
-class User extends Authenticatable
+class User extends Authenticatable implements OAuthenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use Billable, HasFactory, HasTeams, Notifiable, TwoFactorAuthenticatable;
+    use Billable, HasApiTokens, HasFactory, HasTeams, Notifiable, TwoFactorAuthenticatable;
 
     /**
      * Default attribute values so strict mode never sees missing keys after insert
@@ -195,7 +197,7 @@ class User extends Authenticatable
             return false;
         }
 
-        $team->loadMissing('owner');
+        $team->loadMissing(['owner', 'users']);
 
         if (! $team->hasUser($this)) {
             return false;
@@ -241,9 +243,9 @@ class User extends Authenticatable
         return $this->isTeamPlan();
     }
 
-    public function hasReachedDiagramLimit(): bool
+    public function hasReachedDiagramLimit(?Team $team = null): bool
     {
-        $team = Team::currentTeam();
+        $team ??= Team::currentTeam();
 
         if (! $team) {
             return false;

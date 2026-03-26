@@ -24,7 +24,7 @@ class DiagramPolicy
     {
         $team = $diagram->team()->first();
 
-        if (!$team) {
+        if (! $team) {
             return false;
         }
 
@@ -38,17 +38,31 @@ class DiagramPolicy
     {
         $currentTeam = Team::currentTeam();
 
-        if (!$currentTeam) {
+        if (! $currentTeam) {
             return false;
         }
 
         $team = Team::find($currentTeam->id);
 
-        if ($team && $user->ownsTeam($team)) {
+        return $team ? $this->createOnTeam($user, $team) : false;
+    }
+
+    /**
+     * Create diagrams on a specific team (e.g. MCP / API without session current team).
+     */
+    public function createOnTeam(User $user, Team $team): bool
+    {
+        $team = Team::find($team->getKey());
+
+        if (! $team) {
+            return false;
+        }
+
+        if ($user->ownsTeam($team)) {
             return true;
         }
 
-        if ($team && $user->belongsToTeam($team)) {
+        if ($user->belongsToTeam($team)) {
             return $team->userHasRole($user, EnumsRole::EDITOR);
         }
 

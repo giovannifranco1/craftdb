@@ -11,6 +11,7 @@
             @endif
             <flux:navlist.item :href="route('appearance.edit')" wire:navigate>{{ __('Appearance') }}</flux:navlist.item>
             <flux:navlist.item :href="route('language.edit')" wire:navigate>{{ __('Language') }}</flux:navlist.item>
+            <flux:navlist.item :href="route('integrations.edit')" wire:navigate>{{ __('Integrations') }}</flux:navlist.item>
 
             @php($team = Team::currentTeam())
             <flux:separator class="my-2" />

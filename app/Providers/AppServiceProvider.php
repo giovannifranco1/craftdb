@@ -3,26 +3,34 @@
 namespace App\Providers;
 
 use App\Models\Diagram;
+use App\Models\Team\Team;
+use App\Models\User;
+use App\Policies\DiagramPolicy;
 use App\View\Components\Layouts\CanvasPublic;
 use Carbon\CarbonImmutable;
+use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Date;
-use Illuminate\Support\Facades\Route;
-use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Sleep;
 use Illuminate\Validation\Rules\Password;
-use Illuminate\View\Component;
+use App\Listeners\Mcp\StoreMcpTokenTeamsListener;
+use Laravel\Passport\Events\AccessTokenCreated;
+use Laravel\Passport\Passport;
+use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -34,7 +42,7 @@ class AppServiceProvider extends ServiceProvider
         //
     }
 
-     /**
+    /**
      * Bootstrap any application services.
      */
     public function boot(): void
@@ -43,7 +51,7 @@ class AppServiceProvider extends ServiceProvider
         View::addNamespace('pages', resource_path('views/pages'));
         View::addNamespace('placeholders', resource_path('views/components/ui/placeholders'));
 
-        /** @var \Illuminate\Foundation\Application $app */
+        /** @var Application $app */
         $app = $this->app;
 
         if ($app->isProduction()) {
@@ -64,6 +72,8 @@ class AppServiceProvider extends ServiceProvider
         $this->configureUnitTests();
         $this->configureDiagramCaching();
         $this->AliasComponents();
+        $this->configurePassportMcp();
+        $this->configureMcpGatesAndRateLimit();
     }
 
     /**
@@ -174,5 +184,28 @@ class AppServiceProvider extends ServiceProvider
     private function AliasComponents(): void
     {
         Blade::component(CanvasPublic::class, 'layouts.canvas.public');
+    }
+
+    private function configurePassportMcp(): void
+    {
+        Passport::authorizationView('mcp.authorize');
+
+        \Illuminate\Support\Facades\Event::listen(
+            AccessTokenCreated::class,
+            StoreMcpTokenTeamsListener::class,
+        );
+    }
+
+    private function configureMcpGatesAndRateLimit(): void
+    {
+        Gate::define('createDiagramOnTeam', function (User $user, Team $team): bool {
+            return app(DiagramPolicy::class)->createOnTeam($user, $team);
+        });
+
+        RateLimiter::for('mcp', function (Request $request): Limit {
+            $key = $request->user()?->getAuthIdentifier() ?? $request->ip();
+
+            return Limit::perMinute(120)->by((string) $key);
+        });
     }
 }
