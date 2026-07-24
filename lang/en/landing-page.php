@@ -135,6 +135,47 @@ return [
         ],
     ],
 
+    'showcase' => [
+        'title_line1' => 'See CraftDB',
+        'title_gradient' => 'in action',
+        'subtitle' => 'From canvas to collaboration: see how it feels to model, import, and share your databases.',
+        'items' => [
+            [
+                'title' => 'Visual modeling on the canvas',
+                'description' => 'Drag tables, define fields and types, and connect foreign keys on an infinite canvas. All visual—no hand-written SQL.',
+                'bullets' => [
+                    'Tables, fields, types, and constraints',
+                    'One-click FK relationships',
+                    'Colored areas and sticky notes',
+                ],
+                'image' => 'resources/images/landing-page/showcase-canvas.png',
+                'alt' => 'CraftDB canvas with tables and relationships',
+            ],
+            [
+                'title' => 'SQL and Laravel Migration import',
+                'description' => 'Already have a schema? Bring it in seconds by importing a SQL file (MySQL) or your Laravel Migrations. CraftDB detects tables, fields, and relationships automatically.',
+                'bullets' => [
+                    'Import .sql (MySQL)',
+                    'Import Laravel Migration files',
+                    'Automatic foreign key detection',
+                ],
+                'image' => 'resources/images/landing-page/showcase-import.png',
+                'alt' => 'CraftDB schema import screen',
+            ],
+            [
+                'title' => 'Team collaboration and public link',
+                'description' => 'Organize diagrams by team, invite members with editor or viewer roles, and share via public link—no login required to view.',
+                'bullets' => [
+                    'Teams with roles (editor / viewer)',
+                    'Public link with no login required',
+                    'Diagrams organized by team',
+                ],
+                'image' => 'resources/images/landing-page/showcase-collab.png',
+                'alt' => 'Sharing and collaboration in CraftDB',
+            ],
+        ],
+    ],
+
     'pricing' => [
         'title_line1' => 'Simple pricing,',
         'title_gradient' => 'no surprises',

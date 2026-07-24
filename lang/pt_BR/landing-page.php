@@ -135,6 +135,47 @@ return [
         ],
     ],
 
+    'showcase' => [
+        'title_line1' => 'Veja o CraftDB',
+        'title_gradient' => 'em ação',
+        'subtitle' => 'Do canvas à colaboração: veja como é modelar, importar e compartilhar seus bancos de dados.',
+        'items' => [
+            [
+                'title' => 'Modelagem visual no canvas',
+                'description' => 'Arraste tabelas, defina campos e tipos e conecte foreign keys em um canvas infinito. Tudo visual, sem escrever SQL na mão.',
+                'bullets' => [
+                    'Tabelas, campos, tipos e constraints',
+                    'Relacionamentos FK com um clique',
+                    'Áreas coloridas e sticky notes',
+                ],
+                'image' => 'resources/images/landing-page/showcase-canvas.png',
+                'alt' => 'Canvas do CraftDB com tabelas e relacionamentos',
+            ],
+            [
+                'title' => 'Importação SQL e Laravel Migration',
+                'description' => 'Já tem um schema? Traga em segundos importando um arquivo SQL (MySQL) ou suas Laravel Migrations. O CraftDB detecta tabelas, campos e relacionamentos automaticamente.',
+                'bullets' => [
+                    'Importe .sql (MySQL)',
+                    'Importe arquivos de Laravel Migration',
+                    'Detecção automática de foreign keys',
+                ],
+                'image' => 'resources/images/landing-page/showcase-import.png',
+                'alt' => 'Tela de importação de schema do CraftDB',
+            ],
+            [
+                'title' => 'Colaboração em time e link público',
+                'description' => 'Organize diagramas por time, convide membros com papéis de editor ou viewer e compartilhe por link público — sem exigir login para visualizar.',
+                'bullets' => [
+                    'Times com papéis (editor / viewer)',
+                    'Link público sem exigir login',
+                    'Diagramas organizados por time',
+                ],
+                'image' => 'resources/images/landing-page/showcase-collab.png',
+                'alt' => 'Compartilhamento e colaboração no CraftDB',
+            ],
+        ],
+    ],
+
     'pricing' => [
         'title_line1' => 'Preços simples,',
         'title_gradient' => 'sem surpresas',
