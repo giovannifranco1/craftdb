@@ -47,16 +47,11 @@
             </div>
 
             <!-- Right side - MacBook Mockup -->
-            <div class="relative fade-in-up fade-in-delay-3">
-                <div class="relative">
-                    <!-- Laptop mockup image -->
-                    <img src="{{ Vite::asset('resources/images/landing-page/macbook.png') }}" alt="{{ __('landing-page.hero.macbook_alt') }}" class="w-full h-auto relative z-10"/>
-                    <img src="{{ Vite::asset('resources/images/landing-page/image_macbook.png') }}" alt="{{ __('landing-page.hero.macbook_screen_alt') }}" class="absolute w-[70%] h-auto top-[14%] left-[15%] z-5"/>
-                </div>
-
-                <!-- Shadow effect -->
-                <div class="absolute -bottom-8 left-1/2 -translate-x-1/2 w-[80%] h-8 bg-black/10 blur-2xl rounded-full"></div>
-            </div>
+            <x-landing-page.macbook-mockup
+                screen="resources/images/landing-page/image_macbook.png"
+                :alt="__('landing-page.hero.macbook_screen_alt')"
+                class="fade-in-up fade-in-delay-3"
+            />
         </div>
     </div>
 </section>

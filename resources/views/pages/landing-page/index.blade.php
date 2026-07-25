@@ -3,6 +3,7 @@
     @include('pages::landing-page.sections.logo-strip')
     @include('pages::landing-page.sections.features')
     @include('pages::landing-page.sections.how-it-works')
+    @include('pages::landing-page.sections.showcase')
     @include('pages::landing-page.sections.pricing')
     @include('pages::landing-page.sections.faq')
 </x-layouts.landing-page>
