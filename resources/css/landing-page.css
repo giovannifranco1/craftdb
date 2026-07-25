@@ -255,6 +255,25 @@
   transform: translateY(0);
 }
 
+/* Zoom-in ao entrar na viewport (imagens do showcase crescem um pouco) */
+.zoom-on-scroll {
+  transform: scale(0.92);
+  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+.zoom-on-scroll.visible {
+  transform: scale(1.05);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zoom-on-scroll,
+  .zoom-on-scroll.visible {
+    transform: none;
+    transition: none;
+  }
+}
+
 /* Collaboration cursor animations */
 @keyframes cursor-path-1 {
   0%, 100% { transform: translate(180px, 120px); }
