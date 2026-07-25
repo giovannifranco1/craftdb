@@ -135,6 +135,47 @@ return [
         ],
     ],
 
+    'showcase' => [
+        'title_line1' => 'See CraftDB',
+        'title_gradient' => 'in action',
+        'subtitle' => 'From canvas to collaboration: see how it feels to model, import, and share your databases.',
+        'items' => [
+            [
+                'title' => 'Foreign key dependency graph',
+                'description' => 'Visualize your database foreign keys as an interactive graph and instantly see the dependencies between tables—ideal for understanding the impact of schema changes.',
+                'bullets' => [
+                    'Interactive relationship graph',
+                    'FK dependencies per table',
+                    'Full diagram overview',
+                ],
+                'image' => 'resources/images/landing-page/showcase-graph.png',
+                'alt' => 'Foreign key dependency graph in CraftDB',
+            ],
+            [
+                'title' => 'SQL and Laravel Migration import',
+                'description' => 'Already have a schema? Bring it in seconds by importing a SQL file (MySQL) or your Laravel Migrations. CraftDB detects tables, fields, and relationships automatically.',
+                'bullets' => [
+                    'Import .sql (MySQL)',
+                    'Import Laravel Migration files',
+                    'Automatic foreign key detection',
+                ],
+                'image' => 'resources/images/landing-page/showcase-import.png',
+                'alt' => 'CraftDB schema import screen',
+            ],
+            [
+                'title' => 'Team collaboration',
+                'description' => 'Organize diagrams by team, invite members with editor or viewer roles, and work together on the same schema. Share a public link when you need to show it to someone outside.',
+                'bullets' => [
+                    'Teams with roles (editor / viewer)',
+                    'Multiple members on the same diagram',
+                    'Public link with no login required',
+                ],
+                'image' => 'resources/images/landing-page/showcase-collab.png',
+                'alt' => 'Team collaboration in CraftDB',
+            ],
+        ],
+    ],
+
     'pricing' => [
         'title_line1' => 'Simple pricing,',
         'title_gradient' => 'no surprises',

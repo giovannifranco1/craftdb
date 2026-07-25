@@ -135,6 +135,47 @@ return [
         ],
     ],
 
+    'showcase' => [
+        'title_line1' => 'Veja o CraftDB',
+        'title_gradient' => 'em ação',
+        'subtitle' => 'Do canvas à colaboração: veja como é modelar, importar e compartilhar seus bancos de dados.',
+        'items' => [
+            [
+                'title' => 'Grafo de dependências de FK',
+                'description' => 'Visualize as foreign keys do seu banco como um grafo interativo e enxergue rapidamente as dependências entre tabelas — ideal para entender o impacto de mudanças no schema.',
+                'bullets' => [
+                    'Grafo interativo de relacionamentos',
+                    'Dependências de FK por tabela',
+                    'Visão completa do diagrama',
+                ],
+                'image' => 'resources/images/landing-page/showcase-graph.png',
+                'alt' => 'Grafo de dependências de foreign keys no CraftDB',
+            ],
+            [
+                'title' => 'Importação SQL e Laravel Migration',
+                'description' => 'Já tem um schema? Traga em segundos importando um arquivo SQL (MySQL) ou suas Laravel Migrations. O CraftDB detecta tabelas, campos e relacionamentos automaticamente.',
+                'bullets' => [
+                    'Importe .sql (MySQL)',
+                    'Importe arquivos de Laravel Migration',
+                    'Detecção automática de foreign keys',
+                ],
+                'image' => 'resources/images/landing-page/showcase-import.png',
+                'alt' => 'Tela de importação de schema do CraftDB',
+            ],
+            [
+                'title' => 'Colaboração em time',
+                'description' => 'Organize diagramas por time, convide membros com papéis de editor ou viewer e trabalhem juntos no mesmo schema. Compartilhe por link público quando precisar mostrar para quem está de fora.',
+                'bullets' => [
+                    'Times com papéis (editor / viewer)',
+                    'Vários membros no mesmo diagrama',
+                    'Link público sem exigir login',
+                ],
+                'image' => 'resources/images/landing-page/showcase-collab.png',
+                'alt' => 'Colaboração em time no CraftDB',
+            ],
+        ],
+    ],
+
     'pricing' => [
         'title_line1' => 'Preços simples,',
         'title_gradient' => 'sem surpresas',

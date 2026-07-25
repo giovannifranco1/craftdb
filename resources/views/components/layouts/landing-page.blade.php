@@ -74,7 +74,7 @@
                 });
             }, observerOptions);
 
-            document.querySelectorAll('.scroll-animate').forEach(el => {
+            document.querySelectorAll('.scroll-animate, .zoom-on-scroll').forEach(el => {
                 observer.observe(el);
             });
         });

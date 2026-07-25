@@ -84,7 +84,7 @@ craftdb/
 │   │           ├── _foreign-keys-graph.js  # foreignKeysGraph — grafo D3 de FK por tabela
 │   │           └── _diagram-graph.js       # grafo D3 completo do diagrama
 │   └── views/
-│       ├── components/      # Blade components (auth/, diagram/, layouts/, settings/, ui/)
+│       ├── components/      # Blade components (auth/, diagram/, landing-page/, layouts/, settings/, ui/)
 │       ├── livewire/        # Views de componentes Livewire
 │       └── pages/           # Views de páginas (landing, dashboard, etc.)
 ├── routes/
