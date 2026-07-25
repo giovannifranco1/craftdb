@@ -141,15 +141,15 @@ return [
         'subtitle' => 'From canvas to collaboration: see how it feels to model, import, and share your databases.',
         'items' => [
             [
-                'title' => 'Visual modeling on the canvas',
-                'description' => 'Drag tables, define fields and types, and connect foreign keys on an infinite canvas. All visual—no hand-written SQL.',
+                'title' => 'Foreign key dependency graph',
+                'description' => 'Visualize your database foreign keys as an interactive graph and instantly see the dependencies between tables—ideal for understanding the impact of schema changes.',
                 'bullets' => [
-                    'Tables, fields, types, and constraints',
-                    'One-click FK relationships',
-                    'Colored areas and sticky notes',
+                    'Interactive relationship graph',
+                    'FK dependencies per table',
+                    'Full diagram overview',
                 ],
-                'image' => 'resources/images/landing-page/showcase-canvas.png',
-                'alt' => 'CraftDB canvas with tables and relationships',
+                'image' => 'resources/images/landing-page/showcase-graph.png',
+                'alt' => 'Foreign key dependency graph in CraftDB',
             ],
             [
                 'title' => 'SQL and Laravel Migration import',
@@ -163,15 +163,15 @@ return [
                 'alt' => 'CraftDB schema import screen',
             ],
             [
-                'title' => 'Team collaboration and public link',
-                'description' => 'Organize diagrams by team, invite members with editor or viewer roles, and share via public link—no login required to view.',
+                'title' => 'Team collaboration',
+                'description' => 'Organize diagrams by team, invite members with editor or viewer roles, and work together on the same schema. Share a public link when you need to show it to someone outside.',
                 'bullets' => [
                     'Teams with roles (editor / viewer)',
+                    'Multiple members on the same diagram',
                     'Public link with no login required',
-                    'Diagrams organized by team',
                 ],
                 'image' => 'resources/images/landing-page/showcase-collab.png',
-                'alt' => 'Sharing and collaboration in CraftDB',
+                'alt' => 'Team collaboration in CraftDB',
             ],
         ],
     ],

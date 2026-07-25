@@ -141,15 +141,15 @@ return [
         'subtitle' => 'Do canvas à colaboração: veja como é modelar, importar e compartilhar seus bancos de dados.',
         'items' => [
             [
-                'title' => 'Modelagem visual no canvas',
-                'description' => 'Arraste tabelas, defina campos e tipos e conecte foreign keys em um canvas infinito. Tudo visual, sem escrever SQL na mão.',
+                'title' => 'Grafo de dependências de FK',
+                'description' => 'Visualize as foreign keys do seu banco como um grafo interativo e enxergue rapidamente as dependências entre tabelas — ideal para entender o impacto de mudanças no schema.',
                 'bullets' => [
-                    'Tabelas, campos, tipos e constraints',
-                    'Relacionamentos FK com um clique',
-                    'Áreas coloridas e sticky notes',
+                    'Grafo interativo de relacionamentos',
+                    'Dependências de FK por tabela',
+                    'Visão completa do diagrama',
                 ],
-                'image' => 'resources/images/landing-page/showcase-canvas.png',
-                'alt' => 'Canvas do CraftDB com tabelas e relacionamentos',
+                'image' => 'resources/images/landing-page/showcase-graph.png',
+                'alt' => 'Grafo de dependências de foreign keys no CraftDB',
             ],
             [
                 'title' => 'Importação SQL e Laravel Migration',
@@ -163,15 +163,15 @@ return [
                 'alt' => 'Tela de importação de schema do CraftDB',
             ],
             [
-                'title' => 'Colaboração em time e link público',
-                'description' => 'Organize diagramas por time, convide membros com papéis de editor ou viewer e compartilhe por link público — sem exigir login para visualizar.',
+                'title' => 'Colaboração em time',
+                'description' => 'Organize diagramas por time, convide membros com papéis de editor ou viewer e trabalhem juntos no mesmo schema. Compartilhe por link público quando precisar mostrar para quem está de fora.',
                 'bullets' => [
                     'Times com papéis (editor / viewer)',
+                    'Vários membros no mesmo diagrama',
                     'Link público sem exigir login',
-                    'Diagramas organizados por time',
                 ],
                 'image' => 'resources/images/landing-page/showcase-collab.png',
-                'alt' => 'Compartilhamento e colaboração no CraftDB',
+                'alt' => 'Colaboração em time no CraftDB',
             ],
         ],
     ],
