@@ -1,5 +1,5 @@
 <div class="bg-gray-50 dark:bg-background-dark flex-none pl-3 pr-4 py-px rounded-b-xl table-footer-beauty">
-    <div class="flex items-center justify-between text-xs text-gray-500 dark:text-zinc-400">
+    <div class="flex items-center justify-between text-xs font-normal text-gray-500 dark:text-zinc-400">
         <div class="flex gap-3">
             <span>{{ $tableData->columns_count . ' / ' . ($tableColumnsLimit ?? config('diagram.free.table_columns_limit')) }} campos</span>
             <span>•</span>

@@ -37,7 +37,7 @@
                             <span class="sr-only">Loading...</span>
                         </div>
 
-                        <span class="text-[10px] tracking-wide font-[Space Mono] font-semibold text-gray-700 dark:text-zinc-300 uppercase tracking-wide truncate">
+                        <span class="text-[10px] tracking-wide font-semibold text-gray-700 dark:text-zinc-300 uppercase tracking-wide truncate">
                             {{ $area->name ?? 'Area name...' }}
                         </span>
                     </div>

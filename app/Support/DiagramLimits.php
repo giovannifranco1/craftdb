@@ -16,9 +16,9 @@ class DiagramLimits
     {
         if ($user->isSuperRoot()) {
             return [
-                'diagram_limit' => PHP_INT_MAX,
-                'table_limit' => PHP_INT_MAX,
-                'table_columns_limit' => PHP_INT_MAX,
+                'diagram_limit' => 300,
+                'table_limit' => 300,
+                'table_columns_limit' => 300,
             ];
         }
 

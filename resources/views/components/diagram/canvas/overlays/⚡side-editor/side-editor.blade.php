@@ -50,7 +50,7 @@
                                             class="w-4 h-4 bg-[var(--table-base-bg)] rounded-full shadow-sm ring-2 ring-white dark:ring-zinc-900"
                                             title="table color: {{ $this->getTable->color ?? \App\Models\Table::COLOR_DEFAULT }}"
                                         ></div>
-                                        <h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-50 font-[Poppins]" id="table-title">
+                                        <h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-50" id="table-title">
                                             {{ ucfirst($this->getTable->name) }}
                                         </h2>
                                     </div>

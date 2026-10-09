@@ -28,14 +28,14 @@
                             <div class="flex items-center gap-2">
                                 {!! Helpers::getIconDiamondByTypeColumn($column) !!}
 
-                                <span class="text-[14px] font-medium text-gray-900 dark:text-zinc-200 font-[Comic_Relief] max-w-[120px] truncate block" title="{{ $column->name }}">
+                                <span class="text-[13px] font-medium text-gray-900 dark:text-zinc-200 max-w-[120px] truncate block" title="{{ $column->name }}">
                                     {{ $column->name }}
                                 </span>
                             </div>
                         </td>
 
                         <td>
-                            <span class="inline-flex items-center px-2 rounded text-[11px] uppercase font-medium bg-gray-100 dark:bg-zinc-700 text-zinc-800 dark:text-zinc-200">
+                            <span class="inline-flex items-center px-2 rounded text-[10px] uppercase font-medium bg-gray-100 dark:bg-zinc-700 text-zinc-800 dark:text-zinc-200">
                                 @if(($column->length ?? 0) > 0)
                                     @php
                                         $lengthStr = (string)$column->length;

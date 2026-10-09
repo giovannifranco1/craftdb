@@ -31,7 +31,7 @@
 }
 
 @theme {
-    --font-sans: "Hanken Grotesk", sans-serif;
+    --font-sans: "Poppins", sans-serif;
     --color-accent: var(--color-gray-900);
     --color-accent-content: var(--color-slate-800);
     --color-accent-foreground: var(--color-white);

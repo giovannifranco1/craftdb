@@ -25,7 +25,7 @@
                 @foreach($tableData->columns as $index => $column)
                     <tr
                         x-init="if ($wire.tableData.resize_column_position < {{ $index + 1 }}) { $el.setAttribute('is-hidden', true); }"
-                        x-data="{ isEventRenameColumn: false, loadingRenameColumn: false, renameActionTriggered: false, isHovering: false, hoverLeaveTimer: null }"
+                        x-data="{ isEventRenameColumn: false, loadingRenameColumn: false, isHovering: false, hoverLeaveTimer: null }"
                         @mouseenter="clearTimeout(hoverLeaveTimer); isHovering = true"
                         @mouseleave="hoverLeaveTimer = setTimeout(() => { isHovering = false }, 150)"
                         id="column-{{ $tableId }}-{{ $column->id }}"
@@ -61,8 +61,34 @@
 
                                                 window.addEventListener(`table::column-added.${this.tableId}`, (event) => {
                                                     this.__new = false;
-                                                    this.isEventRenameColumn = false;
+                                                    this.closeRename();
                                                 });
+                                            },
+
+                                            /** Fecha a edição desta linha e libera o x-trap. Idempotente. */
+                                            closeRename() {
+                                                this.isEventRenameColumn = false;
+                                                this.loadingRenameColumn = false;
+
+                                                if (this.$refs.inputColumn) {
+                                                    this.$refs.inputColumn.value = '';
+                                                }
+                                            },
+
+                                            /** Salva no enter e no blur. Fecha a edição antes do request para não deixar o trap preso. */
+                                            commitRename() {
+                                                if (!this.isEventRenameColumn) return;
+
+                                                const newName = (this.$refs.inputColumn?.value ?? '').trim();
+
+                                                this.closeRename();
+
+                                                if (newName === '') return;
+
+                                                this.loadingRenameColumn = true;
+
+                                                this.$wire.renameColumn(this.columnId, newName)
+                                                    .finally(() => { this.loadingRenameColumn = false; });
                                             },
                                         }"
                                         name="name"
@@ -70,35 +96,17 @@
                                         x-ref="inputColumn"
                                         x-trap="isEventRenameColumn"
                                         type="text"
-                                        class="bg-transparent border-none outline-none shadow-none font-normal text-[14px] font-[Comic_Relief] p-0 m-0 w-auto"
+                                        class="bg-transparent border-none outline-none shadow-none font-medium text-[13px] p-0 m-0 w-auto"
                                         style="background: transparent !important; box-shadow: none !important;"
                                         @mousedown.stop
                                         @keydown.stop
-                                        @keydown.enter="renameActionTriggered = true; loadingRenameColumn = true; $wire.renameColumn({{ $column->id }}, $refs.inputColumn?.value || '')"
-                                        @keydown.escape.stop="isEventRenameColumn = false;"
-                                        @table::column-renamed.window="() => {
-                                            if (renameActionTriggered) isEventRenameColumn = false;
-                                            loadingRenameColumn = false;
-                                        }"
-                                        @blur="() => {
-                                            if (renameActionTriggered) return;
-
-                                            if ($refs.inputColumn?.value === '') {
-                                                $refs.inputColumn.value = 'new_column';
-                                                isEventRenameColumn = false;
-                                                renameActionTriggered = false;
-                                                loadingRenameColumn = false;
-                                                return;
-                                            }
-
-                                            renameActionTriggered = false;
-                                            loadingRenameColumn = true;
-                                            $wire.renameColumn({{ $column->id }}, $refs.inputColumn?.value);
-                                        }"
+                                        @keydown.enter="commitRename()"
+                                        @keydown.escape.stop="closeRename()"
+                                        @blur="commitRename()"
                                     />
                                     <span
                                         x-show="!isEventRenameColumn"
-                                        class="text-[14px] font-medium text-gray-900 dark:text-zinc-200 font-[Comic_Relief] max-w-[120px] truncate block"
+                                        class="text-[13px] font-medium text-gray-900 dark:text-zinc-200 max-w-[120px] truncate block"
                                         title="{{ $column->name }}"
                                     >
                                         {{ $column->name }}
@@ -174,7 +182,7 @@
                         </td>
 
                         <td x-show="!isHovering">
-                            <span class="inline-flex items-center px-2 w-20 justify-center rounded text-[11px] uppercase font-medium bg-gray-100 dark:bg-zinc-700 text-zinc-800 dark:text-zinc-200">
+                            <span class="inline-flex items-center px-2 w-20 justify-center rounded text-[10px] uppercase font-medium bg-gray-100 dark:bg-zinc-700 text-zinc-800 dark:text-zinc-200">
                                 @if(($column->length ?? 0) > 0)
                                     @php
                                         $lengthStr = (string)$column->length;

@@ -98,6 +98,7 @@ Detalhes completos em `.specs/codebase/CONVENTIONS.md`
 - **Cloudflare** — header `cf-ipcountry` para detecção de região (USD vs BRL)
 - **phpmyadmin/sql-parser** — import de schemas MySQL
 - **AWS S3** — storage configurado
+- **MCP + Passport** — `.cursor/mcp.json` guarda JWT RS256 (scope `mcp:use`) assinado pelas Passport OAuth keys. As keys vivem no `.env` (`PASSPORT_PRIVATE_KEY` / `PASSPORT_PUBLIC_KEY`), **não** em `storage/oauth-*.key` — esses arquivos são gitignored e regeneráveis, e trocá-los invalida o token do MCP. Se precisar rotacionar keys, regenerar também o `MCP_BEARER_TOKEN` em `.cursor/mcp.json`.
 
 Detalhes completos em `.specs/codebase/INTEGRATIONS.md`
 
