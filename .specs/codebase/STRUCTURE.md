@@ -19,14 +19,11 @@ craftdb/
 │   │   │                    #   ParseSQLiteSchema, ParseLaravelMigration
 │   │   └── Team/            # Operações de equipe
 │   ├── Console/Commands/
-│   ├── Enums/               # ColumnType, RelationshipType, BillingCountry
-│   ├── Exceptions/          # DiagramLimitExceededException, TableLimitExceededException,
-│   │                        #   TableColumnLimitExceededException, AuthorizationDiagramException,
-│   │                        #   PlanFeatureException
+│   ├── Enums/               # ColumnType, RelationshipType
+│   ├── Exceptions/          # AuthorizationDiagramException
 │   ├── Http/
 │   │   ├── Controllers/
-│   │   │   ├── Pages/       # DiagramController, LandingPageController
-│   │   │   └── BillingController.php
+│   │   │   └── Pages/       # DiagramController, LandingPageController
 │   │   └── Middleware/
 │   ├── Listeners/
 │   ├── Livewire/
@@ -35,7 +32,7 @@ craftdb/
 │   │   ├── MyFavorites.php       # Componente: lista de diagramas favoritos
 │   │   ├── Forms/Diagram/        # ColumnForm.php, ImportForm.php (Livewire Form Objects)
 │   │   ├── Data/                 # TableData.php, ColumnData.php (implementam Wireable)
-│   │   └── Contracts/            # PublicCanvas.php (interface para canvas read-only)
+│   │   └── Contracts/            # (vazio após a F3)
 │   ├── Models/
 │   │   ├── Team/            # Team, Membership
 │   │   ├── Scopes/          # TableAccessible
@@ -45,13 +42,11 @@ craftdb/
 │   ├── Policies/            # DiagramPolicy, TablePolicy, TeamPolicy
 │   ├── Providers/
 │   ├── Rules/Diagram/
-│   ├── Support/             # DiagramLimits
+│   ├── Support/             # Helpers
 │   └── View/Components/
 │       ├── Diagram/Canvas/
 │       └── Layouts/
 ├── config/
-│   ├── billing.php          # Planos, preços, Stripe Price IDs
-│   ├── diagram.php          # Limites por plano (free/pro/team)
 │   └── craftdb.php          # Usuário local + APP_FORCE_HTTPS
 ├── database/
 │   ├── migrations/          # 26 migrations
@@ -59,7 +54,6 @@ craftdb/
 │   └── seeders/
 ├── docs/                    # Documentação técnica existente
 │   ├── DIAGRAM_CACHING.md
-│   ├── PUBLIC_SHARING.md
 │   └── TEAM_MANAGEMENT.md
 ├── lang/                    # Internacionalização
 ├── public/
@@ -116,7 +110,6 @@ craftdb/
 **Arquivos-chave:**
 - `app/Actions/Diagram/CreateNewDiagram.php` — entrada principal para novos diagramas
 - `app/Actions/Diagram/AddColumnToTable.php`, `AddRelationship.php`
-- `app/Support/DiagramLimits.php` — calcula limites por plano
 
 ### Equipes
 
@@ -135,15 +128,6 @@ craftdb/
 - Action: `app/Actions/Local/EnsureLocalUser.php`
 - Comando: `app/Console/Commands/EnsureLocalUserCommand.php` (`php artisan craftdb:local-user`, executado no boot do container)
 - Config: `config/craftdb.php` (`local_user.email`, `force_https`)
-
-### Billing
-
-**Propósito:** Assinaturas, planos, pagamentos Stripe
-**Localização:**
-- Controller: `app/Http/Controllers/BillingController.php`
-- Config: `config/billing.php`
-- Enum: `app/Enums/BillingCountry.php`
-- Views: `resources/views/pages/settings/billing.blade.php`
 
 ### Importação de Schema
 
@@ -164,11 +148,11 @@ craftdb/
 - Interface/UI: `resources/views/livewire/` + `resources/views/components/diagram/`
 - Lógica de negócio: `app/Actions/Diagram/`
 - Acesso a dados: `app/Models/` + migrations em `database/migrations/`
-- Configuração: `config/diagram.php` (se envolver limites de plano)
+- Sem limites de plano: não adicionar checagens (removidas na F3)
 
 **Nova integração externa:**
 - Serviço/adapter: `app/Services/` (criar se não existir) ou diretamente no Controller
-- Configuração: `config/services.php` + `config/billing.php`
+- Configuração: `config/services.php`
 - Variáveis de ambiente: `.env.example`
 
 **Docker / CraftDB Local:**
@@ -185,7 +169,7 @@ craftdb/
 
 **`app/Support/`:**
 **Propósito:** Utilitários de negócio que não são Model, Service ou Action
-**Exemplos:** `DiagramLimits.php` — centraliza cálculo de limites por plano
+**Exemplos:** `Helpers.php`
 
 **`app/Livewire/Data/`:**
 **Propósito:** DTOs usados para transferência de dados entre componentes Livewire
@@ -193,11 +177,11 @@ craftdb/
 
 **`app/Livewire/Contracts/`:**
 **Propósito:** Interfaces para componentes com comportamento compartilhado
-**Exemplos:** `PublicCanvas` — interface para canvas em modo público (read-only)
+**Exemplos:** nenhum no momento (`PublicCanvas` removido na F3)
 
 **`docs/`:**
 **Propósito:** Documentação técnica de features específicas do projeto
-**Exemplos:** `DIAGRAM_CACHING.md`, `PUBLIC_SHARING.md`, `TEAM_MANAGEMENT.md`
+**Exemplos:** `DIAGRAM_CACHING.md`, `TEAM_MANAGEMENT.md`
 
 **`.specs/codebase/`:**
 **Propósito:** Contexto para agentes de IA (esta documentação)

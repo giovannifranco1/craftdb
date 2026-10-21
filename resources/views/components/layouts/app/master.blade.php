@@ -35,27 +35,7 @@
 
                     <!-- Navbar -->
                     <flux:navbar class="-mb-px max-lg:hidden">
-                        @php
-                            $user = auth()->user();
-                            $teamOwner = $team?->owner;
-                            $teamContextHasTeamPlan = $teamOwner && $teamOwner->isTeamPlan();
-                            $isOwnerOfCurrentTeam = $team && $user->ownsTeam($team);
-
-                            if ($teamContextHasTeamPlan && $team && ! $isOwnerOfCurrentTeam) {
-                                $planBadge = $team->name;
-                                $planColor = 'violet';
-                            } elseif ($user->isTeamPlan()) {
-                                $planBadge = 'Team';
-                                $planColor = 'violet';
-                            } elseif ($user->isPro()) {
-                                $planBadge = 'Pro';
-                                $planColor = 'lime';
-                            } else {
-                                $planBadge = 'Free';
-                                $planColor = 'sky';
-                            }
-                        @endphp
-                        <flux:navbar.item :badge="$planBadge" badge:color="{{ $planColor }}" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>{{ __('Diagrams') }}</flux:navbar.item>
+                        <flux:navbar.item :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>{{ __('Diagrams') }}</flux:navbar.item>
                     </flux:navbar>
 
                     <div class="flex items-center space-x-4 ml-auto">
@@ -92,10 +72,8 @@
                                     </div>
                                 </flux:menu.radio.group>
 
-                                @can('create', \App\Models\Team\Team::class)
-                                    <flux:menu.separator />
-                                    <flux:menu.item as="button" icon="user-plus" type="button" :href="route('team.create')">{{__('Create New Team')}}</flux:menu.item>
-                                @endcan
+                                <flux:menu.separator />
+                                <flux:menu.item as="button" icon="user-plus" type="button" :href="route('team.create')">{{__('Create New Team')}}</flux:menu.item>
 
                                 <flux:menu.separator/>
 
@@ -103,7 +81,6 @@
 
                                 <flux:menu.radio.group>
                                     <flux:menu.item :href="route('profile.edit')" icon="cog" wire:navigate>{{ __('Settings') }}</flux:menu.item>
-                                    <flux:menu.item :href="route('billing.index')" icon="credit-card" wire:navigate>{{ __('Billing') }}</flux:menu.item>
                                     <flux:menu.item class="cursor-pointer" as="button" type="button" icon="chat-bubble-left-ellipsis" @click="$flux.modal('contact-us').show()">
                                         {{ __('Contact Us') }}
                                     </flux:menu.item>
@@ -123,7 +100,6 @@
 
         <livewire:diagram.create/>
         <livewire:ui.contact-us/>
-        <x-ui.pro-feature-modal/>
         @fluxScripts
     </body>
 </html>

@@ -23,7 +23,7 @@
 - Seed de usuário/workspace local e auto-login por middleware
 - Remove Fortify (login, registro, 2FA, reset), Socialite, convites, papéis
 
-**F3 — Remoção de billing, limites e links públicos** - PLANEJADA
+**F3 — Remoção de billing, limites e links públicos** - CONCLUÍDA (2026-10-21)
 
 - Remove Cashier/Stripe, planos, DiagramLimits, pro-features, cf-ipcountry
 - Remove rota e componentes de diagrama público

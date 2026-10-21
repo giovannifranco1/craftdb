@@ -21,9 +21,9 @@ class ListDiagramsTool extends Tool
     {
         $query = Diagram::query()->withCount('tables');
 
-        $premiumTeamIds = McpAccess::premiumTeamIdsForUser($request);
-        if (is_array($premiumTeamIds)) {
-            $query->whereIn('team_id', $premiumTeamIds);
+        $teamIds = McpAccess::teamIdsForUser($request);
+        if (is_array($teamIds)) {
+            $query->whereIn('team_id', $teamIds);
         }
 
         if ($teamId = $request->get('team_id')) {

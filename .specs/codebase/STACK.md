@@ -34,8 +34,7 @@
 
 ## Serviços Externos
 
-- Pagamentos: Stripe via Laravel Cashier 16
-- Detecção de região: Cloudflare header `cf-ipcountry`
+- Pagamentos/região: nenhum (Cashier/Stripe e `cf-ipcountry` removidos na F3)
 - Storage: AWS S3 (configurado, não verificado se em uso ativo)
 
 ## Ferramentas de Desenvolvimento

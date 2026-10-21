@@ -113,8 +113,6 @@ new class extends BaseComponent {
     {
         $validatedData = $this->validate();
 
-        Auth::user()?->validateDiagramLimit();
-
         $diagram = $action->exec($validatedData);
 
         $this->modal('diagram-create')->close();

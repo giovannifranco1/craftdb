@@ -10,7 +10,6 @@ use App\Models\Table;
 use App\Models\Team\Team;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Laravel\Cashier\Subscription;
 
 uses(RefreshDatabase::class);
 
@@ -35,9 +34,7 @@ describe('ExportDiagramToLaravelMigration generation', function (): void {
 
     beforeEach(function (): void {
         /** @var TestCase $this */
-        $proUser = \Mockery::mock($this->user)->makePartial();
-        $proUser->shouldReceive('isPro')->andReturn(true);
-        $this->actingAs($proUser);
+        $this->actingAs($this->user);
     });
 
     // ---------------------------------------------------------------------------
@@ -668,14 +665,9 @@ describe('ExportDiagramToLaravelMigration generation', function (): void {
 
 describe('ExportLaravelMigration endpoint', function (): void {
 
-    it('returns 200 with zip content-type for pro user', function () {
+    it('returns 200 with zip content-type for the local user', function () {
         /** @var TestCase $this */
         createTable($this, 'users');
-
-        Subscription::factory()->for($this->user)->create([
-            'type' => config('billing.subscription_name', 'default'),
-        ]);
-        User::clearSubscriptionCaches();
 
         $this->actingAs($this->user)
             ->get(route('diagram.export-laravel-migration', [
@@ -684,18 +676,6 @@ describe('ExportLaravelMigration endpoint', function (): void {
             ]))
             ->assertOk()
             ->assertHeader('Content-Type', 'application/zip');
-    });
-
-    it('returns 403 for non-pro user', function () {
-        /** @var TestCase $this */
-        createTable($this, 'users');
-
-        $this->actingAs($this->user)
-            ->get(route('diagram.export-laravel-migration', [
-                'team_id' => $this->team->id,
-                'diagram' => $this->diagram->slug,
-            ]))
-            ->assertForbidden();
     });
 
     it('returns 403 for user without team access', function () {
@@ -723,11 +703,6 @@ describe('ExportLaravelMigration endpoint', function (): void {
     it('downloaded filename contains migrations and date', function () {
         /** @var TestCase $this */
         createTable($this, 'users');
-
-        Subscription::factory()->for($this->user)->create([
-            'type' => config('billing.subscription_name', 'default'),
-        ]);
-        User::clearSubscriptionCaches();
 
         $response = $this->actingAs($this->user)
             ->get(route('diagram.export-laravel-migration', [

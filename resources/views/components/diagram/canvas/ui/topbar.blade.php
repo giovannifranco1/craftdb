@@ -94,10 +94,6 @@
                             </flux:button>
 
                             <flux:menu keep-open class="min-w-80">
-                                <livewire:diagram.canvas.share :diagram="$diagram" />
-
-                                <flux:menu.separator />
-
                                 <flux:menu.item icon="link" x-data="{
                                     copyInternalLink() {
                                         navigator.clipboard.writeText('{{ route('diagram.show', [$diagram->team_id, $diagram->slug]) }}');
@@ -168,7 +164,6 @@
 
                                 <flux:menu.radio.group>
                                     <flux:menu.item :href="route('profile.edit')" icon="cog" wire:navigate>{{ __('Settings') }}</flux:menu.item>
-                                    <flux:menu.item :href="route('billing.index')" icon="credit-card">{{ __('Billing') }}</flux:menu.item>
                                     <flux:menu.item as="button" type="button" icon="chat-bubble-left-ellipsis" @click="$flux.modal('contact-us').show()">
                                         {{ __('Contact Us') }}
                                     </flux:menu.item>
@@ -186,37 +181,19 @@
                         </flux:button>
 
                         <flux:menu class="min-w-52">
-                            @if(auth()->user()->hasDiagramPremiumAccess($diagram))
-                                <flux:menu.submenu heading="{{ __('Export') }}" icon="arrow-down-tray">
-                                    <flux:menu.item icon="code-bracket" :href="route('diagram.export-json', [$teamId, $diagram->slug])">
-                                        {{ __('JSON') }}
-                                    </flux:menu.item>
-                                    <flux:menu.item icon="code-bracket" @click="$flux.modal('diagram-canvas-export').show()">
-                                        {{ __('Migration') }}
-                                        <flux:badge class="ms-2" color="amber" size="sm">{{ __('Beta') }}</flux:badge>
-                                    </flux:menu.item>
-                                </flux:menu.submenu>
-                            @else
-                                <flux:menu.submenu heading="{{ __('Export') }}" icon="arrow-down-tray">
-                                    <flux:menu.item icon="code-bracket" @click="$dispatch('pro-feature::show', { key: 'export' })">
-                                        {{ __('JSON') }}
-                                    </flux:menu.item>
-                                    <flux:menu.item icon="code-bracket" @click="$dispatch('pro-feature::show', { key: 'export-migration' })">
-                                        {{ __('Migration') }}
-                                        <flux:badge class="ms-2" color="amber" size="sm">{{ __('Beta') }}</flux:badge>
-                                    </flux:menu.item>
-                                </flux:menu.submenu>
-                            @endif
+                            <flux:menu.submenu heading="{{ __('Export') }}" icon="arrow-down-tray">
+                                <flux:menu.item icon="code-bracket" :href="route('diagram.export-json', [$teamId, $diagram->slug])">
+                                    {{ __('JSON') }}
+                                </flux:menu.item>
+                                <flux:menu.item icon="code-bracket" @click="$flux.modal('diagram-canvas-export').show()">
+                                    {{ __('Migration') }}
+                                    <flux:badge class="ms-2" color="amber" size="sm">{{ __('Beta') }}</flux:badge>
+                                </flux:menu.item>
+                            </flux:menu.submenu>
 
-                            @if(auth()->user()->hasDiagramPremiumAccess($diagram))
-                                <flux:menu.item icon="arrow-up-tray" @click="$flux.modal('diagram-canvas-import').show()">
-                                    {{ __('Import') }}
-                                </flux:menu.item>
-                            @else
-                                <flux:menu.item icon="arrow-up-tray" @click="$dispatch('pro-feature::show', { key: 'import' })">
-                                    {{ __('Import') }}
-                                </flux:menu.item>
-                            @endif
+                            <flux:menu.item icon="arrow-up-tray" @click="$flux.modal('diagram-canvas-import').show()">
+                                {{ __('Import') }}
+                            </flux:menu.item>
                             <flux:menu.separator />
 
                             <flux:menu.item disabled icon="document-duplicate">

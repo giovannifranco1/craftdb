@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\BillingController;
 use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\Pages\DiagramController;
 use App\Livewire\MyFavorites;
@@ -26,10 +25,6 @@ Route::middleware(['auth'])->group(function () {
     Route::redirect('settings', 'settings/profile');
 
     Route::livewire('settings/profile', 'settings.profile')->name('profile.edit');
-    Route::livewire('settings/billing', 'settings.billing')->name('billing.index');
-    Route::get('settings/billing/checkout/{plan}', [BillingController::class, 'checkout'])->name('billing.checkout');
-    Route::get('settings/billing/portal', [BillingController::class, 'portal'])->name('billing.portal');
-    Route::get('settings/billing/success', [BillingController::class, 'success'])->name('billing.success');
     Route::livewire('settings/appearance', 'settings.appearance')->name('appearance.edit');
     Route::livewire('settings/language', 'settings.language')->name('language.edit');
     Route::livewire('settings/integrations', 'settings.integrations')->name('integrations.edit');
@@ -45,18 +40,3 @@ Route::middleware(['auth', 'throttle:60,1'])->group(function () {
     Route::get('{team_id}/diagram/{diagram:slug}/export-laravel-migration', [DiagramController::class, 'exportLaravelMigration'])->name('diagram.export-laravel-migration');
     Route::post('{team_id}/diagram/{diagram:slug}/toggle-favorite', [DiagramController::class, 'toggleFavorite'])->name('diagram.toggle-favorite');
 });
-
-/** Public Diagram (no auth required) */
-Route::get('/diagram/public/{token}', [DiagramController::class, 'showPublic'])->name('diagram.public');
-
-/** Debug cf-ipcountry (local only) */
-if (app()->environment('local')) {
-    Route::get('/debug-cf', function () {
-        return [
-            'all_headers' => request()->headers->all(),
-            'country'     => request()->header('cf-ipcountry'),
-            'ip'          => request()->ip(),
-            'server'      => request()->server->all(),
-        ];
-    });
-}

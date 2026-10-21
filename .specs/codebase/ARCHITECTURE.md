@@ -11,7 +11,7 @@ Request HTTP
 Middleware (AuthenticateLocalUser → auth, throttle)
     │
     ├── Controllers (HTTP) ──▶ Views Blade
-    │       └── BillingController, DiagramController
+    │       └── DiagramController
     │
     └── Livewire Components ──▶ Views Blade
             └── Actions ──▶ Models (Eloquent) ──▶ Database
@@ -27,11 +27,11 @@ Middleware (AuthenticateLocalUser → auth, throttle)
 **Implementação:** Classes invocáveis com método `handle()` ou `__invoke()`
 **Subdiretórios:**
 - `app/Actions/Diagram/` — 13 operações:
-  - `CreateNewDiagram` — cria diagrama com validação de limites e parse de SQL/migrations
+  - `CreateNewDiagram` — cria diagrama com parse de SQL/migrations
   - `UpdateDiagram` — atualiza nome/slug do diagrama
   - `DeleteDiagram` — remove diagrama e dados relacionados
   - `ImportToExistingDiagram` — importa schema para diagrama existente
-  - `AddColumnToTable` — adiciona coluna validando limite do plano
+  - `AddColumnToTable` — adiciona coluna à tabela
   - `DeleteColumnToTable` — remove coluna
   - `UpdateTable` — atualiza propriedades de tabela
   - `DeleteTable` — remove tabela
@@ -43,7 +43,7 @@ Middleware (AuthenticateLocalUser → auth, throttle)
 - `app/Actions/Local/` — `EnsureLocalUser` (cria/recupera o usuário local e seu time, sem senha)
 - `app/Actions/Parse/` — 5 arquivos: `BaseSQLParse` (classe base), `ParseMySQLSchema`, `ParsePOstgreSQLSchema`, `ParseSQLiteSchema`, `ParseLaravelMigration`
 - `app/Actions/Team/` — Operações de equipe
-**Exemplo:** `app/Actions/Diagram/CreateNewDiagram.php` — valida nome, gera slug, faz parse de imports, verifica limites do plano
+**Exemplo:** `app/Actions/Diagram/CreateNewDiagram.php` — valida nome, gera slug, faz parse de imports
 
 ### Livewire Components
 
@@ -76,11 +76,8 @@ Middleware (AuthenticateLocalUser → auth, throttle)
 **Localização:** `app/Exceptions/`
 **Propósito:** Comunicar violações de regras de negócio de forma expressiva
 **Tipos:**
-- `DiagramLimitExceededException` — plano free atingiu limite de diagramas
-- `TableLimitExceededException` — diagrama atingiu limite de tabelas do plano
-- `TableColumnLimitExceededException` — tabela atingiu limite de colunas do plano
 - `AuthorizationDiagramException` — acesso não autorizado ao diagrama
-- `PlanFeatureException` — funcionalidade não disponível no plano atual
+**Nota:** a F3 removeu as exceções de limite e de plano (`DiagramLimitExceeded`, `TableLimitExceeded`, `TableColumnLimitExceeded`, `PlanFeature`); não há limites nem gates premium.
 **Integração:** Capturadas em `BaseComponent.php` para feedback visual ao usuário
 
 ### Enums
@@ -90,7 +87,6 @@ Middleware (AuthenticateLocalUser → auth, throttle)
 **Tipos:**
 - `ColumnType` — Tipos de dado de coluna (int, varchar, etc.)
 - `RelationshipType` — Tipos de relacionamento (FK patterns)
-- `BillingCountry` — USD (default) / BRL (Brasil) para precificação regional
 
 ## Fluxo de dados
 
@@ -99,41 +95,11 @@ Middleware (AuthenticateLocalUser → auth, throttle)
 ```
 POST /dashboard (Livewire)
     → CreateNewDiagram::handle()
-        → Valida limites do plano (DiagramLimits::check())
         → Gera slug único
         → Se arquivo SQL: ParseMySQLSchema
         → Se migration Laravel: ParseLaravelMigration
         → Diagram::create() → tabelas, colunas, relacionamentos
         → Redireciona para /{team_id}/diagram/{slug}
-```
-
-### Fluxo de billing
-
-```
-GET /settings/billing/checkout/{plan}
-    → BillingController::checkout()
-        → Detecta país via cf-ipcountry header
-        → Seleciona Price ID (USD ou BRL)
-        → $user->newSubscription()->checkout()
-        → Redireciona para Stripe Checkout
-
-Stripe → POST /stripe/webhook
-    → Cashier processa eventos de subscription
-    → Atualiza status do plano no banco
-```
-
-### Compartilhamento público
-
-```
-POST /{team_id}/diagram/{slug}/make-public
-    → DiagramController::makePublic()
-        → Gera UUID token único
-        → Diagram::update([public_token => uuid])
-
-GET /diagram/public/{token}
-    → DiagramController::showPublic()
-        → Lookup via public_token (sem auth)
-        → Renderiza canvas em modo read-only
 ```
 
 ### Cache de diagrama
@@ -184,7 +150,7 @@ Detalhes completos em `.specs/codebase/CANVAS.md`
 **Configurações-chave:**
 - **Route model binding customizado:** `{diagram:slug}` com cache de 5min (prod) / 60s (local) — busca diagrama pelo slug com cache automático
 - **View namespacing:** registra `diagram::` como namespace de views para componentes Blade reutilizáveis
-- **Trusted proxies:** configura para ler IPs reais atrás do Cloudflare
+- **Trusted proxies:** configura para ler IPs reais atrás de proxy reverso
 
 ## Organização do código
 
@@ -201,5 +167,5 @@ Detalhes completos em `.specs/codebase/CANVAS.md`
 **Fronteiras de módulo:**
 - Diagrama é o domínio central (Diagram, Table, Column, Relationship, Area, Note)
 - Team é módulo independente com próprios models (Team, Membership)
-- Billing é camada de infraestrutura sobre Cashier/Stripe
+- Sem billing, planos ou limites (removidos na F3): todas as funcionalidades estão sempre disponíveis
 - Usuário local: sem fluxo de login — o middleware `AuthenticateLocalUser` (primeiro do grupo `web`, com prioridade antes de `AuthenticatesRequests`) autentica o usuário configurado em `craftdb.local_user.email` uma vez por sessão, via `EnsureLocalUser`. `/`, `/login` e `/register` redirecionam para `/dashboard` (TODO F7)

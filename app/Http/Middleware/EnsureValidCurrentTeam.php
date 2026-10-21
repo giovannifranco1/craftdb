@@ -50,10 +50,6 @@ class EnsureValidCurrentTeam
 
     private function shouldRedirectAfterSwitch(Request $request): bool
     {
-        if ($request->routeIs('billing.checkout', 'billing.portal', 'billing.success')) {
-            return false;
-        }
-
         if ($request->isMethod('GET') && ! str_contains($request->path(), 'livewire')) {
             return true;
         }

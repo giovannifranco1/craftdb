@@ -41,25 +41,4 @@ describe('Table Management', function() {
             'y' => 100,
         ]);
     });
-
-    it('prevents adding tables beyond limit', function () {
-        /** @var TestCase&object{diagram: Diagram} $this */
-
-        $tableLimit = config('diagram.free.table_limit');
-
-        // Create tables up to the limit
-        for ($i = 0; $i < $tableLimit; $i++) {
-            $this->diagram->tables()->create([
-                'name' => "table_$i",
-                'x' => 0,
-                'y' => 0,
-            ]);
-        }
-
-        $this->component
-            ->call('addTable', 100, 100)
-            ->assertDispatched('alert');
-
-        expect($this->diagram->tables()->count())->toBe($tableLimit);
-    });
 })->group('livewire-components');

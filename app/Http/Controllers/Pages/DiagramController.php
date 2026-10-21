@@ -32,31 +32,15 @@ class DiagramController extends Controller
         $diagram->load([
             'tables.columns',
             'tables.foreignKeys',
-            'team.owner',
+            'team',
         ]);
 
         return view('pages.diagram.show', compact('diagram'));
     }
 
-    /** Show Public Diagram (no authentication required) */
-    public function showPublic(string $token): View
-    {
-        $diagram = Diagram::where('public_token', $token)->firstOrFail();
-
-        $diagram->load([
-            'tables.columns',
-            'tables.foreignKeys',
-            'areas',
-            'notes',
-        ]);
-
-        return view('pages.diagram.public', compact('diagram'));
-    }
-
     public function exportJson(int $teamId, Diagram $diagram): StreamedResponse
     {
         Gate::authorize('view', $diagram);
-        abort_unless(Auth::user()?->hasDiagramPremiumAccess($diagram), 403, __('Export is available on the Pro plan or higher.'));
 
         $data = app(ExportDiagramToJson::class)->exec($diagram);
         $filename = str()->slug($diagram->name).'-'.now()->format('Ymd').'.json';
@@ -71,7 +55,6 @@ class DiagramController extends Controller
     public function exportLaravelMigration(int $teamId, Diagram $diagram): StreamedResponse
     {
         Gate::authorize('view', $diagram);
-        abort_unless(Auth::user()?->hasDiagramPremiumAccess($diagram), 403, __('Export is available on the Pro plan or higher.'));
 
         $files = app(ExportDiagramToLaravelMigration::class)->exec($diagram);
         $zipPath = app(GenerateMigrationZip::class)->exec($files);

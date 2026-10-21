@@ -65,8 +65,7 @@
 <body class="min-h-screen font-sans antialiased bg-zinc-50 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-50">
 
 @php
-    // Preload owner so we can show "Pro" vs "Team" accurately.
-    $teams = $user->allTeams()->loadMissing('owner')->values();
+    $teams = $user->allTeams()->values();
     $multipleTeams = $teams->count() > 1;
 @endphp
 
@@ -164,24 +163,6 @@
                                                     @endif
                                                 </p>
                                             </div>
-                                            @php
-                                                $hasPremium = $user->hasTeamWorkspacePremiumAccess($team);
-                                                $planLabel = match (true) {
-                                                    ! $hasPremium => 'Free',
-                                                    $team->owner?->isTeamPlan() => 'Team',
-                                                    default => 'Pro',
-                                                };
-
-                                                $badgeClass = match ($planLabel) {
-                                                    'Team' => 'bg-violet-500/15 text-violet-700 dark:bg-violet-400/15 dark:text-violet-300',
-                                                    'Pro'  => 'bg-sky-500/15 text-sky-700 dark:bg-sky-400/15 dark:text-sky-300',
-                                                    default => 'bg-zinc-500/15 text-zinc-700 dark:bg-zinc-400/15 dark:text-zinc-300',
-                                                };
-                                            @endphp
-
-                                            <span class="inline-flex shrink-0 self-center rounded-full px-2 py-0.5 text-xs font-medium {{ $badgeClass }}">
-                                                {{ $planLabel }}
-                                            </span>
                                         </label>
                                     </li>
                                 @endforeach

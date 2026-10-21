@@ -8,14 +8,12 @@ use App\Models\Diagram;
 use App\Models\Team\Team;
 use App\Models\User;
 use App\Policies\DiagramPolicy;
-use App\View\Components\Layouts\CanvasPublic;
 use Carbon\CarbonImmutable;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -74,7 +72,6 @@ class AppServiceProvider extends ServiceProvider
         $this->configureDefaultRulesForPassword();
         $this->configureUnitTests();
         $this->configureDiagramCaching();
-        $this->AliasComponents();
         $this->configurePassportMcp();
         $this->configureMcpGatesAndRateLimit();
     }
@@ -182,11 +179,6 @@ class AppServiceProvider extends ServiceProvider
                 return Diagram::where('slug', $value)->firstOrFail();
             });
         });
-    }
-
-    private function AliasComponents(): void
-    {
-        Blade::component(CanvasPublic::class, 'layouts.canvas.public');
     }
 
     private function configurePassportMcp(): void

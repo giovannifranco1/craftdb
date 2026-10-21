@@ -3,7 +3,6 @@
 use App\Http\Middleware\AuthenticateLocalUser;
 use App\Http\Middleware\EnsureValidCurrentTeam;
 use App\Http\Middleware\ForceJsonResponseForMcpOAuthRegistration;
-use App\Http\Middleware\SetHeaders;
 use App\Http\Middleware\SetLocale;
 use Illuminate\Contracts\Auth\Middleware\AuthenticatesRequests;
 use Illuminate\Foundation\Application;
@@ -20,7 +19,6 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->web(append: [
             AuthenticateLocalUser::class,
-            SetHeaders::class,
             SetLocale::class,
             EnsureValidCurrentTeam::class,
         ]);

@@ -3,11 +3,9 @@
 namespace App\Actions\Parse;
 
 use App\Actions\Diagram\AddRelationshipWithExistingForeignKey;
-use App\Exceptions\TableLimitExceededException;
 use App\Models\Column;
 use App\Models\Diagram;
 use App\Models\Table;
-use App\Support\DiagramLimits;
 use App\Support\Helpers;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
@@ -27,18 +25,6 @@ class ParseMySQLSchema extends BaseSQLParse
     public function exec(array $files, Diagram $diagram): void
     {
         $this->diagram = $diagram;
-
-        // Count all tables before processing to validate limit
-        $owner = $this->diagram->team?->owner;
-        abort_if($owner === null, 403, 'Team owner not found');
-        $limits = DiagramLimits::forUser($owner);
-
-        $existingCount = $this->diagram->tables()->count();
-        $tablesFromFiles = $this->countTablesFromFiles($files);
-        $totalTables = $existingCount + $tablesFromFiles;
-        if ($totalTables > $limits['table_limit']) {
-            throw new TableLimitExceededException($totalTables);
-        }
 
         foreach ($files as $file) {
             $content = $this->getFileContent($file);
@@ -316,37 +302,5 @@ class ParseMySQLSchema extends BaseSQLParse
             'childTableId' => $childTable->id,
             'foreignKeyColumnId' => $foreignKeyColumn->id,
         ]);
-    }
-
-    /**
-     * Count total number of unique tables from all files
-     *
-     * @param array<UploadedFile> $files
-     * @return int
-     */
-    private function countTablesFromFiles(array $files): int
-    {
-        /** @var array<string, bool> */
-        $uniqueTables = [];
-
-        foreach ($files as $file) {
-            $content = $this->getFileContent($file);
-            $parser = new Parser($content);
-
-            foreach ($parser->statements as $statement) {
-                if (!$statement instanceof CreateStatement) {
-                    continue;
-                }
-
-                if (!$statement->name || !$statement->name->table) {
-                    continue;
-                }
-
-                $tableName = $this->cleanIdentifier($statement->name->table);
-                $uniqueTables[$tableName] = true;
-            }
-        }
-
-        return count($uniqueTables);
     }
 }

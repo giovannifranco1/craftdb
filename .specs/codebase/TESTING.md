@@ -131,5 +131,5 @@ bash docker/smoke-test.sh
 
 ## Cobertura
 
-**Atual:** Foco em Auth flows e Settings — cobertura de Actions/Diagram/Billing limitada nos testes identificados
+**Atual:** Auth/usuário local, Settings, Parse e regressões da F3 (suíte: 263 testes passando). Testes da F3: `tests/Feature/Plans/{PremiumFeaturesUnlockedTest,NoLimitsTest,PublicLinksRemovedTest,BillingRemovedTest}.php` (funcionalidades sempre liberadas, sem limites, links públicos e billing removidos) e `tests/Feature/Database/RemoveBillingLeftoversTest.php` (migration `2026_10_21_000002_remove_billing_leftovers`)
 **Metas:** Não documentadas explicitamente

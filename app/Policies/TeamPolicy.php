@@ -22,14 +22,6 @@ class TeamPolicy
     }
 
     /**
-     * Determine whether the user can create models.
-     */
-    public function create(User $user): bool
-    {
-        return $user->canCreateTeam();
-    }
-
-    /**
      * Determine whether the user can update the team information.
      *
      * @param User $user

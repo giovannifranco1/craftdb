@@ -2,11 +2,9 @@
 
 namespace App\Models;
 
-use App\Exceptions\DiagramLimitExceededException;
 use App\Models\Concerns\HasTeams;
 use App\Models\Team\Membership;
 use App\Models\Team\Team;
-use App\Support\DiagramLimits;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
@@ -18,7 +16,6 @@ use Illuminate\Notifications\DatabaseNotificationCollection;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
-use Laravel\Cashier\Billable;
 use Laravel\Passport\Contracts\OAuthenticatable;
 use Laravel\Passport\HasApiTokens;
 
@@ -60,7 +57,7 @@ use Laravel\Passport\HasApiTokens;
 class User extends Authenticatable implements OAuthenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use Billable, HasApiTokens, HasFactory, HasTeams, Notifiable;
+    use HasApiTokens, HasFactory, HasTeams, Notifiable;
 
     /**
      * Default attribute values so strict mode never sees missing keys after insert
@@ -97,118 +94,5 @@ class User extends Authenticatable implements OAuthenticatable
             ->take(2)
             ->map(fn ($word) => Str::substr($word, 0, 1))
             ->implode('');
-    }
-
-    private static array $isProCache = [];
-
-    private static array $isTeamPlanCache = [];
-
-    /**
-     * Reset subscription lookups (tests reuse user ids after RefreshDatabase; ??= would keep stale booleans).
-     */
-    public static function clearSubscriptionCaches(): void
-    {
-        static::$isProCache = [];
-        static::$isTeamPlanCache = [];
-    }
-
-    public function isPro(): bool
-    {
-        return static::$isProCache[$this->id] ??= $this->subscribed(
-            config('billing.subscription_name', 'default')
-        );
-    }
-
-    public function isTeamPlan(): bool
-    {
-        return static::$isTeamPlanCache[$this->id] ??= (function () {
-            $prices = array_filter([
-                config('billing.plans.team_usd.price_id'),
-                config('billing.plans.team_brl.price_id'),
-                config('billing.plans.team_usd_annual.price_id'),
-                config('billing.plans.team_brl_annual.price_id'),
-            ]);
-
-            foreach ($prices as $priceId) {
-                if ($this->subscribedToPrice($priceId, config('billing.subscription_name', 'default'))) {
-                    return true;
-                }
-            }
-
-            return false;
-        })();
-    }
-
-    /**
-     * Pro/Team features in a workspace: own subscription, or team owner paid (invited members inherit).
-     */
-    public function hasTeamWorkspacePremiumAccess(?Team $team = null): bool
-    {
-        if ($this->isPro() || $this->isTeamPlan()) {
-            return true;
-        }
-
-        $team ??= Team::currentTeam();
-
-        if (! $team) {
-            return false;
-        }
-
-        $team->loadMissing(['owner', 'users']);
-
-        if (! $team->hasUser($this)) {
-            return false;
-        }
-
-        $owner = $team->owner;
-        if (! $owner) {
-            return false;
-        }
-
-        return $owner->isPro() || $owner->isTeamPlan();
-    }
-
-    /**
-     * Pro/Team features on a diagram: own subscription, or team owner paid (invited members inherit).
-     */
-    public function hasDiagramPremiumAccess(?Diagram $diagram = null): bool
-    {
-        if ($diagram === null) {
-            return false;
-        }
-
-        $diagram->loadMissing('team');
-
-        return $this->hasTeamWorkspacePremiumAccess($diagram->team);
-    }
-
-    public function canCreateTeam(): bool
-    {
-        return $this->isTeamPlan();
-    }
-
-    public function hasReachedDiagramLimit(?Team $team = null): bool
-    {
-        $team ??= Team::currentTeam();
-
-        if (! $team) {
-            return false;
-        }
-
-        $owner = $team->owner;
-        if (! $owner) {
-            return false;
-        }
-
-        $limits = DiagramLimits::forUser($owner);
-
-        return $team->diagrams()->count() >= $limits['diagram_limit'];
-    }
-
-    public function validateDiagramLimit(): void
-    {
-        if ($this->hasReachedDiagramLimit()) {
-            throw new DiagramLimitExceededException;
-        }
     }
 }

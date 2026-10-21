@@ -2,59 +2,19 @@
 
 ## Pagamentos
 
-**Serviço:** Stripe via Laravel Cashier 16
-**Propósito:** Processamento de assinaturas, checkout, portal de gerenciamento
-**Implementação:** `app/Http/Controllers/BillingController.php`
-**Configuração:** `config/billing.php` — define planos, preços e Price IDs do Stripe
-
-**Planos e preços:**
-```
-Free:              $0 / R$0 — 3 diagramas, 30 tabelas, 50 colunas/tabela
-Pro USD mensal:    $9/mês
-Pro BRL mensal:    R$49.90/mês
-Pro USD anual:     preço anual com desconto
-Pro BRL anual:     preço anual com desconto
-Team USD mensal:   $24.99/mês — Tudo Pro + colaboração multi-usuário
-Team BRL mensal:   R$59.99/mês — Mesmas features
-Team USD anual:    preço anual com desconto
-Team BRL anual:    preço anual com desconto
-```
-
-**Environment variables de preço** (valores nominais, não Price IDs):
-```
-BILLING_PRO_USD_PRICE=9
-BILLING_PRO_BRL_PRICE=49.90
-BILLING_TEAM_USD_PRICE=24.99
-BILLING_TEAM_BRL_PRICE=59.99
-# variantes anuais equivalentes
-```
-
-**Autenticação:** `STRIPE_KEY` (público) + `STRIPE_SECRET` (privado) no `.env`
-**Price IDs Stripe:** `STRIPE_PRICE_PRO_USD`, `STRIPE_PRICE_PRO_BRL`, `STRIPE_PRICE_TEAM_USD`, `STRIPE_PRICE_TEAM_BRL` + variantes `_ANNUAL` — todos via `.env`
-
-**Fluxo de checkout:**
-1. BillingController detecta país via `cf-ipcountry` header (Cloudflare)
-2. Seleciona Price ID correspondente (USD ou BRL)
-3. Redireciona para Stripe Checkout: `$user->newSubscription()->checkout()`
-4. Stripe retorna para `/settings/billing/success`
-
-**Webhooks:** Gerenciados automaticamente pelo Laravel Cashier em `/stripe/webhook`
+Não há. A F3 removeu Laravel Cashier/Stripe, planos, webhooks (`/stripe/webhook`), rotas de billing e páginas de assinatura. A seção de preços da landing page ainda existe (remoção na F7).
 
 ---
 
 ## Autenticação
 
-Não há OAuth de login (GitHub/Google), registro ou reset de senha: o CraftDB Local autentica automaticamente o usuário local (ver `AuthenticateLocalUser`). O único OAuth presente é o do MCP (Laravel Passport, scope `mcp:use`; F6).
+Não há OAuth de login (GitHub/Google), registro ou reset de senha: o CraftDB Local autentica automaticamente o usuário local (ver `AuthenticateLocalUser`). O único OAuth presente é o do MCP (Laravel Passport, scope `mcp:use`; F6). No MCP não há checagem de plano nem de limites (F3): `list_diagrams` lista todos os diagramas dos times permitidos ao token; time não permitido lança `AuthorizationException`.
 
 ---
 
 ## Detecção de Região
 
-**Serviço:** Cloudflare (proxy reverso)
-**Propósito:** Detectar país do usuário para aplicar precificação regional (USD vs BRL)
-**Implementação:** `BillingController::checkout()` lê header `cf-ipcountry`
-**Configuração:** `CLOUDFLARE_PROXY=true` no `.env` (habilita leitura do header)
-**Enum:** `app/Enums/BillingCountry` — `USD` (default) ou `BRL` (Brasil)
+Removida na F3 (header `cf-ipcountry`, `CLOUDFLARE_PROXY`, `BillingCountry`, middleware `SetHeaders`, rota `/debug-cf`). Não há precificação regional.
 
 ---
 
@@ -106,19 +66,9 @@ Não há OAuth de login (GitHub/Google), registro ou reset de senha: o CraftDB L
 **Diagrama:**
 - `GET /{team_id}/diagram/{diagram:slug}` — Editor de diagrama
 - `POST /{team_id}/diagram/{diagram:slug}/toggle-favorite` — JSON
-- `POST /{team_id}/diagram/{diagram:slug}/make-public` — JSON
-- `POST /{team_id}/diagram/{diagram:slug}/revoke-public` — JSON
-
-**Público (sem auth):**
-- `GET /diagram/public/{token}` — Visualização pública de diagrama
-
-**Billing:**
-- `GET /settings/billing/checkout/{plan}` — Redireciona para Stripe
-- `GET /settings/billing/portal` — Redireciona para portal Stripe
-- `GET /settings/billing/success` — Pós-checkout
 
 **Configurações (auth):**
-- `GET /settings/{profile,billing,appearance,language,integrations}`, `/settings/team`, `/settings/team/create`
+- `GET /settings/{profile,appearance,language,integrations}`, `/settings/team`, `/settings/team/create`
 - `/login` e `/register` são redirects para `/dashboard` (TODO F7)
 
 ---

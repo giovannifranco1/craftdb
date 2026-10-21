@@ -4,12 +4,9 @@ namespace App\Actions\Diagram;
 
 use App\Actions\Parse\ParseLaravelMigration;
 use App\Actions\Parse\ParseMySQLSchema;
-use App\Exceptions\TableLimitExceededException;
 use App\Models\Diagram;
 use App\Models\Team\Team;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\ValidationException;
 
 /**
  * @phpstan-type DTODiagram array{
@@ -53,29 +50,14 @@ class CreateNewDiagram
         ]);
 
         if (data_has($data, 'file') && ! empty(data_get($data, 'file')) && data_has($data, 'type')) {
-            /** @var User $user */
-            $user = Auth::user();
-
-            if (! $user->hasDiagramPremiumAccess($diagram)) {
-                $diagram->delete();
-                throw ValidationException::withMessages([
-                    'importForm.file' => __('SQL and migration import are available on the Pro plan or higher.'),
-                ]);
-            }
-
             $diagram->imported_at = now();
             $diagram->save();
 
-            try {
-                match (data_get($data, 'type')) {
-                    'sql' => $this->_parseSqlFile(data_get($data, 'file'), $diagram),
-                    'migration' => $this->_parseMigrationFile(data_get($data, 'file'), $diagram),
-                    default => throw new \Exception('Invalid file type'),
-                };
-            } catch (TableLimitExceededException $e) {
-                $diagram->delete();
-                throw ValidationException::withMessages(['importForm.file' => __('Table limit exceeded with :totalTables tables', ['totalTables' => $e->getTotalTables()])]);
-            }
+            match (data_get($data, 'type')) {
+                'sql' => $this->_parseSqlFile(data_get($data, 'file'), $diagram),
+                'migration' => $this->_parseMigrationFile(data_get($data, 'file'), $diagram),
+                default => throw new \Exception('Invalid file type'),
+            };
         }
 
         return $diagram;

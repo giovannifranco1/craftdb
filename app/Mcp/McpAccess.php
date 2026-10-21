@@ -2,13 +2,12 @@
 
 namespace App\Mcp;
 
-use App\Exceptions\DiagramLimitExceededException;
-use App\Exceptions\PlanFeatureException;
 use App\Models\Diagram;
 use App\Models\McpTokenTeam;
 use App\Models\Table;
 use App\Models\Team\Team;
 use App\Models\User;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Gate;
 use Laravel\Mcp\Request;
@@ -20,18 +19,6 @@ final class McpAccess
         $authUser = $request->user();
 
         return $authUser instanceof User ? $authUser : null;
-    }
-
-    public static function assertWorkspacePremium(Request $request, Team $team): void
-    {
-        $user = self::user($request);
-        if ($user === null) {
-            return;
-        }
-
-        if (! $user->hasTeamWorkspacePremiumAccess($team)) {
-            throw new PlanFeatureException;
-        }
     }
 
     public static function assertDiagramAbilityForTable(Request $request, Table $table, string $ability = 'update'): void
@@ -52,11 +39,6 @@ final class McpAccess
         }
 
         Gate::forUser($user)->authorize($ability, $diagram);
-
-        $diagram->loadMissing('team');
-        if ($diagram->team instanceof Team) {
-            self::assertWorkspacePremium($request, $diagram->team);
-        }
     }
 
     public static function assertCanCreateDiagramOnTeam(Request $request, Team $team): void
@@ -67,38 +49,31 @@ final class McpAccess
         }
 
         Gate::forUser($user)->authorize('createDiagramOnTeam', $team);
-        self::assertWorkspacePremium($request, $team);
         self::assertTokenAllowsTeam($request, $team);
-
-        if ($user->hasReachedDiagramLimit($team)) {
-            throw new DiagramLimitExceededException;
-        }
     }
 
     /**
      * @return list<int>|null null = unauthenticated (local MCP): no filter
      */
-    public static function premiumTeamIdsForUser(Request $request): ?array
+    public static function teamIdsForUser(Request $request): ?array
     {
         $user = self::user($request);
         if ($user === null) {
             return null;
         }
 
-        $premiumIds = $user->allTeams()
-            ->filter(fn (Team $team) => $user->hasTeamWorkspacePremiumAccess($team))
+        $teamIds = array_values($user->allTeams()
             ->pluck('id')
             ->map(fn ($id) => (int) $id)
-            ->values()
-            ->all();
+            ->all());
 
         $tokenAllowed = self::tokenAllowedTeamIds($request);
 
         if ($tokenAllowed === null) {
-            return $premiumIds;
+            return $teamIds;
         }
 
-        return array_values(array_intersect($premiumIds, $tokenAllowed));
+        return array_values(array_intersect($teamIds, $tokenAllowed));
     }
 
     /**
@@ -128,7 +103,7 @@ final class McpAccess
         $allowed = self::tokenAllowedTeamIds($request);
 
         if ($allowed !== null && ! in_array((int) $team->id, $allowed, true)) {
-            throw new PlanFeatureException;
+            throw new AuthorizationException('This token is not allowed to access this team.');
         }
     }
 }

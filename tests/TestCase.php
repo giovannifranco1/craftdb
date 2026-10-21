@@ -17,13 +17,6 @@ abstract class TestCase extends BaseTestCase
     /** @var Testable<Component> */
     public $component;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        User::clearSubscriptionCaches();
-    }
-
     public function autenticated()
     {
         $this->user = User::factory()->create();

@@ -43,14 +43,4 @@ class UserFactory extends Factory
             'email_verified_at' => null,
         ]);
     }
-
-    /**
-     * Attach a fake active Pro subscription (Cashier + config price id). See {@see BillingSubscriptionFactory}.
-     */
-    public function withActiveProSubscription(?string $stripePriceId = null): static
-    {
-        return $this->afterCreating(function (User $user) use ($stripePriceId): void {
-            BillingSubscriptionFactory::grantPro($user, $stripePriceId);
-        });
-    }
 }

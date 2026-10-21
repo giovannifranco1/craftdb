@@ -3,8 +3,6 @@
 namespace App\Actions\Diagram;
 
 use App\Models\Diagram;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\ValidationException;
 
 class ExportDiagramToJson
 {
@@ -13,15 +11,6 @@ class ExportDiagramToJson
      */
     public function exec(Diagram $diagram): array
     {
-        /** @var User $user */
-        $user = Auth::user();
-
-        if (! ($user?->hasDiagramPremiumAccess($diagram) || app()->environment('testing'))) {
-            throw ValidationException::withMessages([
-                'export' => __('Export is available on the Pro plan or higher.'),
-            ]);
-        }
-
         $diagram->loadMissing('tables.columns');
 
         $relationships = $diagram->relationships()

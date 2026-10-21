@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Mcp\Server;
 
-use App\Exceptions\DiagramLimitExceededException;
-use App\Exceptions\PlanFeatureException;
 use Generator;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Container\Container;
@@ -58,8 +56,6 @@ class CraftdbCallTool extends CallTool
         } catch (AuthorizationException $authorizationException) {
             $message = $authorizationException->getMessage();
             $response = Response::error($message !== '' ? $message : __('This action is unauthorized.'));
-        } catch (PlanFeatureException|DiagramLimitExceededException $e) {
-            $response = Response::error($e->getMessage());
         } catch (ModelNotFoundException) {
             $response = Response::error(__('The requested resource was not found.'));
         }

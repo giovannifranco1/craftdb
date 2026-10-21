@@ -10,7 +10,6 @@
 
 ## Deferred
 - 2026-10-21 (F2): `HasMembers::purge()` sem chamadas e `users()` com pivot vazio → revisar na F4 (workspaces).
-- 2026-10-21 (F2): `User.php` (~157) carrega `owner/users` com comentário "invited members inherit" (plano herdado por membros) → remover na F3 (billing).
 - 2026-10-21 (F2): `DiagramPolicy::view` usa `belongsToTeam` (consulta `team_user`) → simplificar para posse na F4.
 - 2026-10-21 (F2): `/my-favorites` aponta para view inexistente (`livewire.my-favorites`) — quebrada antes da F2.
 - 2026-10-21 (F2): links do starter-kit (`github.com/laravel/livewire-starter-kit`) em `layouts/app/header.blade.php`.

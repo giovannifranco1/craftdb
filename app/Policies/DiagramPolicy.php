@@ -63,14 +63,4 @@ class DiagramPolicy
 
         return $team && $user->ownsTeam($team);
     }
-
-    /**
-     * Determine whether the user can manage public sharing.
-     */
-    public function share(User $user, Diagram $diagram): bool
-    {
-        $team = $diagram->team()->first();
-
-        return $team && $user->ownsTeam($team);
-    }
 }

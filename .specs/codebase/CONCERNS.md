@@ -6,8 +6,8 @@
 ## Áreas frágeis
 - Global scope `TableAccessible`: desligado em `Table` (comentado em Table.php:47) mas ainda referenciado em `Diagram.php:90`
 - Acoplamento alto com usuário autenticado: 44 arquivos / 90 usos de `auth()`, `Auth::`, `->user()`; `currentTeam` em 13 arquivos
-- Limites de plano espalhados por 22 arquivos (isPro, isTeamPlan, hasDiagramPremiumAccess...)
-- MCP (`McpAccess`, `StdioMcpAuth`) depende de Passport + plano premium mesmo em stdio
+- MCP (`McpAccess`, `StdioMcpAuth`) ainda depende de Passport mesmo em stdio (F6); checagens de plano/limite foram removidas na F3
+- Seção de preços da landing page (`/pricing`) ainda existe apesar de não haver planos (F7)
 
 ## Tech debt
 - `ParsePOstgreSQLSchema.php` (typo no nome) e `ParseSQLiteSchema.php` vazios (0 linhas)

@@ -1,7 +1,6 @@
 <?php
 
 use App\Actions\Team\CreateNewTeam;
-use App\Models\Team\Team;
 use Illuminate\Support\Facades\Auth;
 use App\Livewire\BaseComponent;
 
@@ -9,20 +8,10 @@ new class extends BaseComponent {
     public string $name = '';
 
     /**
-     * Mount the component.
-     */
-    public function mount(): void
-    {
-        $this->authorize('create', Team::class);
-    }
-
-    /**
      * Create a new team.
      */
     public function createTeam(CreateNewTeam $action): void
     {
-        $this->authorize('create', Team::class);
-
         $validated = $this->validate([
             'name' => ['required', 'string', 'max:255'],
         ]);
