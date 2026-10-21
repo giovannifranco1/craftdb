@@ -2,7 +2,7 @@
 
 ## Pagamentos
 
-Não há. A F3 removeu Laravel Cashier/Stripe, planos, webhooks (`/stripe/webhook`), rotas de billing e páginas de assinatura. A seção de preços da landing page ainda existe (remoção na F7).
+Não há. A F3 removeu Laravel Cashier/Stripe, planos, webhooks (`/stripe/webhook`), rotas de billing e páginas de assinatura. A landing (e a seção de preços) foi removida na F7.
 
 ---
 
@@ -37,7 +37,7 @@ Removido na F5 (disco S3 e variáveis `AWS_*`). Apenas discos locais em `config/
 
 Sem chamadas a serviços externos em runtime: removidos `laravel/nightwatch` e `resend/resend-laravel` (e o provider em `bootstrap/providers.php`), serviços postmark/ses/resend/slack, mailers postmark/resend/ses/failover/roundrobin, canais de log slack/papertrail, fila sqs e cache dynamodb. Mailer padrão: `log`. Variáveis `AWS_*`, `NIGHTWATCH_*`, `RESEND_*`, `POSTMARK_*`, `SLACK_*`, `PAPERTRAIL_*` removidas. Os defaults do framework Laravel continuam mesclados, porém inertes (não selecionados).
 
-Fontes self-hosted via `@fontsource` em `resources/css/app.css`. Garantias: `tests/Feature/Telemetry/` e check ZT-09 do `docker/smoke-test.sh`. Fora de escopo: landing (F7), formulário `contact-us`.
+Fontes self-hosted via `@fontsource` em `resources/css/app.css`. Garantias: `tests/Feature/Telemetry/` e check ZT-09 do `docker/smoke-test.sh`. A landing e o formulário `contact-us` foram removidos na F7.
 
 ---
 
@@ -70,9 +70,10 @@ Fontes self-hosted via `@fontsource` em `resources/css/app.css`. Garantias: `tes
 
 ### Endpoints HTTP identificados (routes/web.php)
 
-**Landing (TODO F7):**
-- `GET /`, `/login`, `/register` — redirecionam para `/dashboard`
-- `GET /features`, `/pricing`, `/about`, `/terms`, `/policy`
+**Raiz e apoio (F7):**
+- `GET /` — redirect (sem nome) para `/dashboard`; visitantes sem sessão também vão para `/dashboard` (`redirectGuestsTo` em `bootstrap/app.php`)
+- `GET /support` (`support`) — página Apoiar (`resources/views/pages/⚡support/`); links vindos de `config('craftdb.support.*')` (env `CRAFTDB_SUPPORT_REPO_URL`, `_GITHUB_SPONSORS_URL`, `_KOFI_URL`, `_BUYMEACOFFEE_URL`, `_PIX_KEY`); só URLs http(s) são renderizadas, links não definidos ficam ocultos, chave Pix copiável, "em breve" quando nenhum está definido
+- `/features`, `/pricing`, `/about`, `/terms`, `/policy`, `/login`, `/register` → 404 (landing removida)
 
 **Dashboard (auth — usuário local automático):**
 - `GET /dashboard` — Lista de diagramas
@@ -83,7 +84,6 @@ Fontes self-hosted via `@fontsource` em `resources/css/app.css`. Garantias: `tes
 
 **Configurações (auth):**
 - `GET /settings/{profile,appearance,language,integrations}`, `/settings/workspaces` (`workspaces.index`: listar, criar, renomear, apagar e alternar workspace; rotas `team.*` e `settings/team*` removidas na F4)
-- `/login` e `/register` são redirects para `/dashboard` (TODO F7)
 
 ---
 
@@ -92,7 +92,7 @@ Fontes self-hosted via `@fontsource` em `resources/css/app.css`. Garantias: `tes
 **Sistema de filas:** Database driver (padrão Laravel)
 **Localização:** `app/Jobs/` (diretório existe, jobs específicos não mapeados em detalhe)
 **Tabela:** `jobs` no banco de dados
-**Uso identificado:** Nenhum job de convite/verificação de e-mail (removidos na F2); fila permanece disponível para o formulário de contato e demais usos
+**Uso identificado:** Nenhum job de convite/verificação de e-mail (removidos na F2); fila permanece disponível (sem uso atual)
 
 ---
 
@@ -101,4 +101,4 @@ Fontes self-hosted via `@fontsource` em `resources/css/app.css`. Garantias: `tes
 **Sistema:** Laravel Notifications
 **Localização:** `app/Notifications/`
 **Canal:** Email (driver configurável via `MAIL_*` no `.env`)
-**Uso:** Sem notificações de convite, verificação ou reset de senha (removidas na F2); e-mail restante limitado ao formulário de contato (F7)
+**Uso:** Sem notificações de convite, verificação ou reset de senha (removidas na F2); o formulário de contato foi removido na F7, sem e-mail de saída

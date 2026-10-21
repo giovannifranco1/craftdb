@@ -9,6 +9,7 @@
 - [Arquitetura](#arquitetura)
 - [Estrutura do Projeto](#estrutura-do-projeto)
 - [Funcionalidades Principais](#funcionalidades-principais)
+- [Apoie o projeto](#apoie-o-projeto)
 
 ---
 
@@ -22,7 +23,7 @@
 - **Gerenciamento de Tabelas**: Criação e edição de tabelas com suas respectivas colunas
 - **Relacionamentos**: Definição de relacionamentos entre tabelas (1:1, 1:N, N:N)
 - **Visualização Gráfica**: Visualização interativa dos diagramas usando gráficos de força (force-directed graphs)
-- **Sistema de Equipes**: Colaboração em equipes com controle de acesso
+- **Workspaces**: Agrupamento de diagramas em workspaces locais
 - **Favoritos**: Sistema para marcar diagramas favoritos
 - **Importação**: Capacidade de importar estruturas de banco de dados
 - **Exportação**: Capacidade de exportar diagramas em diferentes formatos
@@ -35,7 +36,7 @@
 
 - Documentar estruturas de banco de dados
 - Visualizar relacionamentos entre entidades
-- Colaborar em equipes para projetar esquemas de banco de dados
+- Organizar diagramas de bancos de dados em workspaces
 - Manter uma visão clara da arquitetura de dados de seus projetos
 
 O nome "CraftDB" reflete a ideia de "craft" (artesanato/criação) combinado com "DB" (Database), representando a criação cuidadosa e artesanal de diagramas de banco de dados.
@@ -47,20 +48,16 @@ O nome "CraftDB" reflete a ideia de "craft" (artesanato/criação) combinado com
 ### Backend
 
 - **PHP 8.2+**: Linguagem de programação principal
-- **Laravel 12**: Framework PHP moderno e robusto
-- **Laravel Livewire 3.6**: Framework para criar interfaces reativas sem escrever JavaScript
-- **Livewire Volt 1.7**: Abordagem funcional para componentes Livewire
-- **Laravel Fortify 1.30**: Autenticação completa e segura
-- **jurager/teams 3.0**: Sistema de equipes e permissões
+- **Laravel 13**: Framework PHP moderno e robusto
+- **Livewire 4**: Framework para criar interfaces reativas sem escrever JavaScript
 - **Eloquent ORM**: ORM do Laravel para interação com banco de dados
 
 ### Frontend
 
 - **Alpine.js 3.15**: Framework JavaScript minimalista para interatividade
 - **D3.js 7.9**: Biblioteca para visualização de dados e gráficos
-- **Tailwind CSS 4.0**: Framework CSS utility-first
-- **Livewire Flux 2.1**: Componentes UI modernos para Livewire
-- **Luvi UI 0.6**: Biblioteca de componentes UI adicionais
+- **Tailwind CSS 4**: Framework CSS utility-first
+- **Livewire Flux 2**: Componentes UI modernos para Livewire
 - **Vite 7.0**: Build tool moderna e rápida
 
 ### Ferramentas de Desenvolvimento
@@ -78,7 +75,6 @@ O nome "CraftDB" reflete a ideia de "craft" (artesanato/criação) combinado com
 
 ### Outras Dependências
 
-- **Spatie Livewire Filepond 1.5**: Upload de arquivos
 - **Blade Lucide Icons 1.23**: Ícones modernos
 - **Axios 1.7**: Cliente HTTP para requisições AJAX
 
@@ -99,7 +95,7 @@ O **CraftDB** utiliza uma arquitetura **MVC (Model-View-Controller)** combinada 
 #### 2. **Component-Based Architecture (Livewire)**
 
 - **Livewire Components** (`app/Livewire/`): Componentes reativos que combinam lógica PHP e interface
-- **Volt Components**: Componentes funcionais usando Livewire Volt
+- **Volt Components**: Componentes single-file (SFC) do Livewire 4
 - Comunicação bidirecional entre frontend e backend sem necessidade de APIs REST
 
 #### 3. **Action Classes**
@@ -107,7 +103,8 @@ O **CraftDB** utiliza uma arquitetura **MVC (Model-View-Controller)** combinada 
 - **Actions** (`app/Actions/`): Classes que encapsulam lógica de negócio específica
   - `Diagram/`: Ações relacionadas a diagramas
   - `Parse/`: Ações de parsing e importação
-  - `Fortify/`: Ações de autenticação
+  - `Team/`: Ações de workspaces
+  - `Local/`: Ações do usuário local
 
 #### 4. **Service Layer**
 
@@ -151,7 +148,8 @@ craftdb/
 ├── app/
 │   ├── Actions/          # Lógica de negócio específica
 │   │   ├── Diagram/      # Ações de diagramas
-│   │   ├── Fortify/      # Ações de autenticação
+│   │   ├── Local/        # Usuário local
+│   │   ├── Team/         # Workspaces
 │   │   └── Parse/        # Ações de parsing
 │   ├── Concerns/         # Traits reutilizáveis
 │   ├── Enums/            # Enumeradores (RelationshipType)
@@ -225,19 +223,27 @@ craftdb/
 - Visualização de foreign keys
 - Atualização em tempo real
 
-### 6. Sistema de Equipes
+### 6. Workspaces
 
-- Criação e gerenciamento de equipes
-- Controle de acesso baseado em roles
-- Permissões granulares
-- Convites para equipes
+- Criar, renomear e excluir workspaces
+- Alternar entre workspaces; cada diagrama pertence a um workspace
+- Sem papéis nem convites (veja `docs/WORKSPACES.md`)
 
-### 7. Autenticação e Segurança
+### 7. Usuário local (sem login)
 
-- Autenticação completa com Laravel Fortify
-- Autenticação de dois fatores (2FA)
-- Recuperação de senha
-- Verificação de email
+- Existe um único usuário local implícito; não há login, cadastro nem senha
+- O app abre direto no dashboard
+- Os dados ficam no seu próprio banco (SQLite ou MySQL)
+
+## 💜 Apoie o projeto
+
+O CraftDB é gratuito e open source. Se ele é útil para você, veja a página `/support` no app. Os links exibidos nela são configurados por variáveis de ambiente (todas opcionais; só aparece o que estiver preenchido):
+
+- `CRAFTDB_SUPPORT_REPO_URL`
+- `CRAFTDB_SUPPORT_GITHUB_SPONSORS_URL`
+- `CRAFTDB_SUPPORT_KOFI_URL`
+- `CRAFTDB_SUPPORT_BUYMEACOFFEE_URL`
+- `CRAFTDB_SUPPORT_PIX_KEY`
 
 ---
 
@@ -341,60 +347,6 @@ composer test
 # ou
 php artisan test
 ```
-
----
-
-## 🚀 Deploy em Produção
-
-### Variáveis de Ambiente Obrigatórias
-
-Além das variáveis padrão, configure no `.env` de produção:
-
-```env
-APP_ENV=production
-APP_DEBUG=false
-APP_URL=https://seu-dominio.com
-
-# Banco de dados (MySQL ou PostgreSQL recomendados para produção)
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=craftdb
-DB_USERNAME=
-DB_PASSWORD=
-
-# Cache e filas (Redis recomendado)
-CACHE_STORE=redis
-QUEUE_CONNECTION=redis
-
-# OAuth
-GITHUB_CLIENT_ID=
-GITHUB_CLIENT_SECRET=
-GOOGLE_CLIENT_ID=
-GOOGLE_CLIENT_SECRET=
-```
-
-### OAuth em Produção
-
-Registre as URLs de callback nos provedores:
-
-- **GitHub**: `https://seu-dominio.com/auth/callback`
-- **Google**: `https://seu-dominio.com/auth/google/callback`
-
-Certifique-se de que `APP_URL` esteja correto para os redirects.
-
-### Filas e Scheduler
-
-Configure um processo de fila (ex.: Supervisor) e o cron para o scheduler:
-
-```bash
-* * * * * cd /caminho/do/projeto && php artisan schedule:run >> /dev/null 2>&1
-```
-
-### Pré-lançamento
-
-- [x] Middleware `ValidateLoginTermsAcceptance` registrado (valida aceite de termos no login)
-- [ ] OAuth callbacks registrados
 
 ---
 

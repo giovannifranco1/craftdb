@@ -12,7 +12,7 @@
 ## Frontend
 
 - Abordagem: Livewire 4 + Flux 2 (componentes UI)
-- Estilização: Tailwind CSS 4 (via @tailwindcss/vite)
+- Estilização: Tailwind CSS 4 (via @tailwindcss/vite; sem `tailwind.config.js` — removido na F7 junto com `@tailwindcss/forms`, `tailwindcss-animate` e `daisyui`)
 - Interatividade client-side: Alpine.js (bundled com Livewire 4) — usado para os Alpine data stores do canvas
 - Visualização: D3.js 7 para grafo de FK e grafo de diagrama (dentro do canvas)
 - Canvas customizado: `resources/js/canvas/classes/InfiniteCanvas.js` — HTML5 Canvas 2D, pan/zoom, touch

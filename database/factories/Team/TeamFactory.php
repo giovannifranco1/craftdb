@@ -18,7 +18,8 @@ class TeamFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->name(),
+            // fake()->name() pode gerar "Prof."/"Freeman", colidindo com asserts de texto.
+            'name' => 'Workspace '.str()->lower(str()->random(8)),
             'user_id' => User::factory()
         ];
     }

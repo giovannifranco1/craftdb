@@ -66,7 +66,7 @@ it('ZT01: app pages reference no external resources', function (string $path) {
     $response = $this->get($path);
 
     expectNoExternalResources($response->getContent());
-})->with(['/dashboard', '/settings/profile', '/settings/workspaces', '/rota-inexistente']);
+})->with(['/dashboard', '/settings/profile', '/settings/workspaces', '/support', '/rota-inexistente']);
 
 it('ZT01: diagram page references no external resources', function () {
     $diagram = Diagram::factory()->create(['team_id' => $this->team->id]);
@@ -81,22 +81,16 @@ it('ZT01: error pages reference no external resources', function (string $view) 
     expectNoExternalResources(view($view)->render());
 })->with(['errors.404', 'errors.500', 'errors.503']);
 
-it('ZT03: landing has no external hosts, goadopt or craftdb.app (also in production)', function () {
-    $originalEnv = app()['env'];
+it('LP11: /support with every link configured loads no external resource', function () {
+    config([
+        'craftdb.support.repo_url' => 'https://example.test/repo',
+        'craftdb.support.github_sponsors_url' => 'https://example.test/sponsors',
+        'craftdb.support.kofi_url' => 'https://example.test/kofi',
+        'craftdb.support.buymeacoffee_url' => 'https://example.test/bmc',
+        'craftdb.support.pix_key' => 'pix-key-123',
+    ]);
 
-    try {
-        foreach (['testing', 'production'] as $env) {
-            app()['env'] = $env;
-            expect(app()->environment($env))->toBeTrue();
-
-            $html = $this->get('/features')->assertOk()->getContent();
-
-            expectNoExternalResources($html);
-            expect(strtolower($html))->not->toContain('goadopt')->not->toContain('craftdb.app');
-        }
-    } finally {
-        app()['env'] = $originalEnv;
-    }
+    expectNoExternalResources($this->get('/support')->assertOk()->getContent());
 });
 
 it('ZT02: compiled css bundles fonts locally via @font-face', function () {

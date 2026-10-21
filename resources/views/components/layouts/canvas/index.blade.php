@@ -40,7 +40,6 @@
             <livewire:diagram.canvas.overlays.import :$diagram/>
             <livewire:diagram.canvas.overlays.export :$diagram/>
             <livewire:diagram.ui.graph :$diagram/>
-            <livewire:ui.contact-us/>
         </div>
         @fluxScripts
     </body>

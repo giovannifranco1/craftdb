@@ -23,6 +23,8 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->prependToPriorityList(before: AuthenticatesRequests::class, prepend: AuthenticateLocalUser::class);
 
+        $middleware->redirectGuestsTo('/dashboard');
+
         $middleware->trustProxies(at: '*');
     })
     ->withExceptions(function (Exceptions $exceptions) {

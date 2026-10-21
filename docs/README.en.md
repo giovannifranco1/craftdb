@@ -9,6 +9,7 @@
 - [Architecture](#architecture)
 - [Project Structure](#project-structure)
 - [Main Features](#main-features)
+- [Support the project](#support-the-project)
 
 ---
 
@@ -22,7 +23,7 @@
 - **Table Management**: Creation and editing of tables with their respective columns
 - **Relationships**: Definition of relationships between tables (1:1, 1:N, N:N)
 - **Graphical Visualization**: Interactive visualization of diagrams using force-directed graphs
-- **Team System**: Collaboration in teams with access control
+- **Workspaces**: Group diagrams into local workspaces
 - **Favorites**: System to bookmark favorite diagrams
 - **Import**: Ability to import database structures
 - **Export**: Ability to export diagrams in different formats
@@ -35,7 +36,7 @@
 
 - Document database structures
 - Visualize relationships between entities
-- Collaborate in teams to design database schemas
+- Organize database diagrams into workspaces
 - Maintain a clear view of their projects' data architecture
 
 The name "CraftDB" reflects the idea of "craft" (craftsmanship/creation) combined with "DB" (Database), representing the careful and artisanal creation of database diagrams.
@@ -47,20 +48,16 @@ The name "CraftDB" reflects the idea of "craft" (craftsmanship/creation) combine
 ### Backend
 
 - **PHP 8.2+**: Main programming language
-- **Laravel 12**: Modern and robust PHP framework
-- **Laravel Livewire 3.6**: Framework for creating reactive interfaces without writing JavaScript
-- **Livewire Volt 1.7**: Functional approach to Livewire components
-- **Laravel Fortify 1.30**: Complete and secure authentication
-- **jurager/teams 3.0**: Team and permission system
+- **Laravel 13**: Modern and robust PHP framework
+- **Livewire 4**: Framework for creating reactive interfaces without writing JavaScript
 - **Eloquent ORM**: Laravel's ORM for database interaction
 
 ### Frontend
 
 - **Alpine.js 3.15**: Minimalist JavaScript framework for interactivity
 - **D3.js 7.9**: Library for data visualization and graphs
-- **Tailwind CSS 4.0**: Utility-first CSS framework
-- **Livewire Flux 2.1**: Modern UI components for Livewire
-- **Luvi UI 0.6**: Additional UI component library
+- **Tailwind CSS 4**: Utility-first CSS framework
+- **Livewire Flux 2**: Modern UI components for Livewire
 - **Vite 7.0**: Modern and fast build tool
 
 ### Development Tools
@@ -78,7 +75,6 @@ The name "CraftDB" reflects the idea of "craft" (craftsmanship/creation) combine
 
 ### Other Dependencies
 
-- **Spatie Livewire Filepond 1.5**: File uploads
 - **Blade Lucide Icons 1.23**: Modern icons
 - **Axios 1.7**: HTTP client for AJAX requests
 
@@ -99,7 +95,7 @@ The name "CraftDB" reflects the idea of "craft" (craftsmanship/creation) combine
 #### 2. **Component-Based Architecture (Livewire)**
 
 - **Livewire Components** (`app/Livewire/`): Reactive components that combine PHP logic and interface
-- **Volt Components**: Functional components using Livewire Volt
+- **Volt Components**: Single-file components (SFC) from Livewire 4
 - Bidirectional communication between frontend and backend without REST APIs
 
 #### 3. **Action Classes**
@@ -107,7 +103,8 @@ The name "CraftDB" reflects the idea of "craft" (craftsmanship/creation) combine
 - **Actions** (`app/Actions/`): Classes that encapsulate specific business logic
   - `Diagram/`: Diagram-related actions
   - `Parse/`: Parsing and import actions
-  - `Fortify/`: Authentication actions
+  - `Team/`: Workspace actions
+  - `Local/`: Local user actions
 
 #### 4. **Service Layer**
 
@@ -151,7 +148,8 @@ craftdb/
 ├── app/
 │   ├── Actions/          # Specific business logic
 │   │   ├── Diagram/      # Diagram actions
-│   │   ├── Fortify/      # Authentication actions
+│   │   ├── Local/        # Local user
+│   │   ├── Team/         # Workspaces
 │   │   └── Parse/        # Parsing actions
 │   ├── Concerns/         # Reusable traits
 │   ├── Enums/            # Enumerators (RelationshipType)
@@ -225,19 +223,27 @@ craftdb/
 - Foreign key visualization
 - Real-time updates
 
-### 6. Team System
+### 6. Workspaces
 
-- Creation and management of teams
-- Role-based access control
-- Granular permissions
-- Team invitations
+- Create, rename and delete workspaces
+- Switch between workspaces; every diagram belongs to a workspace
+- No roles or invitations (see `docs/WORKSPACES.md`)
 
-### 7. Authentication and Security
+### 7. Local user (no login)
 
-- Complete authentication with Laravel Fortify
-- Two-factor authentication (2FA)
-- Password recovery
-- Email verification
+- A single implicit local user exists; there is no login, sign-up or password
+- The app opens straight on the dashboard
+- Your data stays in your own database (SQLite or MySQL)
+
+## 💜 Support the project
+
+CraftDB is free and open source. If it is useful to you, see the `/support` page in the app. The links it shows are set through environment variables (all optional; only filled ones appear):
+
+- `CRAFTDB_SUPPORT_REPO_URL`
+- `CRAFTDB_SUPPORT_GITHUB_SPONSORS_URL`
+- `CRAFTDB_SUPPORT_KOFI_URL`
+- `CRAFTDB_SUPPORT_BUYMEACOFFEE_URL`
+- `CRAFTDB_SUPPORT_PIX_KEY`
 
 ---
 

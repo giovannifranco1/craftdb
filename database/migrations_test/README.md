@@ -1,7 +1,7 @@
 # migrations_test — fixture de importação
 
 Migrations de exemplo usadas **só para testar a importação de migrations Laravel** do CraftDB
-(`App\Actions\Parse\ParseLaravelMigration`) e gerar prints para a landing page.
+(`App\Actions\Parse\ParseLaravelMigration`) e gerar prints de exemplo.
 
 Reproduz o schema do diagrama **"Blog Platform — Demo"**
 (diagrama de demonstração publicado anteriormente).

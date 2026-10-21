@@ -23,7 +23,7 @@ craftdb/
 │   ├── Exceptions/          # AuthorizationDiagramException
 │   ├── Http/
 │   │   ├── Controllers/
-│   │   │   └── Pages/       # DiagramController, LandingPageController
+│   │   │   └── Pages/       # DiagramController
 │   │   └── Middleware/
 │   ├── Listeners/
 │   ├── Livewire/
@@ -74,9 +74,9 @@ craftdb/
 │   │           ├── _foreign-keys-graph.js  # foreignKeysGraph — grafo D3 de FK por tabela
 │   │           └── _diagram-graph.js       # grafo D3 completo do diagrama
 │   └── views/
-│       ├── components/      # Blade components (auth/, diagram/, landing-page/, layouts/, settings/, ui/)
+│       ├── components/      # Blade components (auth/, diagram/, layouts/, settings/, ui/)
 │       ├── livewire/        # Views de componentes Livewire
-│       └── pages/           # Views de páginas (landing, dashboard, etc.)
+│       └── pages/           # Views de páginas (dashboard, `⚡support/` — página Apoiar, etc.)
 ├── routes/
 │   └── web.php              # Único arquivo de rotas
 ├── storage/
@@ -90,7 +90,6 @@ craftdb/
 ├── composer.json
 ├── package.json
 ├── phpunit.xml
-├── tailwind.config.js
 └── vite.config.js
 ```
 

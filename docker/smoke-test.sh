@@ -52,6 +52,12 @@ check_no_external() {
 check_no_external /dashboard "$html"
 check_no_external /settings/workspaces "$ws_html"
 
+support_code="$(curl -s -o /dev/null -w '%{http_code}' "$URL/support")"
+[ "$support_code" = "200" ] && pass "LP-15 /support retorna 200" || fail "LP-15 /support retornou '$support_code'"
+check_no_external /support "$(curl -s "$URL/support")"
+features_code="$(curl -s -o /dev/null -w '%{http_code}' "$URL/features")"
+[ "$features_code" = "404" ] && pass "LP-15 /features retorna 404" || fail "LP-15 /features retornou '$features_code'"
+
 css_path="$(grep -oE '/build/assets/[^"'"'"' )]+\.css' <<<"$html" | head -n1 || true)"
 [ -n "$css_path" ] || fail "ZT-09 nenhum CSS /build/assets/*.css no HTML do dashboard"
 css_body="$(curl -sf "$URL$css_path" || true)"

@@ -1,7 +1,7 @@
 # Roadmap
 
 **Milestone atual:** M1 — CraftDB Local v1
-**Status:** Planejamento
+**Status:** Concluído (2026-10-21) — aguardando teste do dev
 
 ---
 
@@ -40,7 +40,7 @@
 
 - stdio sem token; HTTP só em localhost
 
-**F7 — Remoção da landing + página Apoiar** - PLANEJADA
+**F7 — Remoção da landing + página Apoiar** - CONCLUÍDA (2026-10-21)
 
 ---
 

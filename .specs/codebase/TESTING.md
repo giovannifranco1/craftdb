@@ -31,7 +31,7 @@ tests/
     └── (testes unitários de classes isoladas)
 ```
 
-**Total:** 288 testes (suíte completa)
+**Total:** 389 testes (suíte completa)
 
 ## Padrões de teste
 
@@ -55,7 +55,7 @@ test('local user is logged in automatically', function () {
 - Autorização de diagramas/workspaces por posse (`ownsTeam`); workspaces extras e de outro dono via helpers `secondTeam()` / `foreignTeam()` em `tests/TestCase.php`
 - Página de workspaces: criar (vira atual), renomear, apagar com confirmação por nome (recusa o último), alternar; terminologia "workspace" na UI
 
-**Suíte atual:** 288 testes passando
+**Suíte atual:** 389 testes passando
 
 ### Testes de Livewire
 
@@ -136,4 +136,5 @@ bash docker/smoke-test.sh   # inclui ZT-09: sem hosts externos em /dashboard e /
 
 **Atual:** Auth/usuário local, Settings, Parse e regressões da F3 (suíte: 263 testes passando). Testes da F3: `tests/Feature/Plans/{PremiumFeaturesUnlockedTest,NoLimitsTest,PublicLinksRemovedTest,BillingRemovedTest}.php` (funcionalidades sempre liberadas, sem limites, links públicos e billing removidos) e `tests/Feature/Database/RemoveBillingLeftoversTest.php` (migration `2026_10_21_000002_remove_billing_leftovers`)
 **F6 (MCP local):** `tests/Feature/Mcp/{LocalMcpTest,PassportRemovedTest,RouteCacheTest,McpToolsAuthorizationTest}.php` e `tests/Feature/Settings/IntegrationsPageTest.php`; checks MCP-12/MCP-14 no `docker/smoke-test.sh`. Suíte: 378 testes passando
+**F7 (landing + Apoiar):** `tests/Feature/Landing/{LandingRemovedTest,CleanupTest}.php` (rotas da landing/login/register 404, `/` redireciona, Feedback/tailwind.config removidos) e `tests/Feature/Support/SupportPageTest.php` (página `/support`: só URLs http(s), links ocultos, Pix, "em breve"); check LP-15 no `docker/smoke-test.sh`. Factories `DiagramFactory`/`TeamFactory` usam sufixo aleatório (evita testes flaky). Suíte: 389 testes passando
 **Metas:** Não documentadas explicitamente

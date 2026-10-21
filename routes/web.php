@@ -1,19 +1,12 @@
 <?php
 
-use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\Pages\DiagramController;
 use Illuminate\Support\Facades\Route;
 
-/** Landing Page */
-// TODO(F7): remove with the landing page
-Route::redirect('/', '/dashboard')->name('landing.index');
-Route::redirect('/login', '/dashboard')->name('login');
-Route::redirect('/register', '/dashboard')->name('register');
-Route::get('/features', [LandingPageController::class, 'features'])->name('landing.features');
-Route::get('/pricing', [LandingPageController::class, 'pricing'])->name('landing.pricing');
-Route::get('/about', [LandingPageController::class, 'about'])->name('landing.about');
-Route::get('/terms', fn () => view('pages.landing-page.terms'))->name('landing.terms');
-Route::get('/policy', fn () => view('pages.landing-page.policy'))->name('landing.policy');
+Route::redirect('/', '/dashboard');
+
+/** Support */
+Route::livewire('/support', 'pages::support')->middleware('auth')->name('support');
 
 /** Dashboard */
 Route::livewire('/dashboard', 'pages::dashboard')->lazy()->middleware(['auth'])->name('dashboard');

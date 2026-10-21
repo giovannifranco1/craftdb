@@ -16,7 +16,7 @@ FROM node:22-bookworm-slim AS assets
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci --no-audit --no-fund
-COPY vite.config.js tailwind.config.js ./
+COPY vite.config.js ./
 COPY resources ./resources
 COPY app ./app
 COPY --from=vendor /app/vendor/livewire/flux ./vendor/livewire/flux

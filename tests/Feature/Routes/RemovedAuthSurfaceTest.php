@@ -10,10 +10,12 @@ use Tests\TestCase;
 uses(RefreshDatabase::class);
 
 describe('Removed auth surface', function (): void {
-    it('NOAUTH04: redirects /, /login and /register to the dashboard', function (string $uri) {
+    it('NOAUTH04: only / redirects to the dashboard (F7 removed the /login and /register redirects)', function () {
         /** @var TestCase $this */
-        $this->get($uri)->assertRedirect('/dashboard');
-    })->with(['/', '/login', '/register']);
+        $this->get('/')->assertRedirect('/dashboard');
+        $this->get('/login')->assertNotFound();
+        $this->get('/register')->assertNotFound();
+    });
 
     it('NOAUTH06/12/15: removed route :dataset is not registered', function (string $name) {
         expect(Route::has($name))->toBeFalse();

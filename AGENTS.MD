@@ -28,7 +28,7 @@
 **Domínio:** Database diagram designer / Entity-Relationship diagram tool
 **Arquitetura:** Monolito Laravel com Livewire para reatividade
 
-CraftDB Local é uma ferramenta open source para criação e visualização de diagramas de banco de dados, executada localmente via Docker. Permite criar diagramas do zero ou importando schemas SQL e migrations Laravel, com workspaces (times). Não há login: um usuário local único é autenticado automaticamente (middleware `AuthenticateLocalUser`). Não há billing, planos, limites nem links públicos (removidos na F3): todas as funcionalidades (import, export, grafo, áreas, notas) estão sempre disponíveis.
+CraftDB Local é uma ferramenta open source para criação e visualização de diagramas de banco de dados, executada localmente via Docker. Permite criar diagramas do zero ou importando schemas SQL e migrations Laravel, com workspaces (times). Não há login: um usuário local único é autenticado automaticamente (middleware `AuthenticateLocalUser`). Não há billing, planos, limites nem links públicos (removidos na F3): todas as funcionalidades (import, export, grafo, áreas, notas) estão sempre disponíveis. Não há landing page (removida na F7): `/` leva ao dashboard e a página `/support` (Apoiar) reúne os links de apoio ao projeto.
 
 ---
 
@@ -67,6 +67,7 @@ app/Models/         → Entidades Eloquent + Team/ subpasta (`Team` = Workspace 
 app/Livewire/       → Componentes reativos + Forms/, Data/, Contracts/
 app/Http/Controllers/ → Controllers finos (Pages/)
 app/Support/        → Helpers
+resources/views/pages/⚡support/ → Página Apoiar (`/support`; links em `config('craftdb.support')`)
 app/Enums/          → ColumnType, RelationshipType
 app/Exceptions/     → AuthorizationDiagramException (única exceção de domínio)
 resources/js/canvas/ → InfiniteCanvas.js + 6 Alpine stores + D3.js (ver CANVAS.md)
@@ -126,5 +127,5 @@ Detalhes completos em `.specs/codebase/TESTING.md`
 
 ---
 
-**Última atualização:** 2026-10-21 (F5 — Zero telemetria)
+**Última atualização:** 2026-10-21 (F7 — M1 concluído)
 **Gerado por:** Skill Brownfield Mapping + revisão manual
