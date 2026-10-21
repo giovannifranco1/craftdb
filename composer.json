@@ -1,6 +1,6 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "nanoincub/craftdb",
+    "name": "giovannirz/craftdb",
     "type": "project",
     "description": "CraftDB Local: open source visual database diagram editor that runs locally via Docker.",
     "keywords": [
@@ -8,6 +8,11 @@
         "framework"
     ],
     "license": "AGPL-3.0-or-later",
+    "authors": [
+        {
+            "name": "Giovanni Franco Rezende"
+        }
+    ],
     "require": {
         "php": "^8.2",
         "laravel/framework": "^13.0",
