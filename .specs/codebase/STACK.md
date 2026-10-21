@@ -4,9 +4,9 @@
 
 ## Core
 
-- Framework: Laravel 12
-- Linguagem: PHP ^8.2
-- Runtime: PHP-FPM / Artisan CLI
+- Framework: Laravel 13
+- Linguagem: PHP ^8.2 no composer.json (dependências do lock exigem >=8.3; a imagem Docker usa 8.4)
+- Runtime: PHP-FPM / Artisan CLI (SaaS) · FrankenPHP na imagem Docker do CraftDB Local
 - Gerenciador de pacotes: Composer (PHP) + NPM (JS)
 
 ## Frontend
@@ -21,7 +21,7 @@
 ## Backend
 
 - Estilo de API: Sem REST API dedicada — Livewire para interações reativas
-- Banco de dados: Eloquent ORM + SQLite (dev) / MySQL (prod)
+- Banco de dados: Eloquent ORM + SQLite (dev) / MySQL (prod) / MySQL 8.4 em container (CraftDB Local)
 - Autenticação: Laravel Fortify (email/senha, 2FA, verificação de email) + Laravel Socialite (GitHub, Google)
 - Filas: Database driver (jobs definidos em app/)
 - Cache: File driver (local) / Redis opcional (prod)
@@ -45,3 +45,11 @@
 - Formatação: Laravel Pint
 - IDE helpers: barryvdh/laravel-ide-helper 3
 - Parser SQL: phpmyadmin/sql-parser 6 (MySQL); parsers customizados para PostgreSQL e SQLite em `app/Actions/Parse/BaseSQLParse.php`
+
+## Distribuição local (Docker)
+
+- `Dockerfile` multi-stage: `vendor` (composer, `--no-dev`) → `assets` (Node 22, `npm run build`) → `app` (`dunglas/frankenphp:1-php8.4-bookworm`, sem Node em runtime; `event:cache` e `view:cache` no build)
+- `docker-compose.yml`: serviços `app` (127.0.0.1:8080) + `mysql:8.4` (127.0.0.1:3307), volumes `craftdb-mysql` e `craftdb-data` (`/data/app.key`)
+- `docker/entrypoint.sh`: APP_KEY (env > volume > gera) → espera MySQL → `config:cache` → `migrate --force` → `craftdb:local-user` → `frankenphp run`
+- Variáveis do stack usam prefixo `CRAFTDB_` porque o Compose lê o `.env` de dev da raiz
+

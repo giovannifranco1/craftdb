@@ -175,6 +175,12 @@ craftdb/
 - Configuração: `config/services.php` + `config/billing.php`
 - Variáveis de ambiente: `.env.example`
 
+**Docker / CraftDB Local:**
+- Imagem e stack: `Dockerfile`, `.dockerignore`, `docker-compose.yml` (raiz)
+- Boot do container: `docker/entrypoint.sh`; verificação end-to-end: `docker/smoke-test.sh`
+- Usuário local: `app/Actions/Local/EnsureLocalUser.php` + comando `craftdb:local-user` (`app/Console/Commands/EnsureLocalUserCommand.php`)
+- Configuração: `config/craftdb.php` (`local_user.*`, `force_https`)
+
 **Nova rota:**
 - Arquivo: `routes/web.php` (único arquivo de rotas)
 - Middleware aplicado inline na definição da rota

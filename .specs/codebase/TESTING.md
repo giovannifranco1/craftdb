@@ -132,6 +132,9 @@ php artisan test     # Via Artisan
 
 # Análise estática
 ./vendor/bin/phpstan analyse
+
+# Smoke test do stack Docker (sobe do zero; roda `docker compose down -v`)
+bash docker/smoke-test.sh
 ```
 
 **Configuração:** SQLite in-memory para isolamento total entre testes — sem estado persistente
