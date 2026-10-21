@@ -126,6 +126,7 @@ craftdb/
 **Propósito:** Usuário único implícito (sem login, registro ou senha)
 **Localização:**
 - Middleware: `app/Http/Middleware/AuthenticateLocalUser.php` (login automático uma vez por sessão)
+- Middleware MCP: `app/Http/Middleware/EnsureLocalMcpOrigin.php` (valida Origin do `POST /mcp/craftdb`); `app/Mcp/McpAccess.php` resolve o usuário local; rotas MCP em `routes/ai.php` (carregado só pelo `McpServiceProvider`)
 - Action: `app/Actions/Local/EnsureLocalUser.php`
 - Comando: `app/Console/Commands/EnsureLocalUserCommand.php` (`php artisan craftdb:local-user`, executado no boot do container)
 - Config: `config/craftdb.php` (`local_user.email`, `force_https`)

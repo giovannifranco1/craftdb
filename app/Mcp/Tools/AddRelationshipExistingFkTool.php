@@ -37,7 +37,7 @@ class AddRelationshipExistingFkTool extends Tool
             return Response::error(__('The owner and child tables must belong to the same diagram.'));
         }
 
-        McpAccess::assertDiagramAbilityForTable($request, $ownerTable, 'update');
+        McpAccess::assertDiagramAbilityForTable($ownerTable, 'update');
 
         $relationship = app(AddRelationshipWithExistingForeignKey::class)->exec([
             'ownerTableId' => $validated['owner_table_id'],

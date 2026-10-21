@@ -36,7 +36,7 @@
 
 - Remove Nightwatch, Resend, S3; self-host de fontes; remove og/URLs craftdb.app
 
-**F6 — MCP local sem Passport** - PLANEJADA
+**F6 — MCP local sem Passport** - CONCLUÍDA (2026-10-21)
 
 - stdio sem token; HTTP só em localhost
 

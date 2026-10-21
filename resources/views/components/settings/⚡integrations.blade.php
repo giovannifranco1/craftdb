@@ -14,6 +14,12 @@ new class extends BaseComponent {}; ?>
             $deeplink  = 'cursor://anysphere.cursor-deeplink/mcp/install?name=craftdb&config=' . $mcpConfig;
         @endphp
 
+        <div class="mb-6 space-y-1">
+            <flux:text class="text-sm font-medium text-zinc-600 dark:text-zinc-400">{{ __('Local MCP URL') }}</flux:text>
+            <pre class="rounded-lg bg-zinc-900 dark:bg-zinc-950 text-zinc-100 text-xs font-mono p-3 overflow-x-auto">{{ $mcpUrl }}</pre>
+            <flux:text class="text-xs text-zinc-400 dark:text-zinc-500">{{ __('The MCP server runs locally and uses your local workspace, ready to connect.') }}</flux:text>
+        </div>
+
         <div x-data="{ tab: 'cursor' }">
 
             {{-- Tab buttons --}}
@@ -38,6 +44,16 @@ new class extends BaseComponent {}; ?>
                 >
                     <flux:icon name="claude-agente" variant="micro" />
                     {{ __('Claude') }}
+                </button>
+
+                <button
+                    @click="tab = 'stdio'"
+                    :class="tab === 'stdio'
+                        ? 'bg-white dark:bg-zinc-700 shadow-sm text-zinc-900 dark:text-zinc-100'
+                        : 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200'"
+                    class="inline-flex items-center gap-2 rounded-md px-3.5 py-1.5 text-sm font-medium transition-all"
+                >
+                    {{ __('Terminal (stdio)') }}
                 </button>
             </div>
 
@@ -97,7 +113,7 @@ new class extends BaseComponent {}; ?>
                     </div>
 
                     <flux:text class="text-xs text-zinc-400 dark:text-zinc-500">
-                        {{ __('After adding, Cursor will open a browser window to log in and authorize the connection.') }}
+                        {{ __('After adding, restart Cursor and the CraftDB tools will be available right away.') }}
                     </flux:text>
                 </div>
             </div>
@@ -121,7 +137,7 @@ new class extends BaseComponent {}; ?>
                 <div class="space-y-2">
                     <flux:heading size="sm" class="font-semibold text-zinc-800 dark:text-zinc-200">{{ __('Claude Code (CLI)') }}</flux:heading>
                     <flux:text class="text-sm text-zinc-500 dark:text-zinc-400">
-                        {{ __('Run this in your terminal (replace the URL if you use a custom domain):') }}
+                        {{ __('Run this in your terminal (replace the URL if you use a custom port or domain):') }}
                     </flux:text>
                     @php
                         $claudeMcpAddCmd = 'claude mcp add --transport http craftdb '.$mcpUrl;
@@ -212,7 +228,7 @@ new class extends BaseComponent {}; ?>
                 <div class="flex items-start gap-2">
                     <span class="inline-flex size-5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary text-xs font-semibold mt-0.5">3</span>
                     <flux:text class="text-sm text-zinc-500 dark:text-zinc-400">
-                        {{ __('Restart Claude Desktop. On the next conversation, Claude will connect to CraftDB and ask you to log in and authorize access.') }}
+                        {{ __('Restart Claude Desktop. On the next conversation, Claude will connect to CraftDB and the tools will be available right away.') }}
                     </flux:text>
                 </div>
 
@@ -222,6 +238,45 @@ new class extends BaseComponent {}; ?>
                     </svg>
                     <flux:text class="text-xs text-amber-700 dark:text-amber-400">
                         {{ __('Remote MCP support requires Claude Desktop version 0.10 or later. Make sure your app is up to date.') }}
+                    </flux:text>
+                </div>
+            </div>
+
+            {{-- ── STDIO TAB ── --}}
+            @php
+                $stdioCmd = 'docker compose exec -T app php artisan mcp:start craftdb';
+                $stdioJson = json_encode([
+                    'mcpServers' => ['craftdb' => [
+                        'command' => 'docker',
+                        'args' => ['compose', 'exec', '-T', 'app', 'php', 'artisan', 'mcp:start', 'craftdb'],
+                    ]],
+                ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+            @endphp
+            <div x-show="tab === 'stdio'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 translate-y-1" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-5">
+                <flux:text class="text-sm text-zinc-500 dark:text-zinc-400">
+                    {{ __('For clients that launch the MCP server as a local process, run it inside the CraftDB container via stdio.') }}
+                </flux:text>
+
+                <div class="space-y-2">
+                    <flux:text class="text-sm font-medium text-zinc-600 dark:text-zinc-400">{{ __('Command') }}</flux:text>
+                    <pre class="rounded-lg bg-zinc-900 dark:bg-zinc-950 text-zinc-100 text-xs font-mono p-4 overflow-x-auto whitespace-pre-wrap break-all">{{ $stdioCmd }}</pre>
+                </div>
+
+                <div class="space-y-2">
+                    <flux:text class="text-sm font-medium text-zinc-600 dark:text-zinc-400">{{ __('Example client config:') }}</flux:text>
+                    <div x-data="{ copied: false }" class="relative">
+                        <pre class="rounded-lg bg-zinc-900 dark:bg-zinc-950 text-zinc-100 text-xs font-mono p-4 overflow-x-auto leading-relaxed">{{ $stdioJson }}</pre>
+                        <button
+                            x-on:click="navigator.clipboard.writeText(@js($stdioJson)); copied = true; setTimeout(() => copied = false, 2000)"
+                            class="absolute top-2.5 right-2.5 p-1.5 rounded-md text-zinc-400 hover:text-zinc-200 hover:bg-zinc-700 transition-colors"
+                            :title="copied ? '{{ __('Copied!') }}' : '{{ __('Copy') }}'"
+                        >
+                            <svg x-show="!copied" class="size-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.666 3.888A2.25 2.25 0 0 0 13.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 0 1-.75.75H9a.75.75 0 0 1-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 0 1-2.25 2.25H6.75A2.25 2.25 0 0 1 4.5 19.5V6.278c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 0 1 1.927-.184" /></svg>
+                            <svg x-show="copied" class="size-4 text-emerald-400" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>
+                        </button>
+                    </div>
+                    <flux:text class="text-xs text-zinc-400 dark:text-zinc-500">
+                        {{ __('Run the command from the CraftDB project folder (where docker-compose.yml lives), with the stack running.') }}
                     </flux:text>
                 </div>
             </div>

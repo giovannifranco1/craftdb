@@ -31,7 +31,7 @@ class UpdateColumnTool extends Tool
 
         $column = Column::findOrFail($validated['column_id']);
         $column->loadMissing('table');
-        McpAccess::assertDiagramAbilityForTable($request, $column->table, 'update');
+        McpAccess::assertDiagramAbilityForTable($column->table, 'update');
 
         $data = collect($validated)
             ->except('column_id')

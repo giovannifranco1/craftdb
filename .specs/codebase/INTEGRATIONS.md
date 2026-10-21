@@ -8,7 +8,16 @@ Não há. A F3 removeu Laravel Cashier/Stripe, planos, webhooks (`/stripe/webhoo
 
 ## Autenticação
 
-Não há OAuth de login (GitHub/Google), registro ou reset de senha: o CraftDB Local autentica automaticamente o usuário local (ver `AuthenticateLocalUser`). O único OAuth presente é o do MCP (Laravel Passport, scope `mcp:use`; F6). No MCP não há checagem de plano nem de limites (F3): `list_diagrams` lista todos os diagramas dos times permitidos ao token; time não permitido lança `AuthorizationException`.
+Não há OAuth de login (GitHub/Google), registro ou reset de senha: o CraftDB Local autentica automaticamente o usuário local (ver `AuthenticateLocalUser`). Laravel Passport foi removido na F6 (guard `api`, `config/passport.php`, rotas `oauth/*` e `.well-known/oauth-*`, `Registrar` custom, `McpTokenTeam` etc.; a migration `2026_10_21_000004_remove_passport_tables` apaga `oauth_*` e `mcp_token_teams`).
+
+## MCP local
+
+- Endpoint HTTP: `POST http://localhost:8080/mcp/craftdb`, sem autenticação. Proteção: bind `127.0.0.1` (compose), middleware `EnsureLocalMcpOrigin` (sem `Origin` ou localhost/127.0.0.1/[::1]/host do `APP_URL`; qualquer outro, inclusive com barra invertida, retorna 403) e `throttle:mcp` (por IP). GET/DELETE retornam 405 (padrão do vendor).
+- stdio: `php artisan mcp:start craftdb` (sem token); via Docker: `docker compose exec -T app php artisan mcp:start craftdb`.
+- Identidade: `McpAccess::user()` = `Auth::user()` ou o binding escopado `craftdb.local-user` (`EnsureLocalUser`), resolvido uma vez por request/processo. Checagens de posse sempre valem; `AddRelationshipTool` confere as duas tabelas. Sem checagem de plano nem limites (F3): `list_diagrams` lista os diagramas do usuário; time de outro usuário lança `AuthorizationException`.
+- Nomes `list_teams`/`team_id` mantidos (contrato das tools).
+- Rotas: `routes/ai.php` é carregado só pelo `McpServiceProvider` (`bootstrap/app.php` não usa mais `api:`), então `route:cache` funciona; o entrypoint roda `php artisan optimize`.
+- Cliente: `.cursor/mcp.json` = `{"mcpServers":{"craftdb":{"url":"http://localhost:8080/mcp/craftdb"}}}`; a página Settings → Integrations mostra a URL para Cursor, Claude Code e Claude Desktop, e a aba stdio.
 
 ---
 
@@ -28,7 +37,7 @@ Removido na F5 (disco S3 e variáveis `AWS_*`). Apenas discos locais em `config/
 
 Sem chamadas a serviços externos em runtime: removidos `laravel/nightwatch` e `resend/resend-laravel` (e o provider em `bootstrap/providers.php`), serviços postmark/ses/resend/slack, mailers postmark/resend/ses/failover/roundrobin, canais de log slack/papertrail, fila sqs e cache dynamodb. Mailer padrão: `log`. Variáveis `AWS_*`, `NIGHTWATCH_*`, `RESEND_*`, `POSTMARK_*`, `SLACK_*`, `PAPERTRAIL_*` removidas. Os defaults do framework Laravel continuam mesclados, porém inertes (não selecionados).
 
-Fontes self-hosted via `@fontsource` em `resources/css/app.css`. Garantias: `tests/Feature/Telemetry/` e check ZT-09 do `docker/smoke-test.sh`. Fora de escopo: landing (F7), Passport/MCP (F6), formulário `contact-us`.
+Fontes self-hosted via `@fontsource` em `resources/css/app.css`. Garantias: `tests/Feature/Telemetry/` e check ZT-09 do `docker/smoke-test.sh`. Fora de escopo: landing (F7), formulário `contact-us`.
 
 ---
 

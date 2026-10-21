@@ -65,7 +65,7 @@ class CreateSchemaTool extends Tool
         ]);
 
         $team = Team::findOrFail($validated['team_id']);
-        McpAccess::assertCanCreateDiagramOnTeam($request, $team);
+        McpAccess::assertCanCreateDiagramOnTeam($team);
 
         $style    = $validated['style'] ?? 'colorful';
         $database = $validated['database'] ?? 'mysql';

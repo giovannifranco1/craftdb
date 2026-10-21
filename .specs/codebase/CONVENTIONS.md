@@ -109,6 +109,8 @@ class Workspaces extends Component
 
 ## Tratamento de erros
 
+**MCP:** tools obtêm o usuário via `McpAccess::user()` (nunca `auth()` direto) e sempre validam posse; violações lançam `AuthorizationException`.
+
 **Padrão observado:** Exceções de domínio customizadas capturadas em `BaseComponent`
 ```php
 // Action lança exceção de domínio

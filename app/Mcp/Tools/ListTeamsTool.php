@@ -19,11 +19,7 @@ class ListTeamsTool extends Tool
 {
     public function handle(Request $request): Response
     {
-        $user = McpAccess::user($request);
-
-        if (! $user) {
-            return Response::error('Unauthenticated.');
-        }
+        $user = McpAccess::user();
 
         $teams = $user->allTeams()->values()->loadCount('diagrams');
 

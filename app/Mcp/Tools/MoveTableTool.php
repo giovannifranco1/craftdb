@@ -24,7 +24,7 @@ class MoveTableTool extends Tool
         ]);
 
         $table = Table::findOrFail($validated['table_id']);
-        McpAccess::assertDiagramAbilityForTable($request, $table, 'update');
+        McpAccess::assertDiagramAbilityForTable($table, 'update');
 
         $table->update(['x' => $validated['x'], 'y' => $validated['y']]);
 

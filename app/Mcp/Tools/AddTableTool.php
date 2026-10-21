@@ -27,7 +27,7 @@ class AddTableTool extends Tool
         ]);
 
         $diagram = Diagram::findOrFail($validated['diagram_id']);
-        McpAccess::assertDiagramAbility($request, $diagram, 'update');
+        McpAccess::assertDiagramAbility($diagram, 'update');
 
         $tableCount = $diagram->tables()->count();
         $position = (isset($validated['x']) && isset($validated['y']))

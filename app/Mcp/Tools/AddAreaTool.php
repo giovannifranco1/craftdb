@@ -30,7 +30,7 @@ class AddAreaTool extends Tool
         ]);
 
         $diagram = Diagram::findOrFail($validated['diagram_id']);
-        McpAccess::assertDiagramAbility($request, $diagram, 'update');
+        McpAccess::assertDiagramAbility($diagram, 'update');
 
         $area = Area::create([
             'diagram_id' => $validated['diagram_id'],

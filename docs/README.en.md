@@ -276,6 +276,15 @@ If port 8080 or 3307 is taken, change it with `CRAFTDB_PORT` / `CRAFTDB_DB_PORT`
 
 Everything is bound to `127.0.0.1` only, so nothing is exposed on your network.
 
+### MCP
+
+The MCP server runs with no token and acts as the local user:
+
+- HTTP: `http://localhost:8080/mcp/craftdb` (e.g. `.cursor/mcp.json` with `{"mcpServers":{"craftdb":{"url":"http://localhost:8080/mcp/craftdb"}}}`)
+- stdio: `docker compose exec -T app php artisan mcp:start craftdb`
+
+Ready-made snippets for Cursor, Claude Code and Claude Desktop are in Settings → Integrations (`/settings/integrations`).
+
 ### Smoke test
 
 `bash docker/smoke-test.sh` boots the stack from scratch and checks boot, login, persistence, reset and absence of external hosts in pages (ZT-09). **Warning:** it runs `docker compose down -v`, which deletes the stack's data.

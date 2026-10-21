@@ -22,7 +22,7 @@
 
 - Estilo de API: Sem REST API dedicada — Livewire para interações reativas
 - Banco de dados: Eloquent ORM + SQLite (dev) / MySQL (prod) / MySQL 8.4 em container (CraftDB Local)
-- Autenticação: Sem login — usuário local automático (`AuthenticateLocalUser`); Laravel Passport apenas para o MCP
+- Autenticação: Sem login — usuário local automático (`AuthenticateLocalUser`); o MCP age como o usuário local (sem Passport/OAuth/token — removidos na F6)
 - Filas: Database driver (jobs definidos em app/)
 - Cache: File driver (local) / Redis opcional (prod)
 

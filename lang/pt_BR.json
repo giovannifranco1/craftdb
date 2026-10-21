@@ -323,5 +323,15 @@
   "You do not have access to this workspace.": "Você não tem acesso a este workspace.",
   "Switched to workspace: ": "Mudou para o workspace: ",
   "You have no workspaces. Create one to get started.": "Você não tem workspaces. Crie um para começar.",
-  "No workspace found for the current user.": "Nenhum workspace encontrado para o usuário atual."
+  "No workspace found for the current user.": "Nenhum workspace encontrado para o usuário atual.",
+  "Local MCP URL": "URL do MCP local",
+  "The MCP server runs locally and uses your local workspace, ready to connect.": "O servidor MCP roda localmente e usa o seu workspace local, pronto para conectar.",
+  "Terminal (stdio)": "Terminal (stdio)",
+  "After adding, restart Cursor and the CraftDB tools will be available right away.": "Depois de adicionar, reinicie o Cursor e as ferramentas do CraftDB ficarão disponíveis imediatamente.",
+  "Restart Claude Desktop. On the next conversation, Claude will connect to CraftDB and the tools will be available right away.": "Reinicie o Claude Desktop. Na próxima conversa, o Claude se conectará ao CraftDB e as ferramentas estarão disponíveis imediatamente.",
+  "Run this in your terminal (replace the URL if you use a custom port or domain):": "Execute isto no seu terminal (troque a URL se usar outra porta ou domínio):",
+  "For clients that launch the MCP server as a local process, run it inside the CraftDB container via stdio.": "Para clientes que iniciam o servidor MCP como um processo local, execute-o dentro do contêiner do CraftDB via stdio.",
+  "Command": "Comando",
+  "Example client config:": "Exemplo de configuração do cliente:",
+  "Run the command from the CraftDB project folder (where docker-compose.yml lives), with the stack running.": "Execute o comando a partir da pasta do projeto CraftDB (onde fica o docker-compose.yml), com o stack em execução."
 }

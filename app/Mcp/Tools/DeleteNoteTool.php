@@ -26,7 +26,7 @@ class DeleteNoteTool extends Tool
 
         $note = Note::findOrFail($validated['note_id']);
         $diagram = Diagram::findOrFail($note->diagram_id);
-        McpAccess::assertDiagramAbility($request, $diagram, 'update');
+        McpAccess::assertDiagramAbility($diagram, 'update');
 
         $name = $note->name;
         $note->delete();

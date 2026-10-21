@@ -81,18 +81,6 @@ it('ZT01: error pages reference no external resources', function (string $view) 
     expectNoExternalResources(view($view)->render());
 })->with(['errors.404', 'errors.500', 'errors.503']);
 
-it('ZT01: mcp authorize page references no external resources', function () {
-    $html = view('mcp.authorize', [
-        'user' => $this->user,
-        'client' => (object) ['id' => 'client-1', 'name' => 'Test Client'],
-        'authToken' => 'token',
-        'scopes' => [],
-        'request' => request(),
-    ])->render();
-
-    expectNoExternalResources($html);
-});
-
 it('ZT03: landing has no external hosts, goadopt or craftdb.app (also in production)', function () {
     $originalEnv = app()['env'];
 

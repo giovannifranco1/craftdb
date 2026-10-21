@@ -14,7 +14,7 @@
 | Seguir convenções de código e naming | `.specs/codebase/CONVENTIONS.md` | Naming, estrutura de arquivos, imports |
 | Encontrar onde X está no projeto | `.specs/codebase/STRUCTURE.md` | Árvore de diretórios, responsabilidades |
 | Escrever ou entender testes | `.specs/codebase/TESTING.md` | Frameworks, padrões, como executar |
-| Integrar com APIs externas, webhooks | `.specs/codebase/INTEGRATIONS.md` | MCP/Passport, jobs, rotas |
+| Integrar com APIs externas, webhooks | `.specs/codebase/INTEGRATIONS.md` | MCP local, jobs, rotas |
 | Trabalhar com canvas, Alpine stores, SVG | `.specs/codebase/CANVAS.md` | InfiniteCanvas, Alpine stores, eventos, z-index |
 | Implementar feature específica | `AGENTS.MD` + contexto da tarefa | Workflow RPI + PREVC |
 
@@ -53,7 +53,7 @@ Detalhes completos em `.specs/codebase/ARCHITECTURE.md`
 - **Local:** Docker Compose (FrankenPHP + MySQL 8.4) — `docker compose up -d`, ver `docs/README.md`
 - **Frontend:** Livewire 4 + Flux 2 + Tailwind CSS 4
 - **Canvas:** D3.js 7 + `InfiniteCanvas.js` customizado
-- **Auth:** Sem login — usuário local autenticado automaticamente (`AuthenticateLocalUser` + `EnsureLocalUser`); Passport apenas para o MCP
+- **Auth:** Sem login — usuário local autenticado automaticamente (`AuthenticateLocalUser` + `EnsureLocalUser`); o MCP age como esse mesmo usuário (sem token)
 
 Detalhes completos em `.specs/codebase/STACK.md`
 
@@ -95,7 +95,7 @@ Detalhes completos em `.specs/codebase/CONVENTIONS.md`
 
 - **phpmyadmin/sql-parser** — import de schemas MySQL
 - **Zero telemetria (F5)** — sem Nightwatch, Resend/Postmark/SES, S3/AWS nem Google Fonts; fontes self-hosted via `@fontsource` (bundladas pelo Vite). Guardado por `tests/Feature/Telemetry/` e pelo check ZT-09 do `docker/smoke-test.sh`
-- **MCP + Passport** — `.cursor/mcp.json` guarda JWT RS256 (scope `mcp:use`) assinado pelas Passport OAuth keys. As keys vivem no `.env` (`PASSPORT_PRIVATE_KEY` / `PASSPORT_PUBLIC_KEY`), **não** em `storage/oauth-*.key` — esses arquivos são gitignored e regeneráveis, e trocá-los invalida o token do MCP. Se precisar rotacionar keys, regenerar também o `MCP_BEARER_TOKEN` em `.cursor/mcp.json`.
+- **MCP local (F6)** — sem Passport/OAuth/token. HTTP em `http://localhost:8080/mcp/craftdb` (POST sem auth; protegido pelo bind `127.0.0.1`, pelo middleware `EnsureLocalMcpOrigin` — Origin ausente ou localhost/127.0.0.1/[::1]/host do `APP_URL`, senão 403 — e por `throttle:mcp`). stdio: `php artisan mcp:start craftdb` (no Docker: `docker compose exec -T app php artisan mcp:start craftdb`). `McpAccess::user()` = `Auth::user()` ou o usuário local (`EnsureLocalUser`); checagens de posse sempre valem. Nomes `list_teams`/`team_id` mantidos (contrato). `.cursor/mcp.json` só tem a URL local
 
 Detalhes completos em `.specs/codebase/INTEGRATIONS.md`
 

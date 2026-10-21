@@ -135,4 +135,5 @@ bash docker/smoke-test.sh   # inclui ZT-09: sem hosts externos em /dashboard e /
 ## Cobertura
 
 **Atual:** Auth/usuário local, Settings, Parse e regressões da F3 (suíte: 263 testes passando). Testes da F3: `tests/Feature/Plans/{PremiumFeaturesUnlockedTest,NoLimitsTest,PublicLinksRemovedTest,BillingRemovedTest}.php` (funcionalidades sempre liberadas, sem limites, links públicos e billing removidos) e `tests/Feature/Database/RemoveBillingLeftoversTest.php` (migration `2026_10_21_000002_remove_billing_leftovers`)
+**F6 (MCP local):** `tests/Feature/Mcp/{LocalMcpTest,PassportRemovedTest,RouteCacheTest,McpToolsAuthorizationTest}.php` e `tests/Feature/Settings/IntegrationsPageTest.php`; checks MCP-12/MCP-14 no `docker/smoke-test.sh`. Suíte: 378 testes passando
 **Metas:** Não documentadas explicitamente

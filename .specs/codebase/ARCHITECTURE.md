@@ -9,6 +9,7 @@ Request HTTP
     │
     ▼
 Middleware (AuthenticateLocalUser → auth, throttle)
+    (MCP: POST /mcp/craftdb → EnsureLocalMcpOrigin + throttle:mcp, sem auth; McpAccess::user() = usuário local)
     │
     ├── Controllers (HTTP) ──▶ Views Blade
     │       └── DiagramController

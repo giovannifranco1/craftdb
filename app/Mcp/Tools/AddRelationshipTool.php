@@ -25,17 +25,21 @@ class AddRelationshipTool extends Tool
             'type' => 'required|string|in:1:1,1:n,n:1,n:n',
         ]);
 
-        $from = Table::findOrFail($validated['from_table_id']);
-        $to = Table::findOrFail($validated['to_table_id']);
+        $fromId = (int) $validated['from_table_id'];
+        $toId = (int) $validated['to_table_id'];
+
+        $from = Table::findOrFail($fromId);
+        $to = Table::findOrFail($toId);
         if ($from->diagram_id !== $to->diagram_id) {
             return Response::error(__('The two tables must belong to the same diagram.'));
         }
 
-        McpAccess::assertDiagramAbilityForTable($request, $from, 'update');
+        McpAccess::assertDiagramAbilityForTable($from, 'update');
+        McpAccess::assertDiagramAbilityForTable($to, 'update');
 
         $result = app(AddRelationshipWithNewForeignKey::class)->exec([
-            'fromTableId' => $validated['from_table_id'],
-            'toTableId' => $validated['to_table_id'],
+            'fromTableId' => $fromId,
+            'toTableId' => $toId,
             'type' => $validated['type'],
         ]);
 

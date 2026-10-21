@@ -63,6 +63,33 @@ logs="$(docker compose logs app)"
 grep -q "local@craftdb.local" <<<"$logs" && grep -q "URL:" <<<"$logs" && ! grep -q "Senha" <<<"$logs" \
     && pass "DOCK-07 usuário local e URL no log, sem senha" || fail "DOCK-07 log incorreto (usuário/URL ausentes ou senha presente)"
 
+mcp_post() {
+    # $1 = payload JSON; demais args = headers extras (-H ...). Imprime headers, linha em branco e corpo.
+    local payload="$1"; shift
+    curl -s -i -X POST "$URL/mcp/craftdb" \
+        -H 'Content-Type: application/json' -H 'Accept: application/json, text/event-stream' \
+        "$@" -d "$payload"
+}
+init_payload='{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-11-25","capabilities":{},"clientInfo":{"name":"smoke","version":"1.0"}}}'
+mcp_init="$(mcp_post "$init_payload")"
+mcp_code="$(head -n1 <<<"$mcp_init" | awk '{print $2}')"
+[ "$mcp_code" = "200" ] && pass "MCP-14 initialize em /mcp/craftdb 200" || fail "MCP-14 initialize retornou '$mcp_code'"
+
+session_id="$(grep -i '^mcp-session-id:' <<<"$mcp_init" | head -n1 | cut -d' ' -f2- | tr -d '\r\n ' || true)"
+sess_args=()
+[ -n "$session_id" ] && sess_args=(-H "Mcp-Session-Id: ${session_id}")
+call_payload='{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"list_teams","arguments":{}}}'
+mcp_teams="$(mcp_post "$call_payload" ${sess_args[@]+"${sess_args[@]}"})"
+grep -q "Local Workspace" <<<"$mcp_teams" \
+    && pass "MCP-14 tools/call list_teams retorna Local Workspace" \
+    || fail "MCP-14 list_teams sem 'Local Workspace': $mcp_teams"
+
+mcp_evil="$(mcp_post "$init_payload" -H 'Origin: http://evil.example' | head -n1 | awk '{print $2}')"
+[ "$mcp_evil" = "403" ] && pass "MCP-14 Origin externo bloqueado (403)" || fail "MCP-14 Origin externo retornou '$mcp_evil'"
+
+route_cache="$(docker compose exec -T app sh -c 'ls bootstrap/cache/routes-*.php' 2>/dev/null || true)"
+[ -n "$route_cache" ] && pass "MCP-12 rotas cacheadas no boot ($route_cache)" || fail "MCP-12 cache de rotas ausente"
+
 status_out="$(docker compose exec -T app php artisan migrate:status --no-ansi)"
 grep -q "Pending" <<<"$status_out" \
     && fail "DOCK-03 migrations pendentes" || pass "DOCK-03 migrations aplicadas"

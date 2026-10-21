@@ -3,7 +3,6 @@
 namespace App\Mcp\Servers;
 
 use App\Mcp\Server\CraftdbCallTool;
-use App\Mcp\StdioMcpAuth;
 use App\Mcp\Tools\AddAreaTool;
 use App\Mcp\Tools\AddColumnTool;
 use App\Mcp\Tools\AddColumnsTool;
@@ -55,8 +54,6 @@ class CraftdbServer extends Server
 
     protected function boot(): void
     {
-        StdioMcpAuth::bootstrapIfStdio($this->transport);
-
         $this->addMethod('tools/call', CraftdbCallTool::class);
     }
 

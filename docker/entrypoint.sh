@@ -37,10 +37,8 @@ while (true) {
 }
 '
 
-# 3. Cache de config (depende do APP_KEY exportado; event e view são cacheados no build).
-# Sem route:cache: routes/ai.php é carregado duas vezes (bootstrap/app.php `api:` +
-# McpServiceProvider), duplicando nomes de rota. Ver .specs/project/STATE.md.
-php artisan config:cache --no-ansi
+# 3. Caches de config, rotas, eventos e views (dependem do APP_KEY exportado)
+php artisan optimize --no-ansi
 
 # 4. Migrations (DOCK-03)
 php artisan migrate --force --no-ansi

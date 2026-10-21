@@ -24,7 +24,7 @@ class ListRelationshipsTool extends Tool
         ]);
 
         $diagram = Diagram::findOrFail($validated['diagram_id']);
-        McpAccess::assertDiagramAbility($request, $diagram, 'view');
+        McpAccess::assertDiagramAbility($diagram, 'view');
 
         $relationships = $diagram->relationships()
             ->with(['fromTable', 'fromColumn', 'toTable', 'toColumn'])

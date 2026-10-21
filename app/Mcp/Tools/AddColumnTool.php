@@ -31,7 +31,7 @@ class AddColumnTool extends Tool
         ]);
 
         $table = Table::findOrFail($validated['table_id']);
-        McpAccess::assertDiagramAbilityForTable($request, $table, 'update');
+        McpAccess::assertDiagramAbilityForTable($table, 'update');
 
         $maxOrder = $table->columns()->max('order');
         $newOrder = Helpers::calculateNextOrder($maxOrder);
