@@ -50,7 +50,7 @@ Detalhes completos em `.specs/codebase/ARCHITECTURE.md`
 ## Stack
 
 - **Backend:** Laravel 13 + PHP 8.2+ (8.4 na imagem Docker) + Eloquent ORM
-- **Local:** Docker Compose (FrankenPHP + MySQL 8.4) — `docker compose up -d`, ver `docs/README.md`
+- **Local:** Docker Compose (FrankenPHP + MySQL 8.4) — `docker compose up -d --build`, ver `README.md` (EN) / `README.pt-BR.md`
 - **Frontend:** Livewire 4 + Flux 2 + Tailwind CSS 4
 - **Canvas:** D3.js 7 + `InfiniteCanvas.js` customizado
 - **Auth:** Sem login — usuário local autenticado automaticamente (`AuthenticateLocalUser` + `EnsureLocalUser`); o MCP age como esse mesmo usuário (sem token)
