@@ -20,9 +20,15 @@ Removida na F3 (header `cf-ipcountry`, `CLOUDFLARE_PROXY`, `BillingCountry`, mid
 
 ## Storage
 
-**Serviço:** AWS S3
-**Propósito:** Armazenamento de arquivos (configurado, uso específico não identificado)
-**Configuração:** `config/filesystems.php` — `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_DEFAULT_REGION`, `AWS_BUCKET`
+Removido na F5 (disco S3 e variáveis `AWS_*`). Apenas discos locais em `config/filesystems.php`.
+
+---
+
+## Zero telemetria (F5)
+
+Sem chamadas a serviços externos em runtime: removidos `laravel/nightwatch` e `resend/resend-laravel` (e o provider em `bootstrap/providers.php`), serviços postmark/ses/resend/slack, mailers postmark/resend/ses/failover/roundrobin, canais de log slack/papertrail, fila sqs e cache dynamodb. Mailer padrão: `log`. Variáveis `AWS_*`, `NIGHTWATCH_*`, `RESEND_*`, `POSTMARK_*`, `SLACK_*`, `PAPERTRAIL_*` removidas. Os defaults do framework Laravel continuam mesclados, porém inertes (não selecionados).
+
+Fontes self-hosted via `@fontsource` em `resources/css/app.css`. Garantias: `tests/Feature/Telemetry/` e check ZT-09 do `docker/smoke-test.sh`. Fora de escopo: landing (F7), Passport/MCP (F6), formulário `contact-us`.
 
 ---
 

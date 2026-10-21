@@ -278,7 +278,7 @@ Everything is bound to `127.0.0.1` only, so nothing is exposed on your network.
 
 ### Smoke test
 
-`bash docker/smoke-test.sh` boots the stack from scratch and checks boot, login, persistence and reset. **Warning:** it runs `docker compose down -v`, which deletes the stack's data.
+`bash docker/smoke-test.sh` boots the stack from scratch and checks boot, login, persistence, reset and absence of external hosts in pages (ZT-09). **Warning:** it runs `docker compose down -v`, which deletes the stack's data.
 
 ---
 

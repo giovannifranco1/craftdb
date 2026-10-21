@@ -121,12 +121,13 @@ php artisan test     # Via Artisan
 # Filtrar por suite
 ./vendor/bin/pest --group=auth
 ./vendor/bin/pest tests/Feature/Auth/
+./vendor/bin/pest tests/Feature/Telemetry/   # F5: NoExternalServicesTest e NoExternalRequestsTest (renderiza páginas e falha em qualquer host externo)
 
 # Análise estática
 ./vendor/bin/phpstan analyse
 
 # Smoke test do stack Docker (sobe do zero; roda `docker compose down -v`)
-bash docker/smoke-test.sh
+bash docker/smoke-test.sh   # inclui ZT-09: sem hosts externos em /dashboard e /settings/workspaces
 ```
 
 **Configuração:** SQLite in-memory para isolamento total entre testes — sem estado persistente

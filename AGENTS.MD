@@ -94,7 +94,7 @@ Detalhes completos em `.specs/codebase/CONVENTIONS.md`
 ## Integrações Principais
 
 - **phpmyadmin/sql-parser** — import de schemas MySQL
-- **AWS S3** — storage configurado
+- **Zero telemetria (F5)** — sem Nightwatch, Resend/Postmark/SES, S3/AWS nem Google Fonts; fontes self-hosted via `@fontsource` (bundladas pelo Vite). Guardado por `tests/Feature/Telemetry/` e pelo check ZT-09 do `docker/smoke-test.sh`
 - **MCP + Passport** — `.cursor/mcp.json` guarda JWT RS256 (scope `mcp:use`) assinado pelas Passport OAuth keys. As keys vivem no `.env` (`PASSPORT_PRIVATE_KEY` / `PASSPORT_PUBLIC_KEY`), **não** em `storage/oauth-*.key` — esses arquivos são gitignored e regeneráveis, e trocá-los invalida o token do MCP. Se precisar rotacionar keys, regenerar também o `MCP_BEARER_TOKEN` em `.cursor/mcp.json`.
 
 Detalhes completos em `.specs/codebase/INTEGRATIONS.md`
@@ -126,5 +126,5 @@ Detalhes completos em `.specs/codebase/TESTING.md`
 
 ---
 
-**Última atualização:** 2026-10-21 (F4 — Workspaces locais)
+**Última atualização:** 2026-10-21 (F5 — Zero telemetria)
 **Gerado por:** Skill Brownfield Mapping + revisão manual

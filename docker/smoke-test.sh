@@ -40,6 +40,25 @@ grep -q "http://localhost:${PORT}/build/" <<<"$html" \
     && pass "DOCK-01 assets em http:// (APP_FORCE_HTTPS=false)" \
     || fail "DOCK-01 assets não usam http://localhost:${PORT}/build/"
 
+ws_html="$(curl -s "$URL/settings/workspaces")"
+check_no_external() {
+    local name="$1" body="$2"
+    if grep -qiE 'fonts\.googleapis|fonts\.gstatic|goadopt|craftdb\.app' <<<"$body"; then
+        fail "ZT-09 ${name} referencia host externo (fonts/goadopt/craftdb.app)"
+    else
+        pass "ZT-09 ${name} sem hosts externos"
+    fi
+}
+check_no_external /dashboard "$html"
+check_no_external /settings/workspaces "$ws_html"
+
+css_path="$(grep -oE '/build/assets/[^"'"'"' )]+\.css' <<<"$html" | head -n1 || true)"
+[ -n "$css_path" ] || fail "ZT-09 nenhum CSS /build/assets/*.css no HTML do dashboard"
+css_body="$(curl -sf "$URL$css_path" || true)"
+grep -q '@font-face' <<<"$css_body" \
+    && pass "ZT-09 CSS local $css_path 200 com @font-face" \
+    || fail "ZT-09 CSS $css_path indisponível ou sem @font-face"
+
 logs="$(docker compose logs app)"
 grep -q "local@craftdb.local" <<<"$logs" && grep -q "URL:" <<<"$logs" && ! grep -q "Senha" <<<"$logs" \
     && pass "DOCK-07 usuário local e URL no log, sem senha" || fail "DOCK-07 log incorreto (usuário/URL ausentes ou senha presente)"

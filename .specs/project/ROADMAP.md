@@ -32,7 +32,7 @@
 
 - Team vira Workspace na UI (criar, renomear, apagar, alternar)
 
-**F5 — Zero telemetria** - PLANEJADA
+**F5 — Zero telemetria** - CONCLUÍDA (2026-10-21)
 
 - Remove Nightwatch, Resend, S3; self-host de fontes; remove og/URLs craftdb.app
 

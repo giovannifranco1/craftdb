@@ -278,7 +278,7 @@ Tudo fica publicado só em `127.0.0.1`, então nada é exposto na sua rede.
 
 ### Smoke test
 
-`bash docker/smoke-test.sh` sobe o stack do zero e verifica boot, login, persistência e reset. **Atenção:** ele roda `docker compose down -v` e apaga os dados do stack.
+`bash docker/smoke-test.sh` sobe o stack do zero e verifica boot, login, persistência, reset e ausência de hosts externos nas páginas (ZT-09). **Atenção:** ele roda `docker compose down -v` e apaga os dados do stack.
 
 ---
 

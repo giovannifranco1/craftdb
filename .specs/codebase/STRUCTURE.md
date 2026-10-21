@@ -142,6 +142,7 @@ craftdb/
   - `ParseLaravelMigration.php` — parser customizado para migrations Laravel
 - Form: `app/Livewire/Forms/Diagram/ImportForm.php`
 - Fixtures de teste: `tests/Feature/Actions/Parse/`
+- Zero telemetria (F5): `tests/Feature/Telemetry/` (NoExternalServicesTest, NoExternalRequestsTest); fontes via `@fontsource` em `resources/css/app.css`
 
 ## Onde ficam as coisas
 

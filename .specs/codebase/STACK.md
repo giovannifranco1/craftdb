@@ -35,7 +35,9 @@
 ## Serviços Externos
 
 - Pagamentos/região: nenhum (Cashier/Stripe e `cf-ipcountry` removidos na F3)
-- Storage: AWS S3 (configurado, não verificado se em uso ativo)
+- Storage: disco local (S3/AWS removido na F5)
+- Telemetria/e-mail externo: nenhum (Nightwatch e Resend removidos na F5; mailer padrão `log`)
+- Fontes: self-hosted via `@fontsource` (Poppins, Outfit, Kalam, Space Mono; subsets latin e latin-ext), bundladas pelo Vite — sem Google Fonts
 
 ## Ferramentas de Desenvolvimento
 

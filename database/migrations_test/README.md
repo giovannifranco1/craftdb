@@ -4,7 +4,7 @@ Migrations de exemplo usadas **só para testar a importação de migrations Lara
 (`App\Actions\Parse\ParseLaravelMigration`) e gerar prints para a landing page.
 
 Reproduz o schema do diagrama **"Blog Platform — Demo"**
-(`https://craftdb.app/1/diagram/blog-platform-demo-E3dQTdfcLt`).
+(diagrama de demonstração publicado anteriormente).
 
 ⚠️ **Esta pasta não é carregada pelo `php artisan migrate`.** O Laravel só varre
 `database/migrations`. Nenhum path custom está registrado no projeto, então estes arquivos

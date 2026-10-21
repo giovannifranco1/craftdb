@@ -18,3 +18,4 @@
 - 2026-10-21 (F2): `App\Models\Team\Membership` ficou sem uso real (só docblocks) → apagar junto com a decisão de `team_user` na F4.
 - 2026-10-21 (F4): ~60 chaves `__()` sem tradução pt_BR (páginas MCP/integrações, erros, tooltips do canvas) — pré-existentes; revisar numa passada de i18n (F7 ou M2).
 - 2026-10-21 (F4): `session('current_team')` guarda o model Team serializado e é re-buscado a cada uso (até 4–5 finds por página; rename precisa regravar a sessão) → guardar só `current_team_id` e resolver com `ownedTeams()->find()` (mudança de arquitetura em ~8 pontos + testes; fazer numa fase própria).
+- 2026-10-21 (F5): aviso do esbuild em todo build desde a F1 — comentário CSS sem `/* */` ("min-height: 177px !important; Ajuste conforme sua necessidade", grep em resources/css) → corrigir num quick fix.

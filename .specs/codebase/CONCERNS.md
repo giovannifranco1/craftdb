@@ -16,4 +16,6 @@
 - Testes rodam só em SQLite in-memory; compatibilidade com MySQL nunca foi validada
 
 ## Telemetria / saída de rede
-- Laravel Nightwatch (`NIGHTWATCH_TOKEN`), Resend (mail), Google Fonts em 7 views, og:url/og:image e URLs de upgrade apontando para craftdb.app
+- Resolvido na F5 (2026-10-21): Nightwatch, Resend, S3 e demais serviços externos removidos; Google Fonts substituído por fontes self-hosted (`@fontsource`); og:url/og:image usam `url()`/`asset()`; script GoAdopt removido da landing
+- Guardas: `tests/Feature/Telemetry/` e check ZT-09 do smoke test
+- Pendente fora da F5: landing pages (F7), Passport/MCP (F6), formulário `contact-us`

@@ -48,7 +48,6 @@ services:
       CACHE_STORE: database
       QUEUE_CONNECTION: sync
       MAIL_MAILER: log
-      NIGHTWATCH_ENABLED: "false"
       CRAFTDB_USER_EMAIL: ${CRAFTDB_USER_EMAIL:-local@craftdb.local}
     volumes:
       - craftdb-data:/data
