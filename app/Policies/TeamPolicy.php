@@ -18,7 +18,7 @@ class TeamPolicy
      */
     public function view(User $user, object $team): bool
     {
-        return $user->belongsToTeam($team);
+        return $user->ownsTeam($team);
     }
 
     /**
@@ -28,7 +28,15 @@ class TeamPolicy
      * @param object $team
      * @return bool
      */
-    public function updateTeam(User $user, object $team): bool
+    public function update(User $user, object $team): bool
+    {
+        return $user->ownsTeam($team);
+    }
+
+    /**
+     * Determine whether the user can delete the workspace.
+     */
+    public function delete(User $user, object $team): bool
     {
         return $user->ownsTeam($team);
     }

@@ -156,11 +156,7 @@
                                             <div class="min-w-0 flex-1">
                                                 <p class="text-sm font-medium leading-snug text-zinc-900 dark:text-zinc-100">{{ $team->name }}</p>
                                                 <p class="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
-                                                    @if($user->ownsTeam($team))
-                                                        Owner
-                                                    @else
-                                                        Member
-                                                    @endif
+                                                    Owner
                                                 </p>
                                             </div>
                                         </label>

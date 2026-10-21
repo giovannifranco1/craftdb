@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Models\Concerns\HasTeams;
-use App\Models\Team\Membership;
 use App\Models\Team\Team;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -33,9 +32,6 @@ use Laravel\Passport\HasApiTokens;
  * @property-read int|null $notifications_count
  * @property-read Collection<int, Team> $ownedTeams
  * @property-read int|null $owned_teams_count
- * @property-read Membership|null $membership
- * @property-read Collection<int, Team> $teams
- * @property-read int|null $teams_count
  *
  * @method static \Database\Factories\UserFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User newModelQuery()

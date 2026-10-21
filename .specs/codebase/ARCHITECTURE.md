@@ -40,9 +40,9 @@ Middleware (AuthenticateLocalUser → auth, throttle)
   - `AddRelationshipWithExistingForeignKey` — relacionamento com FK existente
   - `AddRelationshipWithNewForeignKey` — relacionamento criando nova FK
   - `ExportDiagramToJson`, `ExportDiagramToLaravelMigration`, `GenerateMigrationZip` — exportações
-- `app/Actions/Local/` — `EnsureLocalUser` (cria/recupera o usuário local e seu time, sem senha)
+- `app/Actions/Local/` — `EnsureLocalUser` (cria/recupera o usuário local e seu workspace, sem senha)
 - `app/Actions/Parse/` — 5 arquivos: `BaseSQLParse` (classe base), `ParseMySQLSchema`, `ParsePOstgreSQLSchema`, `ParseSQLiteSchema`, `ParseLaravelMigration`
-- `app/Actions/Team/` — Operações de equipe
+- `app/Actions/Team/` — Workspaces: `CreateNewTeam`, `RenameTeam`, `DeleteTeam` (apaga os diagramas do workspace via `DeleteDiagram` em transação; recusa apagar o último)
 **Exemplo:** `app/Actions/Diagram/CreateNewDiagram.php` — valida nome, gera slug, faz parse de imports
 
 ### Livewire Components
@@ -61,7 +61,7 @@ Middleware (AuthenticateLocalUser → auth, throttle)
 **Localização:** `app/Policies/`
 **Propósito:** Controle de acesso baseado em regras de negócio
 **Arquivos:** DiagramPolicy, TablePolicy, TeamPolicy
-**Uso:** Autorização por posse do time (`ownsTeam`) em DiagramPolicy/TeamPolicy; não há papéis (roles) nem convites
+**Uso:** Autorização por posse do workspace (`ownsTeam`) em DiagramPolicy/TeamPolicy, `TableAccessible`, `Column::accessible` e `AddRelationship`; não há membros, papéis (roles) nem convites
 
 ### Observers (Side Effects)
 
@@ -166,6 +166,6 @@ Detalhes completos em `.specs/codebase/CANVAS.md`
 
 **Fronteiras de módulo:**
 - Diagrama é o domínio central (Diagram, Table, Column, Relationship, Area, Note)
-- Team é módulo independente com próprios models (Team, Membership)
+- Workspace (model `Team`) é módulo independente: sem membros (tabela `team_user`, `Membership` e `HasMembers` removidos na F4); `allTeams()` = workspaces do dono ordenados por nome; `firstTeam()` é o fallback. O middleware `EnsureValidCurrentTeam` volta para `firstTeam()` quando o workspace atual deixa de existir ("The current workspace no longer exists. Switched to :name."). Contagens de menu/dashboard são calculadas ao vivo (sem sessão/cache)
 - Sem billing, planos ou limites (removidos na F3): todas as funcionalidades estão sempre disponíveis
 - Usuário local: sem fluxo de login — o middleware `AuthenticateLocalUser` (primeiro do grupo `web`, com prioridade antes de `AuthenticatesRequests`) autentica o usuário configurado em `craftdb.local_user.email` uma vez por sessão, via `EnsureLocalUser`. `/`, `/login` e `/register` redirecionam para `/dashboard` (TODO F7)

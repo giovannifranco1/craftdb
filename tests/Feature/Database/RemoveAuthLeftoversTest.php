@@ -19,10 +19,9 @@ it('NOAUTH18: drops auth columns from users and keeps password nullable', functi
     expect(Schema::hasColumn('users', 'password'))->toBeTrue();
 });
 
-it('NOAUTH18: drops invitation, role and password reset tables and team_user.role_id', function () {
+it('NOAUTH18: drops invitation, role and password reset tables and team_user', function () {
     expect(Schema::hasTable('invitation'))->toBeFalse()
         ->and(Schema::hasTable('role'))->toBeFalse()
         ->and(Schema::hasTable('password_reset_tokens'))->toBeFalse()
-        ->and(Schema::hasColumn('team_user', 'role_id'))->toBeFalse()
-        ->and(Schema::hasTable('team_user'))->toBeTrue();
+        ->and(Schema::hasTable('team_user'))->toBeFalse(); // dropped in F4 (WS18)
 });

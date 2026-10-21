@@ -2,14 +2,13 @@
 
 namespace App\Models\Team;
 
-use App\Models\Concerns\HasMembers as ConcernsHasMembers;
 use App\Models\Diagram;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 
@@ -19,14 +18,7 @@ use Illuminate\Support\Carbon;
  * @property string $name
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read Collection<int, Ability> $abilities
- * @property-read int|null $abilities_count
- * @property-read Collection<int, Group> $groups
- * @property-read int|null $groups_count
  * @property-read User|null $owner
- *@property-read Membership|null $membership
- * @property-read Collection<int, User> $users
- * @property-read int|null $users_count
  *
  * @method static \Database\Factories\Team\TeamFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Team newModelQuery()
@@ -44,7 +36,7 @@ use Illuminate\Support\Carbon;
 #[Fillable(['user_id', 'name'])]
 class Team extends Model
 {
-    use ConcernsHasMembers, HasFactory;
+    use HasFactory;
 
     /**
      * Creates a new instance of the model.
@@ -67,23 +59,25 @@ class Team extends Model
         $sessionTeam = session('current_team');
 
         if ($sessionTeam instanceof self) {
-            $team = self::find($sessionTeam->getKey());
+            $team = $user->ownedTeams()->find($sessionTeam->getKey());
 
-            if ($team && $user->belongsToTeam($team)) {
+            if ($team) {
                 return $team;
             }
-
-            $replacement = $user->allTeams()->first();
-            session(['current_team' => $replacement]);
-
-            return $replacement;
         }
 
-        $firstTeam = $user->allTeams()->first();
+        $team = $user->firstTeam();
+        session(['current_team' => $team]);
 
-        session(['current_team' => $firstTeam]);
+        return $team;
+    }
 
-        return $firstTeam;
+    /**
+     * @return BelongsTo<User, $this>
+     */
+    public function owner(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     /**

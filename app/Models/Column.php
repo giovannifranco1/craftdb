@@ -123,7 +123,7 @@ class Column extends Model
         }
 
         return $query->whereHas('table.diagram', function (Builder $q) use ($user): void {
-            $q->whereIn('team_id', $user->teams()->pluck('id'));
+            $q->whereIn('team_id', $user->ownedTeams()->pluck('team.id'));
         });
     }
 }

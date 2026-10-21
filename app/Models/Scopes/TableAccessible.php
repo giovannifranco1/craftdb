@@ -20,11 +20,7 @@ class TableAccessible implements Scope
                 $q->whereRaw('1 = 0');
                 return;
             }
-            $teamIds = $user
-                ->teams()
-                ->pluck('team.id')
-                ->merge($user->ownedTeams()->pluck('team.id'))
-                ->unique();
+            $teamIds = $user->ownedTeams()->pluck('team.id');
 
             $q->whereIn('team_id', $teamIds);
         });

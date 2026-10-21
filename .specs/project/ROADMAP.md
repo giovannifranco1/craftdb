@@ -28,7 +28,7 @@
 - Remove Cashier/Stripe, planos, DiagramLimits, pro-features, cf-ipcountry
 - Remove rota e componentes de diagrama público
 
-**F4 — Workspaces locais** - PLANEJADA
+**F4 — Workspaces locais** - CONCLUÍDA (2026-10-21)
 
 - Team vira Workspace na UI (criar, renomear, apagar, alternar)
 

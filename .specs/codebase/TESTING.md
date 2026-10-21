@@ -10,7 +10,7 @@
 ## Organização dos testes
 
 **Localização:** `tests/`
-**Nomenclatura:** `{Feature}Test.php` — ex: `AuthenticateLocalUserTest.php`, `TeamCreateTest.php`
+**Nomenclatura:** `{Feature}Test.php` — ex: `AuthenticateLocalUserTest.php`, `WorkspacesPageTest.php`
 **Estrutura:**
 ```
 tests/
@@ -22,15 +22,16 @@ tests/
 │   ├── Settings/
 │   │   ├── ProfileUpdateTest.php
 │   │   ├── SettingsNavigationTest.php
-│   │   ├── TeamCreateTest.php
 │   │   └── (outros settings tests)
+│   ├── Workspaces/ (OwnershipOnlyTest, WorkspacesPageTest, CrossWorkspaceTest, WorkspaceWordingTest)
+│   ├── Actions/Team/ (RenameTeamTest, DeleteTeamTest)
 │   └── Actions/Parse/
 │       └── (fixtures para testes de parser SQL/migration)
 └── Unit/
     └── (testes unitários de classes isoladas)
 ```
 
-**Total:** 246 testes (suíte completa)
+**Total:** 288 testes (suíte completa)
 
 ## Padrões de teste
 
@@ -51,22 +52,23 @@ test('local user is logged in automatically', function () {
 - Login automático do usuário local (uma vez por sessão)
 - `/login` e `/register` redirecionam para `/dashboard`; rotas de auth removidas retornam 404
 - Banco novo (migrations do zero) e migration `remove_auth_leftovers`
-- Autorização de diagramas/times por posse do time
+- Autorização de diagramas/workspaces por posse (`ownsTeam`); workspaces extras e de outro dono via helpers `secondTeam()` / `foreignTeam()` em `tests/TestCase.php`
+- Página de workspaces: criar (vira atual), renomear, apagar com confirmação por nome (recusa o último), alternar; terminologia "workspace" na UI
 
-**Suíte atual:** 246 testes passando
+**Suíte atual:** 288 testes passando
 
 ### Testes de Livewire
 
 **Abordagem:** Testa componentes Livewire via `Livewire::test()`
-**Localização:** `tests/Feature/Settings/`
+**Localização:** `tests/Feature/Settings/`, `tests/Feature/Workspaces/`
 **Padrão observado:**
 ```php
-test('team can be created', function () {
+test('workspace can be created', function () {
     $user = User::factory()->create();
 
     Livewire::actingAs($user)
-        ->test(CreateTeam::class)
-        ->set('name', 'My Team')
+        ->test('settings.⚡workspaces')
+        ->set('createName', 'My Workspace')
         ->call('create')
         ->assertHasNoErrors();
 });

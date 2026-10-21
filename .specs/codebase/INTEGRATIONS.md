@@ -61,14 +61,13 @@ Removida na F3 (header `cf-ipcountry`, `CLOUDFLARE_PROXY`, `BillingCountry`, mid
 
 **Dashboard (auth — usuário local automático):**
 - `GET /dashboard` — Lista de diagramas
-- `GET /my-favorites` — Diagramas favoritos
 
 **Diagrama:**
 - `GET /{team_id}/diagram/{diagram:slug}` — Editor de diagrama
 - `POST /{team_id}/diagram/{diagram:slug}/toggle-favorite` — JSON
 
 **Configurações (auth):**
-- `GET /settings/{profile,appearance,language,integrations}`, `/settings/team`, `/settings/team/create`
+- `GET /settings/{profile,appearance,language,integrations}`, `/settings/workspaces` (`workspaces.index`: listar, criar, renomear, apagar e alternar workspace; rotas `team.*` e `settings/team*` removidas na F4)
 - `/login` e `/register` são redirects para `/dashboard` (TODO F7)
 
 ---

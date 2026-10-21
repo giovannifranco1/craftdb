@@ -57,12 +57,12 @@ test('FREE05 import to existing diagram works for the local user', function () {
     expect($this->diagram->tables()->count())->toBe(2);
 });
 
-test('FREE08 any user can create a team', function () {
-    $this->get(route('team.create'))->assertOk();
+test('FREE08 any user can create a workspace', function () {
+    $this->get(route('workspaces.index'))->assertOk();
 
-    Livewire::test('settings.team.⚡create')
-        ->set('name', 'Another team')
-        ->call('createTeam')
+    Livewire::test('settings.⚡workspaces')
+        ->set('createName', 'Another team')
+        ->call('create')
         ->assertHasNoErrors();
 
     expect(Team::where('name', 'Another team')->exists())->toBeTrue();

@@ -23,6 +23,7 @@
 - camelCase em PHP
 - snake_case em colunas de banco de dados
 - Exemplos DB: `team_id`, `diagram_id`, `created_at`
+- Termo de UI: "Workspace"; `Team`/`team`/`team_id` é o nome interno (renomeação interna fica para o futuro). Textos visíveis (lang/*.json) usam "workspace", nunca "team/equipe/time"
 
 **Rotas:**
 - kebab-case nos segments de URL
@@ -80,20 +81,20 @@ class CreateNewDiagram
 
 **Livewire Component:**
 ```php
-class MyFavorites extends Component
+class Workspaces extends Component
 {
     // Propriedades públicas reativas
-    public $diagrams;
+    public string $createName = '';
 
     // Hooks de lifecycle
     public function mount(): void {}
 
     // Métodos de ação chamados via wire:click
-    public function toggleFavorite(int $id): void {}
+    public function startRename(int $id): void {}
 
     public function render(): View
     {
-        return view('livewire.my-favorites');
+        return view('livewire.workspaces');
     }
 }
 ```
@@ -170,5 +171,5 @@ public static function fromModel(Model $model): self { ... }
 
 ## Scopes e Concerns
 
-**Global Scopes:** Em `app/Models/Scopes/` — ex: `TableAccessible` para filtrar por acesso de equipe
-**Concerns (Traits):** Em `app/Models/Concerns/` — ex: `HasTeams` para helpers de relacionamento com equipes
+**Global Scopes:** Em `app/Models/Scopes/` — ex: `TableAccessible` para filtrar por posse do workspace
+**Concerns (Traits):** Em `app/Models/Concerns/` — ex: `HasTeams` para helpers de workspaces (`ownsTeam`, `ownedTeams`, `allTeams`, `firstTeam`)

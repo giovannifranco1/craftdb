@@ -29,13 +29,11 @@ class EnsureValidCurrentTeam
             return $next($request);
         }
 
-        $team = Team::find($sessionTeam->getKey());
-
-        if ($team && $user->belongsToTeam($team)) {
+        if ($user->ownedTeams()->find($sessionTeam->getKey())) {
             return $next($request);
         }
 
-        $replacement = $user->allTeams()->first();
+        $replacement = $user->firstTeam();
         session(['current_team' => $replacement]);
 
         if (! $this->shouldRedirectAfterSwitch($request)) {
@@ -44,7 +42,7 @@ class EnsureValidCurrentTeam
 
         return redirect()
             ->route('dashboard')
-            ->with('message', __('Your active workspace was switched because you no longer have access to the previous team.'))
+            ->with('message', __('The current workspace no longer exists. Switched to :name.', ['name' => $replacement?->name]))
             ->with('type', 'default');
     }
 

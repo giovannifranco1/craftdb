@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\Pages\DiagramController;
-use App\Livewire\MyFavorites;
 use Illuminate\Support\Facades\Route;
 
 /** Landing Page */
@@ -18,7 +17,6 @@ Route::get('/policy', fn () => view('pages.landing-page.policy'))->name('landing
 
 /** Dashboard */
 Route::livewire('/dashboard', 'pages::dashboard')->lazy()->middleware(['auth'])->name('dashboard');
-Route::livewire('/my-favorites', MyFavorites::class)->middleware(['auth'])->name('dashboard.my-favorites');
 
 /** Settings */
 Route::middleware(['auth'])->group(function () {
@@ -29,8 +27,7 @@ Route::middleware(['auth'])->group(function () {
     Route::livewire('settings/language', 'settings.language')->name('language.edit');
     Route::livewire('settings/integrations', 'settings.integrations')->name('integrations.edit');
 
-    Route::livewire('settings/team/create', 'settings.team.⚡create')->name('team.create');
-    Route::livewire('settings/team', 'settings.team')->name('team.edit');
+    Route::livewire('settings/workspaces', 'settings.workspaces')->name('workspaces.index');
 });
 
 /** Diagram */

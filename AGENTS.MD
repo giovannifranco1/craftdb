@@ -62,8 +62,8 @@ Detalhes completos em `.specs/codebase/STACK.md`
 ## Estrutura de Pastas
 
 ```
-app/Actions/        → Toda lógica de negócio (por feature: Diagram/, Team/, Parse/, Local/)
-app/Models/         → Entidades Eloquent + Team/ subpasta
+app/Actions/        → Toda lógica de negócio (por feature: Diagram/, Team/ [workspaces], Parse/, Local/)
+app/Models/         → Entidades Eloquent + Team/ subpasta (`Team` = Workspace na UI)
 app/Livewire/       → Componentes reativos + Forms/, Data/, Contracts/
 app/Http/Controllers/ → Controllers finos (Pages/)
 app/Support/        → Helpers
@@ -126,5 +126,5 @@ Detalhes completos em `.specs/codebase/TESTING.md`
 
 ---
 
-**Última atualização:** 2026-10-21
+**Última atualização:** 2026-10-21 (F4 — Workspaces locais)
 **Gerado por:** Skill Brownfield Mapping + revisão manual

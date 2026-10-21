@@ -17,7 +17,7 @@ craftdb/
 │   │   ├── Local/           # EnsureLocalUser (usuário local sem senha)
 │   │   ├── Parse/           # BaseSQLParse (base), ParseMySQLSchema, ParsePOstgreSQLSchema,
 │   │   │                    #   ParseSQLiteSchema, ParseLaravelMigration
-│   │   └── Team/            # Operações de equipe
+│   │   └── Team/            # Workspaces: CreateNewTeam, RenameTeam, DeleteTeam
 │   ├── Console/Commands/
 │   ├── Enums/               # ColumnType, RelationshipType
 │   ├── Exceptions/          # AuthorizationDiagramException
@@ -29,14 +29,13 @@ craftdb/
 │   ├── Livewire/
 │   │   ├── BaseComponent.php     # Base abstrata: handler global de exceções de domínio
 │   │   ├── CanvasComponent.php   # Base abstrata: operações do canvas interativo
-│   │   ├── MyFavorites.php       # Componente: lista de diagramas favoritos
 │   │   ├── Forms/Diagram/        # ColumnForm.php, ImportForm.php (Livewire Form Objects)
 │   │   ├── Data/                 # TableData.php, ColumnData.php (implementam Wireable)
 │   │   └── Contracts/            # (vazio após a F3)
 │   ├── Models/
-│   │   ├── Team/            # Team, Membership
+│   │   ├── Team/            # Team (Workspace na UI)
 │   │   ├── Scopes/          # TableAccessible
-│   │   └── Concerns/        # HasTeams trait
+│   │   └── Concerns/        # HasTeams trait (ownedTeams, allTeams, firstTeam, ownsTeam)
 │   ├── Notifications/
 │   ├── Observers/           # DiagramObserver, TableObserver
 │   ├── Policies/            # DiagramPolicy, TablePolicy, TeamPolicy
@@ -49,12 +48,12 @@ craftdb/
 ├── config/
 │   └── craftdb.php          # Usuário local + APP_FORCE_HTTPS
 ├── database/
-│   ├── migrations/          # 26 migrations
+│   ├── migrations/          # 36 migrations
 │   ├── factories/
 │   └── seeders/
 ├── docs/                    # Documentação técnica existente
 │   ├── DIAGRAM_CACHING.md
-│   └── TEAM_MANAGEMENT.md
+│   └── WORKSPACES.md        # Workspaces locais
 ├── lang/                    # Internacionalização
 ├── public/
 ├── resources/
@@ -111,13 +110,15 @@ craftdb/
 - `app/Actions/Diagram/CreateNewDiagram.php` — entrada principal para novos diagramas
 - `app/Actions/Diagram/AddColumnToTable.php`, `AddRelationship.php`
 
-### Equipes
+### Workspaces (Team)
 
-**Propósito:** Colaboração multi-usuário em diagramas
+**Propósito:** Agrupar diagramas do usuário local em workspaces (UI "Workspace"; model `Team`, tabela `team`, `team_id` são o nome interno). Sem membros, convites ou papéis
 **Localização:**
-- Modelos: `app/Models/Team/` (Team, Membership)
+- Modelo: `app/Models/Team/Team.php` (`owner()`)
 - Concern: `app/Models/Concerns/HasTeams.php`
-- Actions: `app/Actions/Team/`
+- Página Livewire: `resources/views/components/settings/⚡workspaces.blade.php` (`settings/workspaces`, rota `workspaces.index`)
+- Switcher: `resources/views/components/ui/⚡team-switcher/`
+- Actions: `app/Actions/Team/` (`CreateNewTeam`, `RenameTeam`, `DeleteTeam`)
 - Policy: `app/Policies/TeamPolicy.php`
 
 ### Usuário local
@@ -181,7 +182,7 @@ craftdb/
 
 **`docs/`:**
 **Propósito:** Documentação técnica de features específicas do projeto
-**Exemplos:** `DIAGRAM_CACHING.md`, `TEAM_MANAGEMENT.md`
+**Exemplos:** `DIAGRAM_CACHING.md`, `WORKSPACES.md`
 
 **`.specs/codebase/`:**
 **Propósito:** Contexto para agentes de IA (esta documentação)

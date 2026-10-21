@@ -16,3 +16,5 @@
 - 2026-10-21 (F2): `config/landingpage.php:79` anuncia Fortify/2FA/recuperação de senha → reescrever/remover na F7.
 - 2026-10-21 (F2): Docker não provisiona chaves do Passport (`oauth/authorize` dá 500 `Invalid key supplied`); com chaves geradas o fluxo abre a tela de consentimento sem pedir login → provisionar (ou eliminar) na F6.
 - 2026-10-21 (F2): `App\Models\Team\Membership` ficou sem uso real (só docblocks) → apagar junto com a decisão de `team_user` na F4.
+- 2026-10-21 (F4): ~60 chaves `__()` sem tradução pt_BR (páginas MCP/integrações, erros, tooltips do canvas) — pré-existentes; revisar numa passada de i18n (F7 ou M2).
+- 2026-10-21 (F4): `session('current_team')` guarda o model Team serializado e é re-buscado a cada uso (até 4–5 finds por página; rename precisa regravar a sessão) → guardar só `current_team_id` e resolver com `ownedTeams()->find()` (mudança de arquitetura em ~8 pontos + testes; fazer numa fase própria).

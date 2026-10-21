@@ -19,7 +19,7 @@ class DiagramPolicy
             return false;
         }
 
-        return $user->belongsToTeam($team);
+        return $user->ownsTeam($team);
     }
 
     /**

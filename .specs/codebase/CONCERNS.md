@@ -5,7 +5,8 @@
 
 ## Áreas frágeis
 - Global scope `TableAccessible`: desligado em `Table` (comentado em Table.php:47) mas ainda referenciado em `Diagram.php:90`
-- Acoplamento alto com usuário autenticado: 44 arquivos / 90 usos de `auth()`, `Auth::`, `->user()`; `currentTeam` em 13 arquivos
+- Acoplamento alto com usuário autenticado: 44 arquivos / 90 usos de `auth()`, `Auth::`, `->user()`; `currentTeam` em 13 arquivos (workspace atual; nome interno `Team`)
+- Nome interno `Team`/`team`/`team_id` diverge do termo de UI "Workspace"; MCP mantém `list_teams`/`team_id` (F6). Renomeação interna é uma consideração futura
 - MCP (`McpAccess`, `StdioMcpAuth`) ainda depende de Passport mesmo em stdio (F6); checagens de plano/limite foram removidas na F3
 - Seção de preços da landing page (`/pricing`) ainda existe apesar de não haver planos (F7)
 

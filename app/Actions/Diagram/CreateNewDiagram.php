@@ -35,7 +35,7 @@ class CreateNewDiagram
         $currentTeam = Team::currentTeam();
 
         if (! $currentTeam) {
-            throw new \Exception('No team found for the current user.');
+            throw new \Exception(__('No workspace found for the current user.'));
         }
 
         $slug = str()->slug($data['name']).'-'.str()->random(10);

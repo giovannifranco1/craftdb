@@ -4,10 +4,6 @@
         @include('_partials.head')
     </head>
 
-    @use('App\Models\Team\Team')
-    @php
-        $team = Team::currentTeam();
-    @endphp
     <body class="min-h-screen bg-zinc-50 dark:bg-background-dark">
 
         @persist('toast')
@@ -28,7 +24,7 @@
                         @if(request()->routeIs('diagram.show') && isset($diagram))
                             <flux:breadcrumbs class="ms-5">
                                 <flux:breadcrumbs.item href="{{ route('dashboard') }}">Diagrams</flux:breadcrumbs.item>
-                                <flux:breadcrumbs.item href="{{ route('diagram.show', [$team->id, $diagram->slug])}}">{{ $diagram->name }}</flux:breadcrumbs.item>
+                                <flux:breadcrumbs.item href="{{ route('diagram.show', [$diagram->team_id, $diagram->slug])}}">{{ $diagram->name }}</flux:breadcrumbs.item>
                             </flux:breadcrumbs>
                         @endif
                     </div>
@@ -73,10 +69,6 @@
                                 </flux:menu.radio.group>
 
                                 <flux:menu.separator />
-                                <flux:menu.item as="button" icon="user-plus" type="button" :href="route('team.create')">{{__('Create New Team')}}</flux:menu.item>
-
-                                <flux:menu.separator/>
-
                                 <livewire:ui.team-switcher/>
 
                                 <flux:menu.radio.group>

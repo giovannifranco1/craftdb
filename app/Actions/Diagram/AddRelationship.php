@@ -4,7 +4,6 @@ namespace App\Actions\Diagram;
 
 use App\Models\Relationship;
 use App\Models\Table;
-use App\Models\Team\Team;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -70,10 +69,11 @@ class AddRelationship
      */
     private function _verifyTablesOwnership(Table $fromTable, Table $toTable): void
     {
-        $currentTeam = Team::currentTeam();
+        /** @var \App\Models\User|null $user */
+        $user = auth()->user();
 
-        if (!$currentTeam) {
-            throw new Exception("No team found for the current user.");
+        if (! $user) {
+            throw new Exception("No user found.");
         }
 
         $fromTableDiagram = $fromTable->diagram;
@@ -83,9 +83,10 @@ class AddRelationship
             throw new Exception("One or both diagrams not found for the tables.");
         }
 
-        if ($fromTableDiagram->team_id !== $currentTeam->getKey() ||
-            $toTableDiagram->team_id !== $currentTeam->getKey()) {
-            throw new Exception("One or both tables do not belong to the user's team.");
+        $ids = array_unique([$fromTableDiagram->team_id, $toTableDiagram->team_id]);
+
+        if ($user->ownedTeams()->whereIn('team.id', $ids)->count() !== count($ids)) {
+            throw new Exception("One or both tables do not belong to the user's workspace.");
         }
     }
 }

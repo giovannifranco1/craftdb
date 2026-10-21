@@ -3,6 +3,7 @@ name: craftdb
 services:
   mysql:
     image: mysql:8.4
+    container_name: craftdb-mysql
     environment:
       MYSQL_DATABASE: craftdb
       MYSQL_USER: craftdb
@@ -22,6 +23,7 @@ services:
 
   app:
     build: .
+    container_name: craftdb-app
     image: craftdb-local:latest
     depends_on:
       mysql:
