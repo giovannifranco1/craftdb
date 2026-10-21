@@ -3,6 +3,7 @@
 ## 📋 Índice
 
 - [Sobre o Projeto](#sobre-o-projeto)
+- [Rodando com Docker](#rodando-com-docker)
 - [Identidade](#identidade)
 - [Tecnologias Utilizadas](#tecnologias-utilizadas)
 - [Arquitetura](#arquitetura)
@@ -237,6 +238,48 @@ craftdb/
 - Autenticação de dois fatores (2FA)
 - Recuperação de senha
 - Verificação de email
+
+---
+
+## 🐳 Rodando com Docker
+
+Requisito: Docker com Compose v2.
+
+```bash
+docker compose up -d          # sobe app + MySQL (a primeira vez faz o build)
+docker compose logs app       # mostra a URL e as credenciais do usuário local
+docker compose down           # para (os dados continuam)
+docker compose down -v        # reset completo (apaga banco e chave)
+```
+
+Acesse http://localhost:8080 e entre com `local@craftdb.local` / `craftdb`.
+
+### Banco de dados
+
+O MySQL fica em `127.0.0.1:3307`: banco `craftdb`, usuário `craftdb`, senha `craftdb`. Dá para abrir em qualquer cliente SQL (TablePlus, DBeaver).
+
+### Variáveis
+
+Defina no shell antes do primeiro `up` (ex.: `CRAFTDB_PORT=8090 docker compose up -d`):
+
+| Variável | Padrão | Para quê |
+|---|---|---|
+| `CRAFTDB_PORT` | `8080` | Porta do app |
+| `CRAFTDB_DB_PORT` | `3307` | Porta do MySQL |
+| `CRAFTDB_DB_PASSWORD` | `craftdb` | Senha do MySQL (só no primeiro boot) |
+| `CRAFTDB_USER_EMAIL` | `local@craftdb.local` | E-mail do usuário local (só no primeiro boot) |
+| `CRAFTDB_USER_PASSWORD` | `craftdb` | Senha do usuário local (só no primeiro boot) |
+| `CRAFTDB_APP_KEY` | gerada e salva no volume | Chave da aplicação |
+
+O Compose também lê o `.env` da raiz do projeto. Como esse é o `.env` do Laravel em desenvolvimento, as variáveis do stack usam o prefixo `CRAFTDB_` para não herdar valores de dev.
+
+Se a porta 8080 ou 3307 já estiver em uso, troque com `CRAFTDB_PORT` / `CRAFTDB_DB_PORT`.
+
+Tudo fica publicado só em `127.0.0.1`, então nada é exposto na sua rede.
+
+### Smoke test
+
+`bash docker/smoke-test.sh` sobe o stack do zero e verifica boot, login, persistência e reset. **Atenção:** ele roda `docker compose down -v` e apaga os dados do stack.
 
 ---
 
