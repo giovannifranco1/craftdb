@@ -18,7 +18,7 @@
 - docker-compose com app + MySQL
 - Entrypoint: APP_KEY persistida, migrate, seed
 
-**F2 — Usuário local implícito + remoção de auth** - PLANEJADA
+**F2 — Usuário local implícito + remoção de auth** - CONCLUÍDA (2026-10-21)
 
 - Seed de usuário/workspace local e auto-login por middleware
 - Remove Fortify (login, registro, 2FA, reset), Socialite, convites, papéis

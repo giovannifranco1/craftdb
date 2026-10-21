@@ -8,10 +8,10 @@
 Request HTTP
     │
     ▼
-Middleware (auth, verified, role:viewer|editor|owner, super.root)
+Middleware (AuthenticateLocalUser → auth, throttle)
     │
     ├── Controllers (HTTP) ──▶ Views Blade
-    │       └── BillingController, DiagramController, AuthController
+    │       └── BillingController, DiagramController
     │
     └── Livewire Components ──▶ Views Blade
             └── Actions ──▶ Models (Eloquent) ──▶ Database
@@ -39,8 +39,8 @@ Middleware (auth, verified, role:viewer|editor|owner, super.root)
   - `AddRelationship` — cria relacionamento genérico
   - `AddRelationshipWithExistingForeignKey` — relacionamento com FK existente
   - `AddRelationshipWithNewForeignKey` — relacionamento criando nova FK
-  - `AddMemberToTeam` — adiciona membro ao time
-- `app/Actions/Fortify/` — CreateNewUser, CreateUserFromOAuth, ResetUserPassword
+  - `ExportDiagramToJson`, `ExportDiagramToLaravelMigration`, `GenerateMigrationZip` — exportações
+- `app/Actions/Local/` — `EnsureLocalUser` (cria/recupera o usuário local e seu time, sem senha)
 - `app/Actions/Parse/` — 5 arquivos: `BaseSQLParse` (classe base), `ParseMySQLSchema`, `ParsePOstgreSQLSchema`, `ParseSQLiteSchema`, `ParseLaravelMigration`
 - `app/Actions/Team/` — Operações de equipe
 **Exemplo:** `app/Actions/Diagram/CreateNewDiagram.php` — valida nome, gera slug, faz parse de imports, verifica limites do plano
@@ -61,7 +61,7 @@ Middleware (auth, verified, role:viewer|editor|owner, super.root)
 **Localização:** `app/Policies/`
 **Propósito:** Controle de acesso baseado em regras de negócio
 **Arquivos:** DiagramPolicy, TablePolicy, TeamPolicy
-**Uso:** Middleware `role:viewer|editor|owner` nas rotas de diagrama
+**Uso:** Autorização por posse do time (`ownsTeam`) em DiagramPolicy/TeamPolicy; não há papéis (roles) nem convites
 
 ### Observers (Side Effects)
 
@@ -81,7 +81,6 @@ Middleware (auth, verified, role:viewer|editor|owner, super.root)
 - `TableColumnLimitExceededException` — tabela atingiu limite de colunas do plano
 - `AuthorizationDiagramException` — acesso não autorizado ao diagrama
 - `PlanFeatureException` — funcionalidade não disponível no plano atual
-- `EmailAlreadyRegisteredException` — email já cadastrado (OAuth com email existente)
 **Integração:** Capturadas em `BaseComponent.php` para feedback visual ao usuário
 
 ### Enums
@@ -89,7 +88,6 @@ Middleware (auth, verified, role:viewer|editor|owner, super.root)
 **Localização:** `app/Enums/`
 **Propósito:** Tipos com domínio fechado
 **Tipos:**
-- `Role` — Editor, Viewer (roles de equipe)
 - `ColumnType` — Tipos de dado de coluna (int, varchar, etc.)
 - `RelationshipType` — Tipos de relacionamento (FK patterns)
 - `BillingCountry` — USD (default) / BRL (Brasil) para precificação regional
@@ -194,7 +192,7 @@ Detalhes completos em `.specs/codebase/CANVAS.md`
 
 **Estrutura:**
 - `app/Models/` — por entidade (flat)
-- `app/Actions/` — por feature (Diagram/, Fortify/, Parse/, Team/)
+- `app/Actions/` — por feature (Diagram/, Local/, Parse/, Team/)
 - `app/Livewire/` — por componente com subpastas (Forms/, Data/, Contracts/)
 - `app/Http/Controllers/` — por área (Pages/, sub-controllers)
 - `app/Policies/` — por recurso protegido
@@ -202,6 +200,6 @@ Detalhes completos em `.specs/codebase/CANVAS.md`
 
 **Fronteiras de módulo:**
 - Diagrama é o domínio central (Diagram, Table, Column, Relationship, Area, Note)
-- Team é módulo independente com próprios models (Team, Membership, Role, Invitation)
+- Team é módulo independente com próprios models (Team, Membership)
 - Billing é camada de infraestrutura sobre Cashier/Stripe
-- Auth é delegado ao Fortify + Socialite (mínima customização)
+- Usuário local: sem fluxo de login — o middleware `AuthenticateLocalUser` (primeiro do grupo `web`, com prioridade antes de `AuthenticatesRequests`) autentica o usuário configurado em `craftdb.local_user.email` uma vez por sessão, via `EnsureLocalUser`. `/`, `/login` e `/register` redirecionam para `/dashboard` (TODO F7)

@@ -24,11 +24,11 @@
 
 ## Visão Geral do Projeto
 
-**Tipo:** SaaS Web
+**Tipo:** Aplicação web open source (CraftDB Local) — roda via Docker, sem login
 **Domínio:** Database diagram designer / Entity-Relationship diagram tool
 **Arquitetura:** Monolito Laravel com Livewire para reatividade
 
-CraftDB é uma ferramenta SaaS para criação e visualização de diagramas de banco de dados. Permite criar diagramas do zero ou importando schemas SQL e migrations Laravel, com suporte a compartilhamento público, colaboração em equipe e modelo freemium com billing via Stripe.
+CraftDB Local é uma ferramenta open source para criação e visualização de diagramas de banco de dados, executada localmente via Docker. Permite criar diagramas do zero ou importando schemas SQL e migrations Laravel, com compartilhamento público e workspaces (times). Não há login: um usuário local único é autenticado automaticamente (middleware `AuthenticateLocalUser`). Billing/limites de plano (Stripe) ainda existem até a F3.
 
 ---
 
@@ -54,7 +54,7 @@ Detalhes completos em `.specs/codebase/ARCHITECTURE.md`
 - **Frontend:** Livewire 4 + Flux 2 + Tailwind CSS 4
 - **Canvas:** D3.js 7 + `InfiniteCanvas.js` customizado
 - **Billing:** Stripe via Laravel Cashier 16 (precificação regional USD/BRL)
-- **Auth:** Fortify + Socialite (GitHub, Google) + 2FA
+- **Auth:** Sem login — usuário local autenticado automaticamente (`AuthenticateLocalUser` + `EnsureLocalUser`); Passport apenas para o MCP
 
 Detalhes completos em `.specs/codebase/STACK.md`
 
@@ -63,13 +63,13 @@ Detalhes completos em `.specs/codebase/STACK.md`
 ## Estrutura de Pastas
 
 ```
-app/Actions/        → Toda lógica de negócio (por feature: Diagram/, Team/, Parse/, Fortify/, Local/)
+app/Actions/        → Toda lógica de negócio (por feature: Diagram/, Team/, Parse/, Local/)
 app/Models/         → Entidades Eloquent + Team/ subpasta
 app/Livewire/       → Componentes reativos + Forms/, Data/, Contracts/
-app/Http/Controllers/ → Controllers finos (Pages/, BillingController, AuthController)
+app/Http/Controllers/ → Controllers finos (Pages/, BillingController)
 app/Support/        → DiagramLimits (limites por plano)
-app/Enums/          → Role, ColumnType, RelationshipType, BillingCountry
-app/Exceptions/     → 6 exceções de domínio (DiagramLimit, TableLimit, TableColumnLimit, Authorization, PlanFeature, EmailAlreadyRegistered)
+app/Enums/          → ColumnType, RelationshipType, BillingCountry
+app/Exceptions/     → 5 exceções de domínio (DiagramLimit, TableLimit, TableColumnLimit, Authorization, PlanFeature)
 config/diagram.php  → Limites de features por plano
 config/billing.php  → Preços e Price IDs do Stripe
 resources/js/canvas/ → InfiniteCanvas.js + 6 Alpine stores + D3.js (ver CANVAS.md)
@@ -86,7 +86,7 @@ Detalhes completos em `.specs/codebase/STRUCTURE.md`
 
 - **Actions** são a unidade de negócio — ao adicionar features, criar uma Action, não lógica inline em Controllers
 - **Exceções de domínio** ao invés de retornar erros — `throw new TableLimitExceededException()`
-- **Enums** para domínio fechado — Role, ColumnType, RelationshipType, BillingCountry
+- **Enums** para domínio fechado — ColumnType, RelationshipType, BillingCountry
 - **PascalCase** para classes, **camelCase** para métodos, **kebab-case** para rotas e views Blade
 - **Pest** para testes com SQLite in-memory
 
@@ -97,7 +97,6 @@ Detalhes completos em `.specs/codebase/CONVENTIONS.md`
 ## Integrações Principais
 
 - **Stripe / Cashier** — checkout, portal, webhooks automáticos em `/stripe/webhook`
-- **GitHub + Google OAuth** — via Socialite, campos `*_id/*_token` no model User
 - **Cloudflare** — header `cf-ipcountry` para detecção de região (USD vs BRL)
 - **phpmyadmin/sql-parser** — import de schemas MySQL
 - **AWS S3** — storage configurado

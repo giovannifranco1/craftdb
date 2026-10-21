@@ -42,23 +42,9 @@ BILLING_TEAM_BRL_PRICE=59.99
 
 ---
 
-## Autenticação OAuth
+## Autenticação
 
-### GitHub
-
-**Serviço:** GitHub OAuth via Laravel Socialite 5
-**Propósito:** Login/registro via conta GitHub
-**Implementação:** `app/Actions/Fortify/CreateUserFromOAuth.php`, `app/Http/Controllers/AuthController.php`
-**Configuração:** `config/services.php` — `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`
-**Campos no banco:** `users.github_id`, `users.github_token`, `users.github_refresh_token`
-
-### Google
-
-**Serviço:** Google OAuth via Laravel Socialite 5
-**Propósito:** Login/registro via conta Google
-**Implementação:** Mesmos arquivos do GitHub
-**Configuração:** `config/services.php` — `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`
-**Campos no banco:** `users.google_id`, `users.google_token`, `users.google_refresh_token`
+Não há OAuth de login (GitHub/Google), registro ou reset de senha: o CraftDB Local autentica automaticamente o usuário local (ver `AuthenticateLocalUser`). O único OAuth presente é o do MCP (Laravel Passport, scope `mcp:use`; F6).
 
 ---
 
@@ -109,11 +95,11 @@ BILLING_TEAM_BRL_PRICE=59.99
 
 ### Endpoints HTTP identificados (routes/web.php)
 
-**Landing:**
-- `GET /` — Página inicial
+**Landing (TODO F7):**
+- `GET /`, `/login`, `/register` — redirecionam para `/dashboard`
 - `GET /features`, `/pricing`, `/about`, `/terms`, `/policy`
 
-**Dashboard (auth + verified):**
+**Dashboard (auth — usuário local automático):**
 - `GET /dashboard` — Lista de diagramas
 - `GET /my-favorites` — Diagramas favoritos
 
@@ -131,17 +117,9 @@ BILLING_TEAM_BRL_PRICE=59.99
 - `GET /settings/billing/portal` — Redireciona para portal Stripe
 - `GET /settings/billing/success` — Pós-checkout
 
-**Auth (Fortify + Social):**
-- Rotas padrão Fortify (login, register, forgot-password, verify-email)
-- `GET /auth/{provider}/redirect`, `GET /auth/{provider}/callback`
-
-**Convites de equipe** (`InvitationController`):
-- `POST /{team_id}/invite` — Envia convite por email
-- `GET /invite/accept/{token}` — Aceita convite (com ou sem auth)
-- `DELETE /invite/{invitation}` — Cancela convite
-
-**Administração:**
-- `GET /feedback` — Acesso super root apenas (middleware `super.root`)
+**Configurações (auth):**
+- `GET /settings/{profile,billing,appearance,language,integrations}`, `/settings/team`, `/settings/team/create`
+- `/login` e `/register` são redirects para `/dashboard` (TODO F7)
 
 ---
 
@@ -150,7 +128,7 @@ BILLING_TEAM_BRL_PRICE=59.99
 **Sistema de filas:** Database driver (padrão Laravel)
 **Localização:** `app/Jobs/` (diretório existe, jobs específicos não mapeados em detalhe)
 **Tabela:** `jobs` no banco de dados
-**Uso identificado:** Notificações por email (convites de equipe, verificação de email)
+**Uso identificado:** Nenhum job de convite/verificação de e-mail (removidos na F2); fila permanece disponível para o formulário de contato e demais usos
 
 ---
 
@@ -159,4 +137,4 @@ BILLING_TEAM_BRL_PRICE=59.99
 **Sistema:** Laravel Notifications
 **Localização:** `app/Notifications/`
 **Canal:** Email (driver configurável via `MAIL_*` no `.env`)
-**Uso:** Convites de equipe, verificação de email, reset de senha
+**Uso:** Sem notificações de convite, verificação ou reset de senha (removidas na F2); e-mail restante limitado ao formulário de contato (F7)

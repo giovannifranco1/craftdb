@@ -2,21 +2,12 @@
 
 namespace App\Policies;
 
-use App\Enums\Role as EnumsRole;
 use App\Models\Diagram;
 use App\Models\Team\Team;
 use App\Models\User;
 
 class DiagramPolicy
 {
-    /**
-     * Determine whether the user can view any models.
-     */
-    public function viewAny(User $user): bool
-    {
-        return false;
-    }
-
     /**
      * Determine whether the user can view the model.
      */
@@ -42,9 +33,7 @@ class DiagramPolicy
             return false;
         }
 
-        $team = Team::find($currentTeam->id);
-
-        return $team ? $this->createOnTeam($user, $team) : false;
+        return $this->createOnTeam($user, $currentTeam);
     }
 
     /**
@@ -52,21 +41,7 @@ class DiagramPolicy
      */
     public function createOnTeam(User $user, Team $team): bool
     {
-        $team = Team::find($team->getKey());
-
-        if (! $team) {
-            return false;
-        }
-
-        if ($user->ownsTeam($team)) {
-            return true;
-        }
-
-        if ($user->belongsToTeam($team)) {
-            return $team->userHasRole($user, EnumsRole::EDITOR);
-        }
-
-        return false;
+        return $user->ownsTeam($team);
     }
 
     /**
@@ -76,15 +51,7 @@ class DiagramPolicy
     {
         $team = $diagram->team()->first();
 
-        if ($team && $user->ownsTeam($team)) {
-            return true;
-        }
-
-        if ($team && $user->belongsToTeam($team)) {
-            return $team->userHasRole($user, EnumsRole::EDITOR);
-        }
-
-        return false;
+        return $team && $user->ownsTeam($team);
     }
 
     /**
@@ -94,11 +61,7 @@ class DiagramPolicy
     {
         $team = $diagram->team()->first();
 
-        if ($team && $user->ownsTeam($team)) {
-            return true;
-        }
-
-        return false;
+        return $team && $user->ownsTeam($team);
     }
 
     /**
@@ -108,14 +71,6 @@ class DiagramPolicy
     {
         $team = $diagram->team()->first();
 
-        if ($team && $user->ownsTeam($team)) {
-            return true;
-        }
-
-        if ($team && $user->belongsToTeam($team)) {
-            return $team->userHasRole($user, EnumsRole::EDITOR);
-        }
-
-        return false;
+        return $team && $user->ownsTeam($team);
     }
 }

@@ -23,8 +23,6 @@ use Illuminate\Support\Carbon;
  * @property-read int|null $abilities_count
  * @property-read Collection<int, Group> $groups
  * @property-read int|null $groups_count
- * @property-read Collection<int, Invitation> $invitations
- * @property-read int|null $invitations_count
  * @property-read User|null $owner
  *@property-read Membership|null $membership
  * @property-read Collection<int, User> $users

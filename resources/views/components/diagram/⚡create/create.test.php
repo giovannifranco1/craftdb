@@ -513,7 +513,7 @@ describe('Multi-User Scenarios', function() {
             ->set('database', 'mysql')
             ->call('create');
 
-        $user2 = User::factory()->withoutTwoFactor()->create();
+        $user2 = User::factory()->create();
         $team2 = $user2->ownedTeams()->create([
             'user_id' => $user2->id,
             'name' => $user2->name . "'s Team",

@@ -710,13 +710,14 @@ describe('ExportLaravelMigration endpoint', function (): void {
             ->assertForbidden();
     });
 
-    it('returns 401 for unauthenticated request', function () {
+    it('does not export for the implicit local user outside the team', function () {
         /** @var TestCase $this */
-        $this->get(route('diagram.export-laravel-migration', [
+        $response = $this->get(route('diagram.export-laravel-migration', [
             'team_id' => $this->team->id,
             'diagram' => $this->diagram->slug,
-        ]))
-            ->assertRedirect(route('login'));
+        ]));
+
+        $response->assertForbidden();
     });
 
     it('downloaded filename contains migrations and date', function () {

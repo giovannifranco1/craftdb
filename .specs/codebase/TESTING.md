@@ -10,22 +10,19 @@
 ## Organização dos testes
 
 **Localização:** `tests/`
-**Nomenclatura:** `{Feature}Test.php` — ex: `RegistrationTest.php`, `TeamCreateTest.php`
+**Nomenclatura:** `{Feature}Test.php` — ex: `AuthenticateLocalUserTest.php`, `TeamCreateTest.php`
 **Estrutura:**
 ```
 tests/
 ├── Feature/
-│   ├── Auth/
-│   │   ├── RegistrationTest.php
-│   │   ├── AuthenticationTest.php
-│   │   ├── EmailVerificationTest.php
-│   │   ├── PasswordConfirmationTest.php
-│   │   ├── PasswordResetTest.php
-│   │   ├── PasswordUpdateTest.php
-│   │   └── TwoFactorAuthenticationTest.php
+│   ├── Middleware/AuthenticateLocalUserTest.php
+│   ├── Routes/RemovedAuthSurfaceTest.php
+│   ├── Database/ (FreshDatabaseTest, RemoveAuthLeftoversTest)
+│   ├── Policies/DiagramOwnershipTest.php
 │   ├── Settings/
 │   │   ├── ProfileUpdateTest.php
-│   │   ├── PasswordUpdateTest.php
+│   │   ├── SettingsNavigationTest.php
+│   │   ├── TeamCreateTest.php
 │   │   └── (outros settings tests)
 │   └── Actions/Parse/
 │       └── (fixtures para testes de parser SQL/migration)
@@ -33,7 +30,7 @@ tests/
     └── (testes unitários de classes isoladas)
 ```
 
-**Total:** 26 arquivos de teste identificados
+**Total:** 246 testes (suíte completa)
 
 ## Padrões de teste
 
@@ -44,26 +41,19 @@ tests/
 **Padrão observado:**
 ```php
 // Pest syntax com helpers de Laravel
-test('users can register', function () {
-    $response = $this->post('/register', [
-        'name' => 'Test User',
-        'email' => 'test@example.com',
-        'password' => 'password',
-        'password_confirmation' => 'password',
-    ]);
-
-    $response->assertRedirect('/dashboard');
+test('local user is logged in automatically', function () {
+    $this->get('/dashboard')->assertOk();
     $this->assertAuthenticated();
 });
 ```
 
-**Auth tests cobrem:**
-- Registro com criação automática de equipe
-- Login com email/senha
-- Verificação de email obrigatória
-- Reset de senha
-- Autenticação de dois fatores (2FA)
-- Confirmação de senha para ações sensíveis
+**Testes de usuário local/auth cobrem:**
+- Login automático do usuário local (uma vez por sessão)
+- `/login` e `/register` redirecionam para `/dashboard`; rotas de auth removidas retornam 404
+- Banco novo (migrations do zero) e migration `remove_auth_leftovers`
+- Autorização de diagramas/times por posse do time
+
+**Suíte atual:** 246 testes passando
 
 ### Testes de Livewire
 

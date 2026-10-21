@@ -29,17 +29,20 @@ docker compose up -d --build
 wait_healthy
 pass "DOCK-18 app healthy"
 
-html="$(curl -s -w '\n%{http_code}' "$URL/login")"
+html="$(curl -s -w '\n%{http_code}' "$URL/dashboard")"
 code="${html##*$'\n'}"
-[ "$code" = "200" ] && pass "DOCK-01 /login 200" || fail "DOCK-01 /login retornou $code"
+[ "$code" = "200" ] && pass "NOAUTH-05 /dashboard 200 sem cookie" || fail "NOAUTH-05 /dashboard retornou $code"
+
+root="$(curl -s -o /dev/null -w '%{http_code} %{redirect_url}' "$URL/")"
+[ "$root" = "302 http://localhost:${PORT}/dashboard" ] && pass "NOAUTH-04 / redireciona para /dashboard" || fail "NOAUTH-04 / retornou '$root'"
 
 grep -q "http://localhost:${PORT}/build/" <<<"$html" \
     && pass "DOCK-01 assets em http:// (APP_FORCE_HTTPS=false)" \
     || fail "DOCK-01 assets não usam http://localhost:${PORT}/build/"
 
 logs="$(docker compose logs app)"
-grep -q "local@craftdb.local" <<<"$logs" && grep -q "Senha:  craftdb" <<<"$logs" \
-    && pass "DOCK-07 credenciais no log" || fail "DOCK-07 credenciais ausentes no log"
+grep -q "local@craftdb.local" <<<"$logs" && grep -q "URL:" <<<"$logs" && ! grep -q "Senha" <<<"$logs" \
+    && pass "DOCK-07 usuário local e URL no log, sem senha" || fail "DOCK-07 log incorreto (usuário/URL ausentes ou senha presente)"
 
 status_out="$(docker compose exec -T app php artisan migrate:status --no-ansi)"
 grep -q "Pending" <<<"$status_out" \

@@ -22,7 +22,7 @@
 
 - Estilo de API: Sem REST API dedicada — Livewire para interações reativas
 - Banco de dados: Eloquent ORM + SQLite (dev) / MySQL (prod) / MySQL 8.4 em container (CraftDB Local)
-- Autenticação: Laravel Fortify (email/senha, 2FA, verificação de email) + Laravel Socialite (GitHub, Google)
+- Autenticação: Sem login — usuário local automático (`AuthenticateLocalUser`); Laravel Passport apenas para o MCP
 - Filas: Database driver (jobs definidos em app/)
 - Cache: File driver (local) / Redis opcional (prod)
 
@@ -35,7 +35,6 @@
 ## Serviços Externos
 
 - Pagamentos: Stripe via Laravel Cashier 16
-- OAuth: GitHub, Google (via Laravel Socialite)
 - Detecção de região: Cloudflare header `cf-ipcountry`
 - Storage: AWS S3 (configurado, não verificado se em uso ativo)
 

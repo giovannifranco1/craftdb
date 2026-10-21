@@ -13,7 +13,6 @@ return [
 
     'local_user' => [
         'email' => env('CRAFTDB_USER_EMAIL', 'local@craftdb.local'),
-        'password' => env('CRAFTDB_USER_PASSWORD', 'craftdb'),
     ],
 
     /*

@@ -197,13 +197,14 @@ describe('ExportJson endpoint', function (): void {
             ->assertForbidden();
     });
 
-    it('returns 401 for unauthenticated request', function () {
+    it('does not export for the implicit local user outside the team', function () {
         /** @var TestCase $this */
-        $this->get(route('diagram.export-json', [
+        $response = $this->get(route('diagram.export-json', [
             'team_id' => $this->team->id,
             'diagram' => $this->diagram->slug,
-        ]))
-            ->assertRedirect(route('login'));
+        ]));
+
+        $response->assertForbidden();
     });
 
     it('downloaded filename contains diagram slug and date', function () {

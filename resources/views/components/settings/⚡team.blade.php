@@ -2,14 +2,10 @@
 
 use App\Models\Team\Team;
 use App\Livewire\BaseComponent;
-use Livewire\Attributes\Validate;
 
 new class extends BaseComponent {
     public string $name = '';
     public ?Team $team = null;
-
-    #[Validate('required|string|current_password')]
-    public string $password = '';
 
     /**
      * Mount the component.
@@ -22,25 +18,6 @@ new class extends BaseComponent {
 
         $this->team = Team::currentTeam();
         $this->name = $this->team->name ?? '';
-    }
-
-    public function leaveTeam(): void
-    {
-        $this->authorize('leaveTeam', $this->team);
-
-        if (!Auth::user()->isAuthenticatedWithGoogleOrGithub() && !is_null(Auth::user()->password)) {
-            $this->validate();
-        }
-
-        $this->team->deleteUser(Auth::user());
-
-        session()->forget('current_team');
-        session()->regenerate();
-
-        $this->alert(__('You have left the team successfully.'), type: 'success');
-        $this->dispatch('team::team-left');
-
-        $this->redirect(route('dashboard', absolute: true), navigate: true);
     }
 
 
@@ -105,47 +82,6 @@ new class extends BaseComponent {
                 </div>
             @endcan
         </form>
-
-        @can('leaveTeam', $team)
-            <section class="mt-10 space-y-6">
-                <div class="relative mb-5">
-                    <flux:heading>{{ __('Leave team') }}</flux:heading>
-                    <flux:subheading>{{ __('Leave the team and all of its resources') }}</flux:subheading>
-                </div>
-
-                <flux:modal.trigger name="confirm-leave-team">
-                    <flux:button variant="danger" x-data="" x-on:click.prevent="$dispatch('open-modal', 'confirm-leave-team')" data-test="leave-team-button">
-                        {{ __('Leave team') }}
-                    </flux:button>
-                </flux:modal.trigger>
-
-                <flux:modal name="confirm-leave-team" :show="$errors->isNotEmpty()" focusable class="max-w-lg">
-                    <form method="POST" wire:submit="leaveTeam" class="space-y-6">
-                        <div>
-                            <flux:heading size="lg">{{ __('Are you sure you want to leave the team?') }}</flux:heading>
-
-                            <flux:subheading>
-                                {{ __('Once you leave the team, all of its resources and data will be permanently deleted. Please enter your password to confirm you would like to permanently leave the team.') }}
-                            </flux:subheading>
-                        </div>
-
-                        @if (!auth()->user()->isAuthenticatedWithGoogleOrGithub() && is_null(auth()->user()->password))
-                            <flux:input wire:model="password" :label="__('Password')" type="password" />
-                        @endif
-
-                        <div class="flex justify-end space-x-2 rtl:space-x-reverse">
-                            <flux:modal.close>
-                                <flux:button variant="filled">{{ __('Cancel') }}</flux:button>
-                            </flux:modal.close>
-
-                            <flux:button variant="danger" type="submit" data-test="confirm-leave-team-button">
-                                {{ __('Leave team') }}
-                            </flux:button>
-                        </div>
-                    </form>
-                </flux:modal>
-            </section>
-        @endcan
 
     </x-settings.layout>
 </section>

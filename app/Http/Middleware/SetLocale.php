@@ -24,33 +24,8 @@ class SetLocale
             if (in_array($locale, ['en', 'pt_BR'])) {
                 App::setLocale($locale);
             }
-
-            return $next($request);
-        }
-
-        if ($this->shouldUsePortugueseBrazilFromCloudflare($request)) {
-            App::setLocale('pt_BR');
         }
 
         return $next($request);
-    }
-
-    /**
-     * Guests from Brazil (Cloudflare cf-ipcountry) see auth and landing in pt_BR when no session locale.
-     * Requires SetHeaders to run first so the header is trusted or stripped.
-     */
-    private function shouldUsePortugueseBrazilFromCloudflare(Request $request): bool
-    {
-        if (strtoupper((string) $request->header('cf-ipcountry')) !== 'BR') {
-            return false;
-        }
-
-        return $request->routeIs(
-            'login',
-            'login.store',
-            'register',
-            'register.store',
-            'landing.*',
-        );
     }
 }

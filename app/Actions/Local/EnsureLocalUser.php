@@ -12,16 +12,15 @@ class EnsureLocalUser
 
     /**
      * Ensure the local user exists, is verified and owns a workspace.
-     * Never changes the password of an existing user.
+     * Never changes an existing user.
      *
      * @return array{user: User, created: bool}
      */
-    public function exec(string $email, string $password): array
+    public function exec(string $email): array
     {
-        return DB::transaction(function () use ($email, $password): array {
+        return DB::transaction(function () use ($email): array {
             $user = User::firstOrCreate(['email' => $email], [
                 'name' => 'Local',
-                'password' => $password,
                 'email_verified_at' => now(),
             ]);
 

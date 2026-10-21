@@ -2,8 +2,6 @@
 
 namespace App\Models\Concerns;
 
-use App\Models\Team\Membership;
-use App\Models\Team\Role;
 use App\Models\Team\Team;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -12,12 +10,6 @@ use Exception;
 
 trait HasTeams
 {
-
-    /**
-     * @var array<string, mixed> $decisionCache Used to hold decisions made
-     */
-    private array $decisionCache = [];
-
     /**
      * Check if the user owns the given team.
      *
@@ -50,7 +42,7 @@ trait HasTeams
         return $this->hasMany(Team::class)->withoutGlobalScopes();
     }
 
-      /**
+    /**
      * Check if the user belongs to the specified team.
      *
      * @param object $team
@@ -74,18 +66,7 @@ trait HasTeams
         return $this
             ->belongsToMany(Team::class, 'team_user', 'user_id', 'team_id')
             ->withoutGlobalScopes()
-            ->withPivot('role_id')
             ->withTimestamps()
             ->as('membership');
-    }
-
-    /**
-     * @return BelongsToMany<\App\Models\Team\Role, $this>
-     */
-    public function roles(): BelongsToMany
-    {
-        return $this
-            ->belongsToMany(Role::class, Membership::class, 'user_id', 'role_id')
-            ->withTimestamps();
     }
 }

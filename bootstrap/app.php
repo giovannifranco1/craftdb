@@ -1,17 +1,14 @@
 <?php
 
-use App\Exceptions\InvitationException;
-use App\Http\Middleware\CheckTeamRole;
-use App\Http\Middleware\EnsureSuperRoot;
+use App\Http\Middleware\AuthenticateLocalUser;
 use App\Http\Middleware\EnsureValidCurrentTeam;
 use App\Http\Middleware\ForceJsonResponseForMcpOAuthRegistration;
 use App\Http\Middleware\SetHeaders;
 use App\Http\Middleware\SetLocale;
-use App\Http\Middleware\ValidateLoginTermsAcceptance;
+use Illuminate\Contracts\Auth\Middleware\AuthenticatesRequests;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use Illuminate\Http\Request;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -21,17 +18,14 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        $middleware->alias([
-            'role' => CheckTeamRole::class,
-            'super.root' => EnsureSuperRoot::class,
-        ]);
-
         $middleware->web(append: [
+            AuthenticateLocalUser::class,
             SetHeaders::class,
             SetLocale::class,
-            ValidateLoginTermsAcceptance::class,
             EnsureValidCurrentTeam::class,
         ]);
+
+        $middleware->prependToPriorityList(before: AuthenticatesRequests::class, prepend: AuthenticateLocalUser::class);
 
         $middleware->trustProxies(at: '*');
 
@@ -39,14 +33,5 @@ return Application::configure(basePath: dirname(__DIR__))
 
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        $exceptions->renderable(function (InvitationException $e, Request $request) {
-            if ($request->expectsJson()) {
-                return response()->json(['message' => $e->getMessage()], 422);
-            }
-
-            return redirect()
-                ->route('dashboard')
-                ->with('message', $e->getMessage())
-                ->with('type', 'error');
-        });
+        //
     })->create();

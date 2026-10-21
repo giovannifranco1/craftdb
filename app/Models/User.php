@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-
 use App\Exceptions\DiagramLimitExceededException;
 use App\Models\Concerns\HasTeams;
 use App\Models\Team\Membership;
@@ -21,7 +19,6 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Laravel\Cashier\Billable;
-use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Passport\Contracts\OAuthenticatable;
 use Laravel\Passport\HasApiTokens;
 
@@ -35,9 +32,6 @@ use Laravel\Passport\HasApiTokens;
  * @property string|null $remember_token
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property string|null $two_factor_secret
- * @property string|null $two_factor_recovery_codes
- * @property string|null $two_factor_confirmed_at
  * @property-read DatabaseNotificationCollection<int, DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
  * @property-read Collection<int, Team> $ownedTeams
@@ -57,19 +51,16 @@ use Laravel\Passport\HasApiTokens;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User wherePassword($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereRememberToken($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereTwoFactorConfirmedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereTwoFactorRecoveryCodes($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereTwoFactorSecret($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereUpdatedAt($value)
  *
  * @mixin \Eloquent
  */
-#[Fillable(['name', 'email', 'password', 'github_id', 'github_token', 'github_refresh_token', 'google_id', 'google_token', 'google_refresh_token', 'locale', 'is_dark'])]
-#[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token', 'github_token', 'github_refresh_token', 'google_token', 'google_refresh_token'])]
+#[Fillable(['name', 'email', 'password', 'locale', 'is_dark'])]
+#[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable implements OAuthenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use Billable, HasApiTokens, HasFactory, HasTeams, Notifiable, TwoFactorAuthenticatable;
+    use Billable, HasApiTokens, HasFactory, HasTeams, Notifiable;
 
     /**
      * Default attribute values so strict mode never sees missing keys after insert
@@ -80,11 +71,6 @@ class User extends Authenticatable implements OAuthenticatable
     protected $attributes = [
         'locale' => 'en',
         'is_dark' => false,
-    ];
-
-    const PROVIDERS = [
-        'github' => 'github',
-        'google' => 'google',
     ];
 
     /**
@@ -111,43 +97,6 @@ class User extends Authenticatable implements OAuthenticatable
             ->take(2)
             ->map(fn ($word) => Str::substr($word, 0, 1))
             ->implode('');
-    }
-
-    public static function isProvider(string $provider): bool
-    {
-        return in_array($provider, array_values(self::PROVIDERS));
-    }
-
-    /**
-     * Check if the user is authenticated with Google or Github.
-     */
-    public function isAuthenticatedWithGoogleOrGithub(): bool
-    {
-        return $this->isAuthenticatedWithGithub() || $this->isAuthenticatedWithGoogle();
-    }
-
-    /**
-     * Check if the user is authenticated with Github.
-     */
-    public function isAuthenticatedWithGithub(): bool
-    {
-        return $this->github_id !== null;
-    }
-
-    /**
-     * Check if the user is authenticated with Google.
-     */
-    public function isAuthenticatedWithGoogle(): bool
-    {
-        return $this->google_id !== null;
-    }
-
-    /**
-     * Platform super admin (fixed user id from migrations — see EnsureSuperRoot).
-     */
-    public function isSuperRoot(): bool
-    {
-        return $this->id === 1;
     }
 
     private static array $isProCache = [];
@@ -195,10 +144,6 @@ class User extends Authenticatable implements OAuthenticatable
      */
     public function hasTeamWorkspacePremiumAccess(?Team $team = null): bool
     {
-        if ($this->isSuperRoot()) {
-            return true;
-        }
-
         if ($this->isPro() || $this->isTeamPlan()) {
             return true;
         }
@@ -237,19 +182,6 @@ class User extends Authenticatable implements OAuthenticatable
         return $this->hasTeamWorkspacePremiumAccess($diagram->team);
     }
 
-    /**
-     * Max number of members (excluding owner) allowed in a team.
-     * Team = 24 (owner + 24 = 25 total). Free and Pro = 0 (no team features).
-     */
-    public function memberLimit(): int
-    {
-        if ($this->isTeamPlan()) {
-            return intval(config('diagram.team.member_limit')); // 24
-        }
-
-        return 0; // Free and Pro: no team members
-    }
-
     public function canCreateTeam(): bool
     {
         return $this->isTeamPlan();
@@ -257,10 +189,6 @@ class User extends Authenticatable implements OAuthenticatable
 
     public function hasReachedDiagramLimit(?Team $team = null): bool
     {
-        if ($this->isSuperRoot()) {
-            return false;
-        }
-
         $team ??= Team::currentTeam();
 
         if (! $team) {

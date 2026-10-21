@@ -8,27 +8,25 @@
 craftdb/
 ├── app/
 │   ├── Actions/
-│   │   ├── Diagram/         # 13 operações: CreateNewDiagram, UpdateDiagram, DeleteDiagram,
+│   │   ├── Diagram/         # 15 operações: CreateNewDiagram, UpdateDiagram, DeleteDiagram,
 │   │   │                    #   ImportToExistingDiagram, AddColumnToTable, DeleteColumnToTable,
 │   │   │                    #   UpdateTable, DeleteTable, UpdateResizePositionTable,
 │   │   │                    #   AddRelationship, AddRelationshipWithExistingForeignKey,
-│   │   │                    #   AddRelationshipWithNewForeignKey, AddMemberToTeam
-│   │   ├── Fortify/         # Auth: CreateNewUser, CreateUserFromOAuth, ResetUserPassword
+│   │   │                    #   AddRelationshipWithNewForeignKey, ExportDiagramToJson,
+│   │   │                    #   ExportDiagramToLaravelMigration, GenerateMigrationZip
+│   │   ├── Local/           # EnsureLocalUser (usuário local sem senha)
 │   │   ├── Parse/           # BaseSQLParse (base), ParseMySQLSchema, ParsePOstgreSQLSchema,
 │   │   │                    #   ParseSQLiteSchema, ParseLaravelMigration
 │   │   └── Team/            # Operações de equipe
 │   ├── Console/Commands/
-│   ├── Enums/               # Role, ColumnType, RelationshipType, BillingCountry
+│   ├── Enums/               # ColumnType, RelationshipType, BillingCountry
 │   ├── Exceptions/          # DiagramLimitExceededException, TableLimitExceededException,
 │   │                        #   TableColumnLimitExceededException, AuthorizationDiagramException,
-│   │                        #   PlanFeatureException, EmailAlreadyRegisteredException
+│   │                        #   PlanFeatureException
 │   ├── Http/
 │   │   ├── Controllers/
 │   │   │   ├── Pages/       # DiagramController, LandingPageController
-│   │   │   ├── BillingController.php
-│   │   │   ├── AuthController.php
-│   │   │   ├── InvitationController.php
-│   │   │   └── FeedbackController.php
+│   │   │   └── BillingController.php
 │   │   └── Middleware/
 │   ├── Listeners/
 │   ├── Livewire/
@@ -37,10 +35,9 @@ craftdb/
 │   │   ├── MyFavorites.php       # Componente: lista de diagramas favoritos
 │   │   ├── Forms/Diagram/        # ColumnForm.php, ImportForm.php (Livewire Form Objects)
 │   │   ├── Data/                 # TableData.php, ColumnData.php (implementam Wireable)
-│   │   ├── Actions/              # Logout.php (Livewire action)
 │   │   └── Contracts/            # PublicCanvas.php (interface para canvas read-only)
 │   ├── Models/
-│   │   ├── Team/            # Team, Membership, Role, Invitation
+│   │   ├── Team/            # Team, Membership
 │   │   ├── Scopes/          # TableAccessible
 │   │   └── Concerns/        # HasTeams trait
 │   ├── Notifications/
@@ -55,7 +52,7 @@ craftdb/
 ├── config/
 │   ├── billing.php          # Planos, preços, Stripe Price IDs
 │   ├── diagram.php          # Limites por plano (free/pro/team)
-│   └── teams.php            # Configuração de equipes e roles
+│   └── craftdb.php          # Usuário local + APP_FORCE_HTTPS
 ├── database/
 │   ├── migrations/          # 26 migrations
 │   ├── factories/
@@ -125,20 +122,19 @@ craftdb/
 
 **Propósito:** Colaboração multi-usuário em diagramas
 **Localização:**
-- Modelos: `app/Models/Team/` (Team, Membership, Role, Invitation)
+- Modelos: `app/Models/Team/` (Team, Membership)
 - Concern: `app/Models/Concerns/HasTeams.php`
 - Actions: `app/Actions/Team/`
 - Policy: `app/Policies/TeamPolicy.php`
-- Config: `config/teams.php`
 
-### Autenticação
+### Usuário local
 
-**Propósito:** Login, registro, OAuth, 2FA
+**Propósito:** Usuário único implícito (sem login, registro ou senha)
 **Localização:**
-- Actions: `app/Actions/Fortify/` (CreateNewUser, CreateUserFromOAuth, ResetUserPassword)
-- Controller: `app/Http/Controllers/AuthController.php`
-- Provider: `app/Providers/FortifyServiceProvider.php`
-- Views: `resources/views/components/auth/`
+- Middleware: `app/Http/Middleware/AuthenticateLocalUser.php` (login automático uma vez por sessão)
+- Action: `app/Actions/Local/EnsureLocalUser.php`
+- Comando: `app/Console/Commands/EnsureLocalUserCommand.php` (`php artisan craftdb:local-user`, executado no boot do container)
+- Config: `config/craftdb.php` (`local_user.email`, `force_https`)
 
 ### Billing
 

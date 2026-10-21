@@ -252,7 +252,7 @@ docker compose down           # para (os dados continuam)
 docker compose down -v        # reset completo (apaga banco e chave)
 ```
 
-Acesse http://localhost:8080 e entre com `local@craftdb.local` / `craftdb`.
+Acesse http://localhost:8080: o app abre direto no dashboard, sem login.
 
 ### Banco de dados
 
@@ -268,7 +268,6 @@ Defina no shell antes do primeiro `up` (ex.: `CRAFTDB_PORT=8090 docker compose u
 | `CRAFTDB_DB_PORT` | `3307` | Porta do MySQL |
 | `CRAFTDB_DB_PASSWORD` | `craftdb` | Senha do MySQL (só no primeiro boot) |
 | `CRAFTDB_USER_EMAIL` | `local@craftdb.local` | E-mail do usuário local (só no primeiro boot) |
-| `CRAFTDB_USER_PASSWORD` | `craftdb` | Senha do usuário local (só no primeiro boot) |
 | `CRAFTDB_APP_KEY` | gerada e salva no volume | Chave da aplicação |
 
 O Compose também lê o `.env` da raiz do projeto. Como esse é o `.env` do Laravel em desenvolvimento, as variáveis do stack usam o prefixo `CRAFTDB_` para não herdar valores de dev.

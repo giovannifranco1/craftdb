@@ -14,14 +14,6 @@ class DiagramLimits
      */
     public static function forUser(User $user): array
     {
-        if ($user->isSuperRoot()) {
-            return [
-                'diagram_limit' => 300,
-                'table_limit' => 300,
-                'table_columns_limit' => 300,
-            ];
-        }
-
         $plan = self::planKey($user);
         $planConfig = config("diagram.{$plan}", config('diagram.free'));
 

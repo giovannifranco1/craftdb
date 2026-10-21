@@ -26,7 +26,7 @@ abstract class TestCase extends BaseTestCase
 
     public function autenticated()
     {
-        $this->user = User::factory()->withoutTwoFactor()->create();
+        $this->user = User::factory()->create();
         $this->team = $this->user->ownedTeams()->create([
             'user_id' => $this->user->id,
             'name' => $this->user->name."'s Team",

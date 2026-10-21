@@ -17,12 +17,12 @@
 **Funções/Métodos PHP:**
 - camelCase
 - Verbos descritivos: `makePublic()`, `revokePublic()`, `toggleFavorite()`, `hasReachedDiagramLimit()`
-- Métodos de verificação de estado: `isPro()`, `isTeamPlan()`, `isEditor()`, `isViewer()`
+- Métodos de verificação de estado: `isPro()`, `isTeamPlan()`
 
 **Variáveis:**
 - camelCase em PHP
 - snake_case em colunas de banco de dados
-- Exemplos DB: `public_token`, `team_id`, `github_id`, `created_at`
+- Exemplos DB: `public_token`, `team_id`, `diagram_id`, `created_at`
 
 **Rotas:**
 - kebab-case nos segments de URL
@@ -30,7 +30,7 @@
 - Pattern: `/{team_id}/diagram/{diagram:slug}`
 
 **Enums:**
-- PascalCase para casos: `Role::Editor`, `Role::Viewer`
+- UPPER_SNAKE_CASE para casos: `ColumnType::VARCHAR`, `RelationshipType::ONE_TO_MANY`
 - `BillingCountry::USD`, `BillingCountry::BRL`
 
 ## Organização de arquivos

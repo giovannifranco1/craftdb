@@ -48,7 +48,6 @@ services:
       MAIL_MAILER: log
       NIGHTWATCH_ENABLED: "false"
       CRAFTDB_USER_EMAIL: ${CRAFTDB_USER_EMAIL:-local@craftdb.local}
-      CRAFTDB_USER_PASSWORD: ${CRAFTDB_USER_PASSWORD:-craftdb}
     volumes:
       - craftdb-data:/data
     ports:

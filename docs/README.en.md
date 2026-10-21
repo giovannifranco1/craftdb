@@ -252,7 +252,7 @@ docker compose down           # stops (data is kept)
 docker compose down -v        # full reset (deletes database and key)
 ```
 
-Open http://localhost:8080 and sign in with `local@craftdb.local` / `craftdb`.
+Open http://localhost:8080: the app opens straight on the dashboard, no login.
 
 ### Database
 
@@ -268,7 +268,6 @@ Set them in your shell before the first `up` (e.g. `CRAFTDB_PORT=8090 docker com
 | `CRAFTDB_DB_PORT` | `3307` | MySQL port |
 | `CRAFTDB_DB_PASSWORD` | `craftdb` | MySQL password (first boot only) |
 | `CRAFTDB_USER_EMAIL` | `local@craftdb.local` | Local user's e-mail (first boot only) |
-| `CRAFTDB_USER_PASSWORD` | `craftdb` | Local user's password (first boot only) |
 | `CRAFTDB_APP_KEY` | generated and stored in a volume | Application key |
 
 Compose also reads the `.env` at the project root. That is the Laravel development `.env`, so the stack's variables use the `CRAFTDB_` prefix to avoid inheriting dev values.
