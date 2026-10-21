@@ -61,8 +61,8 @@ class AppServiceProvider extends ServiceProvider
             $this->configureCommands();
         }
 
-        // Force HTTPS in production and staging (homolog) environments
-        if (! $app->environment(['local', 'testing'])) {
+        // Force HTTPS in production and staging (homolog) environments, unless disabled (CraftDB Local)
+        if (! $app->environment(['local', 'testing']) && config('craftdb.force_https')) {
             $this->configureUrls();
         }
 
