@@ -1,13 +1,13 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/livewire-starter-kit",
+    "name": "nanoincub/craftdb",
     "type": "project",
-    "description": "The official Laravel starter kit for Livewire.",
+    "description": "CraftDB Local: open source visual database diagram editor that runs locally via Docker.",
     "keywords": [
         "laravel",
         "framework"
     ],
-    "license": "MIT",
+    "license": "AGPL-3.0-or-later",
     "require": {
         "php": "^8.2",
         "laravel/framework": "^13.0",

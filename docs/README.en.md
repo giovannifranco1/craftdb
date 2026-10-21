@@ -352,7 +352,7 @@ php artisan test
 
 ## 📝 License
 
-This project uses the MIT license.
+This project is licensed under the [GNU AGPL-3.0](../LICENSE) (AGPL-3.0-or-later).
 
 ---
 
