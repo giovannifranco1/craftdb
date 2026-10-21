@@ -49,7 +49,8 @@ Detalhes completos em `.specs/codebase/ARCHITECTURE.md`
 
 ## Stack
 
-- **Backend:** Laravel 12 + PHP 8.2 + Eloquent ORM
+- **Backend:** Laravel 13 + PHP 8.2+ (8.4 na imagem Docker) + Eloquent ORM
+- **Local:** Docker Compose (FrankenPHP + MySQL 8.4) — `docker compose up -d`, ver `docs/README.md`
 - **Frontend:** Livewire 4 + Flux 2 + Tailwind CSS 4
 - **Canvas:** D3.js 7 + `InfiniteCanvas.js` customizado
 - **Billing:** Stripe via Laravel Cashier 16 (precificação regional USD/BRL)
@@ -62,7 +63,7 @@ Detalhes completos em `.specs/codebase/STACK.md`
 ## Estrutura de Pastas
 
 ```
-app/Actions/        → Toda lógica de negócio (por feature: Diagram/, Team/, Parse/, Fortify/)
+app/Actions/        → Toda lógica de negócio (por feature: Diagram/, Team/, Parse/, Fortify/, Local/)
 app/Models/         → Entidades Eloquent + Team/ subpasta
 app/Livewire/       → Componentes reativos + Forms/, Data/, Contracts/
 app/Http/Controllers/ → Controllers finos (Pages/, BillingController, AuthController)
@@ -73,6 +74,8 @@ config/diagram.php  → Limites de features por plano
 config/billing.php  → Preços e Price IDs do Stripe
 resources/js/canvas/ → InfiniteCanvas.js + 6 Alpine stores + D3.js (ver CANVAS.md)
 routes/web.php      → Todas as rotas (arquivo único)
+config/craftdb.php  → Usuário local + flag APP_FORCE_HTTPS (CraftDB Local)
+Dockerfile, docker-compose.yml, docker/ → Stack local (entrypoint + smoke test)
 ```
 
 Detalhes completos em `.specs/codebase/STRUCTURE.md`
@@ -110,6 +113,7 @@ Detalhes completos em `.specs/codebase/INTEGRATIONS.md`
 - **Banco em testes:** SQLite in-memory (phpunit.xml)
 - **Cobertura atual:** Auth flows, Settings, Livewire components
 - **Rodar:** `composer test` ou `./vendor/bin/pest`
+- **Stack Docker:** `bash docker/smoke-test.sh` (apaga os volumes do stack)
 
 Detalhes completos em `.specs/codebase/TESTING.md`
 
@@ -129,5 +133,5 @@ Detalhes completos em `.specs/codebase/TESTING.md`
 
 ---
 
-**Última atualização:** 2026-03-16
+**Última atualização:** 2026-10-21
 **Gerado por:** Skill Brownfield Mapping + revisão manual

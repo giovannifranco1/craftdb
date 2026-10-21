@@ -3,6 +3,7 @@
 ## 📋 Table of Contents
 
 - [About the Project](#about-the-project)
+- [Running with Docker](#running-with-docker)
 - [Identity](#identity)
 - [Technologies Used](#technologies-used)
 - [Architecture](#architecture)
@@ -237,6 +238,48 @@ craftdb/
 - Two-factor authentication (2FA)
 - Password recovery
 - Email verification
+
+---
+
+## 🐳 Running with Docker
+
+Requirement: Docker with Compose v2.
+
+```bash
+docker compose up -d          # starts app + MySQL (builds on the first run)
+docker compose logs app       # shows the URL and the local user's credentials
+docker compose down           # stops (data is kept)
+docker compose down -v        # full reset (deletes database and key)
+```
+
+Open http://localhost:8080 and sign in with `local@craftdb.local` / `craftdb`.
+
+### Database
+
+MySQL listens on `127.0.0.1:3307`: database `craftdb`, user `craftdb`, password `craftdb`. Any SQL client works (TablePlus, DBeaver).
+
+### Variables
+
+Set them in your shell before the first `up` (e.g. `CRAFTDB_PORT=8090 docker compose up -d`):
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `CRAFTDB_PORT` | `8080` | App port |
+| `CRAFTDB_DB_PORT` | `3307` | MySQL port |
+| `CRAFTDB_DB_PASSWORD` | `craftdb` | MySQL password (first boot only) |
+| `CRAFTDB_USER_EMAIL` | `local@craftdb.local` | Local user's e-mail (first boot only) |
+| `CRAFTDB_USER_PASSWORD` | `craftdb` | Local user's password (first boot only) |
+| `CRAFTDB_APP_KEY` | generated and stored in a volume | Application key |
+
+Compose also reads the `.env` at the project root. That is the Laravel development `.env`, so the stack's variables use the `CRAFTDB_` prefix to avoid inheriting dev values.
+
+If port 8080 or 3307 is taken, change it with `CRAFTDB_PORT` / `CRAFTDB_DB_PORT`.
+
+Everything is bound to `127.0.0.1` only, so nothing is exposed on your network.
+
+### Smoke test
+
+`bash docker/smoke-test.sh` boots the stack from scratch and checks boot, login, persistence and reset. **Warning:** it runs `docker compose down -v`, which deletes the stack's data.
 
 ---
 
