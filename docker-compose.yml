@@ -22,9 +22,11 @@ services:
     restart: unless-stopped
 
   app:
+    # Imagem publicada no Docker Hub (amd64 e arm64). `docker compose up -d` baixa a imagem;
+    # `docker compose up -d --build` compila a partir do código local.
+    image: giovannifr/craftdb:${CRAFTDB_VERSION:-latest}
     build: .
     container_name: craftdb-app
-    image: craftdb-local:latest
     depends_on:
       mysql:
         condition: service_healthy

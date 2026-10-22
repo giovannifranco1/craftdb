@@ -90,3 +90,19 @@ bash docker/smoke-test.sh
 ```
 
 It builds the stack from scratch and checks boot, the local user, persistence, reset and the absence of external hosts in the pages. **Warning:** it runs `docker compose down -v`, which deletes the stack's data. Back up first (see the README).
+
+## Publishing the Docker image
+
+The image is published on Docker Hub as [`giovannifr/craftdb`](https://hub.docker.com/r/giovannifr/craftdb), for `linux/amd64` and `linux/arm64`. Build it from a clean checkout of the release tag, so nothing from your working copy ends up in the image:
+
+```bash
+git worktree add /tmp/craftdb-release v1.0.1
+cd /tmp/craftdb-release
+docker buildx build --pull --platform linux/amd64,linux/arm64 \
+  -t giovannifr/craftdb:1.0.1 -t giovannifr/craftdb:1.0 \
+  -t giovannifr/craftdb:1 -t giovannifr/craftdb:latest \
+  --push .
+cd - && git worktree remove /tmp/craftdb-release
+```
+
+Replace `1.0.1` with the version being released. `--pull` makes sure the base image has the latest PHP security fixes (8.4.27 or newer).
