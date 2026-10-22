@@ -26,8 +26,8 @@
     $areaCount = $diagram->areas_count;
     $noteCount = $diagram->notes_count;
 @endphp
-<div class="block group" {{ $attributes }}>
-    <div class="w-80 h-64 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-[#1A1A1A] shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden relative">
+<div class="block group h-full" {{ $attributes }}>
+    <div class="w-80 min-h-64 h-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-[#1A1A1A] shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden relative">
         <!-- Botão de favoritar -->
 
         <div class="absolute top-4 right-4 z-10 flex items-center gap-2">
@@ -108,7 +108,7 @@
             <!-- Descrição -->
             <div class="flex-1 mb-4 min-h-0">
                 @if (!is_null($diagram->description))
-                    <p class="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed line-clamp-1 mb-3">
+                    <p class="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed line-clamp-2 mb-3">
                         {{ $diagram->description }}
                     </p>
                 @else
