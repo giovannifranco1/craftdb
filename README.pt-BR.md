@@ -189,11 +189,12 @@ Você pode se conectar ao banco com qualquer cliente SQL: host `127.0.0.1`, port
 
 ## 🔄 Atualização e backup
 
-**Atualize para a versão mais recente.** As migrations do banco rodam sozinhas no boot.
+**Atualize para a versão mais recente.** O `--pull` também baixa a imagem base mais recente, com as correções de segurança do PHP. As migrations do banco rodam sozinhas no boot.
 
 ```bash
 git pull
-docker compose up -d --build
+docker compose build --pull
+docker compose up -d
 ```
 
 **Faça backup** dos seus diagramas em um arquivo SQL:

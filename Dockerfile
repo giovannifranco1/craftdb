@@ -1,5 +1,7 @@
 # syntax=docker/dockerfile:1
 
+# A imagem precisa ser no mínimo PHP 8.4.27 (correção das CVE-2026-109618 e CVE-2026-109619, PHP2Shell).
+# A tag 1-php8.4-bookworm acompanha o último patch do 8.4: rode `docker compose build --pull` para buscá-lo.
 ARG PHP_IMAGE=dunglas/frankenphp:1-php8.4-bookworm
 
 # --- vendor: dependências PHP de produção ---

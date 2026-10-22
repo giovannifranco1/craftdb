@@ -189,11 +189,12 @@ You can connect to the database with any SQL client: host `127.0.0.1`, port `330
 
 ## 🔄 Updating and backups
 
-**Update to the latest version.** Database migrations run automatically on boot.
+**Update to the latest version.** `--pull` also fetches the latest base image, with PHP security fixes. Database migrations run automatically on boot.
 
 ```bash
 git pull
-docker compose up -d --build
+docker compose build --pull
+docker compose up -d
 ```
 
 **Back up** your diagrams to a SQL file:

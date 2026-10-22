@@ -142,17 +142,15 @@ it('WS13: old team routes are gone and workspaces.index exists', function () {
 
 it("WS19: actions refuse another user's workspace id", function () {
     $foreign = $this->foreignTeam('Foreign');
-    $notFound = \Illuminate\Database\Eloquent\ModelNotFoundException::class;
 
-    $component = Livewire::test('settings.⚡workspaces');
-
-    expect(fn () => $component->call('makeCurrent', $foreign->id))->toThrow($notFound);
-    expect(fn () => $component->call('startRename', $foreign->id))->toThrow($notFound);
-    expect(fn () => Livewire::test('settings.⚡workspaces')
-        ->set('renamingId', $foreign->id)->set('renameName', 'Hacked')->call('rename'))->toThrow($notFound);
-    expect(fn () => $component->call('confirmDelete', $foreign->id))->toThrow($notFound);
-    expect(fn () => Livewire::test('settings.⚡workspaces')
-        ->set('deletingId', $foreign->id)->set('confirmName', 'Foreign')->call('delete'))->toThrow($notFound);
+    // Livewire 4.4+ renders ModelNotFoundException as a 404 response in tests instead of rethrowing it
+    Livewire::test('settings.⚡workspaces')->call('makeCurrent', $foreign->id)->assertStatus(404);
+    Livewire::test('settings.⚡workspaces')->call('startRename', $foreign->id)->assertStatus(404);
+    Livewire::test('settings.⚡workspaces')
+        ->set('renamingId', $foreign->id)->set('renameName', 'Hacked')->call('rename')->assertStatus(404);
+    Livewire::test('settings.⚡workspaces')->call('confirmDelete', $foreign->id)->assertStatus(404);
+    Livewire::test('settings.⚡workspaces')
+        ->set('deletingId', $foreign->id)->set('confirmName', 'Foreign')->call('delete')->assertStatus(404);
 
     expect($foreign->fresh()->name)->toBe('Foreign');
     expect(session('current_team')->id)->toBe($this->team->id);
