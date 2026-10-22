@@ -33,14 +33,16 @@ return [
     |--------------------------------------------------------------------------
     |
     | Links da página /support. Links nulos não aparecem na página.
+    | Repositório e Buy Me a Coffee são os links oficiais do projeto (fixos);
+    | os demais são opcionais e vêm do .env.
     |
     */
 
     'support' => [
-        'repo_url' => env('CRAFTDB_SUPPORT_REPO_URL'),
+        'repo_url' => 'https://github.com/giovannifranco1/craftdb',
         'github_sponsors_url' => env('CRAFTDB_SUPPORT_GITHUB_SPONSORS_URL'),
         'kofi_url' => env('CRAFTDB_SUPPORT_KOFI_URL'),
-        'buymeacoffee_url' => env('CRAFTDB_SUPPORT_BUYMEACOFFEE_URL'),
+        'buymeacoffee_url' => 'https://buymeacoffee.com/craftdb',
         'pix_key' => env('CRAFTDB_SUPPORT_PIX_KEY'),
     ],
 

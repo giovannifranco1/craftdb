@@ -13,6 +13,7 @@
   <img src="https://img.shields.io/badge/Laravel-13-FF2D20?logo=laravel&logoColor=white" alt="Laravel 13">
   <img src="https://img.shields.io/badge/PHP-8.2%2B-777BB4?logo=php&logoColor=white" alt="PHP 8.2+">
   <img src="https://img.shields.io/badge/Docker-ready-2496ED?logo=docker&logoColor=white" alt="Docker ready">
+  <a href="https://buymeacoffee.com/craftdb"><img src="https://img.shields.io/badge/Buy%20Me%20a%20Coffee-support-FFDD00?logo=buymeacoffee&logoColor=black" alt="Buy Me a Coffee"></a>
 </p>
 
 <p align="center">
@@ -167,22 +168,19 @@ CRAFTDB_PORT=8090
 
 ### Support page links
 
-The **Support** page (`/support`) shows only the links you fill in. All of them are optional and empty by default:
+The **Support** page (`/support`) always shows the project's links: the GitHub repository and [Buy Me a Coffee](https://buymeacoffee.com/craftdb). These extra links are optional and only appear when you fill them in:
 
 | Variable | Shows |
 |---|---|
-| `CRAFTDB_SUPPORT_REPO_URL` | Button to star the repository |
 | `CRAFTDB_SUPPORT_GITHUB_SPONSORS_URL` | GitHub Sponsors button |
 | `CRAFTDB_SUPPORT_KOFI_URL` | Ko-fi button |
-| `CRAFTDB_SUPPORT_BUYMEACOFFEE_URL` | Buy Me a Coffee button |
 | `CRAFTDB_SUPPORT_PIX_KEY` | Pix key with a copy button |
 
 URLs must start with `http://` or `https://`. Add them to the same `.env` and run `docker compose up -d` to apply:
 
 ```bash
 # .env
-CRAFTDB_SUPPORT_REPO_URL=https://github.com/giovannifranco1/craftdb
-CRAFTDB_SUPPORT_BUYMEACOFFEE_URL=https://buymeacoffee.com/your-page
+CRAFTDB_SUPPORT_KOFI_URL=https://ko-fi.com/your-page
 ```
 
 You can connect to the database with any SQL client: host `127.0.0.1`, port `3307`, database `craftdb`, user `craftdb`, password `craftdb`.
@@ -227,8 +225,7 @@ CraftDB is free and built in spare time. If it saves you time, you can:
 
 - ⭐ Star the repo and share it with a friend
 - 🐛 Report bugs and suggest features in the [issues](https://github.com/giovannifranco1/craftdb/issues)
-- ☕ Buy me a coffee (link coming soon)
-<!-- TODO: add the Buy Me a Coffee link here (and in README.pt-BR.md) once the page exists -->
+- ☕ [Buy me a coffee](https://buymeacoffee.com/craftdb)
 
 The app also has a **Support** page at `/support`.
 
