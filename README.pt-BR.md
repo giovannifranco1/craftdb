@@ -225,7 +225,11 @@ O CraftDB é gratuito e feito nas horas vagas. Se ele te poupa tempo, você pode
 
 - ⭐ Dar uma estrela no repositório e indicar para alguém
 - 🐛 Reportar bugs e sugerir recursos nas [issues](https://github.com/giovannifranco1/craftdb/issues)
-- ☕ [Me pagar um café](https://buymeacoffee.com/craftdb)
+- ☕ [Me pagar um café](https://buymeacoffee.com/craftdb), ou escanear o QR code:
+
+<p align="center">
+  <a href="https://buymeacoffee.com/craftdb"><img src="docs/images/buymeacoffee-qr.png" alt="QR code para buymeacoffee.com/craftdb" width="180" height="180"></a>
+</p>
 
 O app também tem uma página **Apoiar** em `/support`.
 

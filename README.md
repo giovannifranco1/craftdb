@@ -225,7 +225,11 @@ CraftDB is free and built in spare time. If it saves you time, you can:
 
 - ⭐ Star the repo and share it with a friend
 - 🐛 Report bugs and suggest features in the [issues](https://github.com/giovannifranco1/craftdb/issues)
-- ☕ [Buy me a coffee](https://buymeacoffee.com/craftdb)
+- ☕ [Buy me a coffee](https://buymeacoffee.com/craftdb), or scan the QR code:
+
+<p align="center">
+  <a href="https://buymeacoffee.com/craftdb"><img src="docs/images/buymeacoffee-qr.png" alt="QR code for buymeacoffee.com/craftdb" width="180" height="180"></a>
+</p>
 
 The app also has a **Support** page at `/support`.
 
