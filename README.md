@@ -12,7 +12,7 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-AGPL--3.0-blue" alt="License: AGPL-3.0"></a>
   <img src="https://img.shields.io/badge/Laravel-13-FF2D20?logo=laravel&logoColor=white" alt="Laravel 13">
   <img src="https://img.shields.io/badge/PHP-8.2%2B-777BB4?logo=php&logoColor=white" alt="PHP 8.2+">
-  <img src="https://img.shields.io/badge/Docker-ready-2496ED?logo=docker&logoColor=white" alt="Docker ready">
+  <a href="https://hub.docker.com/r/giovannifr/craftdb"><img src="https://img.shields.io/badge/Docker%20Hub-giovannifr%2Fcraftdb-2496ED?logo=docker&logoColor=white" alt="Docker Hub: giovannifr/craftdb"></a>
   <a href="https://buymeacoffee.com/craftdb"><img src="https://img.shields.io/badge/Buy%20Me%20a%20Coffee-support-FFDD00?logo=buymeacoffee&logoColor=black" alt="Buy Me a Coffee"></a>
 </p>
 
@@ -95,23 +95,31 @@ The e-commerce diagram in the screenshots was created exactly this way.
 
 ## 🚀 Quick start
 
-You only need [Docker](https://docs.docker.com/get-docker/) with Compose v2.
+You only need [Docker](https://docs.docker.com/get-docker/) with Compose v2. No need to clone the repo: download the compose file and start it.
 
 ```bash
-git clone https://github.com/giovannifranco1/craftdb.git
-cd craftdb
-docker compose up -d --build
+mkdir craftdb && cd craftdb
+curl -fsSLO https://raw.githubusercontent.com/giovannifranco1/craftdb/main/docker-compose.yml
+docker compose up -d
 ```
 
 Open **http://localhost:8080**. That's it: no sign-up, no login, you land straight on your dashboard.
 
-The first build takes a few minutes. Later starts take seconds. To stop:
+The first start downloads the [`giovannifr/craftdb`](https://hub.docker.com/r/giovannifr/craftdb) image (amd64 and arm64) and MySQL. Later starts take seconds. To stop:
 
 ```bash
 docker compose down        # stops the containers, keeps your data
 ```
 
 > 🔒 Both the app and MySQL are bound to `127.0.0.1`, so nothing is exposed to your network.
+
+**Prefer building from source?** Clone the repo and add `--build`:
+
+```bash
+git clone https://github.com/giovannifranco1/craftdb.git
+cd craftdb
+docker compose up -d --build
+```
 
 ## 🤖 Connect your AI assistant
 
@@ -151,6 +159,7 @@ The defaults work out of the box. To change something, create a `.env` file next
 
 | Variable | Default | What it does |
 |---|---|---|
+| `CRAFTDB_VERSION` | `latest` | Image tag to run, such as `1.0.1` |
 | `CRAFTDB_PORT` | `8080` | Port of the web app (and of the MCP URL) |
 | `CRAFTDB_DB_PORT` | `3307` | MySQL port on `127.0.0.1`, for your favorite SQL client |
 | `CRAFTDB_DB_PASSWORD` | `craftdb` | MySQL password (applied on the first boot only) |
@@ -187,7 +196,14 @@ You can connect to the database with any SQL client: host `127.0.0.1`, port `330
 
 ## 🔄 Updating and backups
 
-**Update to the latest version.** `--pull` also fetches the latest base image, with PHP security fixes. Database migrations run automatically on boot.
+**Update to the latest version.** Database migrations run automatically on boot.
+
+```bash
+docker compose pull
+docker compose up -d
+```
+
+If you build from source, update the code and rebuild. `--pull` also fetches the latest base image, with PHP security fixes:
 
 ```bash
 git pull
@@ -213,7 +229,7 @@ Your data lives in two Docker volumes, `craftdb-mysql` (database) and `craftdb-d
 
 Next up (M2, distribution): install and update without cloning the repo.
 
-- 📦 Multi-arch Docker image on a public registry
+- ✅ Multi-arch Docker image on Docker Hub ([`giovannifr/craftdb`](https://hub.docker.com/r/giovannifr/craftdb))
 - 🍺 A `craftdb` CLI via Homebrew (`start`, `stop`, `update`, `backup`)
 - 💾 Automatic database backup before migrations
 
