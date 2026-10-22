@@ -62,7 +62,7 @@ export default (relationships) => ({
         });
 
         Livewire.hook('morphed',  ({ component }) => {
-            if (component?.name === 'diagram.canvas.elements.table' || component?.name === 'diagram.public.canvas.elements.table') {
+            if (component?.name === 'diagram.canvas.elements.table') {
                 this.clearDOMCache();
                 this.debouncedCompute();
             }

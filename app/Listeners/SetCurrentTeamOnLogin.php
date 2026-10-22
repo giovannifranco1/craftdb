@@ -22,7 +22,7 @@ class SetCurrentTeamOnLogin
     {
         /** @var User */
         $user = $event->user;
-        $team = $user->ownedTeams()->first();
+        $team = $user->firstTeam();
 
         session()->put('locale', $user->locale);
         app()->setLocale($user->locale);

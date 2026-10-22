@@ -32,7 +32,7 @@ class GetDiagramTool extends Tool
             ? Diagram::where('slug', $validated['slug'])->firstOrFail()
             : Diagram::findOrFail($validated['diagram_id']);
 
-        McpAccess::assertDiagramAbility($request, $diagram, 'view');
+        McpAccess::assertDiagramAbility($diagram, 'view');
 
         $diagram->load(['tables.columns', 'areas', 'notes']);
 

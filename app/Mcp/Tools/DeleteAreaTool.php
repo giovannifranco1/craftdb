@@ -26,7 +26,7 @@ class DeleteAreaTool extends Tool
 
         $area = Area::findOrFail($validated['area_id']);
         $diagram = Diagram::findOrFail($area->diagram_id);
-        McpAccess::assertDiagramAbility($request, $diagram, 'update');
+        McpAccess::assertDiagramAbility($diagram, 'update');
 
         $name = $area->name;
         $area->delete();

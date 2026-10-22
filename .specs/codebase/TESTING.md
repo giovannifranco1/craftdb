@@ -10,30 +10,28 @@
 ## Organização dos testes
 
 **Localização:** `tests/`
-**Nomenclatura:** `{Feature}Test.php` — ex: `RegistrationTest.php`, `TeamCreateTest.php`
+**Nomenclatura:** `{Feature}Test.php` — ex: `AuthenticateLocalUserTest.php`, `WorkspacesPageTest.php`
 **Estrutura:**
 ```
 tests/
 ├── Feature/
-│   ├── Auth/
-│   │   ├── RegistrationTest.php
-│   │   ├── AuthenticationTest.php
-│   │   ├── EmailVerificationTest.php
-│   │   ├── PasswordConfirmationTest.php
-│   │   ├── PasswordResetTest.php
-│   │   ├── PasswordUpdateTest.php
-│   │   └── TwoFactorAuthenticationTest.php
+│   ├── Middleware/AuthenticateLocalUserTest.php
+│   ├── Routes/RemovedAuthSurfaceTest.php
+│   ├── Database/ (FreshDatabaseTest, RemoveAuthLeftoversTest)
+│   ├── Policies/DiagramOwnershipTest.php
 │   ├── Settings/
 │   │   ├── ProfileUpdateTest.php
-│   │   ├── PasswordUpdateTest.php
+│   │   ├── SettingsNavigationTest.php
 │   │   └── (outros settings tests)
+│   ├── Workspaces/ (OwnershipOnlyTest, WorkspacesPageTest, CrossWorkspaceTest, WorkspaceWordingTest)
+│   ├── Actions/Team/ (RenameTeamTest, DeleteTeamTest)
 │   └── Actions/Parse/
 │       └── (fixtures para testes de parser SQL/migration)
 └── Unit/
     └── (testes unitários de classes isoladas)
 ```
 
-**Total:** 26 arquivos de teste identificados
+**Total:** 389 testes (suíte completa)
 
 ## Padrões de teste
 
@@ -44,39 +42,33 @@ tests/
 **Padrão observado:**
 ```php
 // Pest syntax com helpers de Laravel
-test('users can register', function () {
-    $response = $this->post('/register', [
-        'name' => 'Test User',
-        'email' => 'test@example.com',
-        'password' => 'password',
-        'password_confirmation' => 'password',
-    ]);
-
-    $response->assertRedirect('/dashboard');
+test('local user is logged in automatically', function () {
+    $this->get('/dashboard')->assertOk();
     $this->assertAuthenticated();
 });
 ```
 
-**Auth tests cobrem:**
-- Registro com criação automática de equipe
-- Login com email/senha
-- Verificação de email obrigatória
-- Reset de senha
-- Autenticação de dois fatores (2FA)
-- Confirmação de senha para ações sensíveis
+**Testes de usuário local/auth cobrem:**
+- Login automático do usuário local (uma vez por sessão)
+- `/login` e `/register` redirecionam para `/dashboard`; rotas de auth removidas retornam 404
+- Banco novo (migrations do zero) e migration `remove_auth_leftovers`
+- Autorização de diagramas/workspaces por posse (`ownsTeam`); workspaces extras e de outro dono via helpers `secondTeam()` / `foreignTeam()` em `tests/TestCase.php`
+- Página de workspaces: criar (vira atual), renomear, apagar com confirmação por nome (recusa o último), alternar; terminologia "workspace" na UI
+
+**Suíte atual:** 389 testes passando
 
 ### Testes de Livewire
 
 **Abordagem:** Testa componentes Livewire via `Livewire::test()`
-**Localização:** `tests/Feature/Settings/`
+**Localização:** `tests/Feature/Settings/`, `tests/Feature/Workspaces/`
 **Padrão observado:**
 ```php
-test('team can be created', function () {
+test('workspace can be created', function () {
     $user = User::factory()->create();
 
     Livewire::actingAs($user)
-        ->test(CreateTeam::class)
-        ->set('name', 'My Team')
+        ->test('settings.⚡workspaces')
+        ->set('createName', 'My Workspace')
         ->call('create')
         ->assertHasNoErrors();
 });
@@ -129,14 +121,20 @@ php artisan test     # Via Artisan
 # Filtrar por suite
 ./vendor/bin/pest --group=auth
 ./vendor/bin/pest tests/Feature/Auth/
+./vendor/bin/pest tests/Feature/Telemetry/   # F5: NoExternalServicesTest e NoExternalRequestsTest (renderiza páginas e falha em qualquer host externo)
 
 # Análise estática
 ./vendor/bin/phpstan analyse
+
+# Smoke test do stack Docker (sobe do zero; roda `docker compose down -v`)
+bash docker/smoke-test.sh   # inclui ZT-09: sem hosts externos em /dashboard e /settings/workspaces
 ```
 
 **Configuração:** SQLite in-memory para isolamento total entre testes — sem estado persistente
 
 ## Cobertura
 
-**Atual:** Foco em Auth flows e Settings — cobertura de Actions/Diagram/Billing limitada nos testes identificados
+**Atual:** Auth/usuário local, Settings, Parse e regressões da F3 (suíte: 263 testes passando). Testes da F3: `tests/Feature/Plans/{PremiumFeaturesUnlockedTest,NoLimitsTest,PublicLinksRemovedTest,BillingRemovedTest}.php` (funcionalidades sempre liberadas, sem limites, links públicos e billing removidos) e `tests/Feature/Database/RemoveBillingLeftoversTest.php` (migration `2026_10_21_000002_remove_billing_leftovers`)
+**F6 (MCP local):** `tests/Feature/Mcp/{LocalMcpTest,PassportRemovedTest,RouteCacheTest,McpToolsAuthorizationTest}.php` e `tests/Feature/Settings/IntegrationsPageTest.php`; checks MCP-12/MCP-14 no `docker/smoke-test.sh`. Suíte: 378 testes passando
+**F7 (landing + Apoiar):** `tests/Feature/Landing/{LandingRemovedTest,CleanupTest}.php` (rotas da landing/login/register 404, `/` redireciona, Feedback/tailwind.config removidos) e `tests/Feature/Support/SupportPageTest.php` (página `/support`: só URLs http(s), links ocultos, Pix, "em breve"); check LP-15 no `docker/smoke-test.sh`. Factories `DiagramFactory`/`TeamFactory` usam sufixo aleatório (evita testes flaky). Suíte: 389 testes passando
 **Metas:** Não documentadas explicitamente

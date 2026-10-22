@@ -1,11 +1,12 @@
 import * as d3 from 'd3';
 
-export default function foreignKeysGraph(relationships, currentTableId, currentTableName, tablesColors) {
+export default function foreignKeysGraph(relationships, currentTableId, currentTableName, tablesColors, emptyText) {
     return {
         relationships: relationships || [],
         currentTableId: currentTableId,
         currentTableName: currentTableName || `Table ${currentTableId}`,
         tablesColors: tablesColors || {},
+        emptyText: emptyText || "No foreign keys found",
         svg: null,
         simulation: null,
         width: 0,
@@ -100,7 +101,7 @@ export default function foreignKeysGraph(relationships, currentTableId, currentT
                         .attr("text-anchor", "middle")
                         .attr("fill", "#6b7280")
                         .attr("font-size", "14px")
-                        .text("Nenhuma foreign key encontrada");
+                        .text(this.emptyText);
 
                     this.svg = svg;
                 }
@@ -157,7 +158,7 @@ export default function foreignKeysGraph(relationships, currentTableId, currentT
                     .attr("text-anchor", "middle")
                     .attr("fill", "#6b7280")
                     .attr("font-size", "14px")
-                    .text("Nenhuma foreign key encontrada");
+                    .text(this.emptyText);
                 return;
             }
 

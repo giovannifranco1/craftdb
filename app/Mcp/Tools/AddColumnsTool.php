@@ -33,7 +33,7 @@ class AddColumnsTool extends Tool
         ]);
 
         $table = Table::findOrFail($validated['table_id']);
-        McpAccess::assertDiagramAbilityForTable($request, $table, 'update');
+        McpAccess::assertDiagramAbilityForTable($table, 'update');
 
         $created = DB::transaction(function () use ($validated, $table) {
             $maxOrder = $table->columns()->max('order') ?? -1;

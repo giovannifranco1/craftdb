@@ -6,7 +6,6 @@ use App\Models\Diagram;
 use App\Models\Team\Team;
 use Illuminate\Contracts\View\View;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\Cache;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
@@ -33,19 +32,6 @@ new #[Title('Dashboard')] class extends BaseComponent
     public function mount(): void
     {
         $this->team = Team::currentTeam();
-
-        if (! $this->team) {
-            return;
-        }
-
-        session()->put('diagrams_count',
-            Cache::remember(
-                "diagrams_count_{$this->favorites}_{$this->search}_{$this->orderByDesc}",
-                now()->addMinutes(5),
-                fn () => Diagram::query()
-                    ->where('team_id', $this->team->getKey())
-                    ->count()
-            ));
     }
 
     #[Computed]
@@ -54,14 +40,6 @@ new #[Title('Dashboard')] class extends BaseComponent
         if (! $this->team) {
             return Diagram::query()->whereRaw('0 = 1')->paginate(10);
         }
-
-        session()->put('diagrams_count', Cache::remember(
-            "diagrams_count_{$this->favorites}_{$this->search}_{$this->orderByDesc}",
-            now()->addMinutes(5),
-            fn () => Diagram::query()
-                ->where('team_id', $this->team->getKey())
-                ->count()
-        ));
 
         return Diagram::query()
             ->when($this->favorites, fn ($q) => $q->where('is_favorite', true))
@@ -85,15 +63,11 @@ new #[Title('Dashboard')] class extends BaseComponent
 
     public function toggleFavorite(Diagram $diagram): void
     {
-        if (! $this->team) {
-            return;
-        }
+        $this->authorizeDiagram('update', $diagram);
 
         $diagram->is_favorite = !$diagram->isFavorite();
         $diagram->timestamps = false;
         $diagram->save();
-
-        session(['favorites_count' => Diagram::query()->where('team_id', $this->team?->getKey() ?? 0)->where('is_favorite', true)->count()]);
 
         $this->dispatch('diagram::favorite-toggled', $diagram->id);
         $this->dispatch('alert', message: $diagram->isFavorite() ? __('Diagram :name was added to your favorites', ['name' => $diagram->name]) : __('Diagram :name was removed from your favorites', ['name' => $diagram->name]));

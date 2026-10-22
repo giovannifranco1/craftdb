@@ -17,23 +17,25 @@ abstract class TestCase extends BaseTestCase
     /** @var Testable<Component> */
     public $component;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        User::clearSubscriptionCaches();
-    }
-
     public function autenticated()
     {
-        $this->user = User::factory()->withoutTwoFactor()->create();
+        $this->user = User::factory()->create();
         $this->team = $this->user->ownedTeams()->create([
-            'user_id' => $this->user->id,
             'name' => $this->user->name."'s Team",
         ]);
 
         session(['current_team' => $this->team]);
 
         $this->actingAs($this->user);
+    }
+
+    public function secondTeam(string $name = 'Second'): Team
+    {
+        return $this->user->ownedTeams()->create(['name' => $name]);
+    }
+
+    public function foreignTeam(string $name = 'Foreign'): Team
+    {
+        return User::factory()->create()->ownedTeams()->create(['name' => $name]);
     }
 }

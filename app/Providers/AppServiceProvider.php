@@ -2,24 +2,20 @@
 
 namespace App\Providers;
 
-use App\Listeners\Mcp\StoreMcpTokenTeamsListener;
-use App\Mcp\Registrar as AppMcpRegistrar;
+use App\Actions\Local\EnsureLocalUser;
 use App\Models\Diagram;
 use App\Models\Team\Team;
 use App\Models\User;
 use App\Policies\DiagramPolicy;
-use App\View\Components\Layouts\CanvasPublic;
 use Carbon\CarbonImmutable;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\RateLimiter;
@@ -30,9 +26,6 @@ use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Sleep;
 use Illuminate\Validation\Rules\Password;
-use Laravel\Mcp\Server\Registrar as McpRegistrar;
-use Laravel\Passport\Events\AccessTokenCreated;
-use Laravel\Passport\Passport;
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 
 class AppServiceProvider extends ServiceProvider
@@ -42,7 +35,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->singleton(McpRegistrar::class, fn (): McpRegistrar => new AppMcpRegistrar);
+        // Resolved once per request/process (scoped: reset between Octane requests and tests).
+        $this->app->scoped('craftdb.local-user', fn (): User => app(EnsureLocalUser::class)
+            ->exec((string) config('craftdb.local_user.email'))['user']);
     }
 
     /**
@@ -61,8 +56,8 @@ class AppServiceProvider extends ServiceProvider
             $this->configureCommands();
         }
 
-        // Force HTTPS in production and staging (homolog) environments
-        if (! $app->environment(['local', 'testing'])) {
+        // Force HTTPS in production and staging (homolog) environments, unless disabled (CraftDB Local)
+        if (! $app->environment(['local', 'testing']) && config('craftdb.force_https')) {
             $this->configureUrls();
         }
 
@@ -74,8 +69,6 @@ class AppServiceProvider extends ServiceProvider
         $this->configureDefaultRulesForPassword();
         $this->configureUnitTests();
         $this->configureDiagramCaching();
-        $this->AliasComponents();
-        $this->configurePassportMcp();
         $this->configureMcpGatesAndRateLimit();
     }
 
@@ -184,21 +177,6 @@ class AppServiceProvider extends ServiceProvider
         });
     }
 
-    private function AliasComponents(): void
-    {
-        Blade::component(CanvasPublic::class, 'layouts.canvas.public');
-    }
-
-    private function configurePassportMcp(): void
-    {
-        Passport::authorizationView('mcp.authorize');
-
-        Event::listen(
-            AccessTokenCreated::class,
-            StoreMcpTokenTeamsListener::class,
-        );
-    }
-
     private function configureMcpGatesAndRateLimit(): void
     {
         Gate::define('createDiagramOnTeam', function (User $user, Team $team): bool {
@@ -206,9 +184,7 @@ class AppServiceProvider extends ServiceProvider
         });
 
         RateLimiter::for('mcp', function (Request $request): Limit {
-            $key = $request->user()?->getAuthIdentifier() ?? $request->ip();
-
-            return Limit::perMinute(120)->by((string) $key);
+            return Limit::perMinute(120)->by((string) $request->ip());
         });
     }
 }

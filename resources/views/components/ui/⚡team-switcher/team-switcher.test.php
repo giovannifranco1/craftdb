@@ -48,3 +48,16 @@ it('shows only teams user has access to', function (): void {
     expect($component->get('getAllTeams')->count())->toBe(1);
     expect($component->get('getAllTeams')->first()->id)->toBe($userTeam->id);
 });
+
+it('is always visible with the current workspace name and a manage link', function (): void {
+    $user = User::factory()->create();
+    $team = Team::factory()->create(['user_id' => $user->id, 'name' => 'Only one']);
+
+    /** @var TestCase $this */
+    $this->actingAs($user);
+    session(['current_team' => $team]);
+
+    Livewire::test('ui.⚡team-switcher')
+        ->assertSee('Only one')
+        ->assertSee(route('workspaces.index'), false);
+});

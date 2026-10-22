@@ -1,3 +1,29 @@
+@import '@fontsource/poppins/latin-300.css';
+@import '@fontsource/poppins/latin-ext-300.css';
+@import '@fontsource/poppins/latin-400.css';
+@import '@fontsource/poppins/latin-ext-400.css';
+@import '@fontsource/poppins/latin-400-italic.css';
+@import '@fontsource/poppins/latin-ext-400-italic.css';
+@import '@fontsource/poppins/latin-500.css';
+@import '@fontsource/poppins/latin-ext-500.css';
+@import '@fontsource/poppins/latin-600.css';
+@import '@fontsource/poppins/latin-ext-600.css';
+@import '@fontsource/poppins/latin-700.css';
+@import '@fontsource/poppins/latin-ext-700.css';
+@import '@fontsource/outfit/latin-400.css';
+@import '@fontsource/outfit/latin-ext-400.css';
+@import '@fontsource/outfit/latin-500.css';
+@import '@fontsource/outfit/latin-ext-500.css';
+@import '@fontsource/outfit/latin-600.css';
+@import '@fontsource/outfit/latin-ext-600.css';
+@import '@fontsource/outfit/latin-700.css';
+@import '@fontsource/outfit/latin-ext-700.css';
+@import '@fontsource/kalam/latin-300.css';
+@import '@fontsource/kalam/latin-ext-300.css';
+@import '@fontsource/kalam/latin-400.css';
+@import '@fontsource/kalam/latin-ext-400.css';
+@import '@fontsource/space-mono/latin-400.css';
+@import '@fontsource/space-mono/latin-ext-400.css';
 @import 'tailwindcss';
 @import '@preline/tabs/variants';
 @import '@preline/dropdown/variants';
@@ -31,7 +57,7 @@
 }
 
 @theme {
-    --font-sans: "Hanken Grotesk", sans-serif;
+    --font-sans: "Poppins", sans-serif;
     --color-accent: var(--color-gray-900);
     --color-accent-content: var(--color-slate-800);
     --color-accent-foreground: var(--color-white);

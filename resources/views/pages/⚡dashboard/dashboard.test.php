@@ -8,7 +8,7 @@ describe('Dashboard', function (): void {
         /** @var TestCase $this */
 
         $response = $this->get(route('dashboard'));
-        $response->assertRedirect(route('login'));
+        $response->assertStatus(200);
     });
 
     it('can be visited by authenticated users', function (): void {

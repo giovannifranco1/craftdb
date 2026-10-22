@@ -27,7 +27,7 @@ class UpdateDiagramTool extends Tool
         ]);
 
         $diagram = Diagram::findOrFail($validated['diagram_id']);
-        McpAccess::assertDiagramAbility($request, $diagram, 'update');
+        McpAccess::assertDiagramAbility($diagram, 'update');
 
         $diagram = app(UpdateDiagram::class)->exec($diagram, [
             'name' => $validated['name'],

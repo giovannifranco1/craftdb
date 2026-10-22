@@ -14,7 +14,7 @@
 }
 
 .filepond--drop-label {
-    min-height: 177px !important; Ajuste conforme sua necessidade
+    min-height: 177px !important; /* Ajuste conforme sua necessidade */
     padding: 20px; /* Ajuste o padding para aumentar o espaçamento interno */
     cursor: pointer;
 }

@@ -382,20 +382,6 @@ describe('Diagram Creation', function() {
 
             expect(session('message'))->toBe(__("Diagram created successfully."));
         });
-
-        it('increments diagrams count in session after creation', function () {
-            session(['diagrams_count' => 5]);
-
-            /** @var Testcase $this */
-
-            $this->component
-                ->set('name', 'Test Diagram')
-                ->set('style', 'colorful')
-                ->set('database', 'mysql')
-                ->call('create');
-
-            expect(session('diagrams_count'))->toBe(6);
-        });
     });
 })->group('livewire-components');
 
@@ -513,7 +499,7 @@ describe('Multi-User Scenarios', function() {
             ->set('database', 'mysql')
             ->call('create');
 
-        $user2 = User::factory()->withoutTwoFactor()->create();
+        $user2 = User::factory()->create();
         $team2 = $user2->ownedTeams()->create([
             'user_id' => $user2->id,
             'name' => $user2->name . "'s Team",

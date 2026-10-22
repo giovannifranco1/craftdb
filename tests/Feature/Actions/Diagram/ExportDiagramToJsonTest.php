@@ -10,7 +10,6 @@ use App\Models\Table;
 use App\Models\Team\Team;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Laravel\Cashier\Subscription;
 
 uses(RefreshDatabase::class);
 
@@ -159,13 +158,8 @@ describe('ExportDiagramToJson action', function (): void {
 });
 
 describe('ExportJson endpoint', function (): void {
-    it('returns 200 with json content-type for pro user', function () {
+    it('returns 200 with json content-type for the local user', function () {
         /** @var TestCase $this */
-        Subscription::factory()->for($this->user)->create([
-            'type' => config('billing.subscription_name', 'default'),
-        ]);
-        User::clearSubscriptionCaches();
-
         $this->actingAs($this->user)
             ->get(route('diagram.export-json', [
                 'team_id' => $this->team->id,
@@ -173,16 +167,6 @@ describe('ExportJson endpoint', function (): void {
             ]))
             ->assertOk()
             ->assertHeader('Content-Type', 'application/json');
-    });
-
-    it('returns 403 for non-pro user', function () {
-        /** @var TestCase $this */
-        $this->actingAs($this->user)
-            ->get(route('diagram.export-json', [
-                'team_id' => $this->team->id,
-                'diagram' => $this->diagram->slug,
-            ]))
-            ->assertForbidden();
     });
 
     it('returns 403 for user without team access', function () {
@@ -197,22 +181,18 @@ describe('ExportJson endpoint', function (): void {
             ->assertForbidden();
     });
 
-    it('returns 401 for unauthenticated request', function () {
+    it('does not export for the implicit local user outside the team', function () {
         /** @var TestCase $this */
-        $this->get(route('diagram.export-json', [
+        $response = $this->get(route('diagram.export-json', [
             'team_id' => $this->team->id,
             'diagram' => $this->diagram->slug,
-        ]))
-            ->assertRedirect(route('login'));
+        ]));
+
+        $response->assertForbidden();
     });
 
     it('downloaded filename contains diagram slug and date', function () {
         /** @var TestCase $this */
-        Subscription::factory()->for($this->user)->create([
-            'type' => config('billing.subscription_name', 'default'),
-        ]);
-        User::clearSubscriptionCaches();
-
         $response = $this->actingAs($this->user)
             ->get(route('diagram.export-json', [
                 'team_id' => $this->team->id,

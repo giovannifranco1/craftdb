@@ -27,7 +27,7 @@ class UpdateTableTool extends Tool
         ]);
 
         $table = Table::findOrFail($validated['table_id']);
-        McpAccess::assertDiagramAbilityForTable($request, $table, 'update');
+        McpAccess::assertDiagramAbilityForTable($table, 'update');
 
         $data = array_filter([
             'name' => $validated['name'] ?? null,

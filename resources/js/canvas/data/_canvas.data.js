@@ -308,19 +308,8 @@ export default (cellSize = 25, isInitialLoad = false, [offsetX, offsetY] = []) =
     },
 
     keydownListeners(e) {
-        this.handleMetaS(e);
         this.handleEscape(e);
         this.handleSpace(e);
-    },
-
-    handleMetaS(e) {
-        const isMetaS = e.metaKey && e.key === 's';
-        const isCtrlS = e.ctrlKey && e.key === 's';
-
-        if (isMetaS || isCtrlS) {
-            e.preventDefault();
-            this.saveTablesPositions();
-        }
     },
 
     handleEscape(e) {

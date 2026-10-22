@@ -1,0 +1,72 @@
+name: craftdb
+
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: craftdb-mysql
+    environment:
+      MYSQL_DATABASE: craftdb
+      MYSQL_USER: craftdb
+      MYSQL_PASSWORD: ${CRAFTDB_DB_PASSWORD:-craftdb}
+      MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+    volumes:
+      - craftdb-mysql:/var/lib/mysql
+    ports:
+      - "127.0.0.1:${CRAFTDB_DB_PORT:-3307}:3306"
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u craftdb -p\"$$MYSQL_PASSWORD\" --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 20s
+    restart: unless-stopped
+
+  app:
+    build: .
+    container_name: craftdb-app
+    image: craftdb-local:latest
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      APP_NAME: CraftDB
+      APP_ENV: production
+      APP_DEBUG: "false"
+      # CRAFTDB_APP_KEY (não APP_KEY): o compose lê o .env da raiz, que é o .env de dev do Laravel
+      APP_KEY: ${CRAFTDB_APP_KEY:-}
+      APP_URL: http://localhost:${CRAFTDB_PORT:-8080}
+      APP_FORCE_HTTPS: "false"
+      DB_CONNECTION: mysql
+      DB_HOST: mysql
+      DB_PORT: "3306"
+      DB_DATABASE: craftdb
+      DB_USERNAME: craftdb
+      DB_PASSWORD: ${CRAFTDB_DB_PASSWORD:-craftdb}
+      LOG_CHANNEL: stderr
+      LOG_LEVEL: info
+      SESSION_DRIVER: database
+      CACHE_STORE: database
+      QUEUE_CONNECTION: sync
+      MAIL_MAILER: log
+      CRAFTDB_USER_EMAIL: ${CRAFTDB_USER_EMAIL:-local@craftdb.local}
+      # Links da página /support (vazio = link não aparece)
+      CRAFTDB_SUPPORT_REPO_URL: ${CRAFTDB_SUPPORT_REPO_URL:-}
+      CRAFTDB_SUPPORT_GITHUB_SPONSORS_URL: ${CRAFTDB_SUPPORT_GITHUB_SPONSORS_URL:-}
+      CRAFTDB_SUPPORT_KOFI_URL: ${CRAFTDB_SUPPORT_KOFI_URL:-}
+      CRAFTDB_SUPPORT_BUYMEACOFFEE_URL: ${CRAFTDB_SUPPORT_BUYMEACOFFEE_URL:-}
+      CRAFTDB_SUPPORT_PIX_KEY: ${CRAFTDB_SUPPORT_PIX_KEY:-}
+    volumes:
+      - craftdb-data:/data
+    ports:
+      - "127.0.0.1:${CRAFTDB_PORT:-8080}:80"
+    healthcheck:
+      test: ["CMD", "php", "-r", "exit(@file_get_contents('http://127.0.0.1/up') === false ? 1 : 0);"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    restart: on-failure:3
+
+volumes:
+  craftdb-mysql:
+  craftdb-data:

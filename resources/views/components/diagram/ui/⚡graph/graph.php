@@ -3,7 +3,6 @@
 use App\Models\Diagram;
 use App\Models\Relationship;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 use App\Livewire\BaseComponent;
@@ -18,24 +17,12 @@ new class extends BaseComponent {
     {
         $this->diagram = $diagram;
 
-        /** @var User $user */
-        $user = Auth::user();
-
-        if ($this->diagram->exists && $user->hasDiagramPremiumAccess($this->diagram)) {
-            $this->loadGraph = true;
-        }
+        $this->loadGraph = $this->diagram->exists;
     }
 
     #[On('diagram-graph::load')]
     public function loadGraph(Diagram $diagram): void
     {
-        /** @var User $user */
-        $user = Auth::user();
-
-        if (! $user->hasDiagramPremiumAccess($diagram)) {
-            return;
-        }
-
         $this->loadGraph = true;
         $this->modal("diagram-graph")->show();
         $this->diagram = $diagram;

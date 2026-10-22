@@ -25,7 +25,7 @@ class DeleteDiagramTool extends Tool
         ]);
 
         $diagram = Diagram::findOrFail($validated['diagram_id']);
-        McpAccess::assertDiagramAbility($request, $diagram, 'delete');
+        McpAccess::assertDiagramAbility($diagram, 'delete');
 
         $name = $diagram->name;
 

@@ -3,8 +3,6 @@
 use App\Livewire\CanvasComponent;
 use App\Models\Diagram;
 use Flux\Flux;
-use Illuminate\Support\Facades\Auth;
-use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
 
 new class extends CanvasComponent {
@@ -18,23 +16,9 @@ new class extends CanvasComponent {
         $this->diagramId = $diagram->id;
     }
 
-    #[Computed]
-    public function canExport(): bool
-    {
-        /** @var User $user */
-        $user = Auth::user();
-
-        return $user && $user->hasDiagramPremiumAccess($this->diagram);
-    }
-
     public function export(): mixed
     {
         $this->authorizeDiagram('view');
-
-        if (! $this->canExport) {
-            $this->alert(__('Export is available on the Pro plan or higher.'), type: 'error');
-            return null;
-        }
 
         Flux::modal('diagram-canvas-export')->close();
 

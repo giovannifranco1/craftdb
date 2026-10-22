@@ -24,7 +24,7 @@ class ExportMermaidTool extends Tool
         ]);
 
         $diagram = Diagram::findOrFail($validated['diagram_id']);
-        McpAccess::assertDiagramAbility($request, $diagram, 'view');
+        McpAccess::assertDiagramAbility($diagram, 'view');
 
         $diagram->loadMissing('tables.columns');
 

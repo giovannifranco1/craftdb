@@ -4,10 +4,6 @@
         @include('_partials.head')
     </head>
 
-    @use('App\Models\Team\Team')
-    @php
-        $team = Team::currentTeam();
-    @endphp
     <body class="min-h-screen bg-zinc-50 dark:bg-background-dark">
 
         @persist('toast')
@@ -28,34 +24,14 @@
                         @if(request()->routeIs('diagram.show') && isset($diagram))
                             <flux:breadcrumbs class="ms-5">
                                 <flux:breadcrumbs.item href="{{ route('dashboard') }}">Diagrams</flux:breadcrumbs.item>
-                                <flux:breadcrumbs.item href="{{ route('diagram.show', [$team->id, $diagram->slug])}}">{{ $diagram->name }}</flux:breadcrumbs.item>
+                                <flux:breadcrumbs.item href="{{ route('diagram.show', [$diagram->team_id, $diagram->slug])}}">{{ $diagram->name }}</flux:breadcrumbs.item>
                             </flux:breadcrumbs>
                         @endif
                     </div>
 
                     <!-- Navbar -->
                     <flux:navbar class="-mb-px max-lg:hidden">
-                        @php
-                            $user = auth()->user();
-                            $teamOwner = $team?->owner;
-                            $teamContextHasTeamPlan = $teamOwner && $teamOwner->isTeamPlan();
-                            $isOwnerOfCurrentTeam = $team && $user->ownsTeam($team);
-
-                            if ($teamContextHasTeamPlan && $team && ! $isOwnerOfCurrentTeam) {
-                                $planBadge = $team->name;
-                                $planColor = 'violet';
-                            } elseif ($user->isTeamPlan()) {
-                                $planBadge = 'Team';
-                                $planColor = 'violet';
-                            } elseif ($user->isPro()) {
-                                $planBadge = 'Pro';
-                                $planColor = 'lime';
-                            } else {
-                                $planBadge = 'Free';
-                                $planColor = 'sky';
-                            }
-                        @endphp
-                        <flux:navbar.item :badge="$planBadge" badge:color="{{ $planColor }}" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>{{ __('Diagrams') }}</flux:navbar.item>
+                        <flux:navbar.item :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>{{ __('Diagrams') }}</flux:navbar.item>
                     </flux:navbar>
 
                     <div class="flex items-center space-x-4 ml-auto">
@@ -92,31 +68,15 @@
                                     </div>
                                 </flux:menu.radio.group>
 
-                                @can('create', \App\Models\Team\Team::class)
-                                    <flux:menu.separator />
-                                    <flux:menu.item as="button" icon="user-plus" type="button" :href="route('team.create')">{{__('Create New Team')}}</flux:menu.item>
-                                @endcan
-
-                                <flux:menu.separator/>
-
+                                <flux:menu.separator />
                                 <livewire:ui.team-switcher/>
 
                                 <flux:menu.radio.group>
                                     <flux:menu.item :href="route('profile.edit')" icon="cog" wire:navigate>{{ __('Settings') }}</flux:menu.item>
-                                    <flux:menu.item :href="route('billing.index')" icon="credit-card" wire:navigate>{{ __('Billing') }}</flux:menu.item>
-                                    <flux:menu.item class="cursor-pointer" as="button" type="button" icon="chat-bubble-left-ellipsis" @click="$flux.modal('contact-us').show()">
-                                        {{ __('Contact Us') }}
+                                    <flux:menu.item :href="route('support')" icon="heart" wire:navigate>
+                                        {{ __('Support the project') }}
                                     </flux:menu.item>
                                 </flux:menu.radio.group>
-
-                                <flux:menu.separator />
-
-                                <form method="POST" action="{{ route('logout') }}" class="w-full">
-                                    @csrf
-                                    <flux:menu.item as="button" type="submit" icon="arrow-right-start-on-rectangle" class="w-full" data-test="logout-button">
-                                        {{ __('Log Out') }}
-                                    </flux:menu.item>
-                                </form>
                             </flux:menu>
                         </flux:dropdown>
                     </div>
@@ -131,8 +91,6 @@
         </x-flux::footer>
 
         <livewire:diagram.create/>
-        <livewire:ui.contact-us/>
-        <x-ui.pro-feature-modal/>
         @fluxScripts
     </body>
 </html>

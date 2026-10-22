@@ -51,24 +51,14 @@
             <p class="text-sm text-zinc-600 dark:text-zinc-400 text-center max-w-md">
                 {{ __('Import files or framework migrations to automatically create your diagram structure.') }}
             </p>
-            @if(auth()->user()->hasTeamWorkspacePremiumAccess())
-                <flux:button
-                    @click="$flux.modal('diagram-import').show(); $dispatch('diagram-import::show')"
-                    variant="primary"
-                    icon="arrow-up-tray"
-                    :disabled="!$database"
-                >
-                    {{ __('Import Files') }}
-                </flux:button>
-            @else
-                <flux:button
-                    @click="$dispatch('pro-feature::show', { key: 'import' })"
-                    variant="primary"
-                    icon="arrow-up-tray"
-                >
-                    {{ __('Import Files') }}
-                </flux:button>
-            @endif
+            <flux:button
+                @click="$flux.modal('diagram-import').show(); $dispatch('diagram-import::show')"
+                variant="primary"
+                icon="arrow-up-tray"
+                :disabled="!$database"
+            >
+                {{ __('Import Files') }}
+            </flux:button>
 
             @if(($importForm->type || !empty($importForm->file)) && $importForm->hasImport)
                 <div class="mt-3 w-full">

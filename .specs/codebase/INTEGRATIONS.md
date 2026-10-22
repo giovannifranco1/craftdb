@@ -2,81 +2,42 @@
 
 ## Pagamentos
 
-**Serviço:** Stripe via Laravel Cashier 16
-**Propósito:** Processamento de assinaturas, checkout, portal de gerenciamento
-**Implementação:** `app/Http/Controllers/BillingController.php`
-**Configuração:** `config/billing.php` — define planos, preços e Price IDs do Stripe
-
-**Planos e preços:**
-```
-Free:              $0 / R$0 — 3 diagramas, 30 tabelas, 50 colunas/tabela
-Pro USD mensal:    $9/mês
-Pro BRL mensal:    R$49.90/mês
-Pro USD anual:     preço anual com desconto
-Pro BRL anual:     preço anual com desconto
-Team USD mensal:   $24.99/mês — Tudo Pro + colaboração multi-usuário
-Team BRL mensal:   R$59.99/mês — Mesmas features
-Team USD anual:    preço anual com desconto
-Team BRL anual:    preço anual com desconto
-```
-
-**Environment variables de preço** (valores nominais, não Price IDs):
-```
-BILLING_PRO_USD_PRICE=9
-BILLING_PRO_BRL_PRICE=49.90
-BILLING_TEAM_USD_PRICE=24.99
-BILLING_TEAM_BRL_PRICE=59.99
-# variantes anuais equivalentes
-```
-
-**Autenticação:** `STRIPE_KEY` (público) + `STRIPE_SECRET` (privado) no `.env`
-**Price IDs Stripe:** `STRIPE_PRICE_PRO_USD`, `STRIPE_PRICE_PRO_BRL`, `STRIPE_PRICE_TEAM_USD`, `STRIPE_PRICE_TEAM_BRL` + variantes `_ANNUAL` — todos via `.env`
-
-**Fluxo de checkout:**
-1. BillingController detecta país via `cf-ipcountry` header (Cloudflare)
-2. Seleciona Price ID correspondente (USD ou BRL)
-3. Redireciona para Stripe Checkout: `$user->newSubscription()->checkout()`
-4. Stripe retorna para `/settings/billing/success`
-
-**Webhooks:** Gerenciados automaticamente pelo Laravel Cashier em `/stripe/webhook`
+Não há. A F3 removeu Laravel Cashier/Stripe, planos, webhooks (`/stripe/webhook`), rotas de billing e páginas de assinatura. A landing (e a seção de preços) foi removida na F7.
 
 ---
 
-## Autenticação OAuth
+## Autenticação
 
-### GitHub
+Não há OAuth de login (GitHub/Google), registro ou reset de senha: o CraftDB Local autentica automaticamente o usuário local (ver `AuthenticateLocalUser`). Laravel Passport foi removido na F6 (guard `api`, `config/passport.php`, rotas `oauth/*` e `.well-known/oauth-*`, `Registrar` custom, `McpTokenTeam` etc.; a migration `2026_10_21_000004_remove_passport_tables` apaga `oauth_*` e `mcp_token_teams`).
 
-**Serviço:** GitHub OAuth via Laravel Socialite 5
-**Propósito:** Login/registro via conta GitHub
-**Implementação:** `app/Actions/Fortify/CreateUserFromOAuth.php`, `app/Http/Controllers/AuthController.php`
-**Configuração:** `config/services.php` — `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`
-**Campos no banco:** `users.github_id`, `users.github_token`, `users.github_refresh_token`
+## MCP local
 
-### Google
-
-**Serviço:** Google OAuth via Laravel Socialite 5
-**Propósito:** Login/registro via conta Google
-**Implementação:** Mesmos arquivos do GitHub
-**Configuração:** `config/services.php` — `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`
-**Campos no banco:** `users.google_id`, `users.google_token`, `users.google_refresh_token`
+- Endpoint HTTP: `POST http://localhost:8080/mcp/craftdb`, sem autenticação. Proteção: bind `127.0.0.1` (compose), middleware `EnsureLocalMcpOrigin` (sem `Origin` ou localhost/127.0.0.1/[::1]/host do `APP_URL`; qualquer outro, inclusive com barra invertida, retorna 403) e `throttle:mcp` (por IP). GET/DELETE retornam 405 (padrão do vendor).
+- stdio: `php artisan mcp:start craftdb` (sem token); via Docker: `docker compose exec -T app php artisan mcp:start craftdb`.
+- Identidade: `McpAccess::user()` = `Auth::user()` ou o binding escopado `craftdb.local-user` (`EnsureLocalUser`), resolvido uma vez por request/processo. Checagens de posse sempre valem; `AddRelationshipTool` confere as duas tabelas. Sem checagem de plano nem limites (F3): `list_diagrams` lista os diagramas do usuário; time de outro usuário lança `AuthorizationException`.
+- Nomes `list_teams`/`team_id` mantidos (contrato das tools).
+- Rotas: `routes/ai.php` é carregado só pelo `McpServiceProvider` (`bootstrap/app.php` não usa mais `api:`), então `route:cache` funciona; o entrypoint roda `php artisan optimize`.
+- Cliente: `.cursor/mcp.json` = `{"mcpServers":{"craftdb":{"url":"http://localhost:8080/mcp/craftdb"}}}`; a página Settings → Integrations mostra a URL para Cursor, Claude Code e Claude Desktop, e a aba stdio.
 
 ---
 
 ## Detecção de Região
 
-**Serviço:** Cloudflare (proxy reverso)
-**Propósito:** Detectar país do usuário para aplicar precificação regional (USD vs BRL)
-**Implementação:** `BillingController::checkout()` lê header `cf-ipcountry`
-**Configuração:** `CLOUDFLARE_PROXY=true` no `.env` (habilita leitura do header)
-**Enum:** `app/Enums/BillingCountry` — `USD` (default) ou `BRL` (Brasil)
+Removida na F3 (header `cf-ipcountry`, `CLOUDFLARE_PROXY`, `BillingCountry`, middleware `SetHeaders`, rota `/debug-cf`). Não há precificação regional.
 
 ---
 
 ## Storage
 
-**Serviço:** AWS S3
-**Propósito:** Armazenamento de arquivos (configurado, uso específico não identificado)
-**Configuração:** `config/filesystems.php` — `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_DEFAULT_REGION`, `AWS_BUCKET`
+Removido na F5 (disco S3 e variáveis `AWS_*`). Apenas discos locais em `config/filesystems.php`.
+
+---
+
+## Zero telemetria (F5)
+
+Sem chamadas a serviços externos em runtime: removidos `laravel/nightwatch` e `resend/resend-laravel` (e o provider em `bootstrap/providers.php`), serviços postmark/ses/resend/slack, mailers postmark/resend/ses/failover/roundrobin, canais de log slack/papertrail, fila sqs e cache dynamodb. Mailer padrão: `log`. Variáveis `AWS_*`, `NIGHTWATCH_*`, `RESEND_*`, `POSTMARK_*`, `SLACK_*`, `PAPERTRAIL_*` removidas. Os defaults do framework Laravel continuam mesclados, porém inertes (não selecionados).
+
+Fontes self-hosted via `@fontsource` em `resources/css/app.css`. Garantias: `tests/Feature/Telemetry/` e check ZT-09 do `docker/smoke-test.sh`. A landing e o formulário `contact-us` foram removidos na F7.
 
 ---
 
@@ -109,39 +70,20 @@ BILLING_TEAM_BRL_PRICE=59.99
 
 ### Endpoints HTTP identificados (routes/web.php)
 
-**Landing:**
-- `GET /` — Página inicial
-- `GET /features`, `/pricing`, `/about`, `/terms`, `/policy`
+**Raiz e apoio (F7):**
+- `GET /` — redirect (sem nome) para `/dashboard`; visitantes sem sessão também vão para `/dashboard` (`redirectGuestsTo` em `bootstrap/app.php`)
+- `GET /support` (`support`) — página Apoiar (`resources/views/pages/⚡support/`); links vindos de `config('craftdb.support.*')` (env `CRAFTDB_SUPPORT_REPO_URL`, `_GITHUB_SPONSORS_URL`, `_KOFI_URL`, `_BUYMEACOFFEE_URL`, `_PIX_KEY`); só URLs http(s) são renderizadas, links não definidos ficam ocultos, chave Pix copiável, "em breve" quando nenhum está definido
+- `/features`, `/pricing`, `/about`, `/terms`, `/policy`, `/login`, `/register` → 404 (landing removida)
 
-**Dashboard (auth + verified):**
+**Dashboard (auth — usuário local automático):**
 - `GET /dashboard` — Lista de diagramas
-- `GET /my-favorites` — Diagramas favoritos
 
 **Diagrama:**
 - `GET /{team_id}/diagram/{diagram:slug}` — Editor de diagrama
 - `POST /{team_id}/diagram/{diagram:slug}/toggle-favorite` — JSON
-- `POST /{team_id}/diagram/{diagram:slug}/make-public` — JSON
-- `POST /{team_id}/diagram/{diagram:slug}/revoke-public` — JSON
 
-**Público (sem auth):**
-- `GET /diagram/public/{token}` — Visualização pública de diagrama
-
-**Billing:**
-- `GET /settings/billing/checkout/{plan}` — Redireciona para Stripe
-- `GET /settings/billing/portal` — Redireciona para portal Stripe
-- `GET /settings/billing/success` — Pós-checkout
-
-**Auth (Fortify + Social):**
-- Rotas padrão Fortify (login, register, forgot-password, verify-email)
-- `GET /auth/{provider}/redirect`, `GET /auth/{provider}/callback`
-
-**Convites de equipe** (`InvitationController`):
-- `POST /{team_id}/invite` — Envia convite por email
-- `GET /invite/accept/{token}` — Aceita convite (com ou sem auth)
-- `DELETE /invite/{invitation}` — Cancela convite
-
-**Administração:**
-- `GET /feedback` — Acesso super root apenas (middleware `super.root`)
+**Configurações (auth):**
+- `GET /settings/{profile,appearance,language,integrations}`, `/settings/workspaces` (`workspaces.index`: listar, criar, renomear, apagar e alternar workspace; rotas `team.*` e `settings/team*` removidas na F4)
 
 ---
 
@@ -150,7 +92,7 @@ BILLING_TEAM_BRL_PRICE=59.99
 **Sistema de filas:** Database driver (padrão Laravel)
 **Localização:** `app/Jobs/` (diretório existe, jobs específicos não mapeados em detalhe)
 **Tabela:** `jobs` no banco de dados
-**Uso identificado:** Notificações por email (convites de equipe, verificação de email)
+**Uso identificado:** Nenhum job de convite/verificação de e-mail (removidos na F2); fila permanece disponível (sem uso atual)
 
 ---
 
@@ -159,4 +101,4 @@ BILLING_TEAM_BRL_PRICE=59.99
 **Sistema:** Laravel Notifications
 **Localização:** `app/Notifications/`
 **Canal:** Email (driver configurável via `MAIL_*` no `.env`)
-**Uso:** Convites de equipe, verificação de email, reset de senha
+**Uso:** Sem notificações de convite, verificação ou reset de senha (removidas na F2); o formulário de contato foi removido na F7, sem e-mail de saída

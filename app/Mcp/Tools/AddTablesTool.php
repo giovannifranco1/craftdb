@@ -43,7 +43,7 @@ class AddTablesTool extends Tool
         ]);
 
         $diagram = Diagram::findOrFail($validated['diagram_id']);
-        McpAccess::assertDiagramAbility($request, $diagram, 'update');
+        McpAccess::assertDiagramAbility($diagram, 'update');
 
         $result = DB::transaction(function () use ($validated, $diagram) {
             $tableMap = [];

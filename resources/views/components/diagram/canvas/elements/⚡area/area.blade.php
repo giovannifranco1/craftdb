@@ -111,7 +111,7 @@
                             <span
                                 x-show="!isEventRename"
                                 @dblclick.stop="isEventRename = true"
-                                class="text-[10px] font-[Space Mono] font-semibold text-gray-700 dark:text-zinc-300 uppercase tracking-wide truncate"
+                                class="text-[10px] font-semibold text-gray-700 dark:text-zinc-300 uppercase tracking-wide truncate"
                             >{{ $area->name ?? 'Area name...' }}</span>
                         </flux:tooltip>
                     </div>

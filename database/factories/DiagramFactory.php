@@ -18,11 +18,12 @@ class DiagramFactory extends Factory
     public function definition(): array
     {
         $name = fake()->words(2, true);
-        $slug = str()->slug($name);
+        // Sufixo aleatorio: (team_id, slug) e unico e 2 palavras do lorem colidem.
+        $slug = str()->slug($name).'-'.str()->lower(str()->random(8));
 
         return [
             'team_id' => Team::factory(),
-            'name' => fake()->words(2, true),
+            'name' => $name,
             'style' => fake()->randomElement(['colorful', 'neutral']),
             'slug' => $slug,
             'description' => fake()->optional(0.7)->sentence(),

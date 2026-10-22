@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\Note as NoteModel;
-use App\Models\Team\Team;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
 use App\Livewire\CanvasComponent;
@@ -70,13 +69,6 @@ new class extends CanvasComponent {
     public function updateContent(): void
     {
         $this->authorizeDiagram('update');
-
-        $diagram = $this->note->diagram;
-
-        $currentTeam = Team::currentTeam();
-        if (!$currentTeam || $diagram?->team_id !== $currentTeam->getKey()) {
-            abort(403, 'Unauthorized access to diagram');
-        }
 
         $this->note->content = $this->content;
         $this->note->save();

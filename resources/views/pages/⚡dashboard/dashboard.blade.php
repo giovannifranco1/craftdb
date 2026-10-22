@@ -9,7 +9,7 @@
 >
     @if(!$this->team)
         <flux:callout color="amber" icon="exclamation-triangle" class="mb-5">
-            {{ __('You are not in any workspace. Create a team or ask to be invited to one.') }}
+            {{ __('You have no workspaces. Create one to get started.') }}
         </flux:callout>
     @endif
 

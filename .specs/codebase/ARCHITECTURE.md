@@ -8,10 +8,11 @@
 Request HTTP
     │
     ▼
-Middleware (auth, verified, role:viewer|editor|owner, super.root)
+Middleware (AuthenticateLocalUser → auth, throttle)
+    (MCP: POST /mcp/craftdb → EnsureLocalMcpOrigin + throttle:mcp, sem auth; McpAccess::user() = usuário local)
     │
     ├── Controllers (HTTP) ──▶ Views Blade
-    │       └── BillingController, DiagramController, AuthController
+    │       └── DiagramController
     │
     └── Livewire Components ──▶ Views Blade
             └── Actions ──▶ Models (Eloquent) ──▶ Database
@@ -27,11 +28,11 @@ Middleware (auth, verified, role:viewer|editor|owner, super.root)
 **Implementação:** Classes invocáveis com método `handle()` ou `__invoke()`
 **Subdiretórios:**
 - `app/Actions/Diagram/` — 13 operações:
-  - `CreateNewDiagram` — cria diagrama com validação de limites e parse de SQL/migrations
+  - `CreateNewDiagram` — cria diagrama com parse de SQL/migrations
   - `UpdateDiagram` — atualiza nome/slug do diagrama
   - `DeleteDiagram` — remove diagrama e dados relacionados
   - `ImportToExistingDiagram` — importa schema para diagrama existente
-  - `AddColumnToTable` — adiciona coluna validando limite do plano
+  - `AddColumnToTable` — adiciona coluna à tabela
   - `DeleteColumnToTable` — remove coluna
   - `UpdateTable` — atualiza propriedades de tabela
   - `DeleteTable` — remove tabela
@@ -39,11 +40,11 @@ Middleware (auth, verified, role:viewer|editor|owner, super.root)
   - `AddRelationship` — cria relacionamento genérico
   - `AddRelationshipWithExistingForeignKey` — relacionamento com FK existente
   - `AddRelationshipWithNewForeignKey` — relacionamento criando nova FK
-  - `AddMemberToTeam` — adiciona membro ao time
-- `app/Actions/Fortify/` — CreateNewUser, CreateUserFromOAuth, ResetUserPassword
+  - `ExportDiagramToJson`, `ExportDiagramToLaravelMigration`, `GenerateMigrationZip` — exportações
+- `app/Actions/Local/` — `EnsureLocalUser` (cria/recupera o usuário local e seu workspace, sem senha)
 - `app/Actions/Parse/` — 5 arquivos: `BaseSQLParse` (classe base), `ParseMySQLSchema`, `ParsePOstgreSQLSchema`, `ParseSQLiteSchema`, `ParseLaravelMigration`
-- `app/Actions/Team/` — Operações de equipe
-**Exemplo:** `app/Actions/Diagram/CreateNewDiagram.php` — valida nome, gera slug, faz parse de imports, verifica limites do plano
+- `app/Actions/Team/` — Workspaces: `CreateNewTeam`, `RenameTeam`, `DeleteTeam` (apaga os diagramas do workspace via `DeleteDiagram` em transação; recusa apagar o último)
+**Exemplo:** `app/Actions/Diagram/CreateNewDiagram.php` — valida nome, gera slug, faz parse de imports
 
 ### Livewire Components
 
@@ -61,7 +62,7 @@ Middleware (auth, verified, role:viewer|editor|owner, super.root)
 **Localização:** `app/Policies/`
 **Propósito:** Controle de acesso baseado em regras de negócio
 **Arquivos:** DiagramPolicy, TablePolicy, TeamPolicy
-**Uso:** Middleware `role:viewer|editor|owner` nas rotas de diagrama
+**Uso:** Autorização por posse do workspace (`ownsTeam`) em DiagramPolicy/TeamPolicy, `TableAccessible`, `Column::accessible` e `AddRelationship`; não há membros, papéis (roles) nem convites
 
 ### Observers (Side Effects)
 
@@ -76,12 +77,8 @@ Middleware (auth, verified, role:viewer|editor|owner, super.root)
 **Localização:** `app/Exceptions/`
 **Propósito:** Comunicar violações de regras de negócio de forma expressiva
 **Tipos:**
-- `DiagramLimitExceededException` — plano free atingiu limite de diagramas
-- `TableLimitExceededException` — diagrama atingiu limite de tabelas do plano
-- `TableColumnLimitExceededException` — tabela atingiu limite de colunas do plano
 - `AuthorizationDiagramException` — acesso não autorizado ao diagrama
-- `PlanFeatureException` — funcionalidade não disponível no plano atual
-- `EmailAlreadyRegisteredException` — email já cadastrado (OAuth com email existente)
+**Nota:** a F3 removeu as exceções de limite e de plano (`DiagramLimitExceeded`, `TableLimitExceeded`, `TableColumnLimitExceeded`, `PlanFeature`); não há limites nem gates premium.
 **Integração:** Capturadas em `BaseComponent.php` para feedback visual ao usuário
 
 ### Enums
@@ -89,10 +86,8 @@ Middleware (auth, verified, role:viewer|editor|owner, super.root)
 **Localização:** `app/Enums/`
 **Propósito:** Tipos com domínio fechado
 **Tipos:**
-- `Role` — Editor, Viewer (roles de equipe)
 - `ColumnType` — Tipos de dado de coluna (int, varchar, etc.)
 - `RelationshipType` — Tipos de relacionamento (FK patterns)
-- `BillingCountry` — USD (default) / BRL (Brasil) para precificação regional
 
 ## Fluxo de dados
 
@@ -101,41 +96,11 @@ Middleware (auth, verified, role:viewer|editor|owner, super.root)
 ```
 POST /dashboard (Livewire)
     → CreateNewDiagram::handle()
-        → Valida limites do plano (DiagramLimits::check())
         → Gera slug único
         → Se arquivo SQL: ParseMySQLSchema
         → Se migration Laravel: ParseLaravelMigration
         → Diagram::create() → tabelas, colunas, relacionamentos
         → Redireciona para /{team_id}/diagram/{slug}
-```
-
-### Fluxo de billing
-
-```
-GET /settings/billing/checkout/{plan}
-    → BillingController::checkout()
-        → Detecta país via cf-ipcountry header
-        → Seleciona Price ID (USD ou BRL)
-        → $user->newSubscription()->checkout()
-        → Redireciona para Stripe Checkout
-
-Stripe → POST /stripe/webhook
-    → Cashier processa eventos de subscription
-    → Atualiza status do plano no banco
-```
-
-### Compartilhamento público
-
-```
-POST /{team_id}/diagram/{slug}/make-public
-    → DiagramController::makePublic()
-        → Gera UUID token único
-        → Diagram::update([public_token => uuid])
-
-GET /diagram/public/{token}
-    → DiagramController::showPublic()
-        → Lookup via public_token (sem auth)
-        → Renderiza canvas em modo read-only
 ```
 
 ### Cache de diagrama
@@ -186,7 +151,7 @@ Detalhes completos em `.specs/codebase/CANVAS.md`
 **Configurações-chave:**
 - **Route model binding customizado:** `{diagram:slug}` com cache de 5min (prod) / 60s (local) — busca diagrama pelo slug com cache automático
 - **View namespacing:** registra `diagram::` como namespace de views para componentes Blade reutilizáveis
-- **Trusted proxies:** configura para ler IPs reais atrás do Cloudflare
+- **Trusted proxies:** configura para ler IPs reais atrás de proxy reverso
 
 ## Organização do código
 
@@ -194,7 +159,7 @@ Detalhes completos em `.specs/codebase/CANVAS.md`
 
 **Estrutura:**
 - `app/Models/` — por entidade (flat)
-- `app/Actions/` — por feature (Diagram/, Fortify/, Parse/, Team/)
+- `app/Actions/` — por feature (Diagram/, Local/, Parse/, Team/)
 - `app/Livewire/` — por componente com subpastas (Forms/, Data/, Contracts/)
 - `app/Http/Controllers/` — por área (Pages/, sub-controllers)
 - `app/Policies/` — por recurso protegido
@@ -202,6 +167,6 @@ Detalhes completos em `.specs/codebase/CANVAS.md`
 
 **Fronteiras de módulo:**
 - Diagrama é o domínio central (Diagram, Table, Column, Relationship, Area, Note)
-- Team é módulo independente com próprios models (Team, Membership, Role, Invitation)
-- Billing é camada de infraestrutura sobre Cashier/Stripe
-- Auth é delegado ao Fortify + Socialite (mínima customização)
+- Workspace (model `Team`) é módulo independente: sem membros (tabela `team_user`, `Membership` e `HasMembers` removidos na F4); `allTeams()` = workspaces do dono ordenados por nome; `firstTeam()` é o fallback. O middleware `EnsureValidCurrentTeam` volta para `firstTeam()` quando o workspace atual deixa de existir ("The current workspace no longer exists. Switched to :name."). Contagens de menu/dashboard são calculadas ao vivo (sem sessão/cache)
+- Sem billing, planos ou limites (removidos na F3): todas as funcionalidades estão sempre disponíveis
+- Usuário local: sem fluxo de login — o middleware `AuthenticateLocalUser` (primeiro do grupo `web`, com prioridade antes de `AuthenticatesRequests`) autentica o usuário configurado em `craftdb.local_user.email` uma vez por sessão, via `EnsureLocalUser`. `/` redireciona para `/dashboard` (rota sem nome) e visitantes sem sessão também (`redirectGuestsTo('/dashboard')`); `/login` e `/register` não existem mais (404). Página `/support` (Apoiar) lê só `config('craftdb.support.*')`

@@ -5,10 +5,6 @@ namespace App\Livewire;
 use App\Exceptions\AuthorizationDiagramException;
 use App\Models\Diagram;
 use App\Concerns\HandlesDiagramAuthAlert;
-use App\Exceptions\PlanFeatureException;
-use App\Exceptions\TableColumnLimitExceededException;
-use App\Exceptions\TableLimitExceededException;
-use App\Support\DiagramLimits;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Computed;
@@ -35,21 +31,6 @@ abstract class CanvasComponent extends BaseComponent
             $stopPropagation();
             $this->alert(message: $e->getMessage(), type: 'error');
         }
-
-        if ($e instanceof TableLimitExceededException) {
-            $stopPropagation();
-            $this->alert(message: $e->getMessage(), type: 'error');
-        }
-
-        if ($e instanceof TableColumnLimitExceededException) {
-            $stopPropagation();
-            $this->alert(message: $e->getMessage(), type: 'error');
-        }
-
-        if ($e instanceof PlanFeatureException) {
-            $stopPropagation();
-            $this->alert(message: $e->getMessage(), type: 'error');
-        }
     }
 
     #[Computed]
@@ -57,18 +38,7 @@ abstract class CanvasComponent extends BaseComponent
     {
         return Cache::store('array')->rememberForever(
             "diagram:{$this->diagramId}",
-            fn() => Diagram::query()->with(['team.owner'])->findOrFail($this->diagramId)
+            fn() => Diagram::query()->with('team')->findOrFail($this->diagramId)
         );
-    }
-
-    public function validateTableLimit(): void
-    {
-        $owner = $this->diagram->team?->owner;
-        abort_if($owner === null, 403, 'Team owner not found');
-        $limits = DiagramLimits::forUser($owner);
-
-        if ($this->diagram->tables()->count() >= $limits['table_limit']) {
-            throw new TableLimitExceededException($this->diagram->tables()->count());
-        }
     }
 }

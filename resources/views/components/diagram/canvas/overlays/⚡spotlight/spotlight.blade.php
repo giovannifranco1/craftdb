@@ -35,7 +35,7 @@
                                     <div class="flex items-center gap-3 mt-1">
                                         <span class="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
                                             <flux:icon.layout-grid class="size-3" />
-                                            {{ $item->columns_count ?? 0 }} {{ ($item->columns_count ?? 0) === 1 ? 'coluna' : 'colunas' }}
+                                            {{ $item->columns_count ?? 0 }} {{ ($item->columns_count ?? 0) === 1 ? __('column') : __('columns') }}
                                         </span>
                                     </div>
                                 </div>
@@ -57,10 +57,10 @@
                         </div>
                         <div>
                             <p class="text-sm font-medium text-gray-900 dark:text-gray-100">
-                                Nenhuma tabela encontrada
+                                {{ __('No tables found') }}
                             </p>
                             <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                                Tente buscar por outro termo
+                                {{ __('Try a different search term') }}
                             </p>
                         </div>
                     </div>
@@ -73,10 +73,10 @@
                         </div>
                         <div>
                             <p class="text-sm font-medium text-gray-900 dark:text-gray-100">
-                                Busque por tabelas
+                                {{ __('Search tables') }}
                             </p>
                             <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                                Digite o nome de uma tabela para começar
+                                {{ __('Type a table name to get started') }}
                             </p>
                         </div>
                     </div>
