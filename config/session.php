@@ -14,7 +14,7 @@ return [
     | persist session data. Database storage is a great default choice.
     |
     | Supported: "file", "cookie", "database", "apc",
-    |            "memcached", "redis", "dynamodb", "array"
+    |            "memcached", "redis", "array"
     |
     */
 
@@ -97,7 +97,7 @@ return [
     | define the cache store which should be used to store the session data
     | between requests. This must match one of your defined cache stores.
     |
-    | Affects: "apc", "dynamodb", "memcached", "redis"
+    | Affects: "apc", "memcached", "redis"
     |
     */
 

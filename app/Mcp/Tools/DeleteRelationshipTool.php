@@ -25,7 +25,7 @@ class DeleteRelationshipTool extends Tool
 
         $relationship = Relationship::with('fromTable')->findOrFail($validated['relationship_id']);
         if ($relationship->fromTable) {
-            McpAccess::assertDiagramAbilityForTable($request, $relationship->fromTable, 'update');
+            McpAccess::assertDiagramAbilityForTable($relationship->fromTable, 'update');
         }
 
         $relationship->delete();

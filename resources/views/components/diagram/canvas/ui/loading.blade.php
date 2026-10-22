@@ -6,7 +6,7 @@
         </div>
 
         <div class="flex flex-col items-center gap-3">
-            <span class="text-base font-medium text-gray-200">Carregando tabelas</span>
+            <span class="text-base font-medium text-gray-200">{{ __('Loading tables') }}</span>
             <div class="flex gap-1.5">
                 <span class="w-1.5 h-1.5 bg-gray-300 rounded-full animate-bounce" style="animation-delay: 0s;"></span>
                 <span class="w-1.5 h-1.5 bg-gray-300 rounded-full animate-bounce" style="animation-delay: 0.2s;"></span>

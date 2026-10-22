@@ -1,73 +1,59 @@
 <?php
 
+use App\Mcp\Servers\CraftdbServer;
+use App\Mcp\Tools\GetDiagramTool;
 use App\Mcp\Tools\ListDiagramsTool;
+use App\Mcp\Tools\ListTeamsTool;
 use App\Models\Diagram;
 use App\Models\Team\Team;
 use App\Models\User;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Gate;
-use Laravel\Cashier\Subscription;
 use Laravel\Mcp\Request;
+use Laravel\Mcp\Server\Attributes\Description;
+use Laravel\Mcp\Server\Attributes\Instructions;
 
 beforeEach(function (): void {
-    Artisan::call('passport:client', [
-        '--personal' => true,
-        '--name' => 'Test MCP',
-        '--provider' => 'users',
-    ]);
+    $this->owner = User::factory()->create();
+    $this->team = Team::factory()->create(['user_id' => $this->owner->id]);
 });
 
 test('gate createDiagramOnTeam allows team owner', function (): void {
-    $user = User::factory()->create();
-    $team = Team::factory()->create(['user_id' => $user->id]);
-
-    expect(Gate::forUser($user)->allows('createDiagramOnTeam', $team))->toBeTrue();
+    expect(Gate::forUser($this->owner)->allows('createDiagramOnTeam', $this->team))->toBeTrue();
 });
 
-test('mcp list_diagrams returns no diagrams for free api user on own team', function (): void {
-    $owner = User::factory()->create();
-    $team = Team::factory()->create(['user_id' => $owner->id]);
-    Diagram::factory()->create(['team_id' => $team->id]);
+test('FREE20 mcp list_diagrams returns diagrams for the local user', function (): void {
+    Diagram::factory()->count(2)->create(['team_id' => $this->team->id]);
 
-    $this->actingAs($owner);
+    $this->actingAs($this->owner);
 
     $response = (new ListDiagramsTool)->handle(new Request([]));
     $json = json_decode((string) $response->content(), true);
 
-    expect($json)->toBeArray()->and($json)->toHaveCount(0);
+    expect($json)->toBeArray()->and($json)->toHaveCount(2);
 });
 
-test('mcp list_diagrams returns diagrams when owner has pro subscription', function (): void {
-    $owner = User::factory()->create();
-    $team = Team::factory()->create(['user_id' => $owner->id]);
-    Diagram::factory()->create(['team_id' => $team->id]);
+test('FREE19 mcp get_diagram on own team diagram works for the local user', function (): void {
+    $diagram = Diagram::factory()->create(['team_id' => $this->team->id]);
 
-    Subscription::factory()
-        ->for($owner)
-        ->withPrice(config('billing.plans.pro_usd.price_id'))
-        ->create([
-            'type' => config('billing.subscription_name', 'default'),
-        ]);
+    $this->actingAs($this->owner);
 
-    User::clearSubscriptionCaches();
+    $response = (new GetDiagramTool)->handle(new Request(['diagram_id' => $diagram->id]));
 
-    $this->actingAs($owner);
-
-    $response = (new ListDiagramsTool)->handle(new Request([]));
-    $json = json_decode((string) $response->content(), true);
-
-    expect($json)->toHaveCount(1);
+    expect($response->isError())->toBeFalse();
+    expect((string) $response->content())->toContain($diagram->name);
 });
 
-test('mcp endpoint rejects unauthenticated request', function (): void {
-    $this->postJson('/mcp/craftdb', [
-        'jsonrpc' => '2.0',
-        'id' => 1,
-        'method' => 'initialize',
-        'params' => [
-            'protocolVersion' => '2025-11-25',
-            'capabilities' => [],
-            'clientInfo' => ['name' => 'test', 'version' => '1.0'],
-        ],
-    ])->assertUnauthorized();
+test('FREE21 mcp list_teams and server instructions mention no plans', function (): void {
+    $this->actingAs($this->owner);
+
+    $text = (string) (new ListTeamsTool)->handle(new Request([]))->content();
+    $instructions = (new ReflectionClass(CraftdbServer::class))->getAttributes(Instructions::class)[0]->newInstance()->value;
+    $description = (new ReflectionClass(ListTeamsTool::class))->getAttributes(Description::class)[0]->newInstance()->value;
+
+    foreach ([$text, $instructions, $description] as $content) {
+        foreach (['Free', 'Pro', 'Team plan', 'upgrade', '/settings/billing'] as $word) {
+            expect($content)->not->toContain($word);
+        }
+    }
+    expect($text)->toContain('team_id');
 });

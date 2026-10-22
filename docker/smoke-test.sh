@@ -29,17 +29,72 @@ docker compose up -d --build
 wait_healthy
 pass "DOCK-18 app healthy"
 
-html="$(curl -s -w '\n%{http_code}' "$URL/login")"
+html="$(curl -s -w '\n%{http_code}' "$URL/dashboard")"
 code="${html##*$'\n'}"
-[ "$code" = "200" ] && pass "DOCK-01 /login 200" || fail "DOCK-01 /login retornou $code"
+[ "$code" = "200" ] && pass "NOAUTH-05 /dashboard 200 sem cookie" || fail "NOAUTH-05 /dashboard retornou $code"
+
+root="$(curl -s -o /dev/null -w '%{http_code} %{redirect_url}' "$URL/")"
+[ "$root" = "302 http://localhost:${PORT}/dashboard" ] && pass "NOAUTH-04 / redireciona para /dashboard" || fail "NOAUTH-04 / retornou '$root'"
 
 grep -q "http://localhost:${PORT}/build/" <<<"$html" \
     && pass "DOCK-01 assets em http:// (APP_FORCE_HTTPS=false)" \
     || fail "DOCK-01 assets não usam http://localhost:${PORT}/build/"
 
+ws_html="$(curl -s "$URL/settings/workspaces")"
+check_no_external() {
+    local name="$1" body="$2"
+    if grep -qiE 'fonts\.googleapis|fonts\.gstatic|goadopt|craftdb\.app' <<<"$body"; then
+        fail "ZT-09 ${name} referencia host externo (fonts/goadopt/craftdb.app)"
+    else
+        pass "ZT-09 ${name} sem hosts externos"
+    fi
+}
+check_no_external /dashboard "$html"
+check_no_external /settings/workspaces "$ws_html"
+
+support_code="$(curl -s -o /dev/null -w '%{http_code}' "$URL/support")"
+[ "$support_code" = "200" ] && pass "LP-15 /support retorna 200" || fail "LP-15 /support retornou '$support_code'"
+check_no_external /support "$(curl -s "$URL/support")"
+features_code="$(curl -s -o /dev/null -w '%{http_code}' "$URL/features")"
+[ "$features_code" = "404" ] && pass "LP-15 /features retorna 404" || fail "LP-15 /features retornou '$features_code'"
+
+css_path="$(grep -oE '/build/assets/[^"'"'"' )]+\.css' <<<"$html" | head -n1 || true)"
+[ -n "$css_path" ] || fail "ZT-09 nenhum CSS /build/assets/*.css no HTML do dashboard"
+css_body="$(curl -sf "$URL$css_path" || true)"
+grep -q '@font-face' <<<"$css_body" \
+    && pass "ZT-09 CSS local $css_path 200 com @font-face" \
+    || fail "ZT-09 CSS $css_path indisponível ou sem @font-face"
+
 logs="$(docker compose logs app)"
-grep -q "local@craftdb.local" <<<"$logs" && grep -q "Senha:  craftdb" <<<"$logs" \
-    && pass "DOCK-07 credenciais no log" || fail "DOCK-07 credenciais ausentes no log"
+grep -q "local@craftdb.local" <<<"$logs" && grep -q "URL:" <<<"$logs" && ! grep -q "Senha" <<<"$logs" \
+    && pass "DOCK-07 usuário local e URL no log, sem senha" || fail "DOCK-07 log incorreto (usuário/URL ausentes ou senha presente)"
+
+mcp_post() {
+    # $1 = payload JSON; demais args = headers extras (-H ...). Imprime headers, linha em branco e corpo.
+    local payload="$1"; shift
+    curl -s -i -X POST "$URL/mcp/craftdb" \
+        -H 'Content-Type: application/json' -H 'Accept: application/json, text/event-stream' \
+        "$@" -d "$payload"
+}
+init_payload='{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-11-25","capabilities":{},"clientInfo":{"name":"smoke","version":"1.0"}}}'
+mcp_init="$(mcp_post "$init_payload")"
+mcp_code="$(head -n1 <<<"$mcp_init" | awk '{print $2}')"
+[ "$mcp_code" = "200" ] && pass "MCP-14 initialize em /mcp/craftdb 200" || fail "MCP-14 initialize retornou '$mcp_code'"
+
+session_id="$(grep -i '^mcp-session-id:' <<<"$mcp_init" | head -n1 | cut -d' ' -f2- | tr -d '\r\n ' || true)"
+sess_args=()
+[ -n "$session_id" ] && sess_args=(-H "Mcp-Session-Id: ${session_id}")
+call_payload='{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"list_teams","arguments":{}}}'
+mcp_teams="$(mcp_post "$call_payload" ${sess_args[@]+"${sess_args[@]}"})"
+grep -q "Local Workspace" <<<"$mcp_teams" \
+    && pass "MCP-14 tools/call list_teams retorna Local Workspace" \
+    || fail "MCP-14 list_teams sem 'Local Workspace': $mcp_teams"
+
+mcp_evil="$(mcp_post "$init_payload" -H 'Origin: http://evil.example' | head -n1 | awk '{print $2}')"
+[ "$mcp_evil" = "403" ] && pass "MCP-14 Origin externo bloqueado (403)" || fail "MCP-14 Origin externo retornou '$mcp_evil'"
+
+route_cache="$(docker compose exec -T app sh -c 'ls bootstrap/cache/routes-*.php' 2>/dev/null || true)"
+[ -n "$route_cache" ] && pass "MCP-12 rotas cacheadas no boot ($route_cache)" || fail "MCP-12 cache de rotas ausente"
 
 status_out="$(docker compose exec -T app php artisan migrate:status --no-ansi)"
 grep -q "Pending" <<<"$status_out" \

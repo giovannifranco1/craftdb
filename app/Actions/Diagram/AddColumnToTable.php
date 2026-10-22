@@ -2,10 +2,8 @@
 
 namespace App\Actions\Diagram;
 
-use App\Exceptions\TableColumnLimitExceededException;
 use App\Models\Column;
 use App\Models\Table;
-use App\Support\DiagramLimits;
 use App\Support\Helpers;
 use Illuminate\Support\Facades\DB;
 
@@ -28,16 +26,6 @@ class AddColumnToTable
     {
         return DB::transaction(function () use ($table): Column {
             $table->lockForUpdate();
-
-            $owner = $table->diagram?->team?->owner;
-            abort_if($owner === null, 403, 'Team owner not found');
-            $limits = DiagramLimits::forUser($owner);
-
-            $currentCount = $table->columns()->count();
-
-            if ($currentCount >= $limits['table_columns_limit']) {
-                throw new TableColumnLimitExceededException($currentCount);
-            }
 
             $maxOrder = $table->columns()->max('order');
             $newOrder = Helpers::calculateNextOrder($maxOrder);

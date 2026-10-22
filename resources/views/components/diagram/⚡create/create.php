@@ -2,7 +2,6 @@
 
 use App\Actions\Diagram\CreateNewDiagram;
 use App\Livewire\Forms\Diagram\ImportForm;
-use App\Models\Team\Team;
 use App\Rules\Diagram\ImportValidFileType;
 use Livewire\Attributes\Transition;
 use Livewire\Attributes\Validate;
@@ -113,18 +112,14 @@ new class extends BaseComponent {
     {
         $validatedData = $this->validate();
 
-        Auth::user()?->validateDiagramLimit();
-
         $diagram = $action->exec($validatedData);
 
         $this->modal('diagram-create')->close();
 
         session()->flash('message', __("Diagram created successfully."));
-        session()->put('diagrams_count', session()->get('diagrams_count') + 1);
 
-        $currentTeam = Team::currentTeam();
         $this->redirect(route('diagram.show', [
-            $currentTeam?->getKey(),
+            $diagram->team_id,
             $diagram->slug,
         ]));
     }

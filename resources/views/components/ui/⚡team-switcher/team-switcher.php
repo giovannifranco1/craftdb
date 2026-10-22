@@ -2,9 +2,9 @@
 
 use App\Models\Team\Team;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Collection;
 use App\Livewire\BaseComponent;
-use App\Models\Diagram;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Computed;
 
 new class extends BaseComponent {
@@ -14,44 +14,31 @@ new class extends BaseComponent {
         /** @var User */
         $user = Auth::user();
 
-        $ownedTeams = $user->ownedTeams()->pluck('team.id');
-        $memberTeams = $user->teams()->pluck('team.id');
-        $allTeamIds = $ownedTeams->merge($memberTeams)->unique();
+        $team = $user->ownedTeams()->find($teamId);
 
-        if (!$allTeamIds->contains($teamId)) {
-            $this->dispatch('alert', message: __('You do not have access to this team.'), type: 'error');
+        if (! $team) {
+            $this->dispatch('alert', message: __('You do not have access to this workspace.'), type: 'error');
             return;
         }
 
-        $team = Team::find($teamId);
+        session(['current_team' => $team]);
 
-        if ($team) {
-            session(['current_team' => $team]);
-            session(['diagrams_count' => Cache::remember(
-                "diagrams_count_{$teamId}",
-                now()->addMinutes(5),
-                fn() => Diagram::query()->where('team_id', $teamId)->count()
-            )]);
+        $this->dispatch('alert', message: __('Switched to workspace: ') . $team->name);
+        $this->redirect(route('dashboard'), navigate: true);
+    }
 
-            $this->dispatch('alert', message: __('Switched to team: ') . $team->name);
-            $this->redirect(route('dashboard'), navigate: true);
-        }
+    #[Computed]
+    public function currentTeam(): ?Team
+    {
+        return Team::currentTeam();
     }
 
     /**
-     * @return Collection<int,Team>
-    */
+     * @return Collection<int, Team>
+     */
     #[Computed]
     public function getAllTeams(): Collection
     {
-        /** @var User */
-        $user = Auth::user();
-
-        $ownedTeams = $user->ownedTeams()->get();
-        $memberTeams = $user->teams()->get();
-        $allTeams = $ownedTeams->merge($memberTeams)->unique('id')->sortBy('name');
-
-        /** @var Collection<int, Team> $allTeams */
-        return $allTeams;
+        return Auth::user()->allTeams();
     }
 };

@@ -4,12 +4,9 @@ namespace App\Actions\Diagram;
 
 use App\Actions\Parse\ParseLaravelMigration;
 use App\Actions\Parse\ParseMySQLSchema;
-use App\Exceptions\TableLimitExceededException;
 use App\Models\Column;
 use App\Models\Diagram;
-use App\Models\User;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
@@ -28,33 +25,16 @@ class ImportToExistingDiagram
      */
     public function exec(Diagram $diagram, array $files, string $type): void
     {
-        $user = Auth::user();
-        if (! $user instanceof User) {
-            throw ValidationException::withMessages([
-                'importForm.file' => __('You must be logged in to import.'),
-            ]);
-        }
-
-        if (! $user->hasDiagramPremiumAccess($diagram)) {
-            throw ValidationException::withMessages([
-                'importForm.file' => __('SQL and migration import are available on the Pro plan or higher.'),
-            ]);
-        }
-
         $this->_validate($diagram, $files, $type);
 
-        try {
-            match ($type) {
-                'sql' => $this->_importSql($files, $diagram),
-                'migration' => $this->_parseMigrationFile($files, $diagram),
-                default => throw ValidationException::withMessages(['importForm.type' => __('Invalid import type.')]),
-            };
+        match ($type) {
+            'sql' => $this->_importSql($files, $diagram),
+            'migration' => $this->_parseMigrationFile($files, $diagram),
+            default => throw ValidationException::withMessages(['importForm.type' => __('Invalid import type.')]),
+        };
 
-            $diagram->imported_at = now();
-            $diagram->save();
-        } catch (TableLimitExceededException $e) {
-            throw ValidationException::withMessages(['importForm.file' => __('Table limit exceeded with :totalTables tables', ['totalTables' => $e->getTotalTables()])]);
-        }
+        $diagram->imported_at = now();
+        $diagram->save();
     }
 
     /**

@@ -4,7 +4,7 @@
 
 **Arquivos PHP:**
 - PascalCase para todas as classes
-- Exemplos: `CreateNewDiagram.php`, `DiagramController.php`, `TableAccessible.php`, `BillingCountry.php`
+- Exemplos: `CreateNewDiagram.php`, `DiagramController.php`, `TableAccessible.php`
 
 **Arquivos Blade:**
 - kebab-case para views e componentes
@@ -16,40 +16,35 @@
 
 **Funções/Métodos PHP:**
 - camelCase
-- Verbos descritivos: `makePublic()`, `revokePublic()`, `toggleFavorite()`, `hasReachedDiagramLimit()`
-- Métodos de verificação de estado: `isPro()`, `isTeamPlan()`, `isEditor()`, `isViewer()`
+- Verbos descritivos: `toggleFavorite()`, `exportJson()`
+- Métodos de verificação de estado: `isFavorite()`, `ownsTeam()`
 
 **Variáveis:**
 - camelCase em PHP
 - snake_case em colunas de banco de dados
-- Exemplos DB: `public_token`, `team_id`, `github_id`, `created_at`
+- Exemplos DB: `team_id`, `diagram_id`, `created_at`
+- Termo de UI: "Workspace"; `Team`/`team`/`team_id` é o nome interno (renomeação interna fica para o futuro). Textos visíveis (lang/*.json) usam "workspace", nunca "team/equipe/time"
 
 **Rotas:**
 - kebab-case nos segments de URL
-- Nomeadas com ponto como separador: `diagram.show`, `billing.checkout`
+- Nomeadas com ponto como separador: `diagram.show`, `diagram.export-json`
 - Pattern: `/{team_id}/diagram/{diagram:slug}`
 
 **Enums:**
-- PascalCase para casos: `Role::Editor`, `Role::Viewer`
-- `BillingCountry::USD`, `BillingCountry::BRL`
+- UPPER_SNAKE_CASE para casos: `ColumnType::VARCHAR`, `RelationshipType::ONE_TO_MANY`
 
 ## Organização de arquivos
 
 **Estrutura interna de um Controller:**
 ```php
-class BillingController extends Controller
+class DiagramController extends Controller
 {
     // Métodos públicos de ação diretos
     // Sem injeção de repositório — acessa modelo diretamente
-    // Redireciona para Stripe ou retorna View
+    // Delega regras de negócio para Actions; retorna View ou resposta JSON
 
-    public function checkout(Request $request, string $plan): RedirectResponse
-    {
-        // Lógica de negócio inline ou delegada para Cashier
-    }
-
-    public function portal(Request $request): RedirectResponse {}
-    public function success(Request $request): RedirectResponse {}
+    public function show(Request $request, string $team_id, Diagram $diagram): View {}
+    public function toggleFavorite(Request $request, string $team_id, Diagram $diagram): JsonResponse {}
 }
 ```
 
@@ -68,8 +63,7 @@ class Diagram extends Model
     public function viewers(): BelongsToMany {}
 
     // Métodos de domínio
-    public function makePublic(): void {}
-    public function makePrivate(): void {}
+    public function isFavorite(): bool {}
 }
 ```
 
@@ -79,7 +73,6 @@ class CreateNewDiagram
 {
     public function handle(User $user, array $data): Diagram
     {
-        // Validação de limites
         // Criação da entidade
         // Retorna entidade criada
     }
@@ -88,20 +81,20 @@ class CreateNewDiagram
 
 **Livewire Component:**
 ```php
-class MyFavorites extends Component
+class Workspaces extends Component
 {
     // Propriedades públicas reativas
-    public $diagrams;
+    public string $createName = '';
 
     // Hooks de lifecycle
     public function mount(): void {}
 
     // Métodos de ação chamados via wire:click
-    public function toggleFavorite(int $id): void {}
+    public function startRename(int $id): void {}
 
     public function render(): View
     {
-        return view('livewire.my-favorites');
+        return view('livewire.workspaces');
     }
 }
 ```
@@ -110,16 +103,18 @@ class MyFavorites extends Component
 
 **Abordagem:** PHP 8.2 native types — sem PHPDoc salvo onde necessário para generics/complex types
 - Return types explícitos: `public function handle(): Diagram`
-- Type hints em parâmetros: `public function checkout(Request $request, string $plan)`
-- Nullable types com `?`: `?string $public_token`
+- Type hints em parâmetros: `public function show(Request $request, string $team_id)`
+- Nullable types com `?`: `?string $description`
 - Enums para domínio fechado ao invés de constantes
 
 ## Tratamento de erros
 
+**MCP:** tools obtêm o usuário via `McpAccess::user()` (nunca `auth()` direto) e sempre validam posse; violações lançam `AuthorizationException`.
+
 **Padrão observado:** Exceções de domínio customizadas capturadas em `BaseComponent`
 ```php
 // Action lança exceção de domínio
-throw new TableLimitExceededException($limit);
+throw new AuthorizationDiagramException();
 
 // BaseComponent captura e converte para feedback do usuário
 protected function handleDomainException(DomainException $e): void
@@ -178,5 +173,5 @@ public static function fromModel(Model $model): self { ... }
 
 ## Scopes e Concerns
 
-**Global Scopes:** Em `app/Models/Scopes/` — ex: `TableAccessible` para filtrar por acesso de equipe
-**Concerns (Traits):** Em `app/Models/Concerns/` — ex: `HasTeams` para helpers de relacionamento com equipes
+**Global Scopes:** Em `app/Models/Scopes/` — ex: `TableAccessible` para filtrar por posse do workspace
+**Concerns (Traits):** Em `app/Models/Concerns/` — ex: `HasTeams` para helpers de workspaces (`ownsTeam`, `ownedTeams`, `allTeams`, `firstTeam`)

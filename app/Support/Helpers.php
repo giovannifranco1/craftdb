@@ -2,7 +2,6 @@
 
 namespace App\Support;
 
-use App\Enums\BillingCountry;
 use App\Livewire\Data\ColumnData;
 use App\Models\Column;
 use App\Models\Diagram;
@@ -11,21 +10,6 @@ use Illuminate\Support\Facades\Blade;
 
 class Helpers
 {
-    /**
-     * Format a price amount for display.
-     * Brazilian style (comma decimals) when BRL is used or app locale is Portuguese.
-     */
-    public static function formatPriceAmount(float|int $amount, int $decimals = 2, ?BillingCountry $billingCountry = null): string
-    {
-        $brazilianStyle = $billingCountry === BillingCountry::BRL;
-
-        if ($brazilianStyle) {
-            return number_format((float) $amount, $decimals, ',', '.');
-        }
-
-        return number_format((float) $amount, $decimals, '.', ',');
-    }
-
     public static function getIconDiamondByTypeColumn(Column|ColumnData $column): Htmlable|string
     {
         if ($column->is_primary) {

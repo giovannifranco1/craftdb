@@ -8,62 +8,52 @@
 craftdb/
 ├── app/
 │   ├── Actions/
-│   │   ├── Diagram/         # 13 operações: CreateNewDiagram, UpdateDiagram, DeleteDiagram,
+│   │   ├── Diagram/         # 15 operações: CreateNewDiagram, UpdateDiagram, DeleteDiagram,
 │   │   │                    #   ImportToExistingDiagram, AddColumnToTable, DeleteColumnToTable,
 │   │   │                    #   UpdateTable, DeleteTable, UpdateResizePositionTable,
 │   │   │                    #   AddRelationship, AddRelationshipWithExistingForeignKey,
-│   │   │                    #   AddRelationshipWithNewForeignKey, AddMemberToTeam
-│   │   ├── Fortify/         # Auth: CreateNewUser, CreateUserFromOAuth, ResetUserPassword
+│   │   │                    #   AddRelationshipWithNewForeignKey, ExportDiagramToJson,
+│   │   │                    #   ExportDiagramToLaravelMigration, GenerateMigrationZip
+│   │   ├── Local/           # EnsureLocalUser (usuário local sem senha)
 │   │   ├── Parse/           # BaseSQLParse (base), ParseMySQLSchema, ParsePOstgreSQLSchema,
 │   │   │                    #   ParseSQLiteSchema, ParseLaravelMigration
-│   │   └── Team/            # Operações de equipe
+│   │   └── Team/            # Workspaces: CreateNewTeam, RenameTeam, DeleteTeam
 │   ├── Console/Commands/
-│   ├── Enums/               # Role, ColumnType, RelationshipType, BillingCountry
-│   ├── Exceptions/          # DiagramLimitExceededException, TableLimitExceededException,
-│   │                        #   TableColumnLimitExceededException, AuthorizationDiagramException,
-│   │                        #   PlanFeatureException, EmailAlreadyRegisteredException
+│   ├── Enums/               # ColumnType, RelationshipType
+│   ├── Exceptions/          # AuthorizationDiagramException
 │   ├── Http/
 │   │   ├── Controllers/
-│   │   │   ├── Pages/       # DiagramController, LandingPageController
-│   │   │   ├── BillingController.php
-│   │   │   ├── AuthController.php
-│   │   │   ├── InvitationController.php
-│   │   │   └── FeedbackController.php
+│   │   │   └── Pages/       # DiagramController
 │   │   └── Middleware/
 │   ├── Listeners/
 │   ├── Livewire/
 │   │   ├── BaseComponent.php     # Base abstrata: handler global de exceções de domínio
 │   │   ├── CanvasComponent.php   # Base abstrata: operações do canvas interativo
-│   │   ├── MyFavorites.php       # Componente: lista de diagramas favoritos
 │   │   ├── Forms/Diagram/        # ColumnForm.php, ImportForm.php (Livewire Form Objects)
 │   │   ├── Data/                 # TableData.php, ColumnData.php (implementam Wireable)
-│   │   ├── Actions/              # Logout.php (Livewire action)
-│   │   └── Contracts/            # PublicCanvas.php (interface para canvas read-only)
+│   │   └── Contracts/            # (vazio após a F3)
 │   ├── Models/
-│   │   ├── Team/            # Team, Membership, Role, Invitation
+│   │   ├── Team/            # Team (Workspace na UI)
 │   │   ├── Scopes/          # TableAccessible
-│   │   └── Concerns/        # HasTeams trait
+│   │   └── Concerns/        # HasTeams trait (ownedTeams, allTeams, firstTeam, ownsTeam)
 │   ├── Notifications/
 │   ├── Observers/           # DiagramObserver, TableObserver
 │   ├── Policies/            # DiagramPolicy, TablePolicy, TeamPolicy
 │   ├── Providers/
 │   ├── Rules/Diagram/
-│   ├── Support/             # DiagramLimits
+│   ├── Support/             # Helpers
 │   └── View/Components/
 │       ├── Diagram/Canvas/
 │       └── Layouts/
 ├── config/
-│   ├── billing.php          # Planos, preços, Stripe Price IDs
-│   ├── diagram.php          # Limites por plano (free/pro/team)
-│   └── teams.php            # Configuração de equipes e roles
+│   └── craftdb.php          # Usuário local + APP_FORCE_HTTPS
 ├── database/
-│   ├── migrations/          # 26 migrations
+│   ├── migrations/          # 36 migrations
 │   ├── factories/
 │   └── seeders/
 ├── docs/                    # Documentação técnica existente
 │   ├── DIAGRAM_CACHING.md
-│   ├── PUBLIC_SHARING.md
-│   └── TEAM_MANAGEMENT.md
+│   └── WORKSPACES.md        # Workspaces locais
 ├── lang/                    # Internacionalização
 ├── public/
 ├── resources/
@@ -84,9 +74,9 @@ craftdb/
 │   │           ├── _foreign-keys-graph.js  # foreignKeysGraph — grafo D3 de FK por tabela
 │   │           └── _diagram-graph.js       # grafo D3 completo do diagrama
 │   └── views/
-│       ├── components/      # Blade components (auth/, diagram/, landing-page/, layouts/, settings/, ui/)
+│       ├── components/      # Blade components (auth/, diagram/, layouts/, settings/, ui/)
 │       ├── livewire/        # Views de componentes Livewire
-│       └── pages/           # Views de páginas (landing, dashboard, etc.)
+│       └── pages/           # Views de páginas (dashboard, `⚡support/` — página Apoiar, etc.)
 ├── routes/
 │   └── web.php              # Único arquivo de rotas
 ├── storage/
@@ -100,7 +90,6 @@ craftdb/
 ├── composer.json
 ├── package.json
 ├── phpunit.xml
-├── tailwind.config.js
 └── vite.config.js
 ```
 
@@ -119,35 +108,27 @@ craftdb/
 **Arquivos-chave:**
 - `app/Actions/Diagram/CreateNewDiagram.php` — entrada principal para novos diagramas
 - `app/Actions/Diagram/AddColumnToTable.php`, `AddRelationship.php`
-- `app/Support/DiagramLimits.php` — calcula limites por plano
 
-### Equipes
+### Workspaces (Team)
 
-**Propósito:** Colaboração multi-usuário em diagramas
+**Propósito:** Agrupar diagramas do usuário local em workspaces (UI "Workspace"; model `Team`, tabela `team`, `team_id` são o nome interno). Sem membros, convites ou papéis
 **Localização:**
-- Modelos: `app/Models/Team/` (Team, Membership, Role, Invitation)
+- Modelo: `app/Models/Team/Team.php` (`owner()`)
 - Concern: `app/Models/Concerns/HasTeams.php`
-- Actions: `app/Actions/Team/`
+- Página Livewire: `resources/views/components/settings/⚡workspaces.blade.php` (`settings/workspaces`, rota `workspaces.index`)
+- Switcher: `resources/views/components/ui/⚡team-switcher/`
+- Actions: `app/Actions/Team/` (`CreateNewTeam`, `RenameTeam`, `DeleteTeam`)
 - Policy: `app/Policies/TeamPolicy.php`
-- Config: `config/teams.php`
 
-### Autenticação
+### Usuário local
 
-**Propósito:** Login, registro, OAuth, 2FA
+**Propósito:** Usuário único implícito (sem login, registro ou senha)
 **Localização:**
-- Actions: `app/Actions/Fortify/` (CreateNewUser, CreateUserFromOAuth, ResetUserPassword)
-- Controller: `app/Http/Controllers/AuthController.php`
-- Provider: `app/Providers/FortifyServiceProvider.php`
-- Views: `resources/views/components/auth/`
-
-### Billing
-
-**Propósito:** Assinaturas, planos, pagamentos Stripe
-**Localização:**
-- Controller: `app/Http/Controllers/BillingController.php`
-- Config: `config/billing.php`
-- Enum: `app/Enums/BillingCountry.php`
-- Views: `resources/views/pages/settings/billing.blade.php`
+- Middleware: `app/Http/Middleware/AuthenticateLocalUser.php` (login automático uma vez por sessão)
+- Middleware MCP: `app/Http/Middleware/EnsureLocalMcpOrigin.php` (valida Origin do `POST /mcp/craftdb`); `app/Mcp/McpAccess.php` resolve o usuário local; rotas MCP em `routes/ai.php` (carregado só pelo `McpServiceProvider`)
+- Action: `app/Actions/Local/EnsureLocalUser.php`
+- Comando: `app/Console/Commands/EnsureLocalUserCommand.php` (`php artisan craftdb:local-user`, executado no boot do container)
+- Config: `config/craftdb.php` (`local_user.email`, `force_https`)
 
 ### Importação de Schema
 
@@ -161,6 +142,7 @@ craftdb/
   - `ParseLaravelMigration.php` — parser customizado para migrations Laravel
 - Form: `app/Livewire/Forms/Diagram/ImportForm.php`
 - Fixtures de teste: `tests/Feature/Actions/Parse/`
+- Zero telemetria (F5): `tests/Feature/Telemetry/` (NoExternalServicesTest, NoExternalRequestsTest); fontes via `@fontsource` em `resources/css/app.css`
 
 ## Onde ficam as coisas
 
@@ -168,11 +150,11 @@ craftdb/
 - Interface/UI: `resources/views/livewire/` + `resources/views/components/diagram/`
 - Lógica de negócio: `app/Actions/Diagram/`
 - Acesso a dados: `app/Models/` + migrations em `database/migrations/`
-- Configuração: `config/diagram.php` (se envolver limites de plano)
+- Sem limites de plano: não adicionar checagens (removidas na F3)
 
 **Nova integração externa:**
 - Serviço/adapter: `app/Services/` (criar se não existir) ou diretamente no Controller
-- Configuração: `config/services.php` + `config/billing.php`
+- Configuração: `config/services.php`
 - Variáveis de ambiente: `.env.example`
 
 **Docker / CraftDB Local:**
@@ -189,7 +171,7 @@ craftdb/
 
 **`app/Support/`:**
 **Propósito:** Utilitários de negócio que não são Model, Service ou Action
-**Exemplos:** `DiagramLimits.php` — centraliza cálculo de limites por plano
+**Exemplos:** `Helpers.php`
 
 **`app/Livewire/Data/`:**
 **Propósito:** DTOs usados para transferência de dados entre componentes Livewire
@@ -197,11 +179,11 @@ craftdb/
 
 **`app/Livewire/Contracts/`:**
 **Propósito:** Interfaces para componentes com comportamento compartilhado
-**Exemplos:** `PublicCanvas` — interface para canvas em modo público (read-only)
+**Exemplos:** nenhum no momento (`PublicCanvas` removido na F3)
 
 **`docs/`:**
 **Propósito:** Documentação técnica de features específicas do projeto
-**Exemplos:** `DIAGRAM_CACHING.md`, `PUBLIC_SHARING.md`, `TEAM_MANAGEMENT.md`
+**Exemplos:** `DIAGRAM_CACHING.md`, `WORKSPACES.md`
 
 **`.specs/codebase/`:**
 **Propósito:** Contexto para agentes de IA (esta documentação)

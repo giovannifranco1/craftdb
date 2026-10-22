@@ -10,81 +10,58 @@
             </flux:text>
         </div>
 
-        @if($this->canExport)
-            <!-- Framework Selection -->
-            <div>
-                <flux:label class="pb-3">{{ __('Framework') }}</flux:label>
-                <div class="grid grid-cols-2 gap-3">
-                    <label
-                        @class([
-                            'relative cursor-pointer rounded-xl border-1 px-4 py-5 flex flex-col dark:bg-background-dark items-center min-h-24 transition-all duration-150 text-center group dark:hover:bg-background-dark',
-                            'border-primary-300 ring-primary-200 dark:ring-primary-900 bg-primary-50/40 dark:bg-background-dark' => $framework === 'laravel',
-                            'border-zinc-300 hover:border-zinc-400 dark:border-zinc-600 dark:hover:border-zinc-600 bg-white/90 dark:bg-background-dark' => $framework !== 'laravel',
-                        ])
-                    >
-                        <input
-                            type="radio"
-                            wire:model.live="framework"
-                            value="laravel"
-                            class="sr-only"
-                        />
-                        <flux:icon.framework.laravel class="size-10 mb-2 text-[#FF2D20]" />
-                        <span class="font-light text-sm">{{ __('Laravel') }}</span>
-                        <span class="absolute top-2 right-2">
-                            @if ($framework === 'laravel')
-                                <flux:icon.check-circle variant="solid" class="size-5" />
-                            @endif
-                        </span>
-                    </label>
-
-                    <div
-                        class="relative rounded-xl border-1 px-4 py-5 flex flex-col items-center min-h-24 transition-all duration-150 text-center cursor-not-allowed opacity-50 border-zinc-200 dark:border-zinc-700 bg-zinc-50/50 dark:bg-background-dark"
-                    >
-                        <flux:icon.code-bracket class="size-10 mb-2 text-zinc-400" />
-                        <span class="font-light text-sm text-zinc-400">{{ __('Coming Soon') }}</span>
-                        <span class="absolute top-2 right-2">
-                            <flux:icon.lock-closed variant="solid" class="size-5 text-zinc-400 dark:text-zinc-500" />
-                        </span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Footer actions -->
-            <div class="flex items-center gap-2">
-                <flux:button wire:click="cancel()" class="cursor-pointer" variant="ghost" icon="x-mark">{{ __('Cancel') }}</flux:button>
-
-                <flux:spacer />
-
-                <flux:button
-                    class="cursor-pointer"
-                    variant="primary"
-                    icon="arrow-down-tray"
-                    wire:click="export"
+        <!-- Framework Selection -->
+        <div>
+            <flux:label class="pb-3">{{ __('Framework') }}</flux:label>
+            <div class="grid grid-cols-2 gap-3">
+                <label
+                    @class([
+                        'relative cursor-pointer rounded-xl border-1 px-4 py-5 flex flex-col dark:bg-background-dark items-center min-h-24 transition-all duration-150 text-center group dark:hover:bg-background-dark',
+                        'border-primary-300 ring-primary-200 dark:ring-primary-900 bg-primary-50/40 dark:bg-background-dark' => $framework === 'laravel',
+                        'border-zinc-300 hover:border-zinc-400 dark:border-zinc-600 dark:hover:border-zinc-600 bg-white/90 dark:bg-background-dark' => $framework !== 'laravel',
+                    ])
                 >
-                    {{ __('Export') }}
-                </flux:button>
-            </div>
-        @else
-            <!-- Upgrade prompt -->
-            <div class="flex flex-col items-center gap-4 py-4">
-                <div class="flex items-center justify-center w-16 h-16 rounded-2xl bg-zinc-100 dark:bg-zinc-800">
-                    <flux:icon.arrow-down-tray class="size-8 text-zinc-400" />
+                    <input
+                        type="radio"
+                        wire:model.live="framework"
+                        value="laravel"
+                        class="sr-only"
+                    />
+                    <flux:icon.framework.laravel class="size-10 mb-2 text-[#FF2D20]" />
+                    <span class="font-light text-sm">{{ __('Laravel') }}</span>
+                    <span class="absolute top-2 right-2">
+                        @if ($framework === 'laravel')
+                            <flux:icon.check-circle variant="solid" class="size-5" />
+                        @endif
+                    </span>
+                </label>
+
+                <div
+                    class="relative rounded-xl border-1 px-4 py-5 flex flex-col items-center min-h-24 transition-all duration-150 text-center cursor-not-allowed opacity-50 border-zinc-200 dark:border-zinc-700 bg-zinc-50/50 dark:bg-background-dark"
+                >
+                    <flux:icon.code-bracket class="size-10 mb-2 text-zinc-400" />
+                    <span class="font-light text-sm text-zinc-400">{{ __('Coming Soon') }}</span>
+                    <span class="absolute top-2 right-2">
+                        <flux:icon.lock-closed variant="solid" class="size-5 text-zinc-400 dark:text-zinc-500" />
+                    </span>
                 </div>
-                <p class="text-sm text-zinc-600 dark:text-zinc-400 text-center max-w-sm">
-                    {{ __('This feature is available on the Pro plan or higher. Upgrade to unlock it and get unlimited diagrams, tables, and more.') }}
-                </p>
             </div>
+        </div>
 
-            <!-- Footer actions -->
-            <div class="flex items-center gap-2">
-                <flux:button wire:click="cancel()" class="cursor-pointer" variant="ghost" icon="x-mark">{{ __('Maybe later') }}</flux:button>
+        <!-- Footer actions -->
+        <div class="flex items-center gap-2">
+            <flux:button wire:click="cancel()" class="cursor-pointer" variant="ghost" icon="x-mark">{{ __('Cancel') }}</flux:button>
 
-                <flux:spacer />
+            <flux:spacer />
 
-                <flux:button href="{{ route('billing.index') }}" variant="primary" icon="sparkles" wire:navigate class="cursor-pointer">
-                    {{ __('Upgrade to Pro') }}
-                </flux:button>
-            </div>
-        @endif
+            <flux:button
+                class="cursor-pointer"
+                variant="primary"
+                icon="arrow-down-tray"
+                wire:click="export"
+            >
+                {{ __('Export') }}
+            </flux:button>
+        </div>
     </div>
 </flux:modal>

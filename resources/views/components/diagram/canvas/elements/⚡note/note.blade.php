@@ -27,7 +27,7 @@
             @mousedown.stop="$wire.remove()"
             wire:loading.attr="disabled"
             class="absolute top-1 left-1.5 z-20 size-4 flex items-center justify-center rounded hover:bg-red-100 dark:hover:bg-red-900/20 transition-all duration-200"
-            title="Remover nota"
+            title="{{ __('Remove note') }}"
         >
             <flux:icon.trash class="size-3 text-gray-500 dark:text-zinc-400 hover:text-red-600 dark:hover:text-red-400 transition-colors" />
         </button>

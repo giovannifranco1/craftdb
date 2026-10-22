@@ -3,6 +3,7 @@ name: craftdb
 services:
   mysql:
     image: mysql:8.4
+    container_name: craftdb-mysql
     environment:
       MYSQL_DATABASE: craftdb
       MYSQL_USER: craftdb
@@ -22,6 +23,7 @@ services:
 
   app:
     build: .
+    container_name: craftdb-app
     image: craftdb-local:latest
     depends_on:
       mysql:
@@ -46,9 +48,13 @@ services:
       CACHE_STORE: database
       QUEUE_CONNECTION: sync
       MAIL_MAILER: log
-      NIGHTWATCH_ENABLED: "false"
       CRAFTDB_USER_EMAIL: ${CRAFTDB_USER_EMAIL:-local@craftdb.local}
-      CRAFTDB_USER_PASSWORD: ${CRAFTDB_USER_PASSWORD:-craftdb}
+      # Links da página /support (vazio = link não aparece)
+      CRAFTDB_SUPPORT_REPO_URL: ${CRAFTDB_SUPPORT_REPO_URL:-}
+      CRAFTDB_SUPPORT_GITHUB_SPONSORS_URL: ${CRAFTDB_SUPPORT_GITHUB_SPONSORS_URL:-}
+      CRAFTDB_SUPPORT_KOFI_URL: ${CRAFTDB_SUPPORT_KOFI_URL:-}
+      CRAFTDB_SUPPORT_BUYMEACOFFEE_URL: ${CRAFTDB_SUPPORT_BUYMEACOFFEE_URL:-}
+      CRAFTDB_SUPPORT_PIX_KEY: ${CRAFTDB_SUPPORT_PIX_KEY:-}
     volumes:
       - craftdb-data:/data
     ports:

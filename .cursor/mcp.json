@@ -1,12 +1,7 @@
 {
-  "mcpServers": {
-    "craftdb": {
-      "command": "/opt/homebrew/opt/php@8.3/bin/php",
-      "args": ["artisan", "mcp:start", "craftdb"],
-      "cwd": "/Users/giovanni/www/craftdb",
-      "env": {
-        "MCP_BEARER_TOKEN": "***REMOVED***"
-      }
+    "mcpServers": {
+        "craftdb": {
+            "url": "http://localhost:8080/mcp/craftdb"
+        }
     }
-  }
 }

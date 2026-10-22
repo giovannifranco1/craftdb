@@ -1,7 +1,7 @@
 # Roadmap
 
 **Milestone atual:** M1 — CraftDB Local v1
-**Status:** Planejamento
+**Status:** Concluído (2026-10-21) — aguardando teste do dev
 
 ---
 
@@ -18,29 +18,29 @@
 - docker-compose com app + MySQL
 - Entrypoint: APP_KEY persistida, migrate, seed
 
-**F2 — Usuário local implícito + remoção de auth** - PLANEJADA
+**F2 — Usuário local implícito + remoção de auth** - CONCLUÍDA (2026-10-21)
 
 - Seed de usuário/workspace local e auto-login por middleware
 - Remove Fortify (login, registro, 2FA, reset), Socialite, convites, papéis
 
-**F3 — Remoção de billing, limites e links públicos** - PLANEJADA
+**F3 — Remoção de billing, limites e links públicos** - CONCLUÍDA (2026-10-21)
 
 - Remove Cashier/Stripe, planos, DiagramLimits, pro-features, cf-ipcountry
 - Remove rota e componentes de diagrama público
 
-**F4 — Workspaces locais** - PLANEJADA
+**F4 — Workspaces locais** - CONCLUÍDA (2026-10-21)
 
 - Team vira Workspace na UI (criar, renomear, apagar, alternar)
 
-**F5 — Zero telemetria** - PLANEJADA
+**F5 — Zero telemetria** - CONCLUÍDA (2026-10-21)
 
 - Remove Nightwatch, Resend, S3; self-host de fontes; remove og/URLs craftdb.app
 
-**F6 — MCP local sem Passport** - PLANEJADA
+**F6 — MCP local sem Passport** - CONCLUÍDA (2026-10-21)
 
 - stdio sem token; HTTP só em localhost
 
-**F7 — Remoção da landing + página Apoiar** - PLANEJADA
+**F7 — Remoção da landing + página Apoiar** - CONCLUÍDA (2026-10-21)
 
 ---
 

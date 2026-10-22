@@ -159,7 +159,7 @@
                                         <!-- Valor Padrão -->
                                         @if(($column->default_value ?? null))
                                             <div class="pt-1 border-t border-gray-200 dark:border-zinc-700">
-                                                <p class="text-[10px] font-medium text-gray-500 dark:text-zinc-400 uppercase mb-0.5">Valor Padrão</p>
+                                                <p class="text-[10px] font-medium text-gray-500 dark:text-zinc-400 uppercase mb-0.5">{{ __('Default value') }}</p>
                                                 <p class="text-xs text-zinc-300 font-mono rounded">
                                                     {{ $column->default_value }}
                                                 </p>
@@ -169,7 +169,7 @@
                                         <!-- Comentário -->
                                         @if(($column->comment ?? null))
                                             <div class="pt-1 border-t border-gray-200 dark:border-zinc-700">
-                                                <p class="text-[10px] font-medium text-gray-500 dark:text-zinc-400 uppercase mb-0.5">Comentário</p>
+                                                <p class="text-[10px] font-medium text-gray-500 dark:text-zinc-400 uppercase mb-0.5">{{ __('Comment') }}</p>
                                                 <p class="text-xs text-zinc-300 leading-relaxed">
                                                     {{ $column->comment }}
                                                 </p>

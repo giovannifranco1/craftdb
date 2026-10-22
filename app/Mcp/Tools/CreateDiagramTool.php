@@ -27,7 +27,7 @@ class CreateDiagramTool extends Tool
         ]);
 
         $team = Team::findOrFail($validated['team_id']);
-        McpAccess::assertCanCreateDiagramOnTeam($request, $team);
+        McpAccess::assertCanCreateDiagramOnTeam($team);
 
         $slug = str()->slug($validated['name']).'-'.str()->random(10);
 

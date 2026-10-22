@@ -31,9 +31,6 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' => static::$password ??= 'password',
             'remember_token' => Str::random(10),
-            'two_factor_secret' => Str::random(10),
-            'two_factor_recovery_codes' => Str::random(10),
-            'two_factor_confirmed_at' => now(),
         ];
     }
 
@@ -45,27 +42,5 @@ class UserFactory extends Factory
         return $this->state(fn (array $attributes) => [
             'email_verified_at' => null,
         ]);
-    }
-
-    /**
-     * Indicate that the model does not have two-factor authentication configured.
-     */
-    public function withoutTwoFactor(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'two_factor_secret' => null,
-            'two_factor_recovery_codes' => null,
-            'two_factor_confirmed_at' => null,
-        ]);
-    }
-
-    /**
-     * Attach a fake active Pro subscription (Cashier + config price id). See {@see BillingSubscriptionFactory}.
-     */
-    public function withActiveProSubscription(?string $stripePriceId = null): static
-    {
-        return $this->afterCreating(function (User $user) use ($stripePriceId): void {
-            BillingSubscriptionFactory::grantPro($user, $stripePriceId);
-        });
     }
 }

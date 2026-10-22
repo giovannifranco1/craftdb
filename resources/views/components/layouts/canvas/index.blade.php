@@ -9,18 +9,7 @@
         <x-ui.toast/>
         @endpersist
 
-        @php
-            $proFeatures = collect(config('pro-features.features'))->mapWithKeys(fn ($feature, $key) => [
-                $key => array_merge($feature, [
-                    'name' => __($feature['name']),
-                    'description' => __($feature['description']),
-                ]),
-            ])->all();
-        @endphp
-        <div
-            x-data="{ proFeatures: @js($proFeatures) }"
-            @pro-feature::show.window="const key = $event.detail?.key; if (key && proFeatures[key]) { Alpine.store('proFeature', proFeatures[key]); $flux.modal('pro-feature').show(); }"
-        >
+        <div>
             <div x-ref="canvasRoot" x-data="runCanvas(25, @js($isInitialLoad))" diagram-id="{{ $diagram->id }}" diagram-slug="{{ $diagram->slug }}" team-id="{{ $diagram->team_id }}" class="container hs-dropdown [--trigger:contextmenu] pt-12 pb-8">
                 <x-ui.context-menu/>
                 <x-diagram.canvas.ui.loading/>
@@ -50,10 +39,7 @@
             <livewire:diagram.canvas.overlays.side-editor :$diagram/>
             <livewire:diagram.canvas.overlays.import :$diagram/>
             <livewire:diagram.canvas.overlays.export :$diagram/>
-            <livewire:diagram.canvas.ui.limit :$diagram/>
             <livewire:diagram.ui.graph :$diagram/>
-            <livewire:ui.contact-us/>
-            <x-ui.pro-feature-modal/>
         </div>
         @fluxScripts
     </body>

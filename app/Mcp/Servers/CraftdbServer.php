@@ -3,7 +3,6 @@
 namespace App\Mcp\Servers;
 
 use App\Mcp\Server\CraftdbCallTool;
-use App\Mcp\StdioMcpAuth;
 use App\Mcp\Tools\AddAreaTool;
 use App\Mcp\Tools\AddColumnTool;
 use App\Mcp\Tools\AddColumnsTool;
@@ -42,9 +41,7 @@ use Laravel\Mcp\Server\Attributes\Version;
 
 BEFORE creating or modifying any diagram, always call `list_teams` first. The result tells you:
 - Which workspaces are available and their team_id.
-- The plan (Free / Pro ✓ / Team ✓) — only Pro and Team workspaces can use the MCP integration.
-- The current diagram count vs the limit — Free plan allows up to 3 diagrams.
-- A clear ⚠ warning block if no workspace can accept new diagrams (no plan or limit reached). If that warning is present, STOP and inform the user instead of proceeding.
+- The number of diagrams in each workspace.
 
 Prefer bulk tools to minimize round-trips: `create_schema` creates a full diagram in one call; `add_tables` adds multiple tables with columns to an existing diagram in one call; `add_columns` adds multiple columns to a table in one call.')]
 class CraftdbServer extends Server
@@ -57,8 +54,6 @@ class CraftdbServer extends Server
 
     protected function boot(): void
     {
-        StdioMcpAuth::bootstrapIfStdio($this->transport);
-
         $this->addMethod('tools/call', CraftdbCallTool::class);
     }
 

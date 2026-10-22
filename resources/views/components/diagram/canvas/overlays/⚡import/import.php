@@ -103,8 +103,6 @@ new class extends CanvasComponent {
         $this->importForm->hasImport = true;
         $this->importForm->validate();
 
-        $this->validateTableLimit();
-
         $action->exec($this->diagram, $this->importForm->file, $this->importForm->type ?? '');
 
         Flux::modal('diagram-canvas-import')->close();

@@ -7,7 +7,6 @@ use App\Enums\RelationshipType;
 use App\Livewire\CanvasComponent;
 use App\Models\Diagram;
 use App\Models\Table;
-use App\Support\DiagramLimits;
 use App\Support\Helpers;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Contracts\Database\Query\Builder as QueryBuilder;
@@ -64,15 +63,6 @@ new #[Defer(bundle: true)] class extends CanvasComponent {
     public function addTable(int $x = 100, int $y = 100): void
     {
         $this->authorizeDiagram('update');
-
-        $owner = $this->diagram->team?->owner;
-        abort_if($owner === null, 403, 'Team owner not found');
-        $limits = DiagramLimits::forUser($owner);
-
-        if ($this->diagram->tables()->count() >= $limits['table_limit']) {
-            $this->dispatch('alert', message: __('You have reached the maximum number of tables for this diagram.'), type: 'error');
-            return;
-        }
 
         $table = $this->diagram->tables()->create([
             'name'  => 'new_table',
@@ -137,8 +127,6 @@ new #[Defer(bundle: true)] class extends CanvasComponent {
     public function addRelationship(int $fromTableId, int $toTableId, RelationshipType $type, AddRelationship $action, UpdateResizePositionTable $updateResizePositionTableAction): void
     {
         $this->authorizeDiagram('update');
-
-        if ($type === RelationshipType::MANY_TO_MANY) $this->validateTableLimit();
 
         /** @var array{fromTableId: int, toTableId: int, type: '1:1'|'1:n'|'n:1'|'n:n', fromColumnId: int|null, toColumnId: int|null} $data */
         $data = validator()->make([

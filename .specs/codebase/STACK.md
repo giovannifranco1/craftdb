@@ -12,7 +12,7 @@
 ## Frontend
 
 - Abordagem: Livewire 4 + Flux 2 (componentes UI)
-- Estilização: Tailwind CSS 4 (via @tailwindcss/vite)
+- Estilização: Tailwind CSS 4 (via @tailwindcss/vite; sem `tailwind.config.js` — removido na F7 junto com `@tailwindcss/forms`, `tailwindcss-animate` e `daisyui`)
 - Interatividade client-side: Alpine.js (bundled com Livewire 4) — usado para os Alpine data stores do canvas
 - Visualização: D3.js 7 para grafo de FK e grafo de diagrama (dentro do canvas)
 - Canvas customizado: `resources/js/canvas/classes/InfiniteCanvas.js` — HTML5 Canvas 2D, pan/zoom, touch
@@ -22,7 +22,7 @@
 
 - Estilo de API: Sem REST API dedicada — Livewire para interações reativas
 - Banco de dados: Eloquent ORM + SQLite (dev) / MySQL (prod) / MySQL 8.4 em container (CraftDB Local)
-- Autenticação: Laravel Fortify (email/senha, 2FA, verificação de email) + Laravel Socialite (GitHub, Google)
+- Autenticação: Sem login — usuário local automático (`AuthenticateLocalUser`); o MCP age como o usuário local (sem Passport/OAuth/token — removidos na F6)
 - Filas: Database driver (jobs definidos em app/)
 - Cache: File driver (local) / Redis opcional (prod)
 
@@ -34,10 +34,10 @@
 
 ## Serviços Externos
 
-- Pagamentos: Stripe via Laravel Cashier 16
-- OAuth: GitHub, Google (via Laravel Socialite)
-- Detecção de região: Cloudflare header `cf-ipcountry`
-- Storage: AWS S3 (configurado, não verificado se em uso ativo)
+- Pagamentos/região: nenhum (Cashier/Stripe e `cf-ipcountry` removidos na F3)
+- Storage: disco local (S3/AWS removido na F5)
+- Telemetria/e-mail externo: nenhum (Nightwatch e Resend removidos na F5; mailer padrão `log`)
+- Fontes: self-hosted via `@fontsource` (Poppins, Outfit, Kalam, Space Mono; subsets latin e latin-ext), bundladas pelo Vite — sem Google Fonts
 
 ## Ferramentas de Desenvolvimento
 
