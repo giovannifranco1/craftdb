@@ -97,7 +97,7 @@ O diagrama de e-commerce das imagens foi criado exatamente assim.
 Você só precisa do [Docker](https://docs.docker.com/get-docker/) com Compose v2.
 
 ```bash
-git clone https://gitlab.com/giovannirz/craftdb.git
+git clone https://github.com/giovannifranco1/craftdb.git
 cd craftdb
 docker compose up -d --build
 ```
@@ -181,7 +181,7 @@ As URLs precisam começar com `http://` ou `https://`. Adicione as variáveis no
 
 ```bash
 # .env
-CRAFTDB_SUPPORT_REPO_URL=https://gitlab.com/giovannirz/craftdb
+CRAFTDB_SUPPORT_REPO_URL=https://github.com/giovannifranco1/craftdb
 CRAFTDB_SUPPORT_BUYMEACOFFEE_URL=https://buymeacoffee.com/sua-pagina
 ```
 
@@ -225,7 +225,7 @@ Ideias para depois: um modo lite com SQLite, multiusuário em rede local e parse
 O CraftDB é gratuito e feito nas horas vagas. Se ele te poupa tempo, você pode:
 
 - ⭐ Dar uma estrela no repositório e indicar para alguém
-- 🐛 Reportar bugs e sugerir recursos nas [issues](https://gitlab.com/giovannirz/craftdb/-/issues)
+- 🐛 Reportar bugs e sugerir recursos nas [issues](https://github.com/giovannifranco1/craftdb/issues)
 - ☕ Me pagar um café (link em breve)
 <!-- TODO: adicionar aqui (e no README.md) o link do Buy Me a Coffee quando a página existir -->
 
@@ -233,7 +233,7 @@ O app também tem uma página **Apoiar** em `/support`.
 
 ## 🤝 Contribuindo
 
-Contribuições são bem-vindas! Abra uma [issue](https://gitlab.com/giovannirz/craftdb/-/issues) para discutir mudanças maiores antes de mandar um merge request.
+Contribuições são bem-vindas! Abra uma [issue](https://github.com/giovannifranco1/craftdb/issues) para discutir mudanças maiores antes de mandar um pull request.
 
 Para mexer no código sem Docker você precisa de PHP 8.2+, Composer e Node.js:
 

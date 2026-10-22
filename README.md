@@ -97,7 +97,7 @@ The e-commerce diagram in the screenshots was created exactly this way.
 You only need [Docker](https://docs.docker.com/get-docker/) with Compose v2.
 
 ```bash
-git clone https://gitlab.com/giovannirz/craftdb.git
+git clone https://github.com/giovannifranco1/craftdb.git
 cd craftdb
 docker compose up -d --build
 ```
@@ -181,7 +181,7 @@ URLs must start with `http://` or `https://`. Add them to the same `.env` and ru
 
 ```bash
 # .env
-CRAFTDB_SUPPORT_REPO_URL=https://gitlab.com/giovannirz/craftdb
+CRAFTDB_SUPPORT_REPO_URL=https://github.com/giovannifranco1/craftdb
 CRAFTDB_SUPPORT_BUYMEACOFFEE_URL=https://buymeacoffee.com/your-page
 ```
 
@@ -225,7 +225,7 @@ Ideas for later: a lite mode with SQLite, multi-user on a local network, and Pos
 CraftDB is free and built in spare time. If it saves you time, you can:
 
 - ⭐ Star the repo and share it with a friend
-- 🐛 Report bugs and suggest features in the [issues](https://gitlab.com/giovannirz/craftdb/-/issues)
+- 🐛 Report bugs and suggest features in the [issues](https://github.com/giovannifranco1/craftdb/issues)
 - ☕ Buy me a coffee (link coming soon)
 <!-- TODO: add the Buy Me a Coffee link here (and in README.pt-BR.md) once the page exists -->
 
@@ -233,7 +233,7 @@ The app also has a **Support** page at `/support`.
 
 ## 🤝 Contributing
 
-Contributions are welcome! Open an [issue](https://gitlab.com/giovannirz/craftdb/-/issues) to discuss bigger changes before sending a merge request.
+Contributions are welcome! Open an [issue](https://github.com/giovannifranco1/craftdb/issues) to discuss bigger changes before sending a pull request.
 
 To work on the code without Docker you need PHP 8.2+, Composer and Node.js:
 

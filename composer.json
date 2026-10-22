@@ -1,6 +1,6 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "giovannirz/craftdb",
+    "name": "giovannifranco1/craftdb",
     "type": "project",
     "description": "CraftDB Local: open source visual database diagram editor that runs locally via Docker.",
     "keywords": [
