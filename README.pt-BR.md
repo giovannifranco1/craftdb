@@ -13,6 +13,7 @@
   <img src="https://img.shields.io/badge/Laravel-13-FF2D20?logo=laravel&logoColor=white" alt="Laravel 13">
   <img src="https://img.shields.io/badge/PHP-8.2%2B-777BB4?logo=php&logoColor=white" alt="PHP 8.2+">
   <img src="https://img.shields.io/badge/Docker-ready-2496ED?logo=docker&logoColor=white" alt="Pronto para Docker">
+  <a href="https://buymeacoffee.com/craftdb"><img src="https://img.shields.io/badge/Buy%20Me%20a%20Coffee-apoie-FFDD00?logo=buymeacoffee&logoColor=black" alt="Buy Me a Coffee"></a>
 </p>
 
 <p align="center">
@@ -167,22 +168,19 @@ CRAFTDB_PORT=8090
 
 ### Links da página de apoio
 
-A página **Apoiar** (`/support`) mostra só os links que você preencher. Todos são opcionais e vêm vazios por padrão:
+A página **Apoiar** (`/support`) sempre mostra os links do projeto: o repositório no GitHub e o [Buy Me a Coffee](https://buymeacoffee.com/craftdb). Os links extras abaixo são opcionais e só aparecem se você preencher:
 
 | Variável | Mostra |
 |---|---|
-| `CRAFTDB_SUPPORT_REPO_URL` | Botão para dar estrela no repositório |
 | `CRAFTDB_SUPPORT_GITHUB_SPONSORS_URL` | Botão do GitHub Sponsors |
 | `CRAFTDB_SUPPORT_KOFI_URL` | Botão do Ko-fi |
-| `CRAFTDB_SUPPORT_BUYMEACOFFEE_URL` | Botão do Buy Me a Coffee |
 | `CRAFTDB_SUPPORT_PIX_KEY` | Chave Pix com botão de copiar |
 
 As URLs precisam começar com `http://` ou `https://`. Adicione as variáveis no mesmo `.env` e rode `docker compose up -d` para aplicar:
 
 ```bash
 # .env
-CRAFTDB_SUPPORT_REPO_URL=https://github.com/giovannifranco1/craftdb
-CRAFTDB_SUPPORT_BUYMEACOFFEE_URL=https://buymeacoffee.com/sua-pagina
+CRAFTDB_SUPPORT_KOFI_URL=https://ko-fi.com/sua-pagina
 ```
 
 Você pode se conectar ao banco com qualquer cliente SQL: host `127.0.0.1`, porta `3307`, banco `craftdb`, usuário `craftdb`, senha `craftdb`.
@@ -227,8 +225,7 @@ O CraftDB é gratuito e feito nas horas vagas. Se ele te poupa tempo, você pode
 
 - ⭐ Dar uma estrela no repositório e indicar para alguém
 - 🐛 Reportar bugs e sugerir recursos nas [issues](https://github.com/giovannifranco1/craftdb/issues)
-- ☕ Me pagar um café (link em breve)
-<!-- TODO: adicionar aqui (e no README.md) o link do Buy Me a Coffee quando a página existir -->
+- ☕ [Me pagar um café](https://buymeacoffee.com/craftdb)
 
 O app também tem uma página **Apoiar** em `/support`.
 

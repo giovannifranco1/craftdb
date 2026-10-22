@@ -67,6 +67,15 @@ it('LP10: nothing configured shows the coming soon notice', function () {
     $this->get('/support')->assertOk()->assertSee(__('More ways to support are coming soon.'));
 });
 
+it('LP16: repository and Buy Me a Coffee links are built in, with no env needed', function () {
+    $html = $this->get('/support')->assertOk()->getContent();
+
+    expect($html)
+        ->toMatch('#<a\b[^>]*href="https://github\.com/giovannifranco1/craftdb"[^>]*>#')
+        ->toMatch('#<a\b[^>]*href="https://buymeacoffee\.com/craftdb"[^>]*>#')
+        ->not->toContain(__('More ways to support are coming soon.'));
+});
+
 it('LP12: user menu and footer link to support, no contact modal', function () {
     $diagram = Diagram::factory()->create(['team_id' => $this->team->id]);
     $pages = [
