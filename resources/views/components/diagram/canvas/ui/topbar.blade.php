@@ -90,7 +90,7 @@
                     <div>
                         <flux:dropdown>
                             <flux:button class="font-light" size="sm" color="sky" variant="primary" icon="share">
-                                {{ __('Compartilhar') }}
+                                {{ __('Share') }}
                             </flux:button>
 
                             <flux:menu keep-open class="min-w-80">

@@ -165,6 +165,26 @@ CRAFTDB_PORT=8090
 
 > The variables use the `CRAFTDB_` prefix on purpose: Docker Compose also reads this `.env`, which Laravel uses for local development.
 
+### Support page links
+
+The **Support** page (`/support`) shows only the links you fill in. All of them are optional and empty by default:
+
+| Variable | Shows |
+|---|---|
+| `CRAFTDB_SUPPORT_REPO_URL` | Button to star the repository |
+| `CRAFTDB_SUPPORT_GITHUB_SPONSORS_URL` | GitHub Sponsors button |
+| `CRAFTDB_SUPPORT_KOFI_URL` | Ko-fi button |
+| `CRAFTDB_SUPPORT_BUYMEACOFFEE_URL` | Buy Me a Coffee button |
+| `CRAFTDB_SUPPORT_PIX_KEY` | Pix key with a copy button |
+
+URLs must start with `http://` or `https://`. Add them to the same `.env` and run `docker compose up -d` to apply:
+
+```bash
+# .env
+CRAFTDB_SUPPORT_REPO_URL=https://gitlab.com/giovannirz/craftdb
+CRAFTDB_SUPPORT_BUYMEACOFFEE_URL=https://buymeacoffee.com/your-page
+```
+
 You can connect to the database with any SQL client: host `127.0.0.1`, port `3307`, database `craftdb`, user `craftdb`, password `craftdb`.
 
 ## 🔄 Updating and backups

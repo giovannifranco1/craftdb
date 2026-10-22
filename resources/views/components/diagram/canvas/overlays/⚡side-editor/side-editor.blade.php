@@ -194,7 +194,7 @@
                                                                     wire:click.stop="deleteColumnById({{ $column->id }})"
                                                                     wire:confirm="Tem certeza que deseja deletar esta coluna?"
                                                                     class="p-1 rounded hover:bg-red-50 dark:hover:bg-red-900/20 text-red-500 dark:text-red-400 hover:text-red-600 dark:hover:text-red-300 transition-colors"
-                                                                    title="Deletar coluna"
+                                                                    title="{{ __('Delete column') }}"
                                                                     wire:loading.attr="disabled"
                                                                     wire:loading.class="opacity-50 cursor-not-allowed"
                                                                 >
@@ -231,7 +231,7 @@
                                                                             type="button"
                                                                             wire:click="moveColumnUp({{ $selectedColumn->id }})"
                                                                             class="p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-700 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-                                                                            title="Mover para cima"
+                                                                            title="{{ __('Move up') }}"
                                                                             @if($this->getColumns->first()?->id === $selectedColumn->id) disabled @endif
                                                                         >
                                                                             <flux:icon.chevron-up class="cursor-pointer size-3 text-zinc-600 dark:text-zinc-400"/>
@@ -254,7 +254,7 @@
                                                                             type="button"
                                                                             wire:click="moveColumnDown({{ $selectedColumn->id }})"
                                                                             class="p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-700 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-                                                                            title="Mover para baixo"
+                                                                            title="{{ __('Move down') }}"
                                                                             @if($this->getColumns->last()?->id === $selectedColumn->id) disabled @endif
                                                                         >
                                                                             <flux:icon.chevron-down class="cursor-pointer size-3 text-zinc-600 dark:text-zinc-400"/>
@@ -280,13 +280,13 @@
                                                                 >
                                                                     <!-- Nome da Coluna -->
                                                                     <div>
-                                                                        <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Nome</label>
+                                                                        <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">{{ __('Name') }}</label>
                                                                         <input
                                                                             x-ref="firstInput"
                                                                             type="text"
                                                                             wire:model="columnForm.name"
                                                                             class="w-full text-xs border border-zinc-300 dark:border-zinc-600 rounded-md px-2.5 py-1.5 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-[var(--table-base-bg)] focus:border-[var(--table-base-bg)]"
-                                                                            placeholder="Nome da coluna"
+                                                                            placeholder="{{ __('Column name') }}"
                                                                         />
                                                                         @error('columnForm.name') <span class="text-xs text-red-600 dark:text-red-400">{{ $message }}</span> @enderror
                                                                     </div>
@@ -294,7 +294,7 @@
                                                                     <!-- Tipo e Length -->
                                                                     <div class="grid grid-cols-2 gap-2">
                                                                         <div>
-                                                                            <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Tipo</label>
+                                                                            <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">{{ __('Type') }}</label>
                                                                             <select
                                                                                 wire:model="columnForm.type"
                                                                                 class="w-full text-xs border border-zinc-300 dark:border-zinc-600 rounded-md px-2.5 py-1.5 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-[var(--table-base-bg)] focus:border-[var(--table-base-bg)]"
@@ -312,7 +312,7 @@
                                                                                 wire:model="columnForm.length"
                                                                                 min="0"
                                                                                 class="w-full text-xs border border-zinc-300 dark:border-zinc-600 rounded-md px-2.5 py-1.5 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-[var(--table-base-bg)] focus:border-[var(--table-base-bg)]"
-                                                                                placeholder="Ex: 255"
+                                                                                placeholder="{{ __('e.g. 255') }}"
                                                                             />
                                                                             @error('columnForm.length') <span class="text-xs text-red-600 dark:text-red-400">{{ $message }}</span> @enderror
                                                                         </div>
@@ -320,24 +320,24 @@
 
                                                                     <!-- Default Value -->
                                                                     <div>
-                                                                        <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Valor Padrão</label>
+                                                                        <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">{{ __('Default value') }}</label>
                                                                         <input
                                                                             type="text"
                                                                             wire:model="columnForm.defaultValue"
                                                                             class="w-full text-xs border border-zinc-300 dark:border-zinc-600 rounded-md px-2.5 py-1.5 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-[var(--table-base-bg)] focus:border-[var(--table-base-bg)]"
-                                                                            placeholder="Ex: 'default' ou NULL"
+                                                                            placeholder="{{ __('e.g. \'default\' or NULL') }}"
                                                                         />
                                                                         @error('columnForm.defaultValue') <span class="text-xs text-red-600 dark:text-red-400">{{ $message }}</span> @enderror
                                                                     </div>
 
                                                                     <!-- Comment -->
                                                                     <div>
-                                                                        <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Comentário</label>
+                                                                        <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">{{ __('Comment') }}</label>
                                                                         <textarea
                                                                             wire:model="columnForm.comment"
                                                                             rows="2"
                                                                             class="w-full text-xs border border-zinc-300 dark:border-zinc-600 rounded-md px-2.5 py-1.5 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-[var(--table-base-bg)] focus:border-[var(--table-base-bg)] resize-none"
-                                                                            placeholder="Descrição da coluna..."
+                                                                            placeholder="{{ __('Column description...') }}"
                                                                         ></textarea>
                                                                         @error('columnForm.comment') <span class="text-xs text-red-600 dark:text-red-400">{{ $message }}</span> @enderror
                                                                     </div>
@@ -353,7 +353,7 @@
                                                     @endif
                                                 @else
                                                     <div class="bg-white dark:bg-zinc-800/50 rounded-lg h-full flex justify-center items-center border border-zinc-200 dark:border-zinc-700 p-8 text-center">
-                                                        <p class="text-sm text-zinc-500 dark:text-zinc-400">Selecione uma coluna para ver os detalhes</p>
+                                                        <p class="text-sm text-zinc-500 dark:text-zinc-400">{{ __('Select a column to see its details') }}</p>
                                                     </div>
                                                 @endif
                                             </div>
@@ -389,7 +389,7 @@
                                                 </div>
                                                 <div
                                                     id="foreign-keys-graph"
-                                                    x-data="foreignKeysGraph(@js($this->getRelationships), @js($this->getTable->id), @js($this->getTable->name), @js($this->getTablesWithColors))"
+                                                    x-data="foreignKeysGraph(@js($this->getRelationships), @js($this->getTable->id), @js($this->getTable->name), @js($this->getTablesWithColors), @js(__('No foreign keys found')))"
                                                     @table-side-editor::column-added.window="
                                                         // Atualizar dados e re-renderizar gráfico
                                                         relationships = @js($this->getRelationships);

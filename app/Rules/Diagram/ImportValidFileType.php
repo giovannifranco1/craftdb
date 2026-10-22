@@ -28,12 +28,12 @@ class ImportValidFileType implements ValidationRule
         $mime = $value->getMimeType();
 
         if (!in_array($ext, $allowedExtensions)) {
-            $fail("A extensão .$ext não é permitida. Use apenas .sql, .zip ou .php.");
+            $fail(__('The .:ext extension is not allowed. Use only .sql, .zip or .php.', ['ext' => $ext]));
             return;
         }
 
         if (!in_array($mime, $allowedMimes)) {
-            $fail("O tipo MIME '$mime' é inválido para este tipo de arquivo.");
+            $fail(__('The MIME type ":mime" is not valid for this file type.', ['mime' => $mime]));
         }
     }
 }
